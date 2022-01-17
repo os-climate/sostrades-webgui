@@ -1,0 +1,27 @@
+<div class="container" *ngIf="isLoading">
+  <app-progress-bar class="container-dialog" *ngIf="isLoading" progressMode="indeterminate"
+    progressText="Loading diagram information"></app-progress-bar>
+</div>
+<!-- <mat-form-field floatLabel="never" style="margin-right: 10px;">
+  <mat-label>Model Type</mat-label>
+  <mat-select [formControl]="modelTypes" (selectionChange)="onSelectChange()" style="text-align: right;" multiple>
+    <mat-option *ngFor="let type of typeList" [value]="type">{{type}}</mat-option>
+  </mat-select>
+</mat-form-field> -->
+
+<div>
+  Models Levels to show:
+  <button mat-button (click)="modifyShowedLevel('plus')">
+    <b>+</b>
+  </button>
+  {{ levelsToShow }}
+  <button mat-button (click)="modifyShowedLevel('minus')">
+    <b>-</b>
+  </button>
+</div>
+<div class="container" #d3_placeholder>
+</div>
+<!-- <div class="tooltip-container" style="display:none;">
+  <div class="tooltip-header"></div>
+  <div class="tooltip-content"></div>
+</div> -->

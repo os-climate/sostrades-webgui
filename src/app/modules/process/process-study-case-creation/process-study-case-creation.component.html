@@ -1,0 +1,108 @@
+<div class="flex-container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    progressText="Loading form information"
+  ></app-progress-bar>
+</div>
+<div class="flex-container" [formGroup]="createStudyForm" *ngIf="!isLoading">
+  <div mat-dialog-title>
+    <h1 style="margin-bottom: 10px !important; text-align: center">
+      Create study from process
+    </h1>
+    <h4 style="margin-bottom: 0px !important; text-align: center">
+      {{ data.processName }}
+    </h4>
+  </div>
+
+  <div mat-dialog-content>
+    <mat-form-field style="margin-top: 1px !important">
+      <mat-label>Study name</mat-label>
+      <input matInput formControlName="studyName" placeholder="Study name" />
+      <mat-error *ngIf="hasError('studyName', 'required')"
+        >A study name is <strong>required</strong></mat-error
+      >
+      <mat-error *ngIf="hasError('studyName', 'error')">
+        Study case name already <strong>exist</strong>
+      </mat-error>
+      <mat-error *ngIf="hasError('studyName', 'pattern')"
+        >Only letters, numbers, dashes and underscores are authorized</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select
+        placeholder="Study"
+        formControlName="selectedRef"
+        [multiple]="false"
+        #select
+      >
+        <mat-select-trigger>
+          {{ createStudyForm.controls["selectedRef"].value.name }}
+        </mat-select-trigger>
+        <mat-option
+          *ngFor="let ref of referenceList"
+          [value]="ref"
+          [disabled]="ref.isRegeneratingReference"
+        >
+          <div class="reference-option-container">
+            <div>
+              {{ ref.name }}
+            </div>
+            <div style="font-size: 11px; color: grey">
+              <div *ngIf="ref.studyType === 'Study'">User Study</div>
+              <div
+                *ngIf="
+                  ref.studyType === 'Reference' && ref.name !== EMPTY_STUDY_NAME
+                "
+              >
+                Shared Study
+              </div>
+              <div
+                *ngIf="
+                  ref.studyType === 'Reference' && ref.name === EMPTY_STUDY_NAME
+                "
+              >
+                Empty Study
+              </div>
+              <div
+                *ngIf="
+                  ref.studyType === 'UsecaseData' && ref.name !== EMPTY_STUDY_NAME
+                "
+              >
+                Data Shared Study
+              </div>
+            </div>
+          </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select placeholder="Group name" formControlName="groupId">
+        <mat-option
+          *ngFor="let group of this.groupList"
+          [value]="group.group.id"
+        >
+          {{ group.group.name }}
+        </mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="hasError('groupId', 'required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button
+      mat-button
+      (click)="submitForm()"
+      [disabled]="!createStudyForm.valid"
+    >
+      Ok
+    </button>
+  </div>
+</div>

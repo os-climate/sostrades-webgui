@@ -1,0 +1,75 @@
+<div class="flex-container" *ngIf="showLogin">
+  <mat-card class="login-form" style="text-align: center">
+    <mat-card-title style="padding-top: 20px">
+      SoS Trades {{ platform }}
+    </mat-card-title>
+    <mat-card-content style="display: flex; flex-direction: column">
+      <form [formGroup]="loginForm" (ngSubmit)="submit()">
+        <p>
+          <mat-form-field>
+            <input
+              id="input-login-username"
+              type="text"
+              name="username"
+              matInput
+              placeholder="Username"
+              formControlName="username"
+              autocomplete
+            />
+          </mat-form-field>
+        </p>
+
+        <p>
+          <mat-form-field>
+            <input
+              id="input-login-password"
+              type="password"
+              name="password"
+              matInput
+              placeholder="Password"
+              formControlName="password"
+              autocomplete
+            />
+          </mat-form-field>
+        </p>
+
+        <p *ngIf="error" class="error">
+          {{ error }}
+        </p>
+
+        <div style="margin-top: -7.5px; margin-bottom: 20px">
+          <button
+            id="btn-login-log-in"
+            mat-raised-button
+            [appButtonSpinner]="loadingLogin"
+            type="submit"
+            [disabled]="!loginForm.valid"
+            mat-button
+            aria-label="btn-login-log-in"
+          >
+            Login
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+      </form>
+
+      <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="ssoUrl !== ''">
+        <a href="{{ ssoUrl }}">
+          <button mat-raised-button mat-button>
+            Connect with <b>CorpSSO</b>
+            <img
+              src="/assets/logoAirbus.png"
+              aria-label="Airbus logo"
+              style="
+                height: 24px;
+                width: 24px;
+                margin-left: 5px;
+                border-radius: 5px;
+              "
+            />
+          </button>
+        </a>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

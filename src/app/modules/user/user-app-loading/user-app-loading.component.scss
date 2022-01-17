@@ -1,0 +1,32 @@
+.flex-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.waiting-container {
+  border: solid;
+  border-color: lightgrey;
+  width: 350px;
+  border-width: 1px;
+  border-radius: 7px;
+  padding-bottom: 10px;
+}
+
+.logo-zone {
+  background-color: #00205b;
+  width: 350px;
+  padding: 15px 10px 15px 10px;
+  margin-bottom: 10px;
+  border-radius: 6px 6px 0px 0px;
+}
+
+.text-loading {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  text-align: center;
+  padding-top: 10px;
+}

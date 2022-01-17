@@ -1,0 +1,44 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+}
+
+.header {
+  flex: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.body-container {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.height-inherit {
+  height: 100%;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.client-zone {
+  height: 100%;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.log-zone {
+  height: 100%;
+  width: 100%;
+}
+
+.blue-bar {
+  border-left: solid 2px
+}

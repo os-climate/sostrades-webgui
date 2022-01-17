@@ -1,0 +1,72 @@
+<div class="flex-container">
+  <h1 mat-dialog-title>Save & Synchronise Data</h1>
+  <div class="message-container">
+    <div class="message">
+      Select data you want to save on server, other data will be synchronised
+      from server
+    </div>
+  </div>
+  <div class="container-table">
+    <table mat-table #table [dataSource]="dataSourceChanges" matSort>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Parameter name
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.variableId }}
+        </td>
+      </ng-container>
+
+      <!-- Group Column -->
+      <ng-container matColumnDef="oldValue">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Server value</th>
+        <td mat-cell *matCellDef="let element">
+          <div *ngIf="element.changeType=== 'csv'">CSV file</div>
+          <div *ngIf="element.changeType=== 'connector_data'">Connector data</div>
+          <div *ngIf="element.changeType === 'scalar'">{{ element.oldValue }}</div>
+        </td>
+      </ng-container>
+
+      <!-- Repository Column -->
+      <ng-container matColumnDef="newValue">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>New value</th>
+        <td mat-cell *matCellDef="let element">
+          <div *ngIf="element.changeType === 'csv'">CSV file</div>
+          <div *ngIf="element.changeType=== 'connector_data'">Connector data</div>
+          <div *ngIf="element.changeType === 'scalar'">{{ element.newValue }}</div>
+        </td>
+      </ng-container>
+
+      <!-- Selected Column -->
+      <ng-container matColumnDef="selected">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox
+            (change)="$event ? allSelectedChange() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+          >
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? singleRowSelectedChange(row) : null"
+            [checked]="selection.isSelected(row)"
+          >
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button mat-raised-button color="success" (click)="onOkClick()">
+      {{ buttonSaveText }}
+    </button>
+  </div>
+</div>

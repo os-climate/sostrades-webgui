@@ -1,0 +1,35 @@
+<div class="flex-container">
+  <mat-dialog-content>
+    <div class="title">Calculation status</div>
+    <div style="display: flex; flex-direction: column">
+      <div class="legend-item">
+        <div class="execution-bullet CONFIGURE">C</div>
+        <div class="legend-text">Configure</div>
+      </div>
+      <div class="legend-item">
+        <div class="execution-bullet PENDING">P</div>
+        <div class="legend-text">Pending</div>
+      </div>
+      <div class="legend-item">
+        <div class="execution-bullet RUNNING">R</div>
+        <div class="legend-text">Running</div>
+      </div>
+      <div class="legend-item">
+        <div class="execution-bullet DONE">D</div>
+        <div class="legend-text">Done</div>
+      </div>
+      <div class="legend-item">
+        <div class="execution-bullet FAILED">F</div>
+        <div class="legend-text">Failed</div>
+      </div>
+      <div class="legend-item">
+        <div class="execution-bullet INPUT_DATA">I</div>
+        <div class="legend-text">Input data</div>
+      </div>
+  </div>
+  </mat-dialog-content>
+  <div mat-dialog-actions style="align-self: center">
+    <button mat-button (click)="okClick()">Ok</button>
+  </div>
+</div>
+

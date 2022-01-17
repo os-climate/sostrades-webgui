@@ -1,0 +1,43 @@
+<div class="flex-container-sidenav">
+  <button
+    class="button-models-status mat-elevation-z2"
+    mat-flat-button
+    (click)="onClickModelStatus()"
+    [ngClass]="styleZone(3)"
+    id="btn-sidenav-model-status"
+    aria-label="btn-sidenav-model-status"
+  >
+    Models status
+  </button>
+  <button
+    class="button-study-management mat-elevation-z2"
+    mat-flat-button
+    (click)="onClickStudyManagement()"
+    [ngClass]="styleZone(1)"
+    id="btn-sidenav-study-management"
+    aria-label="btn-sidenav-study-management"
+  >
+    Study management
+  </button>
+  <div
+    class="treeview-container mat-elevation-z2"
+    (click)="onClickTreeview()"
+    [ngClass]="setBorder()"
+  >
+    <div
+      class="header-treeview"
+      [ngClass]="styleZone(2)"
+      style="cursor: pointer"
+    >
+      My current study<span
+        id="text-sidenav-study-loaded-name"
+        *ngIf="studyName !== ''"
+      >
+        : {{ studyName }}</span
+      >
+    </div>
+    <div [ngClass]="setTreeviewClass()">
+      <app-study-case-treeview></app-study-case-treeview>
+    </div>
+  </div>
+</div>

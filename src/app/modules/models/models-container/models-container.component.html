@@ -1,0 +1,8 @@
+<mat-tab-group class="container-workspace" (selectedTabChange)="onSelectedTabChange($event)">
+  <mat-tab label="Models status">
+    <app-models-status-table *ngIf="showModelStatusTableContent"></app-models-status-table>
+  </mat-tab>
+  <mat-tab label="Models links" >
+    <app-models-links *ngIf="showModelLinksContent"></app-models-links>
+  </mat-tab>
+</mat-tab-group>

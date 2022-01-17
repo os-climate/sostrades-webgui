@@ -1,0 +1,77 @@
+<mat-toolbar color="primary">
+  <img src="/assets/SOS_TRADES_LOGO_BLANC.svg" height="90%" style="margin-right: 30px;" />
+  <div class="version-container">
+    <div class="platform-text">
+      {{ platform }}
+    </div>
+    <div class="date-text">
+      {{ versionDate }}
+    </div>
+  </div>
+
+  <span class="menu-spacer"></span>
+
+  <button mat-flat-button color="accent" [matMenuTriggerFor]="menuFilters" aria-label="filters menu"
+    style="margin-right: 15px;" *ngIf="hasAccessToStudy">
+    Filters
+  </button>
+
+  <mat-menu #menuFilters="matMenu">
+    <div mat-menu-item>
+      <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showReadOnly">
+        Show not editable data
+      </mat-checkbox>
+    </div>
+  </mat-menu>
+
+  <button mat-flat-button color="accent" [matMenuTriggerFor]="menuUserLevel" aria-label="user level menu"
+    class="button-user-level" *ngIf="hasAccessToStudy">
+    <mat-icon style="
+        float: left;
+        margin-left: 2px;
+        font-size: 16px;
+        height: 24px;
+        line-height: unset;
+      ">visibility</mat-icon>
+    {{ selectedUserlevel }}
+  </button>
+
+  <mat-menu #menuUserLevel="matMenu">
+    <mat-selection-list multiple="false" #userLevelSelectionList
+      (selectionChange)="changeUserLevel($event.option.value)">
+      <mat-list-option class="user-level-item" *ngFor="let userLevelName of userLevelList; let i = index" [value]="i">
+        {{ userLevelName }}
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-menu>
+
+  <div style="font-size: 13px;">{{ username }}</div>
+
+  <div>
+    <button mat-button [matMenuTriggerFor]="menuUser" aria-label="user menu">
+      <i class="fas fa-ellipsis-v"> </i>
+    </button>
+    <mat-menu #menuUser="matMenu">
+      <button mat-menu-item routerLink="/user-management" *ngIf="hasAccessToAdmin">
+        <i class="fas fa-user" style="padding-right: 10px;" aria-hidden="true">
+        </i>
+        <span>User Management</span>
+      </button>
+      <button mat-menu-item routerLink="/processes-management" *ngIf="hasAccessToAdmin">
+        <i class="fas fa-cogs" style="padding-right: 10px;" aria-hidden="true">
+        </i>
+        <span>Processes Management</span>
+      </button>
+      <button mat-menu-item routerLink="/execution-management" *ngIf="hasAccessToAdmin">
+        <i class="fas fa-server" style="padding-right: 10px;" aria-hidden="true">
+        </i>
+        <span>Execution Dashboard</span>
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <i class="fas fa-sign-out" style="padding-right: 10px;" aria-hidden="true">
+        </i>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>

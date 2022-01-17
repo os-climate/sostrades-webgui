@@ -1,0 +1,10 @@
+<div class="flex-container" *ngIf="nodeDataList.length > 0">
+  <div *ngFor="let item of nodeDataList">
+    <app-widget
+      class="widget-container"
+      [nodeData]="item"
+      [discipline]="discipline"
+      [namespace]="namespace"
+    ></app-widget>
+  </div>
+</div>

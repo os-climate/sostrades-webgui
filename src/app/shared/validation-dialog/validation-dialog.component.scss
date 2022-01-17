@@ -1,0 +1,34 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.warning-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-container {
+  height: 100%;
+  width: 100%;
+  margin-top: -20px;
+  display: block;
+  justify-content: center;
+  align-items: center;
+}
+
+.warning-icon {
+  color: orange;
+  margin-bottom: 25px;
+  margin-right: 15px;
+  font-size: 40px;
+}
+
+.message {
+  white-space: pre-wrap;
+}

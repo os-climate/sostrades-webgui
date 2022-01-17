@@ -1,0 +1,60 @@
+<div class="container-configure" id="data-management-widget-container">
+  <div class="legend-header">
+    <div
+      class="legend-item border-readonly"
+      *ngIf="showMaturity && objectKey(allDisciplinesDataDict).length > 0"
+    >
+      <div class="legend-text" style="padding-left: 0 !important">
+        Maturity :
+      </div>
+      <div class="legend-text">
+        <strong>{{ treeNodeData.maturity }}</strong>
+      </div>
+    </div>
+    <div style="min-width: 8px"></div>
+
+    <span class="spacer"></span>
+    <i [className]="studyCaseDataService.iconMapping.get(treeNodeData.nodeType)">
+    </i>
+    <span class="treenode-title" style="margin-left: 5px">{{
+      treeNodeData.name
+    }}</span>
+    <span class="spacer"></span>
+    <button
+      mat-button
+      aria-hidden="false"
+      aria-label="Information about configuration"
+      matTooltip="Information about configuration"
+      class="toolbar-item-shadow"
+      style="margin-right: 5px"
+      (click)="onShowConfigureInformation()"
+    >
+      <div style="width: 24px; height: 24px; line-height: 24px">
+        <i
+          class="fas fa-info-circle"
+          style="font-size: 19px; color: #0b78b8; vertical-align: middle"
+        >
+        </i>
+      </div>
+    </button>
+  </div>
+
+  <div *ngIf="objectKey(allDisciplinesDataDict).length > 0">
+    <app-data-management-discipline
+      *ngFor="let disc of objectValue(allDisciplinesDataDict)"
+      [disciplineData]="disc"
+    ></app-data-management-discipline>
+  </div>
+  <div *ngIf="objectKey(allDisciplinesDataDict).length === 0">
+    <div
+      style="
+        font-size: 12px;
+        line-height: unset;
+        padding: 15px 0 15px 0;
+        text-align: center;
+      "
+    >
+      This node has no data to display
+    </div>
+  </div>
+</div>

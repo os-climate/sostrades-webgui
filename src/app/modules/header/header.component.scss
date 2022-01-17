@@ -1,0 +1,55 @@
+.menu-spacer {
+  flex: 1 1 auto;
+}
+
+.mat-menu-item {
+  font-size: 13px;
+  padding: 0 10px 0 10px;
+  line-height: 35px;
+  height: 35px;
+}
+
+.version-container {
+  height: 70%;
+  border: solid;
+  border-radius: 7px;
+  border-width: 1px;
+  border-color: white;
+  padding: 5px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+}
+
+.platform-text {
+  font: initial;
+  font-size: 15px;
+  font-weight: 450;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.date-text {
+  font: initial;
+  font-size: 12px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.button-user-level {
+  margin-right: 15px;
+  width: 94px;
+  padding: 0px !important;
+}
+
+.mat-list-option {
+  height: 24px !important;
+  border-top: grey;
+}
+
+.mat-selection-list {
+  padding: 0 !important;
+}
+
+.user-level-item {
+  font-size: 13px;
+}

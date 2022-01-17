@@ -1,0 +1,43 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  align-self: center;
+  margin-bottom: 15px;
+}
+
+.legend-item {
+  display: flex;
+  border-radius: 8px;
+  border: solid;
+  border-width: 1px;
+  padding: 0 3px 0 3px;
+  margin-bottom: 6px;
+}
+
+.legend-icon {
+  font-size: 18px;
+  height: auto;
+  width: auto;
+  align-self: center;
+}
+
+.legend-text {
+  font-size: 12px;
+  padding-left: 4px;
+}
+
+.no-data-to-display {
+  color: grey;
+  padding-left: 25px;
+  padding-top: 5px;
+  font-size: 11px;
+  background-color: #f9f9f9;
+}

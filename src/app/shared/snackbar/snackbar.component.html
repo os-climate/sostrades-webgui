@@ -1,0 +1,13 @@
+<div class="flex-container">
+  <i [className]="getIcon()" style="padding-right: 8px;"></i>
+  <div class="scroll-box">
+    <span class="message-box">{{ data.message }}</span>
+  </div>
+  <button
+    mat-icon-button
+    *ngIf="data.action !== ''"
+    (click)="snackBarRef.dismiss()"
+  >
+    {{ data.action }}
+  </button>
+</div>

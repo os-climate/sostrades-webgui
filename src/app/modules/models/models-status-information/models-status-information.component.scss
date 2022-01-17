@@ -1,0 +1,50 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-height: 90vh;
+  width: 100%;
+  padding: 10px 10px 0 10px;
+}
+
+.container-dialog {
+  height: 100%;
+  width: 100%;
+}
+
+.mat-dialog-title {
+  padding-bottom: 10px;
+  margin: 0;
+  height: 52px;
+}
+
+.informations {
+  height: calc(100% - 138px);
+  width: 100%;
+  display: flex;
+  overflow-y: auto;
+}
+
+td:nth-child(1) {
+  width: 100px;
+  font-weight: 500;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+td:nth-child(2) {
+  width: calc(100% - 100px);
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+tr {
+  border-bottom: 1px solid lightgray;
+  width: 100%;
+}
+
+.table-nostriped tbody tr:nth-of-type(odd) {
+  background-color: transparent;
+}
+
+.table {
+  margin: 0;
+}

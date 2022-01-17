@@ -1,0 +1,93 @@
+<div
+  [id]="nodeData.identifier"
+  class="widget"
+  [ngClass]="borderClass"
+  *ngIf="
+    showWidget(
+      filterService.filters.userLevel,
+      filterService.filters.showReadOnly
+    )
+  "
+>
+  <div
+    [ngClass]="
+      nodeData.isHighlighted ? 'widget-header-animated' : 'widget-header'
+    "
+  >
+    <div
+      class="text-header"
+      [matTooltip]="
+        (nodeData.displayName | ontologyParameterConverter) +
+        '\nClick for more information'
+      "
+      matTooltipClass="custom-tooltip-class"
+      (click)="showOntologyInformations()"
+      style="cursor: pointer"
+    >
+      {{ nodeData.displayName | ontologyParameterConverter }}
+    </div>
+
+    <div class="header-icon">
+      <div style="width: 18px">
+        <div *ngIf="!nodeData.coupling" style="width: 18px"></div>
+        <i *ngIf="nodeData.coupling" class="fas fa-exchange-alt"></i>
+        <i *ngIf="nodeData.hasConnectorData" class="fas fa-link" style="font-size: 15px; margin-right: 3px;"></i>
+      </div>
+      <mat-icon style="font-size: 18px; margin-left: 3px; width: 24px">{{
+        headerIcon
+      }}</mat-icon>
+    </div>
+  </div>
+
+  <div class="widget-separator"></div>
+  <div class="widget-cell">
+    <div [ngSwitch]="widgetType" class="fullsize">
+      <ng-template ngSwitchCase="label" class="fullsize">
+        <app-label class="fullsize" [nodeData]="nodeData"> </app-label>
+      </ng-template>
+      <ng-template ngSwitchCase="boolean" class="fullsize">
+        <app-slide-toggle
+          class="fullsize"
+          [nodeData]="nodeData"
+          (valueChanged)="onInputChange($event)"
+        >
+        </app-slide-toggle>
+      </ng-template>
+      <ng-template ngSwitchCase="select" class="fullsize">
+        <app-select
+          class="fullsize"
+          [nodeData]="nodeData"
+          (valueChanged)="onInputChange($event)"
+        >
+        </app-select>
+      </ng-template>
+      <ng-template ngSwitchCase="input" class="fullsize">
+        <app-input
+          class="fullsize"
+          [nodeData]="nodeData"
+          (valueChanged)="onInputChange($event)"
+        >
+        </app-input>
+      </ng-template>
+      <ng-template ngSwitchCase="table" class="fullsize">
+        <app-table
+          class="fullsize"
+          [nodeData]="nodeData"
+          (valueChanged)="onInputChange($event)"
+        >
+        </app-table>
+      </ng-template>
+
+      <ng-template ngSwitchCase="fileSpreadsheet" class="fullsize">
+        <app-file-spreadsheet
+          class="fullsize"
+          [nodeData]="nodeData"
+          [discipline]="discipline"
+          [namespace]="namespace"
+          (valueChanged)="onInputChange($event)"
+        >
+        </app-file-spreadsheet>
+      </ng-template>
+    </div>
+  </div>
+</div>

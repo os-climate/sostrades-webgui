@@ -1,0 +1,78 @@
+<div #tabGroup style="height: 100%; width: 100%; background-color: white">
+  <mat-tab-group
+    class="container-workspace"
+    *ngIf="showView"
+    (selectedTabChange)="onSelectedTabChange($event)"
+  >
+    <mat-tab
+      label="Data management"
+      aria-label="tab-study-workspace-data-management"
+      *ngIf="showDataManagement"
+    >
+      <app-data-management-container></app-data-management-container>
+    </mat-tab>
+    <mat-tab
+      label="Post processing"
+      aria-label="tab-study-workspace-post-processing"
+      *ngIf="showPostProcessing"
+    >
+      <app-post-processing
+        *ngIf="showPostProcessingContent"
+      ></app-post-processing>
+    </mat-tab>
+    <mat-tab
+      label="Data & Graph Validation"
+      aria-label="tab-study-workspace-data-validation"
+      *ngIf="showDataValidation"
+    >
+      <app-study-case-validation-sum-up></app-study-case-validation-sum-up>
+    </mat-tab>
+    <mat-tab
+      label="Visualisation"
+      aria-label="tab-study-workspace-visualisation"
+      *ngIf="showVisualisation"
+    >
+      <app-visualisation-container></app-visualisation-container>
+    </mat-tab>
+    <mat-tab
+      label="Documentation"
+      aria-label="tab-study-workspace-documentation"
+      *ngIf="showDocumentation"
+    >
+      <app-study-case-documentation
+        [documentation]="markdownDocumentation"
+      ></app-study-case-documentation>
+    </mat-tab>
+  </mat-tab-group>
+
+  <button
+    mat-raised-button
+    color="accent"
+    *ngIf="
+      showView && !isFullScreenOn && !calculationService.logFullSizeViewActive
+    "
+    aria-label="Show fullscreen"
+    class="fullscreen-button"
+    (click)="goFullScreen()"
+  >
+    Show Fullscreen
+    <mat-icon
+      style="float: right; font-size: 16px; height: 26px; line-height: unset"
+      >fullscreen</mat-icon
+    >
+  </button>
+  <button
+    mat-raised-button
+    color="accent"
+    *ngIf="showView && isFullScreenOn"
+    aria-label="Exit fullscreen"
+    class="fullscreen-button"
+    (click)="exitFullScreen()"
+  >
+    Exit Fullscreen
+    <mat-icon
+      style="float: right; font-size: 16px; height: 26px; line-height: unset"
+      >fullscreen_exit</mat-icon
+    >
+  </button>
+</div>

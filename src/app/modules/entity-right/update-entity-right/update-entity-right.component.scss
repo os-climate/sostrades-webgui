@@ -1,0 +1,122 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.container-dialog {
+  padding: 5px;
+  width: 100%;
+}
+
+.mat-select {
+  width: 100%;
+}
+
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.mat-dialog-title {
+  margin-bottom: 15px;
+}
+
+mat-cell:nth-child(2),
+mat-header-cell:nth-child(2) {
+  flex: 0 0 15%;
+}
+
+.mat-cell {
+  padding: 0 5px 0 5px;
+  max-height: 60px !important;
+  line-height: 60px;
+  justify-content: right;
+}
+
+.mat-row {
+  height: 60px;
+  min-height: 0;
+}
+
+.mat-header-cell {
+  padding: 0 5px 0 5px;
+  justify-content: right;
+}
+
+.entity-container {
+  height: 60px;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  color: white;
+  margin-right: 15px;
+
+  border-radius: 50%;
+  padding: 8px;
+  text-align: center;
+  font: 22px Arial, sans-serif;
+}
+
+.badge-group {
+  background-color: black;
+}
+
+.group-icon {
+  height: 40px !important;
+}
+
+.entity {
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.entity-first-line {
+  line-height: 30px;
+  height: 30px;
+}
+
+.entity-second-line {
+  line-height: 30px;
+  height: 30px;
+  color: grey;
+}
+
+.mat-option {
+  height: unset;
+}
+
+.mat-form-field {
+  margin: 0;
+}
+
+.table-authorised {
+  width: 100%;
+}
+
+.table-container {
+  padding: 5px;
+  width: 100%;
+}
+
+.select-right {
+  width: 120px;
+}
+
+::ng-deep .mat-select-arrow {
+  margin: 0 0 0 8px;
+}
+
+.mat-dialog-content {
+  margin: 0 !important;
+}

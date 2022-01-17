@@ -1,0 +1,24 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.link-zone {
+  background-color: #f6f6f6;
+  border-radius: 7px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.copy-button {
+  background-color: white;
+  margin-left: 10px;
+  border-radius: 4px;
+}
+
+.mat-dialog-title {
+  margin: 0 !important;
+}

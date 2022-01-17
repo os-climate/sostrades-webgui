@@ -1,0 +1,23 @@
+<mat-form-field floatLabel="never" style="margin-right: 10px">
+  <mat-select
+    placeholder="Select a value"
+    (selectionChange)="onSelectChange()"
+    style="text-align: right"
+    [(ngModel)]="nodeData.value"
+    [matTooltip]="nodeData.value"
+    matTooltipClass="custom-tooltip-class"
+    [multiple]="multiple"
+    [disabled]="isDisabled"
+    #selectionModel="ngModel"
+  >
+    <app-select-all-option
+      *ngIf="multiple"
+      [model]="selectionModel"
+      [values]="nodeData.possibleValues"
+      (changeEvent)="onSelectChange()"
+    ></app-select-all-option>
+    <mat-option *ngFor="let item of nodeData.possibleValues" [value]="item" matTooltip="{{item}}" matToolTipPosition="after" matTooltipShowDelay="100" matTooltipHideDelay="100">
+      {{ item }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+
+.flex-container {
+
+  background-color: grey;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  opacity: 98%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.title {
+  color: white;
+  font-size: 10px;
+}
+
+.definition {
+  color: white;
+  font-size: 10px;
+}

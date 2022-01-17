@@ -1,0 +1,145 @@
+<div class="flex-container">
+  <h3 style="text-align: center; margin-top: 5px; word-wrap: break-word">
+    Share <strong>{{ data.ressourceName }}</strong> with people and groups
+  </h3>
+
+  <div mat-dialog-content class="container-dialog">
+    <div>
+      <mat-form-field class="chips-container">
+        <mat-chip-list #chipList aria-label="User selection">
+          <mat-chip
+            *ngFor="let entity of data.selectedEntities"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="remove(entity)"
+          >
+            <div
+              class="chip-box"
+              *ngIf="entity.entityType === entityRightType.USER"
+            >
+              <div
+                class="chip-badge"
+                [ngClass]="alphabetTool(entity.entityObject.title)"
+              >
+                {{ entity.entityObject.title[0] }}
+              </div>
+              <div>
+                {{ entity.entityObject.title }}
+              </div>
+            </div>
+
+            <div
+              class="chip-box"
+              *ngIf="entity.entityType === entityRightType.GROUP"
+            >
+              <div
+                class="chip-badge badge-group"
+                [ngClass]="alphabetTool(entity.entityObject.title)"
+              >
+                <mat-icon
+                  class="group-icon"
+                  aria-hidden="false"
+                  aria-label="Group icon"
+                  style="width: unset !important; font-size: 18px"
+                  >people</mat-icon
+                >
+              </div>
+              <div>{{ " Group : " + entity.entityObject.title }}</div>
+            </div>
+
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input
+            textarea
+            placeholder="Add people..."
+            #userInput
+            [formControl]="entityCtrl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          />
+        </mat-chip-list>
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="selected($event)"
+        >
+          <mat-option
+            *ngFor="let entity of filteredEntities | async"
+            [value]="entity"
+          >
+            <div
+              class="entity-container"
+              *ngIf="entity.entityType === entityRightType.USER"
+            >
+              <div
+                class="badge"
+                [ngClass]="alphabetTool(entity.entityObject.title)"
+              >
+                {{ entity.entityObject.title[0] }}
+              </div>
+              <div class="entity">
+                <div class="entity-first-line">
+                  {{ entity.entityObject.title }}
+                </div>
+                <div class="entity-second-line">
+                  {{ entity.entityObject.information }}
+                </div>
+              </div>
+            </div>
+            <div
+              class="entity-container"
+              *ngIf="entity.entityType === entityRightType.GROUP"
+            >
+              <div class="badge badge-group">
+                <mat-icon
+                  class="group-icon"
+                  aria-hidden="false"
+                  aria-label="Group icon"
+                  >people</mat-icon
+                >
+              </div>
+              <div class="entity">
+                <div class="entity-first-line">
+                  {{ entity.entityObject.title }}
+                </div>
+                <div class="entity-second-line">
+                  {{ entity.entityObject.information }}
+                </div>
+              </div>
+            </div>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <div class="select-right">
+      <mat-select
+        placeholder=""
+        style="
+          text-align: right;
+          padding: 6px;
+          border-radius: 7px;
+          background-color: #f9f9f9;
+        "
+        [(ngModel)]="selectedRight"
+      >
+        <mat-option
+          *ngFor="let right of data.availableRights"
+          [value]="right.id"
+        >
+          {{ right.accessRight }}
+        </mat-option>
+      </mat-select>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button
+      mat-raised-button
+      color="accent"
+      [disabled]="!hasChangesToSave"
+      (click)="submitForm()"
+    >
+      Save
+    </button>
+  </div>
+</div>

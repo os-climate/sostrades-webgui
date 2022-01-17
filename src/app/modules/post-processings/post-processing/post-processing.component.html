@@ -1,0 +1,40 @@
+<div class="flex-container">
+  <div class="legend-header">
+    <div
+      class="legend-item border-readonly"
+      *ngIf="treeNode.maturity.length > 0"
+    >
+      <div class="legend-text" style="padding-left: 0 !important">
+        Maturity :
+      </div>
+      <div class="legend-text">
+        <strong>{{ treeNode.maturity }}</strong>
+      </div>
+    </div>
+    <div style="min-width: 8px"></div>
+
+    <span class="spacer"></span>
+    <i [className]="studyCaseDataService.iconMapping.get(treeNode.nodeType)"> </i>
+    <span class="treenode-title" style="margin-left: 5px">{{
+      treeNode.name
+    }}</span>
+    <span class="spacer"></span>
+  </div>
+
+  <div #PlotsContainer class="plot-body" (scroll)="scrollPlots()">
+    <div class="plot-resize-zone" #Plots (resized)="onResizePlotZone($event)">
+      <app-post-processing-bundle
+        [postProcessingBundle]="bundle"
+        [fullNamespace]="treeNode.fullNamespace"
+        *ngFor="let bundle of treeNode.postProcessingBundle"
+      >
+      </app-post-processing-bundle>
+    </div>
+  </div>
+
+  <div class="more-content" *ngIf="isMoreContentAvailable">
+    <button class="mat-elevation-z8" mat-fab color="accent" disabled>
+      <mat-icon>expand_more</mat-icon>
+    </button>
+  </div>
+</div>

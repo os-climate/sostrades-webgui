@@ -1,0 +1,50 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: #f8f8f8;
+}
+
+.login-form {
+  align-self: center;
+}
+
+.mat-card {
+  padding: 0;
+  border-radius: 5px;
+}
+
+mat-card-content {
+  padding: 10px;
+}
+
+.mat-card-title {
+  background-color: #00205b;
+  color: white;
+  padding: 10px 0 20px 0;
+  margin-bottom: 20px;
+  border-radius: 5px 5px 0 0;
+}
+
+.mat-form-field {
+  width: 100%;
+  min-width: 300px;
+}
+
+mat-card-title,
+mat-card-content {
+  display: flex;
+  justify-content: center;
+}
+
+.error {
+  padding: 16px;
+  width: 300px;
+  color: white;
+  background-color: #E4002B;
+  border-radius: 5px;
+}
+

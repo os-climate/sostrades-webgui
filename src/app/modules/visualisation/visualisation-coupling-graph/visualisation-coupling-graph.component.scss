@@ -1,0 +1,26 @@
+.container {
+  width: 100%;
+  height: calc(100% - 37px);
+  min-width: 100%;
+  min-height: calc(100% - 37px);
+}
+
+// .tooltip-container {
+//   max-width: 300px;
+//   // position: absolute;
+//   padding: 2px;
+//   font: 12px sans-serif;
+//   border: 0px;
+//   border-radius: 4px;
+//   pointer-events: none;
+//   // box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+// }
+
+// .tooltip-header {
+//   background-color: darkblue;
+//   color: white;
+// }
+
+// .tooltip-content {
+//   background-color: lightblue;
+// }

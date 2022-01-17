@@ -1,0 +1,103 @@
+.expansion-panel {
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.legend-header {
+  flex-grow: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 5px 1px 5px 5px;
+  background-color: #f9f9f9;
+  height: 34px;
+}
+
+.legend-item {
+  display: flex;
+  border-radius: 8px;
+  border: solid;
+  border-width: 1px;
+  padding: 0 3px 0 3px;
+  margin-right: 8px;
+}
+
+.legend-icon {
+  font-size: 18px;
+  height: auto;
+  width: auto;
+  align-self: center;
+}
+
+.treenode-title {
+  font-size: 18px;
+  font-weight: 550;
+}
+
+.legend-text {
+  font-size: 12px;
+  padding-left: 4px;
+}
+
+.configureData {
+  height: 100%;
+  width: 100%;
+}
+
+.no-data-to-display {
+  color: grey;
+  padding-left: 25px;
+  padding-top: 5px;
+  font-size: 11px;
+  background-color: #f9f9f9;
+}
+
+.mat-expansion-panel-header-title {
+  font-size: 13px;
+}
+
+.container-configure {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.execution-running {
+  pointer-events: none !important;
+  opacity: 0.4;
+}
+
+.toolbar-item-shadow {
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-button {
+  line-height: unset;
+  height: 24px;
+  padding-left: 2px;
+  padding-right: 2px;
+  font-size: 13px;
+}
+
+td:nth-child(1) {
+  width: 150px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+td:nth-child(2) {
+  width: calc(100% - 150px);
+  font-size: 12px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+tr {
+  border-bottom: 1px solid lightgray;
+}

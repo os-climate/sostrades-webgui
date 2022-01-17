@@ -1,0 +1,24 @@
+<div
+  id="PlotlyPlaceHolder"
+  #PlotlyPlaceHolder
+  style="height: 100%; width: 100%"
+>
+  <div
+    *ngIf="isPlotLoading"
+    style="
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    "
+  >
+    <mat-progress-spinner
+      diameter="40"
+      mode="indeterminate"
+      style="margin: 0 auto"
+    ></mat-progress-spinner>
+    <div style="margin-top: 10px">Loading chart</div>
+  </div>
+</div>

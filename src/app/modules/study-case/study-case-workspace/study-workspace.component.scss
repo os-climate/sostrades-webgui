@@ -1,0 +1,42 @@
+.container-workspace {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.fullscreen-button {
+  position: absolute;
+  top: 7px;
+  right: 10px;
+  z-index: 1;
+  height: 28px;
+  line-height: 28px;
+}
+
+.markdown-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.missing-documentation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid;
+  border-width: 1px;
+  border-radius: 7px;
+  border-color: lightgrey;
+  background-color: #f9f9f9;
+  padding: 5px 0 5px 0;
+}
+
+.bookmarks {
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+
+.bookmarks-title {
+  font-weight: bold;
+}

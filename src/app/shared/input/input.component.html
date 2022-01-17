@@ -1,0 +1,51 @@
+<mat-form-field floatLabel="never" style="margin-right: 10px">
+  <input
+    *ngIf="nodeData.type === 'float'; else nonFloatManagement"
+    matInput
+    [formControl]="inputFormControl"
+    [type]="nodeData.type"
+    placeholder="Enter a value"
+    [errorStateMatcher]="matcher"
+    [ngModel]="innerValue"
+    (input)="onInputChange($event.target.value)"
+    [attr.disabled]="nodeData.editable"
+    style="text-align: right"
+    (focus)="onFocus($event); $event.target.select()"
+    (blur)="onBlur($event)"
+  />
+  <ng-template #nonFloatManagement>
+    <input
+      matInput
+      [formControl]="inputFormControl"
+      [type]="nodeData.type"
+      placeholder="Enter a value"
+      [errorStateMatcher]="matcher"
+      [ngModel]="innerValue"
+      (input)="onInputChange($event.target.value)"
+      [attr.disabled]="nodeData.editable"
+      style="text-align: right"
+      (focus)="$event.target.select()"
+      (blur)="onBlur($event)"
+    />
+  </ng-template>
+
+  <mat-error *ngIf="inputFormControl.hasError('required')">
+    Field is <strong>required</strong>
+  </mat-error>
+  <mat-error
+    *ngIf="inputFormControl.hasError('pattern') && nodeData.type === 'float'"
+  >
+    Field must be a <strong>float</strong>
+  </mat-error>
+  <mat-error
+    *ngIf="inputFormControl.hasError('pattern') && nodeData.type === 'int'"
+  >
+    Field must be a <strong>int</strong>
+  </mat-error>
+  <mat-error
+    *ngIf="inputFormControl.hasError('min') || inputFormControl.hasError('max')"
+  >
+    Field must be in the
+    <strong>range [{{ nodeData.range[0] }},{{ nodeData.range[1] }}] </strong>
+  </mat-error>
+</mat-form-field>

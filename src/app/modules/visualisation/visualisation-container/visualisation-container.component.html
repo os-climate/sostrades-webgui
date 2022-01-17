@@ -1,0 +1,23 @@
+<mat-chip-list
+  class="chip-list mat-chip-list-stacked"
+  [multiple]="false"
+  [selectable]="true"
+>
+  <mat-chip
+    *ngFor="let viz of visualisationsAvailable"
+    [selected]="viz.selected"
+    (click)="onChipClick(viz.name)"
+    color="accent"
+    >{{ viz.name }}</mat-chip
+  >
+</mat-chip-list>
+<div class="flex-container">
+  <app-visualisation-coupling-graph
+    *ngIf="showCouplingGraphContent"
+    style="height: 100%; width: 100%"
+  ></app-visualisation-coupling-graph>
+  <app-visualisation-execution-sequence
+    *ngIf="showExecutionSequenceContent"
+    style="height: 100%; width: 100%"
+  ></app-visualisation-execution-sequence>
+</div>

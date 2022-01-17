@@ -1,0 +1,14 @@
+{
+  "name": "test_playw",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+      "test": "npx playwright test e2e-playwright"
+    },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "1.15.2"
+  }
+}

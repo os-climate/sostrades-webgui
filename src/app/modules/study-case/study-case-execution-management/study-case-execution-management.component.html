@@ -1,0 +1,181 @@
+<div class="container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    progressText="Loading executions dashboard"
+  ></app-progress-bar>
+</div>
+
+<div class="container" *ngIf="!isLoading">
+  <div class="headerSection">
+    <h3>Execution Dashboard</h3>
+  </div>
+  <div class="filterSection">
+    <mat-form-field style="margin-right: 10px; width: 120px">
+      <mat-select
+        placeholder="Column(s) filtered"
+        (selectionChange)="onFilterChange()"
+        style="text-align: left"
+        [(ngModel)]="columnsFilterSelected"
+        [matTooltip]="columnsFilterSelected"
+        #selectionModel="ngModel"
+      >
+        <mat-option *ngFor="let item of colummnsFilter" [value]="item">
+          {{ item }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="filter">
+      <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
+    </mat-form-field>
+  </div>
+
+  <table
+    mat-table
+    class="table"
+    #table
+    [dataSource]="dataSourceDashboard"
+    matSort
+  >
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th
+        th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        style="width: 100px"
+      >
+        Study name
+      </th>
+      <td td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+
+    <!-- Exeution identifier Column -->
+    <ng-container matColumnDef="studyCaseExecutionId">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        style="width: 100px"
+      >
+        Execution #
+      </th>
+      <td mat-cell *matCellDef="let element" style="text-align: center">
+        {{ element.studyCaseExecutionId }}
+      </td>
+    </ng-container>
+
+    <!-- Repository Column -->
+    <ng-container matColumnDef="repository">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.repositoryDisplayName }}
+      </td>
+    </ng-container>
+
+    <!-- Process Column -->
+    <ng-container matColumnDef="process">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Process</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.processDisplayName }}
+      </td>
+    </ng-container>
+
+    <!-- execution date Column -->
+    <ng-container matColumnDef="creationDate">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        style="width: 120px"
+      >
+        Execution date
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.creationDate | date: "short":"+0200" }}
+      </td>
+    </ng-container>
+
+    <!-- username Column -->
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.username }}
+      </td>
+    </ng-container>
+
+    <!-- Execution status Column -->
+    <ng-container matColumnDef="executionStatus">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        style="width: 100px"
+      >
+        Status
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.executionStatus }}
+      </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>Action</th>
+      <td mat-cell *matCellDef="let element">
+        <div style="display: flex">
+          <button
+            mat-icon-button
+            style="margin-right: 5px"
+            matTooltip="Show logs"
+            (click)="showLogs(element)"
+            color="accent"
+          >
+            <i class="far fa-file-alt fa-fw"> </i>
+          </button>
+          <button
+            mat-icon-button
+            style="margin-right: 5px"
+            matTooltip="Download raw execution logs"
+            (click)="downloadRawLogs(element)"
+            color="warn"
+          >
+            <i class="fas fa-download fa-fw"> </i>
+          </button>
+
+          <div class="separator"></div>
+
+          <button
+            *ngIf="element.executionStatus === 'RUNNING'"
+            mat-icon-button
+            style="margin-left: 5px"
+            matTooltip="Stop execution"
+            (click)="stopStudyExecution(element)"
+            color="warn"
+          >
+            <i class="fas fa-stop fa-fw"> </i>
+          </button>
+          <button
+            *ngIf="element.executionStatus !== 'RUNNING'"
+            mat-icon-button
+            style="margin-left: 5px"
+            matTooltip="Delete execution entry"
+            (click)="deleteStudyExecution(element)"
+            color="warn"
+          >
+            <i class="far fa-trash-alt fa-fw"> </i>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr
+      mat-row
+      class="table-row"
+      *matRowDef="let row; columns: displayedColumns"
+    ></tr>
+  </table>
+</div>

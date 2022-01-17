@@ -1,0 +1,72 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 200px;
+  padding: 5px 10px 5px 10px;
+}
+.add-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.add-row-title {
+  align-self: center;
+  font-size: 12px;
+  text-align: center;
+  color: grey;
+  background-color: #f9f9f9;
+  width: 100%;
+}
+
+.add-row-fields {
+  display: flex;
+  width: 100%;
+  height:57px;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding-left:12px;
+}
+
+.dict-title {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  padding-right: 40px;
+  font-size: 12px;
+  color: grey;
+  background-color: #f9f9f9;
+}
+
+.mat-cell {
+  padding-left: 12px;
+}
+
+.mat-header-row {
+  min-height: 0 !important;
+}
+
+.mat-header-cell {
+  justify-content: center;
+}
+
+mat-cell:last-of-type,
+mat-header-cell:last-of-type,
+mat-footer-cell:last-of-type {
+  padding-right: 0;
+  padding-left: 0 !important;
+  flex: 0 0 40px !important;
+}
+
+mat-cell:first-of-type,
+mat-header-cell:first-of-type,
+mat-footer-cell:first-of-type {
+  padding-left: 12;
+}
+
+.mat-form-field {
+  min-width: 0px!important;
+}

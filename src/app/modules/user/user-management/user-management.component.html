@@ -1,0 +1,119 @@
+<div class="container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    progressText="Loading users information"
+  ></app-progress-bar>
+</div>
+
+<div class="container" *ngIf="!isLoading">
+  <div class="headerSection">
+    <h3>User Management</h3>
+  </div>
+  <div class="filterSection">
+    <mat-form-field style="margin-right: 10px; width: 120px">
+      <mat-select
+        placeholder="Column(s) filtered"
+        (selectionChange)="onFilterChange()"
+        style="text-align: left"
+        [(ngModel)]="columnsFilterSelected"
+        [matTooltip]="columnsFilterSelected"
+        #selectionModel="ngModel"
+      >
+        <mat-option *ngFor="let item of colummnsFilter" [value]="item">
+          {{ item }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="filter">
+      <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
+    </mat-form-field>
+    <button
+      mat-mini-fab
+      color="accent"
+      style="margin-left: 10px"
+      (click)="addUser()"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <table mat-table class="table" #table [dataSource]="dataSourceUsers" matSort>
+    <!-- Username Column -->
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+      <td mat-cell *matCellDef="let element">{{ element.username }}</td>
+    </ng-container>
+
+    <!-- First Name Column -->
+    <ng-container matColumnDef="firstname">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+      <td mat-cell *matCellDef="let element">{{ element.firstname }}</td>
+    </ng-container>
+
+    <!-- Lastname Column -->
+    <ng-container matColumnDef="lastname">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.lastname }}
+      </td>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.email }}
+      </td>
+    </ng-container>
+
+    <!-- Is Admin Column -->
+    <ng-container matColumnDef="userprofilename">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Profile</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.userprofilename }}
+      </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element" class="actions-hover-row">
+        <button
+          mat-icon-button
+          style="margin: 0 5px"
+          color="accent"
+          matTooltip="Update user"
+          (click)="updateUser(element)"
+        >
+          <i class="fas fa-pen fa-fw"> </i>
+        </button>
+        <button
+          mat-icon-button
+          style="margin-right: 5px"
+          color="accent"
+          matTooltip="Delete user"
+          (click)="deleteUserAuthorizedList(element)"
+        >
+          <i class="far fa-trash-alt fa-fw"> </i>
+        </button>
+        <button
+          mat-icon-button
+          color="accent"
+          matTooltip="Reset user password"
+          (click)="resetPassword(element)"
+        >
+          <i class="fas fa-key fa-fw"> </i>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr
+      mat-row
+      class="table-row"
+      *matRowDef="let row; columns: displayedColumns"
+    ></tr>
+  </table>
+</div>

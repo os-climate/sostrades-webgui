@@ -1,0 +1,91 @@
+<div class="flex-container">
+  <h2 mat-dialog-title *ngIf="!data.isReadOnly">
+    Connector data for {{ data.parameterName }}
+  </h2>
+
+  <h2 mat-dialog-title *ngIf="data.isReadOnly">
+    Old connector data for {{ data.parameterName }}
+  </h2>
+  <div class="container-dialog">
+    <div
+      *ngIf="objectKey(innerConnectorData).length > 0"
+      class="connector-container"
+    >
+      <table
+        style="overflow: auto; width: 100%"
+        class="table table-sm table-borderless"
+      >
+        <tr>
+          <td style="text-align: left; vertical-align: middle">
+            <b>Connector type</b>
+          </td>
+          <td style="flex: 1">
+            <mat-form-field>
+              <input
+                matInput
+                [disabled]="true"
+                [(ngModel)]="innerConnectorData['connector_type']"
+                [value]="innerConnectorData['connector_type']"
+                style="text-align: right"
+              />
+            </mat-form-field>
+          </td>
+        </tr>
+        <ng-container *ngFor="let key of objectKey(innerConnectorData)">
+          <tr *ngIf="key !== 'connector_type'">
+            <td style="text-align: left; vertical-align: middle">
+              <b>{{ key }}</b>
+            </td>
+            <td style="flex: 1">
+              <mat-form-field *ngIf="key !== 'password'" style="width: 300px;">
+                <input
+                  matInput
+                  type="text"
+                  placeholder=""
+                  [(ngModel)]="innerConnectorData[key]"
+                  [value]="innerConnectorData[key]"
+                  [disabled]="data.isReadOnly"
+                  style="text-align: right;"
+                />
+              </mat-form-field>
+              <mat-form-field *ngIf="key === 'password'" style="width: 300px;">
+                <input
+                  matInput
+                  type="text"
+                  placeholder=""
+                  type="password"
+                  [(ngModel)]="innerConnectorData[key]"
+                  [value]="innerConnectorData[key]"
+                  [disabled]="data.isReadOnly"
+                  style="text-align: right;"
+                />
+              </mat-form-field>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+  <div mat-dialog-actions style="margin: 0">
+    <button mat-button *ngIf="!data.isReadOnly" (click)="cancelClick()">
+      Cancel
+    </button>
+
+    <button
+      mat-raised-button
+      *ngIf="!data.isReadOnly"
+      color="success"
+      (click)="saveDataClick()"
+    >
+      <span>Save</span>
+    </button>
+    <button
+      mat-raised-button
+      *ngIf="data.isReadOnly"
+      color="success"
+      (click)="cancelClick()"
+    >
+      <span>Ok</span>
+    </button>
+  </div>
+</div>

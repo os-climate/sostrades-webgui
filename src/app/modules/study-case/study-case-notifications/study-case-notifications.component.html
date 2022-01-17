@@ -1,0 +1,56 @@
+<div class="container">
+  <mat-table class="table" #table [dataSource]="dataSourceNotifications">
+    <!-- Crated Column -->
+    <ng-container matColumnDef="created">
+      <mat-header-cell *matHeaderCellDef> Created </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.created | date: "dd/MM/yyyy, H:mm:ss" }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Author Column -->
+    <ng-container matColumnDef="author">
+      <mat-header-cell *matHeaderCellDef> Author </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.author }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+      <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.type }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Message Column -->
+    <ng-container matColumnDef="message">
+      <mat-header-cell *matHeaderCellDef> Message </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.message }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Download Column -->
+    <ng-container matColumnDef="changes">
+      <mat-header-cell *matHeaderCellDef>Changes</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button
+          *ngIf="element.changes != null"
+          mat-icon-button
+          color="accent"
+          (click)="seeNotificationChanges(element)"
+        >
+          <i class="far fa-file-alt fa-fw"> </i>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row
+      *matHeaderRowDef="displayedColumns; sticky: true"
+      class="custom-header"
+    ></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+  </mat-table>
+</div>

@@ -1,0 +1,40 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.container-dialog {
+  height: 100%;
+  width: 100%;
+}
+
+.mat-select {
+  width: 100%;
+}
+
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.mat-dialog-title {
+  margin-bottom: 40px;
+}
+
+.error-container {
+  height: 100%;
+  width: 100%;
+  margin-top: -20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.error-icon {
+  color: #e4002b;
+  font-size: 15px;
+  margin-right: 20px;
+}

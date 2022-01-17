@@ -1,0 +1,101 @@
+<div class="pareto-container" (resized)="refreshPlot()">
+  <div class="pareto-table">
+    <div
+      style="
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        margin-bottom: 5px;
+      "
+    >
+      <button
+        mat-icon-button
+        color="accent"
+        class="icon-button"
+        matTooltip="Select all"
+        (click)="selectAll()"
+      >
+        <i class="fas fa-check-square fa-fw"> </i>
+      </button>
+      <button
+        mat-icon-button
+        color="accent"
+        class="icon-button"
+        matTooltip="Select none"
+        (click)="unSelectAll()"
+      >
+        <i class="fas fa-times fa-fw"> </i>
+      </button>
+      <button
+        mat-icon-button
+        color="accent"
+        class="icon-button"
+        matTooltip="Invert selection"
+        (click)="invertSelection()"
+      >
+        <i class="fas fa-retweet fa-fw"> </i>
+      </button>
+    </div>
+    <div
+      style="
+        flex: 1;
+        overflow: auto;
+        background-color: white;
+        width: 100%;
+        padding: 5px;
+        border-radius: 7px;
+      "
+    >
+      <div *ngFor="let item of scenarioList">
+        <div>
+          <mat-checkbox
+            [(ngModel)]="item.selected"
+            class="checkbox"
+            labelPosition="after"
+            (change)="onCheckboxChange($event, item)"
+            [ngModelOptions]="{ standalone: true }"
+            >{{ item.name }}</mat-checkbox
+          >
+        </div>
+      </div>
+    </div>
+    <button
+      mat-raised-button
+      color="accent"
+      style="
+        align-self: center;
+        padding: 7px;
+        font-size: 13px;
+        line-height: 13px;
+        margin-top: 5px;
+      "
+      (click)="applyTrade()"
+    >
+      Apply Filter
+    </button>
+  </div>
+  <div
+    style="flex: 1; min-width: 0; height: 550px"
+    id="PlotlyPlaceHolder"
+    #PlotlyPlaceHolder
+  >
+    <div
+      *ngIf="isPlotLoading"
+      style="
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate"
+        style="margin: 0 auto"
+      ></mat-progress-spinner>
+      <div style="margin-top: 10px">Loading chart</div>
+    </div>
+  </div>
+</div>

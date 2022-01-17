@@ -1,0 +1,26 @@
+<div class="flex-container">
+  <div class="no-access-container mat-elevation-z6">
+    <div class="title">Important message</div>
+    <div class="message">
+      <div style="margin-bottom: 10px;">
+        You are not registered as SoS Trades user, please contact us
+      </div>
+      <a [href]="mailLink">
+        sos.trades@airbus.com
+      </a>
+      <div
+        class="mail-message-success"
+        *ngIf="userService.newUser && userService.mailSend"
+      >
+        A notification has been sent to the SoSTrades team
+      </div>
+      <div
+        class="mail-message-error"
+        *ngIf="userService.newUser && !userService.mailSend"
+      >
+        An error occured while trying to send a notification to SoS Trades Team,
+        please contact us at sos.trades@airbus.com
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="flex-container">
+  <div mat-dialog-title>
+    <h1 style="margin-bottom: 10px !important; text-align: center">
+      Study access link : {{ data.studyName }}
+    </h1>
+  </div>
+
+  <div mat-dialog-content>
+    <div class="link-zone">
+      <div>
+        <a [href]="data.htmlLink">{{ data.htmlLink }}</a>
+      </div>
+      <div class="add-row mat-elevation-z1 copy-button">
+        <button
+          mat-icon-button
+          color="accent"
+          matTooltip="Copy link"
+          (click)="copyLink()"
+        >
+          <i class="fas fa-copy fa-fw"> </i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions style="align-self: center">
+    <button mat-button (click)="okClick()">Ok</button>
+  </div>
+</div>

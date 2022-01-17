@@ -1,0 +1,45 @@
+<div *ngIf="hasDocumentation; else missingDocumentationMessage" style="height: 100%;background-color: #525659;">
+  <as-split unit="pixel" direction="horizontal" *ngIf="showBookmarks; else onlyDocumentation">
+    <as-split-area
+        size="250"
+        #area1="asSplitArea"
+        [order]="0"
+        style="background-color: white;"
+      >
+      <div class="bookmarks">
+        <h1 class="bookmarks-title">Bookmarks</h1>
+        <hr>
+        <ul>
+          <li *ngFor="let documentItem of documentation">
+              <a href="#{{documentItem.name}}" (click)="onClick($event, documentItem.name)">{{documentItem.name | ontologyDisciplineConverter}}</a>
+          </li>
+        </ul>
+      </div>
+    </as-split-area>
+    <as-split-area size="*" #area1="asSplitArea" [order]="1">
+      <ng-container *ngTemplateOutlet="onlyDocumentation">
+      </ng-container>
+    </as-split-area>
+  </as-split>
+  <ng-template #onlyDocumentation>
+    <div class="markdown-body markdown-container" >
+      <div *ngFor="let documentItem of documentation" >
+        <div class="markdown">
+          <h1 id="{{documentItem.name}}" style="text-align: center;">
+            {{documentItem.name | ontologyDisciplineConverter }}
+          </h1>
+          <div appMarkdownRenderer [data]="documentItem.documentation"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
+<ng-template #missingDocumentationMessage>
+  <div style="padding: 5px">
+    <div class="missing-documentation">
+      <div style="font-size: 12px; line-height: unset">
+        This discipline has no documentation provided yet
+      </div>
+    </div>
+  </div>
+</ng-template>

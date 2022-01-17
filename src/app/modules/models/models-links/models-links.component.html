@@ -1,0 +1,63 @@
+<div class="container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    progressText="Loading diagram information"
+  ></app-progress-bar>
+</div>
+<div class="container">
+  <div class="container-form-fields">
+    <mat-form-field style="margin-left: 10px;" placeholder="Enter a value">
+      <mat-label>Model Type</mat-label>
+      <mat-select
+        [(ngModel)]="selectedModelTypes"
+        (selectionChange)="onSelectChange()"
+        style="text-align: right;"
+        multiple
+        #selectionModel1="ngModel"
+      >
+        <app-select-all-option
+          [model]="selectionModel1"
+          [values]="typeList"
+          (changeEvent)="onSelectChange()"
+        ></app-select-all-option>
+        <mat-option *ngFor="let type of typeList" [value]="type">{{
+          type
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field style="margin-left: 10px;" placeholder="Enter a value">
+      <mat-label>Process List</mat-label>
+      <mat-select
+        [(ngModel)]="selectedProcess"
+        (selectionChange)="onSelectChange()"
+        style="text-align: right;"
+        multiple
+        #selectionModel="ngModel"
+      >
+        <app-select-all-option
+          [model]="selectionModel"
+          [values]="allProcess"
+          (changeEvent)="onSelectChange()"
+        ></app-select-all-option>
+        <mat-option value="noProcess">
+          Not used in any process
+        </mat-option>
+        <mat-optgroup *ngFor="let repo of processRepo" [label]="repo">
+          <mat-option
+            *ngFor="let process of processList[repo]"
+            [value]="process"
+          >
+            {{ process }}
+          </mat-option>
+        </mat-optgroup>
+        <!-- <mat-option *ngFor="let process of processList" [value]="process">{{process}}</mat-option> -->
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="container-d3" #d3_placeholder></div>
+</div>
+
+<div class="node-information" *ngIf="true"></div>

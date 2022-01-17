@@ -1,0 +1,89 @@
+<div class="flex-container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    progressText="Loading form information"
+  ></app-progress-bar>
+</div>
+<div class="flex-container" [formGroup]="createUserForm" *ngIf="!isLoading">
+  <h1 mat-dialog-title>Add user to SoS Trades</h1>
+  <mat-form-field>
+    <input
+      matInput
+      formControlName="username"
+      placeholder="Enter Username"
+      style="text-align: right;"
+    />
+    <mat-error *ngIf="hasError('username', 'required')"
+      >A Username is <strong>required</strong></mat-error
+    >
+    <mat-error *ngIf="hasError('username', 'pattern')"
+      >Only letters, numbers, dashes and underscores are authorized</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      formControlName="firstname"
+      placeholder="Enter First name"
+      style="text-align: right;"
+    />
+    <mat-error *ngIf="hasError('firstname', 'required')"
+      >A First name is <strong>required</strong></mat-error
+    >
+    <mat-error *ngIf="hasError('firstname', 'pattern')"
+      >Only letters, numbers, dashes and underscores are authorized</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      formControlName="lastname"
+      placeholder="Enter Last Name"
+      style="text-align: right;"
+    />
+    <mat-error *ngIf="hasError('lastname', 'required')"
+      >A Last name is <strong>required</strong></mat-error
+    >
+    <mat-error *ngIf="hasError('lastname', 'pattern')"
+      >Only letters, numbers, dashes and underscores are authorized</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      formControlName="email"
+      placeholder="Enter Email"
+      style="text-align: right;"
+    />
+    <mat-error *ngIf="hasError('email', 'required')"
+      >An email is <strong>required</strong></mat-error
+    >
+    <mat-error *ngIf="hasError('email', 'pattern')"
+      >Enter a valid email address</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select
+      placeholder="Select a user profile"
+      style="text-align: right;"
+      formControlName="profile"
+    >
+      <mat-option *ngFor="let item of userProfileList" [value]="item.id">
+        {{ item.name }}
+      </mat-option>
+    </mat-select>
+
+  </mat-form-field>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button
+      mat-button
+      (click)="submitForm()"
+      [disabled]="!createUserForm.valid"
+    >
+      Ok
+    </button>
+  </div>
+</div>

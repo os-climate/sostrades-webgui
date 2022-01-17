@@ -1,0 +1,10 @@
+<div class="parameter-text">
+  <mat-slide-toggle
+    class="text-zone"
+    [ngModel]="nodeData.value"
+    (change)="onInputChange($event.checked)"
+    [attr.disabled]="nodeData.editable"
+    [disabled]="!toggleActivated"
+    >{{ this.nodeData.value ? "True" : "False" }}
+  </mat-slide-toggle>
+</div>

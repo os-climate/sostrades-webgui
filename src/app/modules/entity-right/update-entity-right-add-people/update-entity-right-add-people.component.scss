@@ -1,0 +1,114 @@
+.chips-container {
+  min-width: 480px;
+  max-height: 360px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 3px;
+  border-radius: 7px;
+  border-width: 0.5em;
+  border: solid;
+  border-color: lightgray;
+}
+
+.chip-box {
+  display: flex;
+  align-items: center;
+}
+
+.chip-badge {
+  color: white;
+  margin-right: 5px;
+
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  text-align: center;
+  font: 17px Arial, sans-serif;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.mat-dialog-title {
+  margin-bottom: 15px;
+}
+
+mat-form-field {
+  flex: 1;
+  margin-top: 0 !important;
+}
+
+.user-container {
+  height: 60px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  color: white;
+  margin-right: 15px;
+
+  border-radius: 50%;
+  padding: 8px;
+  text-align: center;
+  font: 22px Arial, sans-serif;
+}
+
+.mat-option {
+  height: unset;
+}
+
+.entity {
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.entity-first-line {
+  line-height: 30px;
+  height: 30px;
+}
+
+.entity-second-line {
+  line-height: 30px;
+  height: 30px;
+  color: grey;
+}
+
+.entity-container {
+  height: 60px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.badge-group {
+  background-color: black;
+}
+
+.group-icon {
+  height: 40px !important;
+}
+
+.mat-dialog-content {
+  padding: 0;
+  width: 100%;
+  margin: unset;
+  display: flex !important;
+}
+
+.select-right {
+  min-width: 136px;
+  padding: 0 8px 0 8px;
+}

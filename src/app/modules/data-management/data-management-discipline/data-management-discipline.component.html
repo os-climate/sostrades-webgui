@@ -1,0 +1,190 @@
+<div class="container-configure">
+  <mat-expansion-panel
+    class="expansion-panel"
+    [expanded]="IsExpand('')"
+    (opened)="SetIsExpand('', true)"
+    (closed)="SetIsExpand('', false)"
+  >
+    <mat-expansion-panel-header
+      [ngStyle]="
+        isDisciplineDataValidated
+          ? { 'background-color': '#28a74587' }
+          : { 'background-color': '#d9d9d9d9' }
+      "
+    >
+      <mat-panel-title style="font-size: 15px; font-weight: 550">
+        {{ disciplineData.modelNameFullPath | ontologyDisciplineConverter }}
+        <span class="spacer"></span>
+
+        <mat-slide-toggle
+          [ngModel]="isDisciplineDataValidated"
+          (click)="onClickDataValidation($event)"
+          >{{
+            isDisciplineDataValidated ? "Data Validated" : "Data not Validated"
+          }}
+        </mat-slide-toggle>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-expansion-panel
+      class="expansion-panel"
+      [expanded]="IsExpand('details')"
+      (opened)="SetIsExpand('details', true)"
+      (closed)="SetIsExpand('details', false)"
+      *ngIf="disciplineData.modelNameFullPath !== 'Data'"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title> Discipline details </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div *ngIf="modelDetails === null" class="no-data-to-display">
+        No details available for this discipline
+      </div>
+      <div
+        *ngIf="modelDetails !== null"
+        style="
+          height: 100%;
+          width: 100%;
+          padding: 10px;
+          background-color: #f9f9f9;
+        "
+      >
+        <table style="width: 100%; padding: 4px">
+          <ng-container *ngFor="let attr of modelDetails">
+            <tr>
+              <td>{{ attr[0] }} :</td>
+              <td>{{ attr[1] }}</td>
+            </tr>
+          </ng-container>
+        </table>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+      class="expansion-panel"
+      [expanded]="IsExpand('numerical')"
+      (opened)="SetIsExpand('numerical', true)"
+      (closed)="SetIsExpand('numerical', false)"
+      *ngIf="
+        countItemsInDict(
+          disciplineData.numericalParameters,
+          filterService.filters.userLevel,
+          filterService.filters.showReadOnly
+        ) > 0
+      "
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Numerical parameters ({{
+            countItemsInDict(
+              disciplineData.numericalParameters,
+              filterService.filters.userLevel,
+              filterService.filters.showReadOnly
+            )
+          }})
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div
+        *ngIf="disciplineData.numericalParameters"
+        [ngClass]="setCalculationCss(isCalculationRunning)"
+        style="height: 100%; width: 100%"
+      >
+        <app-widget-container
+          *ngIf="disciplineData.numericalParameters"
+          [nodeDataList]="numericalParametersOrdered"
+          [discipline]="disciplineData.modelNameFullPath"
+          [namespace]="disciplineData.namespace"
+        >
+        </app-widget-container>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+      class="expansion-panel"
+      [expanded]="IsExpand('inputs')"
+      (opened)="SetIsExpand('inputs', true)"
+      (closed)="SetIsExpand('inputs', false)"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Input Parameters ({{
+            countItemsInDict(
+              disciplineData.disciplinaryInputs,
+              filterService.filters.userLevel,
+              filterService.filters.showReadOnly
+            )
+          }})
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div
+        *ngIf="
+          countItemsInDict(
+            disciplineData.disciplinaryInputs,
+            filterService.filters.userLevel,
+            filterService.filters.showReadOnly
+          ) === 0
+        "
+        class="no-data-to-display"
+      >
+        No input parameters
+      </div>
+      <div
+        *ngIf="disciplineData.disciplinaryInputs"
+        [ngClass]="setCalculationCss(isCalculationRunning)"
+        style="height: 100%; width: 100%"
+      >
+        <app-widget-container
+          *ngIf="disciplineData.disciplinaryInputs"
+          [nodeDataList]="disciplinaryInputsOrdered"
+          [discipline]="disciplineData.modelNameFullPath"
+          [namespace]="disciplineData.namespace"
+          [ngClass]="setCalculationCss(isCalculationRunning)"
+        >
+        </app-widget-container>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+      class="expansion-panel"
+      [expanded]="IsExpand('outputs')"
+      (opened)="SetIsExpand('outputs', true)"
+      (closed)="SetIsExpand('outputs', false)"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Output Parameters ({{
+            countItemsInDict(
+              disciplineData.disciplinaryOutputs,
+              filterService.filters.userLevel,
+              filterService.filters.showReadOnly
+            )
+          }})
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div
+        *ngIf="
+          countItemsInDict(
+            disciplineData.disciplinaryOutputs,
+            filterService.filters.userLevel,
+            filterService.filters.showReadOnly
+          ) === 0
+        "
+        class="no-data-to-display"
+      >
+        No output parameters
+      </div>
+      <div
+        *ngIf="disciplineData.disciplinaryOutputs"
+        [ngClass]="setCalculationCss(isCalculationRunning)"
+        style="height: 100%; width: 100%"
+      >
+        <app-widget-container
+          *ngIf="disciplineData.disciplinaryOutputs"
+          [nodeDataList]="disciplinaryOutputsOrdered"
+          [discipline]="disciplineData.modelNameFullPath"
+          [namespace]="disciplineData.namespace"
+        >
+        </app-widget-container>
+      </div>
+    </mat-expansion-panel>
+  </mat-expansion-panel>
+</div>

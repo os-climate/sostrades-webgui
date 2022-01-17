@@ -1,0 +1,131 @@
+<mat-card class="progress-container" *ngIf="displayProgressBar" color="accent">
+  <mat-card-content>
+    <label>{{ loadingMessage }}</label>
+
+    <section class="example-section">
+      <mat-progress-bar
+        class="example-margin"
+        color="primary"
+        mode="indeterminate"
+      >
+      </mat-progress-bar>
+    </section>
+  </mat-card-content>
+</mat-card>
+
+<mat-expansion-panel class="expansion-panel" expanded="true">
+  <mat-expansion-panel-header
+    [ngStyle]="
+      isDisciplineGraphValidated
+        ? { 'background-color': '#28a74587' }
+        : { 'background-color': '#d9d9d9d9' }
+    "
+  >
+    <mat-panel-title style="font-size: 15px; font-weight: 550">
+      {{ postProcessingBundle.name | ontologyDisciplineConverter }}
+      <span class="spacer"></span>
+
+      <mat-slide-toggle
+        [ngModel]="isDisciplineGraphValidated"
+        (click)="onClickGraphValidation($event)"
+        >{{
+          isDisciplineGraphValidated ? "Graph Validated" : "Graph not Validated"
+        }}
+      </mat-slide-toggle>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="filter-list" *ngIf="displayFilters">
+    <div *ngFor="let filter of postProcessingBundle.filters">
+      <div class="widget-container">
+        <div class="widget" [ngStyle]="{ 'border-color': 'cornflowerblue' }">
+          <div class="widget-header">
+            {{ filter.filterName }}
+          </div>
+          <div class="widget-separator"></div>
+          <div class="widget-cell">
+            <mat-form-field floatLabel="never">
+              <mat-select
+                [placeholder]="filter.filterName"
+                style="text-align: right"
+                [multiple]="filter.multipleSelection"
+                [(ngModel)]="filter.selectedValues"
+                [matTooltip]="filter.selectedValues"
+                #selectionModel="ngModel"
+              >
+                <app-select-all-option
+                  *ngIf="filter.multipleSelection"
+                  [model]="selectionModel"
+                  [values]="filter.filterValues"
+                ></app-select-all-option>
+                <mat-option
+                  *ngFor="let item of filter.filterValues"
+                  [value]="item"
+                  matTooltip="{{ item }}"
+                  matToolTipPosition="after"
+                  matTooltipShowDelay="100"
+                  matTooltipHideDelay="100"
+                >
+                  {{ item }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="legend-header" *ngIf="postProcessingBundle.filters.length !== 0">
+    <button
+      mat-raised-button
+      class="plot-button"
+      color="accent"
+      style="margin-left: 5px"
+      (click)="plot()"
+      [disabled]="isCalculationRunning"
+    >
+      Update chart(s)
+    </button>
+    <mat-slide-toggle
+      color="accent"
+      [(ngModel)]="displayFilters"
+      style="margin-left: 10px"
+    >
+      Show filters
+    </mat-slide-toggle>
+  </div>
+
+  <div
+    *ngIf="postProcessingBundle.filters.length === 0"
+    style="font-size: 12px; line-height: unset; padding: 5px 0 5px 0"
+  >
+    No charts to display
+  </div>
+
+  <div
+    id="zone-post-processing-bundle"
+    *ngIf="
+      postProcessingBundle.plotly.length > 0 ||
+      postProcessingBundle.plotlyParetoFront.length > 0
+    "
+    class="plot-resize-zone"
+  >
+    <app-post-processing-pareto-front
+      class="plot-pareto-front"
+      *ngFor="let plot of postProcessingBundle.plotlyParetoFront"
+      [plotData]="plot"
+    >
+    </app-post-processing-pareto-front>
+
+    <app-post-processing-plotly
+      [class]="
+        plot.data && plot.data[0] && plot.data[0].type === 'table'
+          ? 'table'
+          : 'plot'
+      "
+      *ngFor="let plot of postProcessingBundle.plotly"
+      [plotData]="plot"
+    >
+    </app-post-processing-plotly>
+  </div>
+</mat-expansion-panel>

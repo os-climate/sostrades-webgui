@@ -1,0 +1,200 @@
+<div class="flex-container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    [progressText]="
+      'Loading authorized users and groups for ' + data.resourceType
+    "
+  ></app-progress-bar>
+</div>
+
+<div class="flex-container" *ngIf="!isLoading">
+  <h3 style="text-align: center; margin-top: 5px; word-wrap: break-word">
+    Share <strong>{{ data.ressourceName }}</strong> with people and groups
+  </h3>
+  <form style="height: 67px; width: 100%">
+    <mat-form-field
+      style="
+        padding: 5px 24px 5px 24px;
+        background-color: #f8f9fa;
+        border-radius: 7px;
+      "
+    >
+      <input
+        type="text"
+        placeholder="Add people and groups"
+        aria-label="User"
+        matInput
+        [formControl]="entityCtrl"
+        [matAutocomplete]="auto"
+      />
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        (optionSelected)="selected($event)"
+      >
+        <mat-option
+          *ngFor="let entity of filteredEntities | async"
+          [value]="entity"
+        >
+          <div
+            class="entity-container"
+            *ngIf="entity.entityType === entityRightType.USER"
+          >
+            <div
+              class="badge"
+              [ngClass]="alphabetTool(entity.entityObject.title)"
+            >
+              {{ entity.entityObject.title[0] }}
+            </div>
+            <div class="entity">
+              <div class="entity-first-line">
+                {{ entity.entityObject.title }}
+              </div>
+              <div class="entity-second-line">
+                {{ entity.entityObject.information }}
+              </div>
+            </div>
+          </div>
+          <div
+            class="entity-container"
+            *ngIf="entity.entityType === entityRightType.GROUP"
+          >
+            <div class="badge badge-group">
+              <mat-icon
+                class="group-icon"
+                aria-hidden="false"
+                aria-label="Group icon"
+                >people</mat-icon
+              >
+            </div>
+            <div class="entity">
+              <div class="entity-first-line">
+                {{ entity.entityObject.title }}
+              </div>
+              <div class="entity-second-line">
+                {{ entity.entityObject.information }}
+              </div>
+            </div>
+          </div>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+  <div mat-dialog-content class="container-dialog">
+    <div class="table-container">
+      <table class="table-authorised">
+        <tbody>
+          <tr *ngFor="let entity of entitiesSelected">
+            <td *ngIf="entity.selectedRight !== null">
+              <div
+                class="entity-container"
+                *ngIf="entity.entityType === entityRightType.USER"
+              >
+                <div
+                  class="badge"
+                  [ngClass]="alphabetTool(entity.entityObject.title)"
+                >
+                  {{ entity.entityObject.title[0] }}
+                </div>
+                <div class="entity">
+                  <div class="entity-first-line">
+                    {{ entity.entityObject.title }}
+                  </div>
+                  <div class="entity-second-line">
+                    {{ entity.entityObject.information }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="entity-container"
+                *ngIf="entity.entityType === entityRightType.GROUP"
+              >
+                <div class="badge badge-group">
+                  <mat-icon
+                    class="group-icon"
+                    aria-hidden="false"
+                    aria-label="Group icon"
+                    >people</mat-icon
+                  >
+                </div>
+                <div class="entity">
+                  <div class="entity-first-line">
+                    {{ entity.entityObject.title }}
+                  </div>
+                  <div class="entity-second-line">
+                    {{ entity.entityObject.information }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="select-right" *ngIf="entity.selectedRight !== null">
+              <mat-select
+                placeholder=""
+                style="
+                  text-align: right;
+                  padding: 6px;
+                  border-radius: 7px;
+                  background-color: #f9f9f9;
+                "
+                [(ngModel)]="entity.selectedRight"
+                (selectionChange)="rightChange()"
+                *ngIf="!entity.isLocked"
+              >
+                <mat-option
+                  *ngFor="let ent of selectableRights"
+                  [value]="ent.id"
+                >
+                  <mat-divider
+                    *ngIf="ent.accessRight === 'Remove'"
+                  ></mat-divider>
+                  {{ ent.accessRight }}
+                  <div></div>
+                </mat-option>
+              </mat-select>
+              <div
+                style="
+                  text-align: center;
+                  color: grey;
+                  padding: 6px;
+                  border-radius: 7px;
+                  height: 32px;
+                  background-color: #f9f9f9;
+                "
+                *ngIf="entity.isLocked"
+              >
+                {{ getLockedRight(entity.selectedRight) }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()" style="margin-right: 5px">
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="submitForm()"
+      [disabled]="!entitiesSelectedHasChanges"
+    >
+      Save
+    </button>
+  </div>
+  <div
+    *ngIf="entitiesSelectedHasChanges"
+    style="
+      color: lightgrey;
+      position: absolute;
+      z-index: 1;
+      bottom: -8px;
+      right: 10px;
+      text-align: right;
+    "
+  >
+    Pending changes
+  </div>
+</div>

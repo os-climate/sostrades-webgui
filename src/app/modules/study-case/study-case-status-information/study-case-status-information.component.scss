@@ -1,0 +1,79 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  align-self: center;
+  margin-bottom: 15px;
+}
+
+.legend-item {
+  display: flex;
+  padding: 0 3px 0 3px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.legend-icon {
+  font-size: 18px;
+  height: auto;
+  width: auto;
+  align-self: center;
+}
+
+.legend-text {
+  font-size: 12px;
+  padding-left: 4px;
+}
+
+.no-data-to-display {
+  color: grey;
+  padding-left: 25px;
+  padding-top: 5px;
+  font-size: 11px;
+  background-color: #f9f9f9;
+}
+
+
+.PENDING {
+  background:  radial-gradient(circle at 3px 3px,blue, #000);
+}
+
+.DONE {
+  background: radial-gradient(circle at 3px 3px, lightgreen, #000);
+}
+
+.RUNNING {
+  background: radial-gradient(circle at 3px 3px, orange, #000);
+}
+
+.FAILED {
+  background: radial-gradient(circle at 3px 3px, red, #000);
+}
+
+.CONFIGURE {
+  background: radial-gradient(circle at 3px 3px, brown, #000);
+}
+
+.INPUT_DATA {
+  background: radial-gradient(circle at 3px 3px, rgb(99, 194, 238), #000);
+}
+
+.execution-bullet {
+  line-height: 19px;
+  top: 0 !important;
+  font-weight: 500;
+  color: white;
+  height: 18px;
+  min-width: 18px;
+  font-size: 12px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  text-align: center;
+  border-radius: 10px;
+}

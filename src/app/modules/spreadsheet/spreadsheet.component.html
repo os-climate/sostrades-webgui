@@ -1,0 +1,43 @@
+<div class="main-container">
+  <div style="padding: 10px">CSV : {{ data.title }}</div>
+
+  <div mat-dialog-content style="height: 1px">
+    <div class="progress-bar-csv" *ngIf="!isTableLoaded">
+      <div class="progressText">Loading Csv data</div>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div
+      [ngStyle]="
+        isTableLoaded
+          ? {
+              height: 'calc(100% - ' + contentHeight + 'px)',
+              'max-width': '80vw'
+            }
+          : { height: '0px!important', 'max-width': '80vw' }
+      "
+      #spreadsheet
+    ></div>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="cancelClick()" [disabled]="!isTableLoaded">
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="success"
+      [matTooltip]="
+        isLargeFile
+          ? 'File is too large to be edited and saved > 5000 lines'
+          : null
+      "
+      mat-button
+      *ngIf="isCsvEditable"
+      [disabled]="!hasCsvChanges || isLargeFile"
+      (click)="saveDataClick()"
+    >
+      <span *ngIf="isLargeFile"> Disabled save </span>
+      <span *ngIf="!isLargeFile">Save</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,490 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/cdk/overlay-prebuilt.css";
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+body {
+  margin: 0 !important;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+label.mat-checkbox-layout {
+  margin: 0 !important;
+}
+
+.mat-tab-body-wrapper {
+  flex-grow: 1 !important;
+}
+
+.mat-tab-body-content {
+  overflow: unset !important;
+}
+
+.mat-accordion {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1;
+}
+
+.mat-expansion-panel {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mat-expansion-panel-content,
+.mat-expansion-panel-body {
+  flex-grow: 1 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+.mat-button {
+  min-width: 0px !important;
+  outline: 0 !important;
+}
+
+.mat-menu-item {
+  outline: 0 !important;
+}
+
+.mat-flat-button {
+  outline: 0 !important;
+}
+
+.mat-mini-fab {
+  outline: 0 !important;
+}
+
+.mat-icon-button {
+  outline: 0 !important;
+}
+
+.mat-sort-header-button {
+  outline: none !important;
+}
+
+.mat-menu-panel {
+  min-height: 0px !important;
+}
+
+.mat-snack-bar-container {
+  min-width: fit-content !important;
+}
+
+/* SnackBar custom styles*/
+.snackBarError {
+  background: #e4002b;
+  color: white;
+}
+.snackBarError .mat-simple-snackbar-action {
+  color: white;
+}
+
+.snackBarInformation {
+  background: #08875b;
+  color: white;
+}
+.snackBarInformation .mat-simple-snackbar-action {
+  color: white;
+}
+
+.snackBarWarning {
+  background: #fbca32;
+  color: black;
+}
+.snackBarWarning .mat-simple-snackbar-action {
+  color: black;
+}
+
+/* D3 class style for d3-force-graph-directive */
+// .links line {
+//   stroke: #999;
+//   stroke-opacity: 0.6;
+// }
+
+// .nodes circle {
+//   stroke: #fff;
+//   stroke-width: 1.5px;
+// }
+
+text {
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
+div.tooltip {
+  // position: absolute;
+  // text-align: center;
+  // /*width: 60px;
+  // height: 28px;*/
+  // padding: 2px;
+  // font: 12px sans-serif;
+  // background: lightsteelblue;
+  // border: 0px;
+  border-radius: 4px;
+  pointer-events: none;
+  // border-radius: 4px;
+  font-size: 0.9em;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 8px;
+  background-color: #fff;
+  word-break: break-all;
+  z-index: 9999;
+}
+
+.mat-danger {
+  background-color: #e4002b;
+  color: #ffffff;
+}
+
+.mat-warning {
+  background-color: #fbca32;
+  color: #000000;
+}
+
+.mat-success {
+  background-color: #08875b;
+  color: #ffffff;
+}
+
+.mat-undetermined {
+  background-color: grey;
+  color: #ffffff;
+}
+
+.mat-icon-danger {
+  color: #e4002b;
+}
+
+.mat-icon-warning {
+  color: #fbca32;
+}
+
+.mat-icon-success {
+  color: #08875b;
+}
+
+.mat-icon-restricted {
+  color: grey;
+}
+
+.mat-form-field {
+  margin-top: -10px !important;
+}
+
+.border-empty {
+  border-color: #e4002b !important;
+}
+
+.border-default {
+  border-color: #08875b !important;
+}
+
+.border-user {
+  border-color: #0b78b8 !important;
+}
+
+.border-readonly {
+  border-color: darkgray !important;
+}
+
+.border-optional {
+  border-color: #ffc107 !important;
+}
+
+.csvDialog {
+  mat-dialog-container {
+    padding: 0;
+  }
+}
+
+.mat-tab-label,
+.mat-tab-label-active {
+  min-width: 0 !important;
+  padding: 3px !important;
+  margin: 3px !important;
+  font-size: 12px !important;
+  min-height: 0px !important;
+  height: auto !important;
+}
+
+.mat-sort-header-button {
+  border-bottom: none !important;
+}
+
+.amethyst {
+  background-color: #aa0dfe;
+}
+.blue {
+  background-color: #3283fe;
+}
+.caramel {
+  background-color: #85660d;
+}
+.damson {
+  background-color: #782ab6;
+}
+.ebony {
+  background-color: #565656;
+}
+.forest {
+  background-color: #1c8356;
+}
+.green {
+  background-color: #16ff32;
+}
+.honey {
+  background-color: #f7e1a0;
+}
+.iron {
+  background-color: #e2e2e2;
+}
+.jade {
+  background-color: #1cbe4f;
+}
+.kingcrab {
+  background-color: #c4451c;
+}
+.lavender {
+  background-color: #dea0fd;
+}
+.magenta {
+  background-color: #fe00fa;
+}
+.navy {
+  background-color: #325a9b;
+}
+.orange {
+  background-color: #feaf16;
+}
+.pink {
+  background-color: #f8a19f;
+}
+.quagmire {
+  background-color: #90ad1c;
+}
+.red {
+  background-color: #f6222e;
+}
+.sea {
+  background-color: #1cffce;
+}
+.turquoise {
+  background-color: #2ed9ff;
+}
+.ultraviolet {
+  background-color: #b10da1;
+}
+.violet {
+  background-color: #c075a6;
+}
+.wine {
+  background-color: #fc1cbf;
+}
+.xanthin {
+  background-color: #b00068;
+}
+.yellow {
+  background-color: #fbe426;
+}
+.zinnia {
+  background-color: #fa0087;
+}
+
+/* Markdown */
+.markdown-body {
+  background-color: rgb(82, 86, 89);
+  color: var(--primary-text-color);
+  line-height: 154%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  text-align: justify;
+}
+
+.markdown {
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  overflow: initial;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+  width: 800px;
+}
+
+p > img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.markdown > p,
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6,
+.markdown > ul,
+.markdown > ol,
+.markdown pre {
+  margin-bottom: 10px;
+}
+
+.markdown a {
+  color: #1eaffb;
+  font-family: "open_sansregular";
+}
+
+.markdown a:hover {
+  color: #22cafc;
+}
+
+.markdown h1 {
+  font-size: 1.5em;
+}
+
+.markdown h2 {
+  font-size: 1.3em;
+}
+
+.markdown h3 {
+  font-size: 1.2em;
+}
+
+.markdown h4 {
+  font-size: 1.1em;
+}
+
+.markdown h5 {
+  font-size: 1.1em;
+}
+
+.markdown h6 {
+  font-size: 1.1em;
+}
+
+.markdown hr {
+  border-color: #999;
+  margin: 15px;
+}
+
+.markdown ul {
+  list-style: disc;
+  padding-left: 30px;
+}
+
+.markdown ol {
+  list-style: decimal;
+  padding-left: 30px;
+}
+
+.markdown code {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px;
+  display: inline-block;
+}
+
+.markdown blockquote dl,
+ol,
+p,
+pre,
+ul {
+  margin: 0;
+}
+
+.markdown blockquote {
+  padding: 15px;
+  background: rgba(200, 200, 200, 0.2);
+  color: #dddddd;
+  border-radius: 5px;
+}
+
+.color-conditional {
+  background-color: #1eaffb;
+}
+
+.header-alias {
+  background: rgba(255, 255, 255, 0.1);
+  float: left;
+  padding: 3px 2px 2px 2px;
+  border-left: 1px solid #666 !important;
+}
+
+.header-formula {
+  flex-flow: row nowrap;
+
+  align-items: center;
+
+  background-color: #fff;
+
+  padding: 0 0 0 3px;
+
+  margin-top: 3px;
+
+  border-top-left-radius: 3px;
+
+  border-top-right-radius: 3px;
+}
+
+.header-formula input {
+  width: 100%;
+  outline: none;
+  background-color: #fff;
+  border: none;
+  font-size: 13px;
+  font-family: "open_sansregular";
+  color: #0f0f0f;
+}
+
+.header-formula button {
+  background-color: #1eaffb;
+  border-top-right-radius: 3px;
+}
+
+.b {
+  border: 1px solid red !important;
+}
+
+.custom-tooltip-class {
+  max-width: unset !important;
+  white-space: pre-line !important;
+  text-align: center !important;
+}
+
+// Jspreadsheet
+
+.jexcel {
+  width: auto !important;
+}
+
+.jexcel thead tr:nth-child(1) td {
+  top: 0 !important;
+}
+
+.jexcel thead tr:nth-child(2) td {
+  top: 23px !important;
+}
+
+// Html table
+.table thead th {
+  border-bottom: 1px solid #dee2e6 !important;
+}

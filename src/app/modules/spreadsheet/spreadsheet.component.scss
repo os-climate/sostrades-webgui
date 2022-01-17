@@ -1,0 +1,50 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.progress-bar-csv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  min-width: 300px;
+  padding: 20px;
+}
+
+.mat-dialog-content {
+  max-height: calc(65vh - 40px);
+  min-height: calc(60vh - 40px);
+  max-width: 80vw;
+  padding: 0;
+}
+
+td {
+  width: max-content !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+.loading {
+  flex: 1;
+  width: 100%;
+}
+
+.container-dialog {
+  flex: 1;
+  width: 100%;
+  overflow: auto;
+}
+
+.error-container {
+  height: 100%;
+  width: 100%;
+  margin-top: -20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

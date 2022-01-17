@@ -1,0 +1,26 @@
+.markdown-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.missing-documentation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid;
+  border-width: 1px;
+  border-radius: 7px;
+  border-color: lightgrey;
+  background-color: #f9f9f9;
+  padding: 5px 0 5px 0;
+}
+
+.bookmarks {
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+
+.bookmarks-title {
+  font-weight: bold;
+}

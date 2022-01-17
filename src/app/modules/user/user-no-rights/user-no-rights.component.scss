@@ -1,0 +1,52 @@
+.flex-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-access-container {
+  border: solid;
+  border-color: lightgrey;
+  border-width: 1px;
+  border-radius: 7px;
+
+  background-color: #f9f9f9f9;
+}
+
+.title {
+  padding: 15px 10px 15px 10px;
+  color: white;
+  background-color: #00205b;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 18px;
+  font-weight: 450;
+  border-radius: 6px 6px 0 0;
+}
+
+.message {
+  padding: 15px 10px 15px 10px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mail-message-success {
+  margin-top: 30px;
+  padding: 15px 10px 15px 10px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: white;
+  background-color: #08875b;
+  border-radius: 7px;
+  text-align: center;
+}
+
+.mail-message-error {
+  margin-top: 30px;
+  padding: 15px 10px 15px 10px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: white;
+  background-color: #e4002b;
+  border-radius: 7px;
+  text-align: center;
+}

@@ -1,0 +1,103 @@
+<div class="flex-container">
+  <h1 mat-dialog-title>{{ data.validationType | titlecase }} Validation</h1>
+  <div class="message-container">
+    <div class="message">
+      Namespace : {{ data.namespace }}&emsp;Discipline name :
+      {{ data.disciplineName | ontologyDisciplineConverter }}
+    </div>
+  </div>
+
+  <div mat-dialog-content class="content">
+    <div class="validation-zone" [formGroup]="validationForm">
+      <mat-form-field
+        style="width: 100%;"
+        hintLabel="{{ commentArea.value.length }} / 300 characters"
+      >
+        <textarea
+          #commentArea
+          matInput
+          maxlength="300"
+          formControlName="validationComment"
+          placeholder="Optional Comment"
+          style="height: 90px; background-color: white; resize: none"
+        ></textarea>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="accent"
+        aria-label="Create Group"
+        (click)="validateData()"
+        style="margin-bottom: 20px"
+        [disabled]="!validationForm.valid"
+      >
+        {{ buttonValidationText }}
+      </button>
+    </div>
+    <div class="history-zone">
+      <div class="table-zone">
+        <table mat-table #table [dataSource]="dataSourceChanges" matSort>
+          <!-- User state Column -->
+          <ng-container matColumnDef="userName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.userName }}
+            </td>
+          </ng-container>
+
+          <!-- User state Column -->
+          <ng-container matColumnDef="userDepartment">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Department
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.userDepartment }}
+            </td>
+          </ng-container>
+
+          <!-- Validation state Column -->
+          <ng-container matColumnDef="validationState">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
+            <td mat-cell *matCellDef="let element">
+              {{
+                element.validationState == validationStates.VALIDATED
+                  ? "Validation"
+                  : "Invalidation"
+              }}
+            </td>
+          </ng-container>
+
+          <!-- Date state Column -->
+          <ng-container matColumnDef="validationDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.validationDate | date: "short":"+0200" }}
+            </td>
+          </ng-container>
+
+          <!-- Validation state Column -->
+          <ng-container matColumnDef="validationComment">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Comment</th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              style="word-break: break-word"
+            >
+              {{ element.validationComment }}
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns; sticky: true"
+          ></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+  </div>
+</div>
