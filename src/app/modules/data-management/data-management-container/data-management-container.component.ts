@@ -20,7 +20,10 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   public showMaturity: boolean;
   public countItemsInDict = NodeDataTools.countDisplayableItemsInNodeDataDict;
   public treeNodeData: TreeNode;
+  //dict of display of each discipline
   public allDisciplinesDataDict: { [id: string]: DataManagementDiscipline };
+  //dict of one simple display of all data
+  public allDataDict: { [id: string]: DataManagementDiscipline };
   public objectKey = Object.keys;
   public objectValue = Object.values;
 
@@ -33,7 +36,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     public filterService: FilterService) {
     this.treeNodeDataSubscription = null;
     this.allDisciplinesDataDict = {};
-
+    this.allDataDict = {};
     this.showMaturity = false;
   }
 
@@ -54,21 +57,35 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
           }
 
           // Reset all disciplines data in current node
-          this.allDisciplinesDataDict = {}
+          this.allDisciplinesDataDict = {} //this dict contains a DataManagementDiscipline for each discipline
+          this.allDataDict = {};//this dict contains only one DataManagementDiscipline that contains all disciplines
+          
 
           // Create entry for data stored at this treenode without discipline
           this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
-          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath = 'Data';
+          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push('Data');
           this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].namespace = this.treeNodeData.fullNamespace;
-          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey = `${this.treeNodeData.fullNamespace}.Data`;
+          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.Data`);
+
+          //create entry for all data stored in this treenode (for standard mode view)
+          //Reset all datda in current node 
+          this.allDataDict[`Data-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
+          this.allDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push('Data');
+          this.allDataDict[`Data-${this.treeNodeData.identifier}`].namespace = this.treeNodeData.fullNamespace;
+          this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.Data`);
 
           // Create entries for data with discipline
           this.treeNodeData.modelsFullPathList.forEach(discName => {
             this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
-            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].modelNameFullPath = discName;
+            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].modelNameFullPath.push(discName);
             this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].namespace = this.treeNodeData.fullNamespace;
-            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplineKey = `${this.treeNodeData.fullNamespace}.${discName}`;
+            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.${discName}`);
+            this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.${discName}`);
+            this.allDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push(discName);
           });
+
+          
+
 
           // Reading all data to create object config, couplingInputs, couplingOutputs
           Object.keys(this.treeNodeData.data).forEach(key => {
@@ -85,6 +102,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].numericalParameters[variable.identifier] = variable;
                   });
                 }
+                this.allDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[variable.identifier] = variable;
 
               } else if (variable.ioType === IoType.IN) { // Disciplinary inputs
                 // Add to Data
@@ -96,6 +114,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryInputs[variable.identifier] = variable;
                   });
                 }
+                this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[variable.identifier] = variable;
 
               } else if (variable.ioType === IoType.OUT) { // Disciplinary outputs
                 // Add to Data
@@ -107,6 +126,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryOutputs[variable.identifier] = variable;
                   });
                 }
+                this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[variable.identifier] = variable;
               }
             }
           });
@@ -124,6 +144,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                   if (!(discVariable.identifier in this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters)) {
                     discVariable.editable = false; // Read only data
                     this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
+                    this.allDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
                   }
                   // Add to Disciplines data
                 } else {
@@ -131,9 +152,11 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     if (!(discVariable.identifier in this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].numericalParameters)) {
                       discVariable.editable = false; // Read only data
                       this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
+                      this.allDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
                     }
                   });
                 }
+                
 
               } else if (discVariable.ioType === IoType.IN) { // Disciplinary inputs
                 // Add to Data
@@ -141,6 +164,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                   if (!(discVariable.identifier in this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs)) {
                     discVariable.editable = false; // Read only data
                     this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
+                    this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
                   }
                   // Add to Disciplines data
                 } else {
@@ -148,6 +172,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     if (!(discVariable.identifier in this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryInputs)) {
                       discVariable.editable = false; // Read only data
                       this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
+                      this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
                     }
                   });
                 }
@@ -158,6 +183,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                   if (!(discVariable.identifier in this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs)) {
                     discVariable.editable = false; // Read only data
                     this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
+                    this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
                   }
                   // Add to Disciplines data
                 } else {
@@ -165,9 +191,11 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     if (!(discVariable.identifier in this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryOutputs)) {
                       discVariable.editable = false; // Read only data
                       this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
+                      this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
                     }
                   });
                 }
+                
               }
             }
           });
@@ -178,6 +206,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
             && Object.keys(this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs).length === 0) {
             delete this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`];
           }
+
         }
       }
     });

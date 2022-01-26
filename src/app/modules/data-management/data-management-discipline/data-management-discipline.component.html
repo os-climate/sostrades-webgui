@@ -13,10 +13,10 @@
       "
     >
       <mat-panel-title style="font-size: 15px; font-weight: 550">
-        {{ disciplineData.modelNameFullPath | ontologyDisciplineConverter }}
+        {{ disciplineData.modelNameFullPath[0] | ontologyDisciplineConverter }}
         <span class="spacer"></span>
 
-        <mat-slide-toggle
+        <mat-slide-toggle *ngIf="!filterService.filters.showSimpleDisplay"
           [ngModel]="isDisciplineDataValidated"
           (click)="onClickDataValidation($event)"
           >{{
@@ -31,7 +31,7 @@
       [expanded]="IsExpand('details')"
       (opened)="SetIsExpand('details', true)"
       (closed)="SetIsExpand('details', false)"
-      *ngIf="disciplineData.modelNameFullPath !== 'Data'"
+      *ngIf="disciplineData.modelNameFullPath[0] !== 'Data'"
     >
       <mat-expansion-panel-header>
         <mat-panel-title> Discipline details </mat-panel-title>
@@ -91,7 +91,7 @@
         <app-widget-container
           *ngIf="disciplineData.numericalParameters"
           [nodeDataList]="numericalParametersOrdered"
-          [discipline]="disciplineData.modelNameFullPath"
+          [discipline]="disciplineData.modelNameFullPath[0]"
           [namespace]="disciplineData.namespace"
         >
         </app-widget-container>
@@ -135,7 +135,7 @@
         <app-widget-container
           *ngIf="disciplineData.disciplinaryInputs"
           [nodeDataList]="disciplinaryInputsOrdered"
-          [discipline]="disciplineData.modelNameFullPath"
+          [discipline]="disciplineData.modelNameFullPath[0]"
           [namespace]="disciplineData.namespace"
           [ngClass]="setCalculationCss(isCalculationRunning)"
         >
@@ -155,7 +155,7 @@
             countItemsInDict(
               disciplineData.disciplinaryOutputs,
               filterService.filters.userLevel,
-              filterService.filters.showReadOnly
+              true
             )
           }})
         </mat-panel-title>
@@ -165,7 +165,7 @@
           countItemsInDict(
             disciplineData.disciplinaryOutputs,
             filterService.filters.userLevel,
-            filterService.filters.showReadOnly
+            true
           ) === 0
         "
         class="no-data-to-display"
@@ -180,7 +180,7 @@
         <app-widget-container
           *ngIf="disciplineData.disciplinaryOutputs"
           [nodeDataList]="disciplinaryOutputsOrdered"
-          [discipline]="disciplineData.modelNameFullPath"
+          [discipline]="disciplineData.modelNameFullPath[0]"
           [namespace]="disciplineData.namespace"
         >
         </app-widget-container>
