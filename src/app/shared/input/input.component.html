@@ -6,11 +6,11 @@
     [type]="nodeData.type"
     placeholder="Enter a value"
     [errorStateMatcher]="matcher"
-    [ngModel]="innerValue"
+    [ngModel]="nodeData.value"
     (input)="onInputChange($event.target.value)"
     [attr.disabled]="nodeData.editable"
     style="text-align: right"
-    (focus)="onFocus($event); $event.target.select()"
+    (focus)="$event.target.select()"
     (blur)="onBlur($event)"
   />
   <ng-template #nonFloatManagement>
@@ -20,7 +20,7 @@
       [type]="nodeData.type"
       placeholder="Enter a value"
       [errorStateMatcher]="matcher"
-      [ngModel]="innerValue"
+      [ngModel]="nodeData.value"
       (input)="onInputChange($event.target.value)"
       [attr.disabled]="nodeData.editable"
       style="text-align: right"
