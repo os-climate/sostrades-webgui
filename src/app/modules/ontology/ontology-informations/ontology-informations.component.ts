@@ -72,7 +72,7 @@ export class OntologyInformationsComponent implements OnInit {
 
     this.data.nodeData.disciplineFullPathList.forEach(modelFullPath => {
       const newDataM: DataManagementDiscipline = new DataManagementDiscipline();
-      newDataM.modelNameFullPath = modelFullPath;
+      newDataM.modelNameFullPath.push(modelFullPath);
       this.originDisciplines.push(newDataM);
     });
 

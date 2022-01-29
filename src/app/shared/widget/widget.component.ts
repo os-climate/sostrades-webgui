@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NodeData, WidgetType, ValueType } from 'src/app/models/node-data.model';
+import { NodeData, WidgetType, ValueType, IoType } from 'src/app/models/node-data.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
@@ -9,7 +9,6 @@ import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OntologyInformationsDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology-informations/ontology-informations.component';
-
 
 @Component({
   selector: 'app-widget',
@@ -128,7 +127,7 @@ export class WidgetComponent implements OnInit {
   showWidget(userLevel: number, showReadOnly: boolean): boolean {
     if (userLevel >= this.nodeData.userLevel) {
       if (this.nodeData.valueType === ValueType.READ_ONLY) {
-        if (!showReadOnly) {
+        if (this.nodeData.ioType === IoType.IN && !showReadOnly) {
           return false;
         } else {
           return true;

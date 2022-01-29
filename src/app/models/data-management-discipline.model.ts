@@ -1,18 +1,20 @@
 import { NodeData } from "./node-data.model";
 
 export class DataManagementDiscipline {
-  modelNameFullPath: string;
+  modelNameFullPath: string[];
   namespace: string;
   maturity: string;
   disciplinaryInputs: { [id: string]: NodeData; };
   disciplinaryOutputs: { [id: string]: NodeData; };
   numericalParameters: { [id: string]: NodeData; };
-  disciplineKey: string;
+  disciplineKey: string[];
   constructor() {
     this.maturity = null;
     this.disciplinaryInputs = {};
     this.disciplinaryOutputs = {};
     this.numericalParameters = {};
+    this.disciplineKey = [];
+    this.modelNameFullPath = [];
   }
 }
 

@@ -1,22 +1,7 @@
 <mat-toolbar class="toolbar" style="padding: 18px 16px">
+
   <button
-    mat-button
-    color="accent"
-    class="toolbar-item-shadow"
-    (click)="downloadStudyLogs()"
-  >
-    <div style="width: 24px; height: 24px; line-height: 24px">
-      <i
-        class="fas fa-download fa-fw toolbar-icon-font-aw"
-        aria-hidden="false"
-        aria-label="Download study logs"
-        matTooltip="Download study logs"
-      >
-      </i>
-    </div>
-  </button>
-  <button
-    *ngIf="filterService.filters.userLevel === 3"
+    
     style="margin-right: 5px"
     mat-button
     color="warn"
@@ -110,29 +95,7 @@
 
 <div class="container" #scrollframe>
   <mat-table class="table" #table [dataSource]="dataSourceRef">
-    <!-- Crated Column -->
-    <ng-container matColumnDef="created">
-      <mat-header-cell *matHeaderCellDef> Created </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="custom-font">
-        {{ element.created | date: "dd/MM/yyyy, H:mm:ss" }}
-      </mat-cell>
-    </ng-container>
-
-    <!-- Source Column -->
-    <ng-container matColumnDef="source">
-      <mat-header-cell *matHeaderCellDef> Source </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="custom-font">
-        {{ element.name }}
-      </mat-cell>
-    </ng-container>
-
-    <!-- Level Column -->
-    <ng-container matColumnDef="level">
-      <mat-header-cell *matHeaderCellDef> Level </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="custom-font">
-        {{ element.level }}
-      </mat-cell>
-    </ng-container>
+ 
 
     <!-- Message Column -->
     <ng-container matColumnDef="message">
@@ -142,31 +105,7 @@
       </mat-cell>
     </ng-container>
 
-    <!-- Exception Column -->
-    <ng-container matColumnDef="exception">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
-      <mat-cell *matCellDef="let element" class="custom-font">
-        <button
-          *ngIf="
-            element.exception !== undefined &&
-            element.exception !== null &&
-            element.exception.length > 0
-          "
-          mat-icon-button
-          matTooltip="Show exception"
-          class="button-exception"
-          onclick="this.blur()"
-          (click)="displayException(element.exception)"
-        >
-          <i
-            class="fas fa-info-circle exception-icon"
-            style="height: 20px; width: 20px; line-height: unset"
-          >
-          </i>
-        </button>
-      </mat-cell>
-    </ng-container>
-
+   
     <!-- Download log Column -->
 
     <mat-header-row
