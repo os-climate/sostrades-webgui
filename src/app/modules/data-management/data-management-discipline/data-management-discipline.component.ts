@@ -151,7 +151,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
 
 
   IsExpand(pannelID: string): boolean {
-    var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey}.${pannelID}`;
+    var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey[0]}.${pannelID}`;
     var defaultExpandable = pannelID == PannelIds.INPUTS || pannelID == "";
     return this.studyCaseDataService.GetUserStudyPreference(id, defaultExpandable);
 
@@ -160,7 +160,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
   SetIsExpand(pannelID: string, isExpand: boolean) {
     if (this.IsExpand(pannelID) != isExpand)//save data only if necessary
     {
-      var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey}.${pannelID}`;
+      var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey[0]}.${pannelID}`;
       this.studyCaseDataService.SetUserStudyPreference(id, isExpand).subscribe(
         _ => { },
         error => {
