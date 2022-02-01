@@ -18,17 +18,28 @@
   display: flex;
   align-items: center;
   padding: 4px;
-  background-color: whitesmoke;
+  margin:4px;
+  background-color: white;
+  border: solid;
+  border-width: 1px;
+  border-radius: 7px;
+  border-color: lightgrey;
+  border-radius: 0 0 5px 5px;
+
 }
 
 .filter-input {
   padding: 2px;
   flex: 1;
-  border: solid;
-  border-width: 1px;
-  border-color: lightgrey;
-  background-color: white;
-  border-radius: 7px;
+}
+
+.filter-icon {
+  margin:2px;
+}
+
+.radio-label{
+  margin-left: 5px;
+  vertical-align: middle;
 }
 
 .no-data-to-display {
@@ -45,6 +56,8 @@
 .active {
   background: lightgrey;
 }
+
+
 
 mat-tree {
   margin-left: 10px;
@@ -187,7 +200,7 @@ li ul {
 }
 
 .toolbar {
-  height: 25px;
+  height: 35px;
 }
 
 .toolbar-spacer {

@@ -2,7 +2,7 @@ import { Study, PostStudy, LoadedStudy } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
-import { NodeData } from 'src/app/models/node-data.model';
+import { NodeData, IoType } from 'src/app/models/node-data.model';
 import { Observable, Subscriber } from 'rxjs';
 import { IconMapping } from 'src/app/models/icon-mapping.model';
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { UserStudyPreferences } from 'src/app/models/user-study-preferences.mode
 import { Scenario } from 'src/app/models/scenario.model';
 import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { DataHttpService } from '../../http/data-http/data-http.service';
+import { OntologyService } from '../../ontology/ontology.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ import { DataHttpService } from '../../http/data-http/data-http.service';
 export class StudyCaseDataService extends DataHttpService {
 
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
+  onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
   onTreeNodeNavigation: EventEmitter<NodeData> = new EventEmitter<NodeData>();
 
@@ -33,10 +35,14 @@ export class StudyCaseDataService extends DataHttpService {
   public studyManagementFilter: string;
   public studyManagementColumnFiltered: string;
 
+  public dataSearchResults: NodeData[];
+  public dataSearchInput: string
+
   constructor(
     private http: HttpClient,
     private router: Router,
     private studyCaseValidationService: StudyCaseValidationService,
+    private ontologyService: OntologyService,
     private location: Location) {
     super(location, 'study-case');
     this.loadedStudy = null;
@@ -47,6 +53,8 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyManagementColumnFiltered = 'All columns';
 
     this.tradeScenarioList = [];
+    this.dataSearchResults = [];
+    this.dataSearchInput = '';
   }
 
   clearCache() {
@@ -55,6 +63,8 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = 'All columns';
     this.tradeScenarioList = [];
+    this.dataSearchResults = [];
+    this.dataSearchInput = '';
   }
 
   /// -----------------------------------------------------------------------------------------------------------------------------
@@ -201,4 +211,36 @@ export class StudyCaseDataService extends DataHttpService {
   claimStudyExecutionRight(): Observable<any> {
     return this.http.post<any>(`${this.apiRoute}/${this.loadedStudy.studyCase.id}/user/execution`, null);
   }
+
+  dataSearch(inputToSearch: string, showEditable: boolean, userLevel: number){
+    //search a text in data names or ontology names and display search panel
+
+    
+      this.dataSearchInput = inputToSearch;
+      this.dataSearchResults = [];
+      // search an inpupt into all data names
+      Object.values(this.loadedStudy.treeview.rootNodeDataDict).forEach(nodeData => {
+        let label = '';
+        if (this.ontologyService.getParameter(nodeData.displayName)){
+          label = this.ontologyService.getParameter(nodeData.displayName).label;
+        }
+        if (nodeData.displayName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
+        label.toLowerCase().includes(inputToSearch.toLowerCase()))
+        {
+          if((nodeData.ioType === IoType.OUT || showEditable || (!showEditable && nodeData.editable)) &&
+          (nodeData.userLevel <= userLevel)){
+            this.dataSearchResults.push(nodeData);
+          }
+        }
+      });
+    
+    this.onSearchVariableChange.emit(inputToSearch);
+  }
+
+  resetSearch(){
+    this.dataSearchInput = "";
+    this.dataSearchResults = [];
+  }
+
+
 }

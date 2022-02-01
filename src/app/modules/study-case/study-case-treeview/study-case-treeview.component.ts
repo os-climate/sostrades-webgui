@@ -35,6 +35,7 @@ import { DOCUMENT } from '@angular/common';
 import { PannelIds } from 'src/app/models/data-management-discipline.model';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-execution-system-load.model';
+import { FilterService } from 'src/app/services/filter/filter.service';
 
 
 @Component({
@@ -54,7 +55,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private onTreeNodeNavigationSubscription: Subscription;
 
   public currentSelectedNodeKey: string;
-
+  
   private studyExecutionStartedSubscription: Subscription;
   private studyExecutionStoppedSubscription: Subscription;
   private studyExecutionUpdatedSubscription: Subscription;
@@ -83,6 +84,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   public isStudyReadOnly: boolean;
 
   public isTreeViewFiltered: boolean;
+  public isSearchOption: boolean;
 
   public dataSource: MatTreeNestedDataSource<TreeNode>;
 
@@ -115,7 +117,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     public snackbarService: SnackbarService,
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private loadingDialogService: LoadingDialogService,
-    private studyDialogService: StudyDialogService
+    private studyDialogService: StudyDialogService,
+    private filterService: FilterService
   ) {
     this.onStudyCaseChangeSubscription = null;
     this.onTradeSpaceSelectionChangedSubscription = null;
@@ -146,6 +149,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.isStudyReadOnly = false;
 
     this.isTreeViewFiltered = false;
+    this.isSearchOption = true;
   }
 
 
@@ -267,8 +271,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     if ((this.filterTreeInput !== undefined
       && this.filterTreeInput !== null
-      && this.filterTreeInput.length > 2)
-      || isTradeScenarioFiltered) {
+      && this.filterTreeInput.length > 1 && !this.isSearchOption)
+      || isTradeScenarioFiltered ) {
       this.isTreeViewFiltered = true;
     } else {
       this.isTreeViewFiltered = false;
@@ -363,13 +367,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     // Retrieve related disciplines
     let discNames = []
-    if (nodeData.disciplineFullPathList.length === 0) {
+    if (nodeData.disciplineFullPathList.length === 0 || this.filterService.filters.showSimpleDisplay) {
       discNames.push('Data');
     } else {
       nodeData.disciplineFullPathList.forEach(discName => {
         discNames.push(discName);
       });
     }
+
 
     setTimeout(() => {
       //Expand disciplines
@@ -446,6 +451,16 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
   onHideStatus() {
     this.showStatus = false;
+  }
+
+  onSetSearchOption(){
+    this.isSearchOption = true;
+    this.applyFilterValue(this.filterTreeInput)
+  }
+
+  onSetFilterOption(){
+    this.isSearchOption = false;
+    this.applyFilterValue(this.filterTreeInput)
   }
 
   initExecution() {
@@ -905,12 +920,29 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   applyFilter(event: Event) {
+    
     const filterValue = (event.target as HTMLInputElement).value;
-    if (filterValue !== null && filterValue !== undefined && filterValue.length > 2) {
-      this.applyFilterToTreeview(filterValue);
-      // this.treeControl.expandDescendants(this.originTreeNode);
+    this.applyFilterValue(filterValue);
+  }
+
+  applyFilterValue(filterValue: string){
+
+    if (filterValue !== null && filterValue !== undefined && filterValue.length > 1) {
+      if(this.isSearchOption){
+        this.applySearchToVariable(filterValue);
+        this.applyFilterToTreeview("");
+      } else {
+        this.applyFilterToTreeview(filterValue);
+        // this.treeControl.expandDescendants(this.originTreeNode);
+      }
     } else {
-      this.applyFilterToTreeview('');
+      if(!this.isSearchOption){
+        this.applyFilterToTreeview('');
+      }
+      else{
+        this.studyCaseDataService.resetSearch();
+        this.treeNodeDataService.send_tree_node(this.currentSelectedNode);
+      }
     }
   }
 
@@ -930,7 +962,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.checkTreeViewIsFiltered();
   }
 
+  applySearchToVariable(filter: string) {
+    console.log('start search for ' + filter)
+    this.studyCaseDataService.dataSearch(filter, this.filterService.filters.showReadOnly, this.filterService.filters.userLevel);
+  }
+
   private setChildOk(text: string, dataSource: TreeNode[], displayChild = false) {
+    //set a node, that contains a text, visible then set its children visible too
+    //others nodes are set not visible
     if (displayChild) {
       dataSource.forEach(treeNode => {
         treeNode.isVisible = true;
