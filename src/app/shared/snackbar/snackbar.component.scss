@@ -8,8 +8,9 @@
 }
 
 .scroll-box {
-  overflow-x: hidden;
+  overflow-x: auto;
   max-height: 300px;
+  max-width: 1000px;
   padding: 0px 10px 0px 10px;
 }
 
