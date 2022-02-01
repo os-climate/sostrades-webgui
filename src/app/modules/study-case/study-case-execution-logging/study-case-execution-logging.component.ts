@@ -42,7 +42,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   public bottomAnchorLog: boolean;
   public executionViewActive: boolean;
   public dataSourceRef = new MatTableDataSource<StudyCaseLog>();
-  displayedColumns = ['created', 'source', 'level', 'message', 'exception'];
+  displayedColumns = [ 'message'];
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,

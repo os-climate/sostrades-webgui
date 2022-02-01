@@ -19,7 +19,12 @@
   <mat-menu #menuFilters="matMenu">
     <div mat-menu-item>
       <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showReadOnly">
-        Show not editable data
+        Show not editable inputs data
+      </mat-checkbox>
+    </div>
+    <div mat-menu-item>
+      <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showSimpleDisplay">
+        Show simple display for data View
       </mat-checkbox>
     </div>
   </mat-menu>

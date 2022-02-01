@@ -3,7 +3,7 @@
     <app-widget
       class="widget-container"
       [nodeData]="item"
-      [discipline]="discipline"
+      [discipline]="item.disciplineFullPathList.Length>0?item.disciplineFullPathList[0]:discipline"
       [namespace]="namespace"
     ></app-widget>
   </div>

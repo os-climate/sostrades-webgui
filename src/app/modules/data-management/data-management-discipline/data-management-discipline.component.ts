@@ -1,3 +1,4 @@
+import { ConditionalExpr } from '@angular/compiler';
 import { Component, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -67,9 +68,9 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
 
     // Load model details
     this.modelDetails = null;
-    if (this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath) !== null) {
-      const ontologyInstance = this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath);
-      this.modelDetails = Object.entries(this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath))
+    if (this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]) !== null) {
+      const ontologyInstance = this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]);
+      this.modelDetails = Object.entries(this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]))
         .filter(entry => typeof entry[1] === 'string').map(entry => [OntologyDiscipline.getKeyLabel(entry[0]), entry[1]]);
     }
 
@@ -81,13 +82,21 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
       this.isCalculationRunning = calculationRunning;
     });
 
-    if (this.studyCaseValidationService.studyDataValidationDict !== null && this.studyCaseValidationService.studyDataValidationDict !== undefined) {
-      if (this.studyCaseValidationService.studyDataValidationDict.hasOwnProperty(this.disciplineData.disciplineKey)) {
-        if (this.studyCaseValidationService.studyDataValidationDict[this.disciplineData.disciplineKey][0].validationState == ValidationState.VALIDATED) {
-          this.isDisciplineDataValidated = true;
+    //check if all disciplines are validate
+    this.isDisciplineDataValidated = false;
+    let nbDisciplineValidated = 0;
+    this.disciplineData.disciplineKey.forEach(disciplinekey =>{
+      if (this.studyCaseValidationService.studyDataValidationDict !== null && this.studyCaseValidationService.studyDataValidationDict !== undefined) {
+        if (this.studyCaseValidationService.studyDataValidationDict.hasOwnProperty(disciplinekey)) {
+          if (this.studyCaseValidationService.studyDataValidationDict[disciplinekey][0].validationState === ValidationState.VALIDATED) {
+            nbDisciplineValidated = nbDisciplineValidated + 1;
+          }
         }
       }
-    }
+    });
+    this.isDisciplineDataValidated = nbDisciplineValidated === this.disciplineData.disciplineKey.length;
+      
+    
   }
 
 
@@ -101,18 +110,18 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     event.preventDefault();
 
-
+    
     const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
-    dialogData.disciplineName = this.disciplineData.modelNameFullPath
-    dialogData.namespace = this.disciplineData.namespace
+    dialogData.disciplineName = this.disciplineData.modelNameFullPath[0]
+    dialogData.namespace = this.disciplineData.namespace;
     dialogData.validationType = ValidationType.DATA
     if (this.isDisciplineDataValidated) {
-      dialogData.validationState = ValidationState.VALIDATED
+      dialogData.validationState = ValidationState.VALIDATED;
     } else {
-      dialogData.validationState = ValidationState.NOT_VALIDATED
+      dialogData.validationState = ValidationState.NOT_VALIDATED;
     }
-
-    dialogData.validationList = this.studyCaseValidationService.studyDataValidationDict[this.disciplineData.disciplineKey];
+    dialogData.validationList = [];
+    dialogData.validationList = this.studyCaseValidationService.studyDataValidationDict[this.disciplineData.disciplineKey[0]];
 
     const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
       disableClose: true,
@@ -142,7 +151,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
 
 
   IsExpand(pannelID: string): boolean {
-    var id = pannelID == "" ? this.disciplineData.disciplineKey : `${this.disciplineData.disciplineKey}.${pannelID}`;
+    var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey}.${pannelID}`;
     var defaultExpandable = pannelID == PannelIds.INPUTS || pannelID == "";
     return this.studyCaseDataService.GetUserStudyPreference(id, defaultExpandable);
 
@@ -151,7 +160,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
   SetIsExpand(pannelID: string, isExpand: boolean) {
     if (this.IsExpand(pannelID) != isExpand)//save data only if necessary
     {
-      var id = pannelID == "" ? this.disciplineData.disciplineKey : `${this.disciplineData.disciplineKey}.${pannelID}`;
+      var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey}.${pannelID}`;
       this.studyCaseDataService.SetUserStudyPreference(id, isExpand).subscribe(
         _ => { },
         error => {

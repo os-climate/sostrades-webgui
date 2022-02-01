@@ -39,7 +39,13 @@
     </button>
   </div>
 
-  <div *ngIf="objectKey(allDisciplinesDataDict).length > 0">
+  <div *ngIf="objectKey(allDisciplinesDataDict).length > 0 && filterService.filters.showSimpleDisplay">
+    <app-data-management-discipline
+      *ngFor="let disc of objectValue(allDataDict)"  
+      [disciplineData]="disc"
+    ></app-data-management-discipline>
+  </div>
+  <div *ngIf="objectKey(allDisciplinesDataDict).length > 0 && !filterService.filters.showSimpleDisplay">
     <app-data-management-discipline
       *ngFor="let disc of objectValue(allDisciplinesDataDict)"
       [disciplineData]="disc"
