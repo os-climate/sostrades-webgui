@@ -460,6 +460,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
   onSetFilterOption(){
     this.isSearchOption = false;
+    this.nodeClick(this.currentSelectedNode);
     this.applyFilterValue(this.filterTreeInput)
   }
 
