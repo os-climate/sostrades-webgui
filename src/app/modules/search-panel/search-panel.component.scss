@@ -10,7 +10,10 @@
   overflow-y: auto;
   border-collapse: separate;
   margin-bottom: 0 !important;
-  font-family: Monospace, "Helvetica Neue", sans-serif;
+}
+
+.mat-row{
+  min-height:20px;
 }
 
 .mat-row:hover {

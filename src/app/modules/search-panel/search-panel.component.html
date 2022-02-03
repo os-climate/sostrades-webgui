@@ -1,6 +1,6 @@
 <h2 class="title">
   <mat-icon class="fas fa-search filter-icon" style="margin-right: 10px;"></mat-icon>
-  Search Results
+  Search results
 </h2>
 <div class="container title" *ngIf="isDataEmpty">
   None of the variables matched this search
@@ -48,7 +48,7 @@
 
     <!-- find Column -->
     <ng-container matColumnDef="find">
-      <mat-header-cell *matHeaderCellDef> Find in treeView </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Find in treeview </mat-header-cell>
       <mat-cell *matCellDef="let element" class="custom-font">
         <div class="button-current-value" style="margin-right: 10px">
           <button
@@ -59,7 +59,7 @@
             matTooltip="Go to variable"
             (click)="goToVariable(element)"
           >
-            Go to Variable
+            Go to variable
           </button>
         </div>
       </mat-cell>
