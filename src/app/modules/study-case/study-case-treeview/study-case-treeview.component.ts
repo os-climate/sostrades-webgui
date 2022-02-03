@@ -964,7 +964,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   applySearchToVariable(filter: string) {
-    console.log('start search for ' + filter)
     this.studyCaseDataService.dataSearch(filter, this.filterService.filters.showReadOnly, this.filterService.filters.userLevel);
   }
 
