@@ -1,4 +1,5 @@
-<div #tabGroup style="height: 100%; width: 100%; background-color: white">
+<div #tabGroup style="height: 100%; width: 100%; background-color: white"
+*ngIf="!showSearch">
   <mat-tab-group
     class="container-workspace"
     *ngIf="showView"
@@ -75,4 +76,19 @@
       >fullscreen_exit</mat-icon
     >
   </button>
+</div>
+<div style="height: 100%; width: 100%; background-color: white"
+*ngIf="showSearch">
+  <div style="float: right;">
+    <button
+        mat-icon-button
+        color="accent"
+        
+        matTooltip="Close search panel"
+        (click)="closeSearchPanel()"
+      >
+        <i class="far fa-window-close"> </i>
+      </button>
+  </div>
+  <app-search-panel></app-search-panel>
 </div>

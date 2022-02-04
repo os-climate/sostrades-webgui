@@ -1,0 +1,75 @@
+<h2 class="title">
+  <mat-icon class="fas fa-search filter-icon" style="margin-right: 10px;"></mat-icon>
+  Search results
+</h2>
+<div class="container title" *ngIf="isDataEmpty">
+  None of the variables matched this search
+</div>
+<div class="container" #scrollframe *ngIf="!isDataEmpty">
+  <mat-table class="table" #table [dataSource]="dataSourceRef">
+ 
+
+    <!-- identifier Column -->
+    <ng-container matColumnDef="identifier">
+      <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font" 
+        [matTooltip]="element.displayName" matTooltipClass="custom-tooltip-class"
+        style="word-wrap: break-word;">
+        {{ element.displayName }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- label Column -->
+    <ng-container matColumnDef="label">
+      <mat-header-cell *matHeaderCellDef> Label </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font"
+      style="word-wrap: break-word;">
+        {{ element.displayName | ontologyParameterConverter }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- namespace Column -->
+    <ng-container matColumnDef="namespace">
+      <mat-header-cell *matHeaderCellDef> Namespace </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font" 
+        [matTooltip]="element.parent.fullNamespace" matTooltipClass="custom-tooltip-class"
+        style="word-wrap: break-word; ">
+          {{ element.parent.fullNamespace }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- ioType Column -->
+    <ng-container matColumnDef="ioType">
+      <mat-header-cell *matHeaderCellDef> Input/Output </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.ioType }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- find Column -->
+    <ng-container matColumnDef="find">
+      <mat-header-cell *matHeaderCellDef> Find in treeview </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        <div class="button-current-value" style="margin-right: 10px">
+          <button
+            mat-raised-button
+            style="line-height: 24px"
+            color="accent"
+            aria-label="Go to variable"
+            matTooltip="Go to variable"
+            (click)="goToVariable(element)"
+          >
+            Go to variable
+          </button>
+        </div>
+      </mat-cell>
+    </ng-container>
+   
+    
+    <mat-header-row
+      *matHeaderRowDef="displayedColumns; sticky: true"
+      class="custom-header"
+    ></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+  </mat-table>
+</div>

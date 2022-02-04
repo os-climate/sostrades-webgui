@@ -1,13 +1,32 @@
 <div class="configure-container">
   <div class="filter-zone" *ngIf="originTreeNode">
+    <button mat-icon-button class="fas fa-search filter-icon" (click)="applyFilterValue(filterTreeInput)"></button>
     <input
       class="filter-input"
       matInput
       #filter
       [(ngModel)]="filterTreeInput"
       (keyup)="applyFilter($event)"
-      placeholder=" Filter treeview"
+      [placeholder]="isSearchOption?'Search variable':'Filter treeview'"
+      (click)="applyFilter($event)"
     />
+    <button mat-icon-button [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h">
+      
+    </button>
+    <mat-menu #searchoption="matMenu">
+      <mat-button-toggle-group [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
+        <mat-button-toggle mat-menu-item value="false" 
+        (click)="onSetFilterOption()">
+          <input type="radio"  [(ngModel)]="isSearchOption" [value]=false>
+          <label class="radio-label" >Filter treeview</label> 
+        </mat-button-toggle>
+        <mat-button-toggle mat-menu-item value="true" 
+        (click)="onSetSearchOption()">
+          <input type="radio" [(ngModel)]="isSearchOption" [value]=true>
+          <label class="radio-label">Search variable</label> 
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-menu>
   </div>
   <mat-toolbar class="toolbar" *ngIf="originTreeNode">
     <div class="toolbar-spacer"></div>

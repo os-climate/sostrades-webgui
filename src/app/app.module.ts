@@ -93,6 +93,7 @@ import { PostProcessingBundleComponent } from './modules/post-processings/post-p
 import { StudyCaseDirectAccessComponent } from './modules/study-case/study-case-direct-access/study-case-direct-access.component';
 import { StudyCaseLinkInformationComponent } from './modules/study-case/study-case-link-information/study-case-link-information.component';
 import { PostProcessingParetoFrontComponent } from './shared/post-processing-pareto-front/post-processing-pareto-front.component';
+import { SearchPanelComponent } from './modules/search-panel/search-panel.component'
 
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { SlideToggleComponent } from './shared/slide-toggle/slide-toggle.component';
@@ -173,6 +174,7 @@ registerLocaleData(fr);
     ReferenceManagementComponent,
     DataManagementContainerComponent,
     DataManagementDisciplineComponent,
+    SearchPanelComponent,
     DocumentationComponent,
     OntologyParameterConverterPipe,
     OntologyDisciplineConverterPipe,
