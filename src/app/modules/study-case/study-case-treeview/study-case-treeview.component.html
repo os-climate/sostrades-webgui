@@ -14,7 +14,7 @@
       
     </button>
     <mat-menu #searchoption="matMenu">
-      <mat-button-toggle-group [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
+      <mat-button-toggle-group ngDefaultControl [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
         <mat-button-toggle mat-menu-item value="false" 
         (click)="onSetFilterOption()">
           <input type="radio"  [(ngModel)]="isSearchOption" [value]=false>
