@@ -2,7 +2,7 @@
   <div class="box">
     <button
       mat-flat-button
-      *ngIf="!isReadOnly && !isListType"
+      *ngIf="!isReadOnly"
       color="accent"
       aria-label="Upload data file"
       matTooltip="Upload data file"
@@ -53,7 +53,6 @@
 
     <button
       mat-raised-button
-      *ngIf="!isListType"
       aria-label="Download data"
       matTooltip="Download data"
       (click)="onClickDownload()"
