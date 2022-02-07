@@ -86,7 +86,9 @@ export class StudyCaseMainService extends MainHttpService {
     };
     return this.http.post(`${this.apiRoute}/${studyId}/copy`, request, this.options).pipe(map(
       response => {
+        
         const newStudy = Study.Create(response);
+        console.log('copy created from '+studyId+ ' to '+newStudy.id)
         return newStudy;
       })).subscribe(study => {
         
