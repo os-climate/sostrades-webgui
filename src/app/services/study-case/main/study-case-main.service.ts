@@ -72,21 +72,34 @@ export class StudyCaseMainService extends MainHttpService {
   //#endregion create study
 
   //#region copy study
-  copyStudy(studyId: number, newName: string, groupId: number): Observable<Study> {
+  copyStudy(studyId: number, newName: string, groupId: number): Observable<LoadedStudy> {   
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.copyStudytimeout(studyId, newName, groupId, observer);
+    });
+    return loaderObservable;
+  }
+
+  private copyStudytimeout(studyId: number, newName: string, groupId: number, loaderObservable: Subscriber<LoadedStudy>) {
     const request = {
       new_name: newName,
       group_id: groupId
     };
-
     return this.http.post(`${this.apiRoute}/${studyId}/copy`, request, this.options).pipe(map(
-      result => {
-        const newStudy = Study.Create(result);
-
-        // Add study case to study management list
-        this.studyCaseDataService.studyManagementData.unshift(newStudy);
-        this.studyCaseDataService.tradeScenarioList = [];
+      response => {
+        
+        const newStudy = Study.Create(response);
+        console.log('copy created from '+studyId+ ' to '+newStudy.id)
         return newStudy;
-      }));
+      })).subscribe(study => {
+        
+        console.log('new timer');
+        setTimeout(() => {
+          this.loadStudyTimeout(study.id, false, loaderObservable, true);
+        }, 2000);
+      },
+        error => {
+          loaderObservable.error(error);
+        });
   }
   //#endregion copy study
 
