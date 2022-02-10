@@ -85,36 +85,15 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
           this.rowData.push(row);
         });
       } else {
-        // Create empty list
-        const emptyList = [{ 'value': '' }];
-
-        this.columnsDef = JSpreadSheetColumns.Create(
-          emptyList[0],
-          this.data.nodeData.dataframeDescriptor,
-          this.data.nodeData.type).columnsData;
-
-        const newRows = JSpreadSheetRowData.Create(emptyList, this.data.nodeData.dataframeDescriptor).rowsData;
-        newRows.forEach(row => {
-          this.rowData.push(row);
-        });
+        this.createEmptyArray();
       }
       setTimeout(() => {
         this.initializeJSpreadSheet();
       }, 0);
+      
     } else {
       if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null || this.data.file === null)) {
-          // Create empty array
-        const emptyList = [{ 'value': '' }];
-
-        this.columnsDef = JSpreadSheetColumns.Create(
-          emptyList[0],
-          this.data.nodeData.dataframeDescriptor,
-          this.data.nodeData.type).columnsData;
-
-        const newRows = JSpreadSheetRowData.Create(emptyList, this.data.nodeData.dataframeDescriptor).rowsData;
-        newRows.forEach(row => {
-          this.rowData.push(row);
-        });
+        this.createEmptyArray();
         setTimeout(() => {
           this.initializeJSpreadSheet();
         }, 0);
@@ -136,6 +115,23 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     }
   }
 
+  createEmptyArray()
+  {
+    // Create empty array
+    const emptyList = [{ 'value': '' }];
+
+    this.columnsDef = JSpreadSheetColumns.Create(
+      emptyList[0],
+      this.data.nodeData.dataframeDescriptor,
+      this.data.nodeData.type).columnsData;
+
+    const newRows = JSpreadSheetRowData.Create(emptyList, this.data.nodeData.dataframeDescriptor).rowsData;
+    newRows.forEach(row => {
+      this.rowData.push(row);
+    });
+    
+  }
+
   addRowsByChunk(results) {
     if (results.data !== null && results.data !== undefined && results.data.length > 0) {
       if (this.columnsDef.length === 0) {
@@ -146,6 +142,9 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       newRows.forEach(row => {
         this.rowData.push(row);
       });
+    }
+    else {
+      this.createEmptyArray();
     }
   }
 
@@ -339,6 +338,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
   generateBase64file(): string {
     const csvData = this.jExcelSpreadSheet.copy(false, ',', true, true, true);
+    console.log(csvData);
     return 'data:application/vnd.ms-excel;base64,' + btoa(csvData);
   }
 

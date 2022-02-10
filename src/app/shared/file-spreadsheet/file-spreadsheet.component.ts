@@ -226,7 +226,7 @@ export class FileSpreadsheetComponent implements OnInit {
     spreadsheetDialogData.readOnly = readOnly;
 
     if (this.nodeData) {
-      if (this.isListType || (this.isArrayType && (this.nodeData.value === null || updateParameter === null))) {
+      if (this.isListType || (this.isArrayType && this.nodeData.value === null)) {
         const dialogRef = this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData
@@ -251,6 +251,7 @@ export class FileSpreadsheetComponent implements OnInit {
           }, errorReceived => {
             const error = errorReceived as SoSTradesError;
             this.loadingDialogService.closeLoading();
+            console.log(error)
             if (error.redirect) {
               this.snackbarService.showError(error.description);
             } else {
