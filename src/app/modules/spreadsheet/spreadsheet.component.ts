@@ -102,18 +102,39 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         this.initializeJSpreadSheet();
       }, 0);
     } else {
-      const options = {
-        chunk: (results, parser) => {
-          this.addRowsByChunk(results);
-        },
-        complete: () => {
+      console.log(this.data.nodeData.type)
+      console.log(this.data.nodeData.value)
+      if (this.data.nodeData.type.includes('array') && this.data.nodeData.value === null) {
+          // Create empty array
+        const emptyList = [{ 'value': '' }];
+
+        this.columnsDef = JSpreadSheetColumns.Create(
+          emptyList[0],
+          this.data.nodeData.dataframeDescriptor,
+          this.data.nodeData.type).columnsData;
+
+        const newRows = JSpreadSheetRowData.Create(emptyList, this.data.nodeData.dataframeDescriptor).rowsData;
+        newRows.forEach(row => {
+          this.rowData.push(row);
+        });
+        setTimeout(() => {
           this.initializeJSpreadSheet();
-        },
-        header: true,
-        chunkSize: 1024 * 1024 * 2,
-        skipEmptyLines: true // Removing issue with PapaParse leaving empty lines at end of file
-      };
-      this.papa.parse(this.data.file, options);
+        }, 0);
+      }
+      else {
+        const options = {
+          chunk: (results, parser) => {
+            this.addRowsByChunk(results);
+          },
+          complete: () => {
+            this.initializeJSpreadSheet();
+          },
+          header: true,
+          chunkSize: 1024 * 1024 * 2,
+          skipEmptyLines: true // Removing issue with PapaParse leaving empty lines at end of file
+        };
+        this.papa.parse(this.data.file, options);
+      }
     }
   }
 
