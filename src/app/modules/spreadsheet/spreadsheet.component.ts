@@ -92,7 +92,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       }, 0);
       
     } else {
-      if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null || this.data.file === null)) {
+      if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null && this.data.file === null)) {
         this.createEmptyArray();
         setTimeout(() => {
           this.initializeJSpreadSheet();
@@ -184,7 +184,23 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   }
 
   unlockSaveButton() {
-    this.hasCsvChanges = true;
+    let doSave = true;
+    let atLeastOneColNotEmpty = false;
+    if (this.data.nodeData.type.includes('array')) {
+      const columnData = this.jExcelSpreadSheet.getColumnData(0);
+      columnData.forEach((element) => {
+        if (element === null || element === '') {
+          doSave = false;
+        }
+        else{
+          atLeastOneColNotEmpty = true;
+        }
+      });
+    }
+    if (!doSave && !atLeastOneColNotEmpty){
+      this.snackbarService.showInformation(`${this.data.nodeData.displayName} value is required`);
+    }
+    this.hasCsvChanges = doSave || atLeastOneColNotEmpty;
   }
 
   onCellAfterChanges(instance, records) {
@@ -255,7 +271,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       this.jExcelSpreadSheet.undo();
     } else {
       // Show csv changes button
-      this.hasCsvChanges = true;
+      this.unlockSaveButton();
     }
   }
 
@@ -306,39 +322,44 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     } else {
-      // Saving dataframe, array or dict type
-      this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.data.nodeData.displayName}.csv`);
-      // Generate string b64 file for local storage
-      let updateItem: StudyUpdateParameter;
-      updateItem = new StudyUpdateParameter(
-        this.data.nodeData.identifier,
-        UpdateParameterType.CSV,
-        UpdateParameterType.CSV,
-        this.data.namespace,
-        this.data.discipline,
-        null,
-        this.data.nodeData.oldValue,
-        null,
-        new Date());
+      
+        // Saving dataframe, array or dict type
+        this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.data.nodeData.displayName}.csv`);
+        // Generate string b64 file for local storage
+        let updateItem: StudyUpdateParameter;
+        updateItem = new StudyUpdateParameter(
+          this.data.nodeData.identifier,
+          UpdateParameterType.CSV,
+          UpdateParameterType.CSV,
+          this.data.namespace,
+          this.data.discipline,
+          null,
+          this.data.nodeData.oldValue,
+          null,
+          new Date());
 
-      updateItem.newValue = this.generateBase64file();
+        updateItem.newValue = this.generateBase64file();
+        
+        if(this.data.nodeData.type.includes('array')) {
+          this.data.nodeData.value = '://ndarray';
+        }
+        
+        // Saving edited table in local storage
+        this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
+          updateItem,
+          this.data.nodeData.identifier,
+          this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
-      // Saving edited table in local storage
-      this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
-        updateItem,
-        this.data.nodeData.identifier,
-        this.studyCaseDataService.loadedStudy.studyCase.id.toString());
+        this.loadingDialogService.closeLoading();
+        this.snackbarService.showInformation(`${this.data.nodeData.displayName} value saved in temporary changes`);
+        this.dialogRef.close(this.data);
+      
     }
 
-    this.loadingDialogService.closeLoading();
-    this.snackbarService.showInformation(`${this.data.nodeData.displayName} value saved in temporary changes`);
-
-    this.dialogRef.close(this.data);
   }
 
   generateBase64file(): string {
     const csvData = this.jExcelSpreadSheet.copy(false, ',', true, true, true);
-    console.log(csvData);
     return 'data:application/vnd.ms-excel;base64,' + btoa(csvData);
   }
 
