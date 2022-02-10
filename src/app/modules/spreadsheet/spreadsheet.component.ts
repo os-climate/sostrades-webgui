@@ -102,9 +102,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         this.initializeJSpreadSheet();
       }, 0);
     } else {
-      console.log(this.data.nodeData.type)
-      console.log(this.data.nodeData.value)
-      if (this.data.nodeData.type.includes('array') && this.data.nodeData.value === null) {
+      if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null || this.data.file === null)) {
           // Create empty array
         const emptyList = [{ 'value': '' }];
 

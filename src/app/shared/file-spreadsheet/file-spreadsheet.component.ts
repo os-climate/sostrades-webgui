@@ -218,7 +218,6 @@ export class FileSpreadsheetComponent implements OnInit {
 
     const updateParameter = this.studyCaselocalStorageService.
       getOneStudyParameterFromLocalStorage(this.studyCaseDataService.loadedStudy.studyCase.id.toString(), this.nodeData.identifier);
-
     const spreadsheetDialogData: SpreadsheetDialogData = new SpreadsheetDialogData();
     spreadsheetDialogData.title = name;
     spreadsheetDialogData.nodeData = this.nodeData;
@@ -227,7 +226,7 @@ export class FileSpreadsheetComponent implements OnInit {
     spreadsheetDialogData.readOnly = readOnly;
 
     if (this.nodeData) {
-      if (this.isListType || (this.isArrayType && this.nodeData.value === null)) {
+      if (this.isListType || (this.isArrayType && (this.nodeData.value === null || updateParameter === null))) {
         const dialogRef = this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData
