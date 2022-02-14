@@ -1,15 +1,10 @@
-import { Component, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { PostProcessingService } from 'src/app/services/post-processing/post-processing.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { PostProcessingBundle } from 'src/app/models/post-processing-bundle.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
-import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
-import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
-import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
-import { MatDialog } from '@angular/material/dialog';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 
 @Component({
@@ -28,13 +23,10 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayFilterButton: boolean;
   public displayFilters: boolean;
   public isCalculationRunning: boolean;
-  public isDisciplineValidated: boolean;
   calculationChangeSubscription: Subscription;
 
   constructor(
-    private dialog: MatDialog,
     private studyCaseDataService: StudyCaseDataService,
-    private studyCaseValidationService: StudyCaseValidationService,
     private postProcessingService: PostProcessingService,
     private calculationService: CalculationService,
     private snackbarService: SnackbarService) {
@@ -45,7 +37,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayFilters = false;
     this.calculationChangeSubscription = null;
     this.isCalculationRunning = false;
-    this.isDisciplineValidated = false;
   }
 
   ngOnInit() {
@@ -64,15 +55,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
 
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
-    });
-
-    if (this.studyCaseValidationService.studyValidationDict !== null && this.studyCaseValidationService.studyValidationDict !== undefined) {
-      if (this.studyCaseValidationService.studyValidationDict.hasOwnProperty(`${this.fullNamespace}.${this.postProcessingBundle.name}`)) {
-        if (this.studyCaseValidationService.studyValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`][0].validationState == ValidationTreeNodeState.VALIDATED) {
-          this.isDisciplineValidated = true;
-        }
-      }
-    }
+    });    
   }
 
   ngOnDestroy() {
@@ -109,40 +92,4 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         }
       });
   }
-
-  onClickGraphValidation(event) {
-    event.stopPropagation();
-    event.preventDefault();
-
-
-    const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
-    dialogData.disciplineName = this.postProcessingBundle.name;
-    dialogData.namespace = this.fullNamespace;
-    if (this.isDisciplineValidated) {
-      dialogData.validationState = ValidationTreeNodeState.VALIDATED
-    } else {
-      dialogData.validationState = ValidationTreeNodeState.INVALIDATED
-    }
-
-    dialogData.validationList = this.studyCaseValidationService.studyValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`];
-
-    const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
-      disableClose: true,
-      width: '1100px',
-      height: '800px',
-      panelClass: 'csvDialog',
-      data: dialogData
-    });
-
-    dialogRefValidate.afterClosed().subscribe(result => {
-      const resultData: StudyCaseValidationDialogData = result as StudyCaseValidationDialogData;
-
-      if ((resultData !== null) && (resultData !== undefined)) {
-        if (resultData.cancel !== true) {
-          this.isDisciplineValidated = !this.isDisciplineValidated;
-        }
-      }
-    });
-  }
-
 }

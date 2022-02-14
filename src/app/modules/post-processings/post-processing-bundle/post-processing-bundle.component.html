@@ -14,13 +14,7 @@
 </mat-card>
 
 <mat-expansion-panel class="expansion-panel" expanded="true">
-  <mat-expansion-panel-header
-    [ngStyle]="
-      isDisciplineValidated
-        ? { 'background-color': '#28a74587' }
-        : { 'background-color': '#d9d9d9d9' }
-    "
-  >
+  <mat-expansion-panel-header style="background-color: #d9d9d9d9" >
     <mat-panel-title style="font-size: 15px; font-weight: 550">
       {{ postProcessingBundle.name | ontologyDisciplineConverter }}
       <span class="spacer"></span>

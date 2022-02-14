@@ -32,21 +32,17 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
   public disciplinaryOutputsOrdered: NodeData[];
   public numericalParametersOrdered: NodeData[];
 
-  public isDisciplineDataValidated: boolean;
-
 
   public objectKey = Object.keys;
 
   calculationChangeSubscription: Subscription;
 
   constructor(
-    private dialog: MatDialog,
     private ontologyService: OntologyService,
     private calculationService: CalculationService,
     private studyCaseDataService: StudyCaseDataService,
     public studyCaseValidationService: StudyCaseValidationService,
     public filterService: FilterService) {
-    this.isDisciplineDataValidated = false;
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -78,22 +74,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
     });
-
-    //check if all disciplines are validate
-    this.isDisciplineDataValidated = false;
-    let nbDisciplineValidated = 0;
-    this.disciplineData.disciplineKey.forEach(disciplinekey =>{
-      if (this.studyCaseValidationService.studyValidationDict !== null && this.studyCaseValidationService.studyValidationDict !== undefined) {
-        if (this.studyCaseValidationService.studyValidationDict.hasOwnProperty(disciplinekey)) {
-          if (this.studyCaseValidationService.studyValidationDict[disciplinekey][0].validationState === ValidationTreeNodeState.VALIDATED) {
-            nbDisciplineValidated = nbDisciplineValidated + 1;
-          }
-        }
-      }
-    });
-    this.isDisciplineDataValidated = nbDisciplineValidated === this.disciplineData.disciplineKey.length;
       
-    
   }
 
 
