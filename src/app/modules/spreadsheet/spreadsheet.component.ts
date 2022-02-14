@@ -118,8 +118,19 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   createEmptyArray()
   {
     // Create empty array
-    const emptyList = [{ 'value': '' }];
-
+    let emptyList = [];
+    let columns = Object.keys(this.data.nodeData.dataframeDescriptor.columns);
+    if (columns.length > 0){
+      columns.forEach(column_name => {
+        let row = {};
+        row[column_name] = '';
+        emptyList.push(row);
+      });
+    }
+    else
+    {
+      emptyList = [{ 'value': '' }];
+    }
     this.columnsDef = JSpreadSheetColumns.Create(
       emptyList[0],
       this.data.nodeData.dataframeDescriptor,
