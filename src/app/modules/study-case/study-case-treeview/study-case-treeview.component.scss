@@ -195,7 +195,7 @@ li ul {
 
 .toolbar-icon-font-aw {
   font-size: 18px;
-  height: 24px;
+  height: 26px;
   width: 24px;
 }
 
@@ -237,4 +237,11 @@ li ul {
 .mat-progress-spinner,
 .mat-spinner {
   stroke: #3fb53f !important;
+}
+
+.iconValid {
+  margin-left: 4%; 
+  cursor: default;
+  font-size: 22px;
+  height: 23px;
 }

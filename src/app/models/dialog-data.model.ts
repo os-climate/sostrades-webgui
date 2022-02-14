@@ -193,7 +193,6 @@ export class StudyCaseModificationDialogData extends AbstractDialogData {
 export class StudyCaseValidationDialogData extends AbstractDialogData {
   namespace: string;
   disciplineName: string;
-  validationType: string;
   validationState: string;
   validationList: StudyCaseValidation[];
 
@@ -202,7 +201,6 @@ export class StudyCaseValidationDialogData extends AbstractDialogData {
     this.namespace = '';
     this.disciplineName = '';
     this.validationState = '';
-    this.validationType = '';
     this.validationList = [];
   }
 }

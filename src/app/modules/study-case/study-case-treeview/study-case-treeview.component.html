@@ -124,7 +124,7 @@
       class="toolbar-item-shadow"
     >
       <mat-icon
-        class="toolbar-icon status-off"
+        class="toolbar-icon-font-aw status-off"
         aria-hidden="false"
         aria-label="Hide status"
         matTooltip="Hide status"
@@ -139,14 +139,43 @@
       class="toolbar-item-shadow"
     >
       <mat-icon
-        class="toolbar-icon status-on"
+        class="toolbar-icon-font-aw"
         aria-hidden="false"
         aria-label="Show status"
         matTooltip="Show status"
       >
-        visibility_off</mat-icon
+      visibility_off
+     </mat-icon
       >
     </button>
+    <button
+    mat-button
+    (click)="onHideState()"
+    *ngIf="showState"
+    class="toolbar-item-shadow"
+  >
+  <i 
+  class="fas fa-check-square toolbar-icon-font-aw status-off" 
+  aria-hidden="false"
+  aria-label="Hide validation state"
+  matTooltip="Hide validation state"
+  >
+
+  </i>
+  </button>
+  <button
+    mat-button
+    (click)="onShowState()"
+    *ngIf="!showState"
+    class="toolbar-item-shadow"
+  >
+  <i 
+  class="far fa-check-square toolbar-icon-font-aw status-on"
+  aria-hidden="false"
+  aria-label="Show validation state"
+  matTooltip="Show validation state">
+  </i>
+  </button>
     <button mat-button (click)="onShowRoomUser()" class="toolbar-item-shadow">
       <mat-icon
         [matBadge]="'+' + (numberOfUserRoom - 1)"
@@ -179,8 +208,8 @@
     <button
       mat-button
       aria-hidden="false"
-      aria-label="Information about calculation status"
-      matTooltip="Information about calculation status"
+      aria-label="Information about calculation status and validation state"
+      matTooltip="Information about calculation status and validation state"
       class="toolbar-item-shadow"
       (click)="onShowStatusInformation()"
     >
@@ -236,13 +265,29 @@
               [ngClass]="'execution-bullet ' + node.status"
             >
               {{ node.status[0] }}
+          
             </div>
+            <mat-icon 
+            *ngIf="showState && !node.isValidated" 
+            style="margin-left: 4%; cursor: default;"
+            style="color: darkgrey;"
+            >
+            highlight_off
+           </mat-icon>
+
+            <mat-icon 
+            *ngIf="showState && node.isValidated" 
+            mat-button style="margin-left: 4%; cursor: default;"
+            style="color: #08875b;"
+            >
+            check_circle
+           </mat-icon> 
             <button
               [id]="'btn-treeview-node-' + node.fullNamespace"
               (click)="nodeClick(node)"
               mat-button
               [matTooltip]="
-                node.modelsFullPathList | ontologyDisciplineConverter
+                node.modelsFullPathList  | ontologyDisciplineConverter 
               "
               matTooltipClass="custom-tooltip-class"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
@@ -253,6 +298,7 @@
               >
               </i>
               {{ node.name }}
+                      
               <mat-icon
                 *ngIf="!node.isConfigured"
                 style="font-size: 8px; width: 12px !important"
@@ -261,6 +307,9 @@
                 grade
               </mat-icon>
             </button>
+            
+       
+          
           </div>
         </li>
       </mat-nested-tree-node>
@@ -292,10 +341,29 @@
               [id]="'text-treeview-status-' + node.fullNamespace"
               *ngIf="node.status.length > 0 && showStatus"
               [ngClass]="'execution-bullet ' + node.status"
-              style="margin-left: 4px"
+              style="margin-left: 4px; cursor: default;"
+              [matTooltip]="node.status"
             >
               {{ node.status[0] }}
             </div>
+            <mat-icon 
+            *ngIf="showState && !node.isValidated"
+            class="iconValid"
+            style="color: darkgrey;"
+            matTooltip="Invalidate"
+            >
+            highlight_off
+           </mat-icon>
+
+            <mat-icon 
+            *ngIf="showState && node.isValidated" 
+            mat-button 
+            class="iconValid"
+            style="color: #08875b;"
+            matTooltip="Validated"
+            >
+            check_circle
+           </mat-icon>  
             <button
               [id]="'btn-treeview-node-' + node.fullNamespace"
               (click)="nodeClick(node)"
@@ -315,7 +383,9 @@
                 "
               >
               </i>
-              {{ node.name }}
+             {{ node.name }}
+
+                      
               <span
                 *ngIf="node.isRoot && isTreeViewFiltered"
                 style="
@@ -342,6 +412,8 @@
                 grade
               </mat-icon>
             </button>
+             
+          
           </div>
           <ul [ngClass]="node.isLastChild ? 'last-child-left-border' : null">
             <div *ngIf="treeControl.isExpanded(node)">

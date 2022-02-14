@@ -6,7 +6,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { PostProcessingBundle } from 'src/app/models/post-processing-bundle.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
-import { ValidationType, ValidationState } from 'src/app/models/study-case-validation.model';
+import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,7 +28,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayFilterButton: boolean;
   public displayFilters: boolean;
   public isCalculationRunning: boolean;
-  public isDisciplineGraphValidated: boolean;
+  public isDisciplineValidated: boolean;
   calculationChangeSubscription: Subscription;
 
   constructor(
@@ -45,7 +45,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayFilters = false;
     this.calculationChangeSubscription = null;
     this.isCalculationRunning = false;
-    this.isDisciplineGraphValidated = false;
+    this.isDisciplineValidated = false;
   }
 
   ngOnInit() {
@@ -66,10 +66,10 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
       this.isCalculationRunning = calculationRunning;
     });
 
-    if (this.studyCaseValidationService.studyGraphValidationDict !== null && this.studyCaseValidationService.studyGraphValidationDict !== undefined) {
-      if (this.studyCaseValidationService.studyGraphValidationDict.hasOwnProperty(`${this.fullNamespace}.${this.postProcessingBundle.name}`)) {
-        if (this.studyCaseValidationService.studyGraphValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`][0].validationState == ValidationState.VALIDATED) {
-          this.isDisciplineGraphValidated = true;
+    if (this.studyCaseValidationService.studyValidationDict !== null && this.studyCaseValidationService.studyValidationDict !== undefined) {
+      if (this.studyCaseValidationService.studyValidationDict.hasOwnProperty(`${this.fullNamespace}.${this.postProcessingBundle.name}`)) {
+        if (this.studyCaseValidationService.studyValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`][0].validationState == ValidationTreeNodeState.VALIDATED) {
+          this.isDisciplineValidated = true;
         }
       }
     }
@@ -118,14 +118,13 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
     dialogData.disciplineName = this.postProcessingBundle.name;
     dialogData.namespace = this.fullNamespace;
-    dialogData.validationType = ValidationType.GRAPH
-    if (this.isDisciplineGraphValidated) {
-      dialogData.validationState = ValidationState.VALIDATED
+    if (this.isDisciplineValidated) {
+      dialogData.validationState = ValidationTreeNodeState.VALIDATED
     } else {
-      dialogData.validationState = ValidationState.NOT_VALIDATED
+      dialogData.validationState = ValidationTreeNodeState.INVALIDATED
     }
 
-    dialogData.validationList = this.studyCaseValidationService.studyGraphValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`];
+    dialogData.validationList = this.studyCaseValidationService.studyValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`];
 
     const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
       disableClose: true,
@@ -140,7 +139,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
 
       if ((resultData !== null) && (resultData !== undefined)) {
         if (resultData.cancel !== true) {
-          this.isDisciplineGraphValidated = !this.isDisciplineGraphValidated;
+          this.isDisciplineValidated = !this.isDisciplineValidated;
         }
       }
     });

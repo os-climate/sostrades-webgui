@@ -18,7 +18,46 @@
     <span class="treenode-title" style="margin-left: 5px">{{
       treeNode.name
     }}</span>
+    <span style="margin-left: 30px;"> 
+      State :    
+    </span>
+      <button 
+        mat-button 
+        *ngIf="treeNode.isValidated" 
+       class="stateButton"
+       color="success" 
+       > Validated 
+        </button>
+  
+        <button 
+        mat-button 
+        *ngIf="!treeNode.isValidated" 
+        class="stateButton"
+        color="undetermined"
+        > Not validated 
+        </button>
     <span class="spacer"></span>
+    <button
+    mat-raised-button
+    *ngIf="!treeNode.isValidated"  
+    (click)="onClickDataValidation($event)" 
+    class="validationButton"
+    style="margin-right: 8px;"
+    color="accent"
+     >
+       Validate data
+    </button>
+    
+    <button
+    mat-raised-button  
+    *ngIf="treeNode.isValidated"  
+    (click)="onClickDataValidation($event)"
+    class="validationButton"
+    style="margin-right: 1px;"
+    color="accent"
+      >
+      Invalidate data
+  </button>
   </div>
 
   <div #PlotsContainer class="plot-body" (scroll)="scrollPlots()">

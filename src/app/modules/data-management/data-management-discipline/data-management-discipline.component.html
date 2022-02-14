@@ -16,13 +16,6 @@
         {{ disciplineData.modelNameFullPath[0] | ontologyDisciplineConverter }}
         <span class="spacer"></span>
 
-        <mat-slide-toggle *ngIf="!filterService.filters.showSimpleDisplay"
-          [ngModel]="isDisciplineDataValidated"
-          (click)="onClickDataValidation($event)"
-          >{{
-            isDisciplineDataValidated ? "Data Validated" : "Data not Validated"
-          }}
-        </mat-slide-toggle>
       </mat-panel-title>
     </mat-expansion-panel-header>
 
@@ -106,7 +99,7 @@
     >
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Input Parameters ({{
+          Input parameters ({{
             countItemsInDict(
               disciplineData.disciplinaryInputs,
               filterService.filters.userLevel,
@@ -151,7 +144,7 @@
     >
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Output Parameters ({{
+          Output parameters ({{
             countItemsInDict(
               disciplineData.disciplinaryOutputs,
               filterService.filters.userLevel,

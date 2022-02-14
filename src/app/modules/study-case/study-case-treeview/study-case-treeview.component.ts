@@ -71,6 +71,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   public usersInRoom: User[];
   public numberOfUserRoom: number;
   public showStatus: boolean;
+  public showState : boolean;
   public executionStarted: boolean;
   public showChangesButtons: boolean;
   public studyIsDone: boolean;
@@ -462,6 +463,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.isSearchOption = false;
     this.nodeClick(this.currentSelectedNode);
     this.applyFilterValue(this.filterTreeInput)
+  }
+  onShowState() {
+    this.showState = true;
+  }
+
+  onHideState() {
+    this.showState = false;
   }
 
   initExecution() {
