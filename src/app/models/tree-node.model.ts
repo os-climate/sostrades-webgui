@@ -69,6 +69,7 @@ export class TreeNode implements INodeDataValueChange {
   postProcessingBundle: PostProcessingBundle[];
   private _isRoot: boolean;
   public markdownDocumentation: MardownDocumentation[];
+  isValidated: boolean;
 
   constructor(
     public name: string,
@@ -89,6 +90,11 @@ export class TreeNode implements INodeDataValueChange {
     this.isLastChild = true;
     this.isConfigured = false;
     this._isRoot = isRoot;
+
+    if (this.isValidated == undefined || this.isValidated == null){
+      this.isValidated =false;
+    }
+  
     this.status = DisciplineStatus.STATUS_NONE;
     if (jsonData !== null && jsonData !== undefined) {
       this.data = CreateNodeDataDictionary(jsonData, this, false);

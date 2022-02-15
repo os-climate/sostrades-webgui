@@ -27,6 +27,19 @@
         <div class="legend-text">Input data</div>
       </div>
   </div>
+  <br>
+<div class="title">Validation state</div>
+  <div style="display: flex; flex-direction: column">
+    <div style="display: flex;"> 
+      <mat-icon  style="color: #08875b;">check_circle</mat-icon> 
+      <span class="legend-text" style="margin-top: 3px;">Validated</span> 
+    </div> 
+    <div  style="display: flex;">
+      <mat-icon style="color: darkgrey;"> highlight_off</mat-icon>
+        <span class="legend-text" style="margin-top: 3px;">Not validated</span>
+    </div>   
+ 
+</div>
   </mat-dialog-content>
   <div mat-dialog-actions style="align-self: center">
     <button mat-button (click)="okClick()">Ok</button>

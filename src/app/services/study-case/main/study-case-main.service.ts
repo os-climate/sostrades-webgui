@@ -11,6 +11,7 @@ import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
 import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
+import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -134,6 +135,7 @@ export class StudyCaseMainService extends MainHttpService {
 
         this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
           res => {
+            this.validatedUpdated(res);
             loaderObservable.next(study);
           }, error => {
             loaderObservable.next(study);
@@ -313,5 +315,28 @@ export class StudyCaseMainService extends MainHttpService {
     };
 
     return this.http.post(url, data, options);
+  }
+
+  public validatedUpdated(studyValidationDict:any ){
+  
+    Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach(
+      element => 
+      {
+        const studyCaseValidation= this.studyCaseValidationService.studyValidationDict[this.studyCaseDataService.loadedStudy.studyCase.id, element.fullNamespace]
+         
+          if (studyCaseValidation != undefined ||  studyCaseValidation != null)
+          {
+            const validatedOrNotValidated = studyCaseValidation[0].validationState
+              
+              if (validatedOrNotValidated == ValidationTreeNodeState.VALIDATED) 
+                {
+                  element.isValidated = true
+                }
+               else
+                {
+                element.isValidated = false
+                }
+          }
+     });
   }
 }

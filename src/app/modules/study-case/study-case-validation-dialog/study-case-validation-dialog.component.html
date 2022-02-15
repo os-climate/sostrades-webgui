@@ -1,9 +1,8 @@
 <div class="flex-container">
-  <h1 mat-dialog-title>{{ data.validationType | titlecase }} Validation</h1>
+  <h1 mat-dialog-title> Validation</h1>
   <div class="message-container">
     <div class="message">
-      Namespace : {{ data.namespace }}&emsp;Discipline name :
-      {{ data.disciplineName | ontologyDisciplineConverter }}
+      Namespace : {{ treeNodedata.fullNamespace }}&emsp; 
     </div>
   </div>
 
@@ -23,18 +22,9 @@
         ></textarea>
       </mat-form-field>
 
-      <button
-        mat-flat-button
-        color="accent"
-        aria-label="Create Group"
-        (click)="validateData()"
-        style="margin-bottom: 20px"
-        [disabled]="!validationForm.valid"
-      >
-        {{ buttonValidationText }}
-      </button>
+      
     </div>
-    <div class="history-zone">
+    <div>
       <div class="table-zone">
         <table mat-table #table [dataSource]="dataSourceChanges" matSort>
           <!-- User state Column -->
@@ -59,11 +49,9 @@
           <ng-container matColumnDef="validationState">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
             <td mat-cell *matCellDef="let element">
-              {{
-                element.validationState == validationStates.VALIDATED
-                  ? "Validation"
-                  : "Invalidation"
-              }}
+              {{ element.validationState == validationStates.VALIDATED
+                ? "Validation"
+                : "Invalidation"  }}
             </td>
           </ng-container>
 
@@ -96,8 +84,19 @@
       </div>
     </div>
   </div>
+  
 
-  <div mat-dialog-actions>
+  <div mat-dialog-actions style="display: inline-block;">
     <button mat-button (click)="onCancelClick()">Cancel</button>
-  </div>
+ 
+  <button
+        mat-flat-button
+        color="accent"
+        aria-label="Create Group"
+        (click)="validateData()"
+        [disabled]="!validationForm.valid"
+      >
+        {{ buttonValidationText }}
+      </button> 
+    </div>
 </div>

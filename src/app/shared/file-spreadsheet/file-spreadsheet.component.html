@@ -36,13 +36,14 @@
         (nodeData.value !== undefined &&
           nodeData.value !== null &&
           !isReadOnly) ||
-        (isListType && !isReadOnly)
+        (isListType && !isReadOnly)||
+        (isArrayType && !isReadOnly)
       "
       color="accent"
       aria-label="Edit data"
       matTooltip="Edit data"
       (click)="onClickEdit()"
-      [disabled]="(nodeData.value === null && !isListType)"
+      [disabled]="(nodeData.value === null && !isListType && !isArrayType)"
       class="custom-button"
     >
       <div class="custom-button-container">

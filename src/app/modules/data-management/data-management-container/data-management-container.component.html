@@ -14,19 +14,56 @@
     <div style="min-width: 8px"></div>
 
     <span class="spacer"></span>
+    
     <i [className]="studyCaseDataService.iconMapping.get(treeNodeData.nodeType)">
     </i>
-    <span class="treenode-title" style="margin-left: 5px">{{
-      treeNodeData.name
-    }}</span>
+    <span class="treenode-title" style="margin-left: 5px">
+      {{treeNodeData.name}}</span>
+  <span style="margin-left: 30px;"> 
+    State :    
+  </span>
+    <button 
+      mat-button 
+      *ngIf="treeNodeData.isValidated" 
+     style="cursor: default;margin-left: 4px;" 
+     color="success" 
+     > Validated 
+      </button>
+
+      <button 
+      mat-button 
+      *ngIf="!treeNodeData.isValidated" 
+      style=" cursor: default; margin-left: 4px;" 
+      color="undetermined"
+      > Not validated 
+      </button>
     <span class="spacer"></span>
+    <button
+    mat-raised-button
+    *ngIf="!treeNodeData.isValidated"  
+    (click)="onClickDataValidation($event)" 
+    color="accent"
+    style="height: 25px;line-height: 5px;"  
+     >
+       Validate data
+    </button>
+    
+    <button
+    mat-raised-button  
+    *ngIf="treeNodeData.isValidated"  
+    (click)="onClickDataValidation($event)" 
+    color="accent"
+    style="height: 25px;line-height: 5px;"  
+      >
+      Invalidate data
+  </button>
     <button
       mat-button
       aria-hidden="false"
       aria-label="Information about configuration"
       matTooltip="Information about configuration"
       class="toolbar-item-shadow"
-      style="margin-right: 5px"
+      style="margin-right: 5px; margin-left: 2%"
       (click)="onShowConfigureInformation()"
     >
       <div style="width: 24px; height: 24px; line-height: 24px">

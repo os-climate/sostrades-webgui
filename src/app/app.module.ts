@@ -105,7 +105,6 @@ import { OntologyParametersComponent } from './modules/ontology/ontology-paramet
 import { OntologyProcessesComponent } from './modules/ontology/ontology-processes/ontology-processes.component';
 import { OntologyModelsComponent } from './modules//ontology/ontology-models/ontology-models.component';
 import { StudyCaseValidationDialogComponent } from './modules/study-case/study-case-validation-dialog/study-case-validation-dialog.component';
-import { StudyCaseValidationSumUpComponent } from './modules/study-case/study-case-validation-sum-up/study-case-validation-sum-up.component';
 import { SpreadsheetComponent } from './modules/spreadsheet/spreadsheet.component';
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ScientificNotationPipe } from './pipes/scientific-notation/scientific-notation.pipe';
@@ -191,7 +190,6 @@ registerLocaleData(fr);
     OntologyProcessesComponent,
     OntologyModelsComponent,
     StudyCaseValidationDialogComponent,
-    StudyCaseValidationSumUpComponent,
     SpreadsheetComponent,
     ResetPasswordComponent,
     ScientificNotationPipe,

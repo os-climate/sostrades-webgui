@@ -32,6 +32,7 @@ export class FileSpreadsheetComponent implements OnInit {
   public displayShowButton: boolean;
   public isReadOnly: boolean;
   public isListType: boolean;
+  public isArrayType: boolean;
 
   constructor(
     private loadingDialogService: LoadingDialogService,
@@ -45,6 +46,7 @@ export class FileSpreadsheetComponent implements OnInit {
     this.fileData = null;
     this.isReadOnly = true;
     this.isListType = false;
+    this.isArrayType = false;
   }
 
   ngOnInit(): void {
@@ -56,6 +58,11 @@ export class FileSpreadsheetComponent implements OnInit {
       if (this.nodeData.type.includes('list')) {
         this.isListType = true;
       }
+
+      if (this.nodeData.type.includes('array')) {
+        this.isArrayType = true;
+      }
+
     }
   }
 
@@ -210,7 +217,6 @@ export class FileSpreadsheetComponent implements OnInit {
 
     const updateParameter = this.studyCaselocalStorageService.
       getOneStudyParameterFromLocalStorage(this.studyCaseDataService.loadedStudy.studyCase.id.toString(), this.nodeData.identifier);
-
     const spreadsheetDialogData: SpreadsheetDialogData = new SpreadsheetDialogData();
     spreadsheetDialogData.title = name;
     spreadsheetDialogData.nodeData = this.nodeData;
@@ -219,7 +225,7 @@ export class FileSpreadsheetComponent implements OnInit {
     spreadsheetDialogData.readOnly = readOnly;
 
     if (this.nodeData) {
-      if (this.isListType) {
+      if (this.isListType || (this.isArrayType && (this.nodeData.value === null && updateParameter === null))) {
         const dialogRef = this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData
