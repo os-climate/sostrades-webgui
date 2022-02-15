@@ -6,6 +6,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { PostProcessingBundle } from 'src/app/models/post-processing-bundle.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
+import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 
 @Component({
   selector: 'app-post-processing-bundle',
@@ -24,11 +25,13 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayFilters: boolean;
   public isCalculationRunning: boolean;
   calculationChangeSubscription: Subscription;
+  validationChangeSubscription: Subscription;
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
     private postProcessingService: PostProcessingService,
     private calculationService: CalculationService,
+    private studyCaseValidationService: StudyCaseValidationService,
     private snackbarService: SnackbarService) {
     this.loadingMessage = '';
     this.displayProgressBar = false;
@@ -36,6 +39,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayFilterButton = false;
     this.displayFilters = false;
     this.calculationChangeSubscription = null;
+    this.validationChangeSubscription = null;
     this.isCalculationRunning = false;
   }
 
@@ -56,11 +60,17 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
     });    
+    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation=>{
+      this.plot();
+    });
   }
 
   ngOnDestroy() {
     if ((this.calculationChangeSubscription !== null) && (this.calculationChangeSubscription !== undefined)) {
       this.calculationChangeSubscription.unsubscribe();
+    }
+    if ((this.validationChangeSubscription !== null) && (this.validationChangeSubscription !== undefined)) {
+      this.validationChangeSubscription.unsubscribe();
     }
   }
 
