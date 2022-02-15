@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Location } from "@angular/common";
 import { StudyCaseValidation } from "src/app/models/study-case-validation.model";
@@ -11,6 +11,7 @@ import { DataHttpService } from "../http/data-http/data-http.service";
 })
 export class StudyCaseValidationService extends DataHttpService {
   public studyValidationDict: { [id: string]: StudyCaseValidation[] };
+  onValidationChange: EventEmitter<StudyCaseValidation> = new EventEmitter();
 
   constructor(private http: HttpClient, private location: Location) {
     super(location, "study-case-validation");
@@ -62,6 +63,7 @@ export class StudyCaseValidationService extends DataHttpService {
         map((response) => {
           const newValidation = StudyCaseValidation.Create(response);
           this.addValidationToLocalList(newValidation, true);
+          this.onValidationChange.emit(newValidation);
           return response;
         })
       );
