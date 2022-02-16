@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "~11.2.11",
     "@angular/router": "~11.2.11",
     "@auth0/angular-jwt": "~5.0.2",
+    "@fortawesome/fontawesome-free": "^6.0.0",
     "@jspreadsheet/autowidth": "~1.0.1",
     "@liradb2000/markdown-it-mermaid": "~0.4.2",
     "angular-resize-event": "~2.1.0",
