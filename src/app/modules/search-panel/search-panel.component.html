@@ -1,5 +1,5 @@
 <h2 class="title">
-  <mat-icon class="fas fa-search filter-icon" style="margin-right: 10px;"></mat-icon>
+  <mat-icon class="fa-solid fa-magnifying-glass filter-icon" style="margin-right: 10px;"></mat-icon>
   Search results
 </h2>
 <div class="container title" *ngIf="isDataEmpty">
@@ -7,12 +7,12 @@
 </div>
 <div class="container" #scrollframe *ngIf="!isDataEmpty">
   <mat-table class="table" #table [dataSource]="dataSourceRef">
- 
+
 
     <!-- identifier Column -->
     <ng-container matColumnDef="identifier">
       <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="custom-font" 
+      <mat-cell *matCellDef="let element" class="custom-font"
         [matTooltip]="element.displayName" matTooltipClass="custom-tooltip-class"
         style="word-wrap: break-word;">
         {{ element.displayName }}
@@ -31,7 +31,7 @@
     <!-- namespace Column -->
     <ng-container matColumnDef="namespace">
       <mat-header-cell *matHeaderCellDef> Namespace </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="custom-font" 
+      <mat-cell *matCellDef="let element" class="custom-font"
         [matTooltip]="element.parent.fullNamespace" matTooltipClass="custom-tooltip-class"
         style="word-wrap: break-word; ">
           {{ element.parent.fullNamespace }}
@@ -64,8 +64,8 @@
         </div>
       </mat-cell>
     </ng-container>
-   
-    
+
+
     <mat-header-row
       *matHeaderRowDef="displayedColumns; sticky: true"
       class="custom-header"
