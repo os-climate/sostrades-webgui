@@ -54,26 +54,27 @@
 
   <div>
     <button mat-button [matMenuTriggerFor]="menuUser" aria-label="user menu">
-      <i class="fas fa-ellipsis-v"> </i>
+       <i class="fa-solid fa-ellipsis-vertical"></i>
     </button>
     <mat-menu #menuUser="matMenu">
       <button mat-menu-item routerLink="/user-management" *ngIf="hasAccessToAdmin">
-        <i class="fas fa-user" style="padding-right: 10px;" aria-hidden="true">
+        <i class="fa-solid fa-user" style="padding-right: 10px;" aria-hidden="true">
         </i>
+
         <span>User Management</span>
       </button>
       <button mat-menu-item routerLink="/processes-management" *ngIf="hasAccessToAdmin">
-        <i class="fas fa-cogs" style="padding-right: 10px;" aria-hidden="true">
+        <i class="fa-regular fa-gears" style="padding-right: 10px;" aria-hidden="true">
         </i>
         <span>Processes Management</span>
       </button>
       <button mat-menu-item routerLink="/execution-management" *ngIf="hasAccessToAdmin">
-        <i class="fas fa-server" style="padding-right: 10px;" aria-hidden="true">
+        <i class="fa-solid fa-server" style="padding-right: 10px;" aria-hidden="true">
         </i>
         <span>Execution Dashboard</span>
       </button>
       <button mat-menu-item (click)="logout()">
-        <i class="fas fa-sign-out" style="padding-right: 10px;" aria-hidden="true">
+        <i class="fa-solid fa-right-from-bracket" style="padding-right: 10px;" aria-hidden="true">
         </i>
         <span>Logout</span>
       </button>
