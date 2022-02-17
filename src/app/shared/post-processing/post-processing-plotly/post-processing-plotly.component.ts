@@ -27,6 +27,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
 
 
   ngOnInit() {
+    console.log(this.plotData.layout)
     if (this.plotData !== null && this.plotData !== undefined) {
       if (this.studyCaseValidationService.studyValidationDict !== null && this.studyCaseValidationService.studyValidationDict !== undefined) {
         if (this.studyCaseValidationService.studyValidationDict.hasOwnProperty(`${this.fullNamespace}`)) {
@@ -63,26 +64,26 @@ export class PostProcessingPlotlyComponent implements OnInit {
       if (this.plotData.logo_official) {
         if (this.studyCaseValidation !== null && this.studyCaseValidation !== undefined) {
           if (this.studyCaseValidation.validationState === 'Validated') {
-            const logo_official ={
-            source:"assets/OFFICIAL.PNG",
-            xref:"paper", yref:"paper",
-            x:0, y:1.3,
-            sizex:0.2, sizey:0.2,
-            name:"logo_SOS_trades",
-            opacity:0.8
-          };
+          //   const logo_official ={
+          //   source:"assets/OFFICIAL.PNG",
+          //   xref:"paper", yref:"paper",
+          //   x:0, y:1.3,
+          //   sizex:0.2, sizey:0.2,
+          //   name:"logo_SOS_trades",
+          //   opacity:0.8
+          // };
           const validation_annotation = {
             align: "left",
             bordercolor: "black",
             borderwidth: 1,
             showarrow: false,     
-            text: "validated by " + this.studyCaseValidation.userDepartment,
+            text: "OFFICIAL <br>validated by " + this.studyCaseValidation.userDepartment,
             x: 0,
             xref: "paper",
             y: 1.15,
             yref: "paper"
           };
-          this.plotData.layout.images.push(logo_official);
+          // this.plotData.layout.images.push(logo_official);
           if (this.plotData.layout.annotations === undefined) {
             this.plotData.layout.annotations = [validation_annotation];
           } else {
