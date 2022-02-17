@@ -264,22 +264,25 @@
               *ngIf="node.status.length > 0 && showStatus"
               style="margin-left: 4px"
               [ngClass]="'execution-bullet ' + node.status"
+              [matTooltip]="node.status"
             >
               {{ node.status[0] }}
 
             </div>
-            <mat-icon
+            <mat-icon 
             *ngIf="showState && !node.isValidated"
-            style="margin-left: 4%; cursor: default;"
+            class="iconValid" 
             style="color: darkgrey;"
+            matTooltip="INVALIDATED"
             >
             highlight_off
            </mat-icon>
 
-            <mat-icon
+            <mat-icon 
             *ngIf="showState && node.isValidated"
-            mat-button style="margin-left: 4%; cursor: default;"
+            class="iconValid"  
             style="color: #08875b;"
+            matTooltip="VALIDATED"
             >
             check_circle
            </mat-icon>
@@ -351,7 +354,7 @@
             *ngIf="showState && !node.isValidated"
             class="iconValid"
             style="color: darkgrey;"
-            matTooltip="Invalidate"
+            matTooltip="INVALIDATED"
             >
             highlight_off
            </mat-icon>
@@ -361,7 +364,7 @@
             mat-button
             class="iconValid"
             style="color: #08875b;"
-            matTooltip="Validated"
+            matTooltip="VALIDATED"
             >
             check_circle
            </mat-icon>
