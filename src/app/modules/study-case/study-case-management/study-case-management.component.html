@@ -44,7 +44,7 @@
       matTooltip="Delete Study case(s) selected"
       (click)="deleteStudiesValidation(selection.selected)"
     >
-      <i class="far fa-trash-alt fa-fw"> </i>
+      <i class="fa-regular fa-trash-can fa-fw"> </i>
     </button>
   </div>
 
@@ -173,7 +173,7 @@
               matTooltip="Load study case"
               (click)="loadStudy(element)"
             >
-              <i class="far fa-folder-open fa-fw"> </i>
+              <i class="fa-regular fa-folder-open fa-fw"> </i>
             </button>
 
             <button
@@ -184,7 +184,7 @@
               matTooltip="Delete Study case"
               (click)="deleteStudiesValidation([element])"
             >
-              <i class="far fa-trash-alt fa-fw"> </i>
+              <i class="fa-regular fa-trash-can fa-fw"> </i>
             </button>
             <button
               style="margin-right: 5px"
@@ -194,7 +194,7 @@
               matTooltip="Study case access link"
               (click)="accessLink(element)"
             >
-              <i class="fas fa-external-link-alt fa-fw"> </i>
+              <i class="fa-solid fa-up-right-from-square fa-fw"> </i>
             </button>
             <button
               style="margin-right: 5px"
@@ -209,7 +209,7 @@
               matTooltip="Download study case data"
               (click)="downloadStudy(element)"
             >
-              <i class="fas fa-download fa-fw"> </i>
+              <i class="fa-solid fa-download fa-fw"> </i>
             </button>
             <button
               style="margin-right: 5px"
@@ -219,7 +219,7 @@
               matTooltip="Share study case with users and groups"
               (click)="studyAccess(element)"
             >
-              <i class="fas fa-user-plus fa-fw"> </i>
+              <i class="fa-solid fa-user-plus fa-fw"> </i>
             </button>
           </td>
         </ng-container>
