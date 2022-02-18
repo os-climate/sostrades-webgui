@@ -197,6 +197,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   unlockSaveButton() {
     let doSave = true;
     let atLeastOneColNotEmpty = false;
+    //check that array have at least one row not empty
     if (this.data.nodeData.type.includes('array')) {
       const columnData = this.jExcelSpreadSheet.getColumnData(0);
       columnData.forEach((element) => {
@@ -263,7 +264,32 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
                 errorRecords[columnName].errorInt = `Integer intended `;
               }
             }
+              
+            //check value array and float format in it
+            if (columnDataFrameDescriptor.columnType.includes('array')) {
+              let array_data = rec.newValue;
+              if (rec.newValue !== undefined && rec.newValue !== null) {
+                let array_data_str = array_data.toString().trim();
+                if (array_data_str.startsWith("[")){
+                  array_data_str = array_data_str.replace("[", "");
+                }
+                if (array_data_str.endsWith("]")){
+                  array_data_str = array_data_str.replace("]", "");
+                }
+                let array_data_check = array_data_str.split(",");
+                for(let i = 0;i<array_data_check.length;i++){
+                  array_data_check[i] = array_data_check[i].trim();
+                  if (!TypeCheckingTools.isFloat(array_data_check[i])) {
+                    if (!(columnName in errorRecords)) {
+                      errorRecords[columnName] = new JSpreadSheetValueError();
+                    }
+                    errorRecords[columnName].errorFloat = `Array of Float intended `;
+                  }
+                }
+              }
+            }
           }
+          
         }
       });
     }
