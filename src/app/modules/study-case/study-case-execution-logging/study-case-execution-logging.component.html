@@ -1,7 +1,7 @@
 <mat-toolbar class="toolbar" style="padding: 18px 16px">
 
   <button
-    
+
     style="margin-right: 5px"
     mat-button
     color="warn"
@@ -10,7 +10,7 @@
   >
     <div style="width: 24px; height: 24px; line-height: 24px">
       <i
-        class="fas fa-download fa-fw toolbar-icon-font-aw"
+        class="fa-solid fa-download fa-fw toolbar-icon-font-aw"
         aria-hidden="false"
         aria-label="Download raw study logs"
         matTooltip="Download raw study logs"
@@ -58,7 +58,7 @@
   >
     <div style="width: 24px; height: 24px; line-height: 24px">
       <i
-        class="fas fa-anchor fa-fw toolbar-icon-font-aw"
+        class="fa-solid fa-anchor fa-fw toolbar-icon-font-aw"
         aria-hidden="false"
         aria-label="Anchor to bottom"
         matTooltip="Anchor to bottom"
@@ -83,7 +83,7 @@
             ? 'fas fa-compress fa-fw toolbar-icon-font-aw'
             : 'fas fa-expand fa-fw toolbar-icon-font-aw'
         "
-        class="fas fa-bookmark fa-fw toolbar-icon-font-aw"
+        class="fa-solid fa-bookmark fa-fw toolbar-icon-font-aw"
         aria-hidden="false"
         aria-label="Change log zone size"
         matTooltip="Change log zone size"
@@ -95,7 +95,7 @@
 
 <div class="container" #scrollframe>
   <mat-table class="table" #table [dataSource]="dataSourceRef">
- 
+
 
     <!-- Message Column -->
     <ng-container matColumnDef="message">
@@ -105,7 +105,7 @@
       </mat-cell>
     </ng-container>
 
-   
+
     <!-- Download log Column -->
 
     <mat-header-row

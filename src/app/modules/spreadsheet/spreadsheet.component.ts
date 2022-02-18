@@ -90,7 +90,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         this.initializeJSpreadSheet();
       }, 0);
-      
+
     } else {
       if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null && this.data.file === null)) {
         this.createEmptyArray();
@@ -140,7 +140,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     newRows.forEach(row => {
       this.rowData.push(row);
     });
-    
+
   }
 
   addRowsByChunk(results) {
@@ -333,7 +333,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     } else {
-      
+
         // Saving dataframe, array or dict type
         this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.data.nodeData.displayName}.csv`);
         // Generate string b64 file for local storage
@@ -350,22 +350,20 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
           new Date());
 
         updateItem.newValue = this.generateBase64file();
-        
+
         if(this.data.nodeData.type.includes('array')) {
           this.data.nodeData.value = '://ndarray';
         }
-        
+
         // Saving edited table in local storage
         this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
           updateItem,
           this.data.nodeData.identifier,
           this.studyCaseDataService.loadedStudy.studyCase.id.toString());
-
-        this.loadingDialogService.closeLoading();
-        this.snackbarService.showInformation(`${this.data.nodeData.displayName} value saved in temporary changes`);
-        this.dialogRef.close(this.data);
-      
     }
+    this.loadingDialogService.closeLoading();
+    this.snackbarService.showInformation(`${this.data.nodeData.displayName} value saved in temporary changes`);
+    this.dialogRef.close(this.data);
 
   }
 

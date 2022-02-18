@@ -67,13 +67,13 @@ export class StudyCaseValidationDialogComponent implements OnInit {
 
   validateData() {
     const validComment = this.validationForm.value.validationComment;
-    let valid = ""
+    let validation = ""
 
 if(this.treeNodedata.isValidated){
-  valid = this.validationStates.INVALIDATED
+  validation = this.validationStates.INVALIDATED
 }
 else{
-  valid = this.validationStates.VALIDATED
+  validation = this.validationStates.VALIDATED
 } 
     this.loadingDialogService.showLoading(
       `Saving discipline validation change`
@@ -83,14 +83,14 @@ else{
         this.studyCaseDataService.loadedStudy.studyCase.id,
         this.treeNodedata.fullNamespace,
         validComment,
-        valid   
+        validation   
         
         )
       .subscribe(
         (res) => {
           this.loadingDialogService.closeLoading();
           this.dialogRef.close(this.treeNodedata);
-          if (valid == ValidationTreeNodeState.VALIDATED) {
+          if (validation == ValidationTreeNodeState.VALIDATED) {
             this.snackbarService.showInformation(`${this.treeNodedata.name} datas' validation successfully done`);
           } else {
             this.snackbarService.showInformation(`${this.treeNodedata.name} datas' invalidation successfully done`);

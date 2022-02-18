@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
+import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 
 declare let Plotly: any;
 
@@ -10,19 +12,28 @@ declare let Plotly: any;
 export class PostProcessingPlotlyComponent implements OnInit {
 
   @Input() plotData: any;
+  @Input() fullNamespace: string;
 
   @ViewChild('PlotlyPlaceHolder', { static: true }) private PlotlyPlaceHolder: ElementRef;
 
   public isPlotLoading: boolean;
+  public studyCaseValidation: StudyCaseValidation;
 
-  constructor() {
+  constructor(private studyCaseValidationService: StudyCaseValidationService) {
     this.isPlotLoading = true;
+    this.studyCaseValidation = null;
+  
   }
 
 
   ngOnInit() {
+    console.log(this.plotData.layout)
     if (this.plotData !== null && this.plotData !== undefined) {
-
+      if (this.studyCaseValidationService.studyValidationDict !== null && this.studyCaseValidationService.studyValidationDict !== undefined) {
+        if (this.studyCaseValidationService.studyValidationDict.hasOwnProperty(`${this.fullNamespace}`)) {
+          this.studyCaseValidation =this.studyCaseValidationService.studyValidationDict[`${this.fullNamespace}`][0];
+        }
+      }
       const downloadIcon = {
         width: 24,
         height: 24,
@@ -49,20 +60,44 @@ export class PostProcessingPlotlyComponent implements OnInit {
         opacity:0.5
       };
       this.plotData.layout.images = [logo];
-      
+      let forceNotOfficialWatermark = false;
       if (this.plotData.logo_official) {
-      	const logo_official ={
-        source:"assets/OFFICIAL.PNG",
-        xref:"paper", yref:"paper",
-        x:0.005, y:0.995,
-        sizex:0.2, sizey:0.2,
-        name:"logo_SOS_trades",
-        opacity:0.8
-      };
-      this.plotData.layout.images.push(logo_official);
+        if (this.studyCaseValidation !== null && this.studyCaseValidation !== undefined) {
+          if (this.studyCaseValidation.validationState === 'Validated') {
+          //   const logo_official ={
+          //   source:"assets/OFFICIAL.PNG",
+          //   xref:"paper", yref:"paper",
+          //   x:0, y:1.3,
+          //   sizex:0.2, sizey:0.2,
+          //   name:"logo_SOS_trades",
+          //   opacity:0.8
+          // };
+          const validation_annotation = {
+            align: "left",
+            bordercolor: "black",
+            borderwidth: 1,
+            showarrow: false,     
+            text: "OFFICIAL <br>validated by " + this.studyCaseValidation.userDepartment,
+            x: 0,
+            xref: "paper",
+            y: 1.15,
+            yref: "paper"
+          };
+          // this.plotData.layout.images.push(logo_official);
+          if (this.plotData.layout.annotations === undefined) {
+            this.plotData.layout.annotations = [validation_annotation];
+          } else {
+            this.plotData.layout.annotations.push(validation_annotation);
+          }
+          } else {
+            forceNotOfficialWatermark = true;
+          }
+        } else {
+          forceNotOfficialWatermark = true;
+        }
        }
       
-      if (this.plotData.logo_notofficial) {
+      if (this.plotData.logo_notofficial || forceNotOfficialWatermark) {
       	const logo_notofficial ={
         source:"assets/NOTOFFICIAL.PNG",
         xref:"paper", yref:"paper",
@@ -84,8 +119,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
       };
       this.plotData.layout.images.push(logo_work_in_progress);
         }
-      
-
+        
       // customize download size
       const downloadConfig =   {
         format: 'png', // one of png, svg, jpeg, webp
