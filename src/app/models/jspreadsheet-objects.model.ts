@@ -142,6 +142,15 @@ export class JSpreadSheetRowData {
           if (colName in dataframeDescriptor.columns) {
             if (dataframeDescriptor.columns[colName].columnType === 'bool') {
               csvRowDict[colName] = csvLineDict[colName].toLowerCase() === 'true';
+            } else if (dataframeDescriptor.columns[colName].columnType === 'array') {
+              let temp_array_str = csvLineDict[colName].toString();
+              let hasBrakets = temp_array_str.includes('[');
+              if (hasBrakets)
+              {
+                let temp_array = temp_array_str.replace('[','').replace(']','').replace(',',' ').split(' ');
+                temp_array = temp_array.filter(function(e){return e!= '';});
+                csvRowDict[colName] = '[' + temp_array.join(', ')+ ']';
+              }
             } else {
               csvRowDict[colName] = csvLineDict[colName];
             }
