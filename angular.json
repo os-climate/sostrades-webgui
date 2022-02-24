@@ -38,7 +38,7 @@
               "src/assets/github/css/github-markdown.min.css",
               "src/assets/texmath/css/texmath.css",
               "src/assets/katex/css/katex.min.css",
-              "src/assets/font-awesome/css/all.min.css"
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
             "scripts": [
               "src/assets/plotly-latest.min.js"

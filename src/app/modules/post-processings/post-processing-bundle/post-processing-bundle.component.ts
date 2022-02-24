@@ -1,16 +1,12 @@
-import { Component, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { PostProcessingService } from 'src/app/services/post-processing/post-processing.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { PostProcessingBundle } from 'src/app/models/post-processing-bundle.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
-import { ValidationType, ValidationState } from 'src/app/models/study-case-validation.model';
-import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
-import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
-import { MatDialog } from '@angular/material/dialog';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
+import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 
 @Component({
   selector: 'app-post-processing-bundle',
@@ -28,15 +24,14 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayFilterButton: boolean;
   public displayFilters: boolean;
   public isCalculationRunning: boolean;
-  public isDisciplineGraphValidated: boolean;
   calculationChangeSubscription: Subscription;
+  validationChangeSubscription: Subscription;
 
   constructor(
-    private dialog: MatDialog,
     private studyCaseDataService: StudyCaseDataService,
-    private studyCaseValidationService: StudyCaseValidationService,
     private postProcessingService: PostProcessingService,
     private calculationService: CalculationService,
+    private studyCaseValidationService: StudyCaseValidationService,
     private snackbarService: SnackbarService) {
     this.loadingMessage = '';
     this.displayProgressBar = false;
@@ -44,8 +39,8 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayFilterButton = false;
     this.displayFilters = false;
     this.calculationChangeSubscription = null;
+    this.validationChangeSubscription = null;
     this.isCalculationRunning = false;
-    this.isDisciplineGraphValidated = false;
   }
 
   ngOnInit() {
@@ -64,20 +59,18 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
 
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
+    });    
+    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation=>{
+      this.plot();
     });
-
-    if (this.studyCaseValidationService.studyGraphValidationDict !== null && this.studyCaseValidationService.studyGraphValidationDict !== undefined) {
-      if (this.studyCaseValidationService.studyGraphValidationDict.hasOwnProperty(`${this.fullNamespace}.${this.postProcessingBundle.name}`)) {
-        if (this.studyCaseValidationService.studyGraphValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`][0].validationState == ValidationState.VALIDATED) {
-          this.isDisciplineGraphValidated = true;
-        }
-      }
-    }
   }
 
   ngOnDestroy() {
     if ((this.calculationChangeSubscription !== null) && (this.calculationChangeSubscription !== undefined)) {
       this.calculationChangeSubscription.unsubscribe();
+    }
+    if ((this.validationChangeSubscription !== null) && (this.validationChangeSubscription !== undefined)) {
+      this.validationChangeSubscription.unsubscribe();
     }
   }
 
@@ -109,41 +102,4 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         }
       });
   }
-
-  onClickGraphValidation(event) {
-    event.stopPropagation();
-    event.preventDefault();
-
-
-    const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
-    dialogData.disciplineName = this.postProcessingBundle.name;
-    dialogData.namespace = this.fullNamespace;
-    dialogData.validationType = ValidationType.GRAPH
-    if (this.isDisciplineGraphValidated) {
-      dialogData.validationState = ValidationState.VALIDATED
-    } else {
-      dialogData.validationState = ValidationState.NOT_VALIDATED
-    }
-
-    dialogData.validationList = this.studyCaseValidationService.studyGraphValidationDict[`${this.fullNamespace}.${this.postProcessingBundle.name}`];
-
-    const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
-      disableClose: true,
-      width: '1100px',
-      height: '800px',
-      panelClass: 'csvDialog',
-      data: dialogData
-    });
-
-    dialogRefValidate.afterClosed().subscribe(result => {
-      const resultData: StudyCaseValidationDialogData = result as StudyCaseValidationDialogData;
-
-      if ((resultData !== null) && (resultData !== undefined)) {
-        if (resultData.cancel !== true) {
-          this.isDisciplineGraphValidated = !this.isDisciplineGraphValidated;
-        }
-      }
-    });
-  }
-
 }

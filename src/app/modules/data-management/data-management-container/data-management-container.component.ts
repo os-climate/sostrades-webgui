@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy,Input, HostListener } from '@angular/core';
 import { TreeNodeDataService } from '../../../services/tree-node-data.service';
 import { TreeNode } from '../../../models/tree-node.model';
 import { IoType, WidgetType } from '../../../models/node-data.model';
@@ -9,6 +9,10 @@ import { DataManagementInformationComponent } from 'src/app/modules/data-managem
 import { NodeDataTools } from 'src/app/tools/node-data.tools';
 import { DataManagementDiscipline } from 'src/app/models/data-management-discipline.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
+import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
+import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
+import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
+import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 
 @Component({
   selector: 'app-data-management-container',
@@ -17,6 +21,11 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 })
 export class DataManagementContainerComponent implements OnInit, OnDestroy {
 
+
+  @Input() disciplineData: DataManagementDiscipline;
+
+
+  public resultData: StudyCaseValidationDialogData
   public showMaturity: boolean;
   public countItemsInDict = NodeDataTools.countDisplayableItemsInNodeDataDict;
   public treeNodeData: TreeNode;
@@ -33,11 +42,12 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private treeNodeDataService: TreeNodeDataService,
     public studyCaseDataService: StudyCaseDataService,
+    public studyCaseValidationService: StudyCaseValidationService,
     public filterService: FilterService) {
     this.treeNodeDataSubscription = null;
     this.allDisciplinesDataDict = {};
     this.allDataDict = {};
-    this.showMaturity = false;
+    this.showMaturity = false;  
   }
 
   ngOnInit() {
@@ -224,7 +234,37 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
       this.treeNodeDataSubscription.unsubscribe();
     }
   }
+  onClickDataValidation(event) {
+    event.stopPropagation();
+    event.preventDefault();
 
+    
+    const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
+    dialogData.namespace = this.treeNodeData.fullNamespace;
+    
+    if (this.treeNodeData.isValidated) {
+      dialogData.validationState = ValidationTreeNodeState.INVALIDATED;
+    } else {
+      dialogData.validationState = ValidationTreeNodeState.VALIDATED;
+    }
+
+    const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
+      disableClose: true,
+      width: '1100px',
+      height: '600px',
+      panelClass: 'csvDialog',
+      data: this.treeNodeData
+    });
+
+    dialogRefValidate.afterClosed().subscribe(() => {  
+         if(this.treeNodeData.isValidated){
+             this.treeNodeData.isValidated =false
+           } 
+         else {
+          this.treeNodeData.isValidated =true
+         }
+    });
+  }
 
 }
 

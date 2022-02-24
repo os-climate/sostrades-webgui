@@ -4,6 +4,10 @@ import { Subscription } from 'rxjs';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import { ResizedEvent } from 'angular-resize-event';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
+import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
+import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
+import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-post-processing',
@@ -24,6 +28,7 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
   public isMoreContentAvailable: boolean;
 
   constructor(
+    private dialog: MatDialog,
     private treeNodeDataService: TreeNodeDataService,
     public studyCaseDataService: StudyCaseDataService) {
 
@@ -58,6 +63,38 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
     } else {
       this.isMoreContentAvailable = false;
     }
+  }
+
+  onClickDataValidation(event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    
+    const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
+    dialogData.namespace = this.treeNode.name;
+    
+    if (this.treeNode.isValidated) {
+      dialogData.validationState = ValidationTreeNodeState.INVALIDATED;
+    } else {
+      dialogData.validationState = ValidationTreeNodeState.VALIDATED;
+    }
+
+    const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
+      disableClose: true,
+      width: '1100px',
+      height: '800px',
+      panelClass: 'csvDialog',
+      data: this.treeNode
+    });
+
+    dialogRefValidate.afterClosed().subscribe(() => {     
+         if(this.treeNode.isValidated){
+             this.treeNode.isValidated =false
+           } 
+         else {
+          this.treeNode.isValidated =true
+         }
+    });
   }
 
   scrollPlots() {

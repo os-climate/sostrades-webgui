@@ -1,13 +1,32 @@
 <div class="configure-container">
   <div class="filter-zone" *ngIf="originTreeNode">
+    <button mat-icon-button class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></button>
     <input
       class="filter-input"
       matInput
       #filter
       [(ngModel)]="filterTreeInput"
       (keyup)="applyFilter($event)"
-      placeholder=" Filter treeview"
+      [placeholder]="isSearchOption?'Search variable':'Filter treeview'"
+      (click)="applyFilter($event)"
     />
+    <button mat-icon-button [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h">
+
+    </button>
+    <mat-menu #searchoption="matMenu">
+      <mat-button-toggle-group ngDefaultControl [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
+        <mat-button-toggle mat-menu-item value="false"
+        (click)="onSetFilterOption()">
+          <input type="radio"  [(ngModel)]="isSearchOption" [value]=false>
+          <label class="radio-label" >Filter treeview</label>
+        </mat-button-toggle>
+        <mat-button-toggle mat-menu-item value="true"
+        (click)="onSetSearchOption()">
+          <input type="radio" [(ngModel)]="isSearchOption" [value]=true>
+          <label class="radio-label">Search variable</label>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-menu>
   </div>
   <mat-toolbar class="toolbar" *ngIf="originTreeNode">
     <div class="toolbar-spacer"></div>
@@ -62,12 +81,12 @@
       [disabled]="!studyIsLoaded || executionStarted"
     >
       <i
-        class="far fa-play-circle toolbar-icon-font-aw execution"
+        class="fa-regular fa-circle-play toolbar-icon-font-aw execution"
         [ngClass]="
           studyCaseDataService.loadedStudy.userIdExecutionAuthorized ===
           userService.getCurrentUserId()
-            ? 'far fa-play-circle toolbar-icon-font-aw execution'
-            : 'far fa-play-circle toolbar-icon-font-aw status-off'
+            ? 'fa-regular fa-circle-play toolbar-icon-font-aw execution'
+            : 'fa-regular fa-circle-play toolbar-icon-font-aw status-off'
         "
         aria-hidden="false"
         aria-label="Start execution"
@@ -105,7 +124,7 @@
       class="toolbar-item-shadow"
     >
       <mat-icon
-        class="toolbar-icon status-off"
+        class="toolbar-icon-font-aw status-off"
         aria-hidden="false"
         aria-label="Hide status"
         matTooltip="Hide status"
@@ -120,14 +139,44 @@
       class="toolbar-item-shadow"
     >
       <mat-icon
-        class="toolbar-icon status-on"
+        class="toolbar-icon-font-aw"
         aria-hidden="false"
         aria-label="Show status"
         matTooltip="Show status"
       >
-        visibility_off</mat-icon
+      visibility_off
+     </mat-icon
       >
     </button>
+    <button
+    mat-button
+    (click)="onHideState()"
+    *ngIf="showState"
+    class="toolbar-item-shadow"
+  >
+  <i
+  class="fa-solid fa-square-check toolbar-icon-font-aw status-off"
+  aria-hidden="false"
+  aria-label="Hide validation state"
+  matTooltip="Hide validation state"
+  >
+
+  </i>
+  </button>
+  <button
+    mat-button
+    (click)="onShowState()"
+    *ngIf="!showState"
+    class="toolbar-item-shadow"
+  >
+  <i
+  class="fa-regular fa-square-check toolbar-icon-font-aw status-on"
+
+  aria-hidden="false"
+  aria-label="Show validation state"
+  matTooltip="Show validation state">
+  </i>
+  </button>
     <button mat-button (click)="onShowRoomUser()" class="toolbar-item-shadow">
       <mat-icon
         [matBadge]="'+' + (numberOfUserRoom - 1)"
@@ -151,7 +200,7 @@
     >
       <div style="width: 24px; height: 24px; line-height: 24px">
         <i
-          class="fas fa-external-link-alt"
+          class="fa-solid fa-up-right-from-square"
           style="font-size: 15px; color: #0b78b8; vertical-align: middle"
         >
         </i>
@@ -160,14 +209,14 @@
     <button
       mat-button
       aria-hidden="false"
-      aria-label="Information about calculation status"
-      matTooltip="Information about calculation status"
+      aria-label="Information about calculation status and validation state"
+      matTooltip="Information about calculation status and validation state"
       class="toolbar-item-shadow"
       (click)="onShowStatusInformation()"
     >
       <div style="width: 24px; height: 24px; line-height: 24px">
         <i
-          class="fas fa-info-circle"
+          class="fa-solid fa-circle-info"
           style="font-size: 19px; color: #0b78b8; vertical-align: middle"
         >
         </i>
@@ -183,14 +232,14 @@
       <div style="width: 24px; height: 24px; line-height: 24px">
         <i
           *ngIf="studyCanReload && !executionStarted"
-          class="fas fa-sync fa-fw toolbar-icon"
+          class="fa-solid fa-rotate fa-fw toolbar-icon"
           style="font-size: 16px; color: #0b78b8; vertical-align: text-bottom"
           matTooltip="Reload the study"
         >
         </i>
         <i
           *ngIf="!studyCanReload || executionStarted"
-          class="fas fa-sync fa-fw toolbar-icon status-off-grey"
+          class="fa-solid fa-rotate fa-fw toolbar-icon status-off-grey"
           style="font-size: 16px; vertical-align: text-bottom"
           matTooltip="No reload possible before first run or while running"
         >
@@ -215,15 +264,34 @@
               *ngIf="node.status.length > 0 && showStatus"
               style="margin-left: 4px"
               [ngClass]="'execution-bullet ' + node.status"
+              [matTooltip]="node.status"
             >
               {{ node.status[0] }}
+
             </div>
+            <mat-icon 
+            *ngIf="showState && !node.isValidated"
+            class="iconValid" 
+            style="color: darkgrey;"
+            matTooltip="INVALIDATED"
+            >
+            highlight_off
+           </mat-icon>
+
+            <mat-icon 
+            *ngIf="showState && node.isValidated"
+            class="iconValid"  
+            style="color: #08875b;"
+            matTooltip="VALIDATED"
+            >
+            check_circle
+           </mat-icon>
             <button
               [id]="'btn-treeview-node-' + node.fullNamespace"
               (click)="nodeClick(node)"
               mat-button
               [matTooltip]="
-                node.modelsFullPathList | ontologyDisciplineConverter
+                node.modelsFullPathList  | ontologyDisciplineConverter
               "
               matTooltipClass="custom-tooltip-class"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
@@ -234,6 +302,7 @@
               >
               </i>
               {{ node.name }}
+
               <mat-icon
                 *ngIf="!node.isConfigured"
                 style="font-size: 8px; width: 12px !important"
@@ -242,6 +311,9 @@
                 grade
               </mat-icon>
             </button>
+
+
+
           </div>
         </li>
       </mat-nested-tree-node>
@@ -273,10 +345,29 @@
               [id]="'text-treeview-status-' + node.fullNamespace"
               *ngIf="node.status.length > 0 && showStatus"
               [ngClass]="'execution-bullet ' + node.status"
-              style="margin-left: 4px"
+              style="margin-left: 4px; cursor: default;"
+              [matTooltip]="node.status"
             >
               {{ node.status[0] }}
             </div>
+            <mat-icon
+            *ngIf="showState && !node.isValidated"
+            class="iconValid"
+            style="color: darkgrey;"
+            matTooltip="INVALIDATED"
+            >
+            highlight_off
+           </mat-icon>
+
+            <mat-icon
+            *ngIf="showState && node.isValidated"
+            mat-button
+            class="iconValid"
+            style="color: #08875b;"
+            matTooltip="VALIDATED"
+            >
+            check_circle
+           </mat-icon>
             <button
               [id]="'btn-treeview-node-' + node.fullNamespace"
               (click)="nodeClick(node)"
@@ -296,7 +387,9 @@
                 "
               >
               </i>
-              {{ node.name }}
+             {{ node.name }}
+
+
               <span
                 *ngIf="node.isRoot && isTreeViewFiltered"
                 style="
@@ -308,7 +401,7 @@
                 "
               >
                 <i
-                  class="fas fa-filter fa-fw"
+                  class="fa-solid fa-filter fa-fw"
                   *ngIf="node.isRoot && isTreeViewFiltered"
                 >
                 </i>
@@ -323,6 +416,8 @@
                 grade
               </mat-icon>
             </button>
+
+
           </div>
           <ul [ngClass]="node.isLastChild ? 'last-child-left-border' : null">
             <div *ngIf="treeControl.isExpanded(node)">

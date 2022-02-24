@@ -11,6 +11,7 @@ import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
 import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
+import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -72,21 +73,34 @@ export class StudyCaseMainService extends MainHttpService {
   //#endregion create study
 
   //#region copy study
-  copyStudy(studyId: number, newName: string, groupId: number): Observable<Study> {
+  copyStudy(studyId: number, newName: string, groupId: number): Observable<LoadedStudy> {   
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.copyStudytimeout(studyId, newName, groupId, observer);
+    });
+    return loaderObservable;
+  }
+
+  private copyStudytimeout(studyId: number, newName: string, groupId: number, loaderObservable: Subscriber<LoadedStudy>) {
     const request = {
       new_name: newName,
       group_id: groupId
     };
-
     return this.http.post(`${this.apiRoute}/${studyId}/copy`, request, this.options).pipe(map(
-      result => {
-        const newStudy = Study.Create(result);
-
-        // Add study case to study management list
-        this.studyCaseDataService.studyManagementData.unshift(newStudy);
-        this.studyCaseDataService.tradeScenarioList = [];
+      response => {
+        
+        const newStudy = Study.Create(response);
+        console.log('copy created from '+studyId+ ' to '+newStudy.id)
         return newStudy;
-      }));
+      })).subscribe(study => {
+        
+        console.log('new timer');
+        setTimeout(() => {
+          this.loadStudyTimeout(study.id, false, loaderObservable, true);
+        }, 2000);
+      },
+        error => {
+          loaderObservable.error(error);
+        });
   }
   //#endregion copy study
 
@@ -121,6 +135,7 @@ export class StudyCaseMainService extends MainHttpService {
 
         this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
           res => {
+            this.validatedUpdated(res);
             loaderObservable.next(study);
           }, error => {
             loaderObservable.next(study);
@@ -300,5 +315,28 @@ export class StudyCaseMainService extends MainHttpService {
     };
 
     return this.http.post(url, data, options);
+  }
+
+  public validatedUpdated(studyValidationDict:any ){
+  
+    Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach(
+      element => 
+      {
+        const studyCaseValidation= this.studyCaseValidationService.studyValidationDict[this.studyCaseDataService.loadedStudy.studyCase.id, element.fullNamespace]
+         
+          if (studyCaseValidation != undefined ||  studyCaseValidation != null)
+          {
+            const validatedOrNotValidated = studyCaseValidation[0].validationState
+              
+              if (validatedOrNotValidated == ValidationTreeNodeState.VALIDATED) 
+                {
+                  element.isValidated = true
+                }
+               else
+                {
+                element.isValidated = false
+                }
+          }
+     });
   }
 }

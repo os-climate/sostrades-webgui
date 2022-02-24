@@ -59,46 +59,7 @@ export class AppDataService extends DataHttpService {
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
-        // Add study case to study management list
-        this.loadingDialogService.updateMessage(`Loading ontology`);
-
-        // Prepare Ontology request inputs
-        const ontologyRequest: PostOntology = {
-          ontology_request: {
-            disciplines: [],
-            parameters: []
-          }
-        };
-
-        // Extract ontology input data from study
-        const root = (this.loadedStudy as LoadedStudy).treeview.rootNode;
-        TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
-
-        // Call ontology service
-        this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe(() => {
-
-          // Notify components observing study case status
-          this.studyCaseDataService.onStudyCaseChange.emit(this.loadedStudy);
-
-          isStudyCreated(true);
-
-          // Close loading viw service
-          this.loadingDialogService.closeLoading();
-
-        }, errorReceived => {
-          // Reset ontology (make sure nothing was loaded)
-          this.ontologyService.resetOntology();
-
-          // Notify user
-          this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorReceived.description}`);
-
-          // Notify components observing study case status
-          this.studyCaseDataService.onStudyCaseChange.emit(this.loadedStudy);
-
-          isStudyCreated(true);
-
-          this.loadingDialogService.closeLoading();
-        });
+        this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
       }, errorReceived => {
         this.snackbarService.showError('Error creating study\n' + errorReceived.description);
         isStudyCreated(false);
@@ -109,6 +70,30 @@ export class AppDataService extends DataHttpService {
         this.loadingDialogService.closeLoading();
       });
   }
+
+  copyCompleteStudy(studyId: number, newName: string, groupId: number, isStudyCreated: any) {
+    // Display loading message
+    this.loadingDialogService.showLoading(`Creating copy of study case : "${newName}"`);
+
+
+    // Request serveur for study case data
+    this.studyCaseMainService.copyStudy(studyId, newName, groupId).subscribe(loadedStudy => {
+      //after creation, load the study into post processing
+      // must be done after the end of the creation, if not the loading cannot be done
+      this.loadedStudy = loadedStudy as LoadedStudy;
+      this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
+        this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+      }, errorReceived => {
+        this.snackbarService.showError('Error copying study\n' + errorReceived.description);
+        isStudyCreated(false);
+        this.loadingDialogService.closeLoading();
+      })}, errorReceived => {
+        this.snackbarService.showError('Error copying study\n' + errorReceived.description);
+        isStudyCreated(false);
+        this.loadingDialogService.closeLoading();
+      });
+  }
+
 
   loadCompleteStudy(studyId: number, studyName: string, isStudyLoaded: any) {
     // Display loading message
@@ -138,63 +123,7 @@ export class AppDataService extends DataHttpService {
         });
       }
 
-      this.loadingDialogService.updateMessage(`Loading ontology`);
-
-      // Prepare Ontology request inputs
-      const ontologyRequest: PostOntology = {
-        ontology_request: {
-          disciplines: [],
-          parameters: []
-        }
-      };
-
-      // Extract ontology input data from study
-      const root = (loadedStudy as LoadedStudy).treeview.rootNode;
-      TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
-
-      // Call ontology service
-      this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe(() => {
-
-        this.loadingDialogService.updateMessage(`Loading notifications`);
-        this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id).subscribe(notifications => {
-
-          this.socketService.notificationList = notifications;
-          // Notify components observing study case status
-          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-
-          isStudyLoaded(true);
-
-          this.loadingDialogService.closeLoading();
-
-        }, errorReceived => {
-
-          // Notify user
-          this.snackbarService.showError(`Notifications not loaded, the following error occurs: ${errorReceived.description}`);
-
-          // Notify components observing study case status
-          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-
-          isStudyLoaded(true);
-
-          // Close loading viw service
-          this.loadingDialogService.closeLoading();
-        });
-
-      }, errorReceived => {
-        // Reset ontology (make sure nothing was loaded)
-        this.ontologyService.resetOntology();
-
-        // Notify user
-        this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorReceived.description}`);
-
-        // Notify components observing study case status
-        this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-
-        isStudyLoaded(true);
-
-        // Close loading viw service
-        this.loadingDialogService.closeLoading();
-      });
+      this.load_study_ontology(loadedStudy, true, isStudyLoaded);
 
     }, errorReceived => {
       this.loggerService.log(errorReceived)
@@ -203,6 +132,7 @@ export class AppDataService extends DataHttpService {
       this.loadingDialogService.closeLoading();
     });
   }
+
 
 
 
@@ -232,6 +162,63 @@ export class AppDataService extends DataHttpService {
     this.studyCasePostProcessingService.loadStudy(study_id, false);
   }
 
+  private load_study_ontology(loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any){
+    // Add study case to study management list
+    this.loadingDialogService.updateMessage(`Loading ontology`);
+
+    // Prepare Ontology request inputs
+    const ontologyRequest: PostOntology = {
+      ontology_request: {
+        disciplines: [],
+        parameters: []
+      }
+    };
+
+    // Extract ontology input data from study
+    const root = loadedStudy.treeview.rootNode;
+    TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
+
+    // Call ontology service
+    this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe(() => {
+
+      if (getNotification){
+      this.loadingDialogService.updateMessage(`Loading notifications`);
+        this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id).subscribe(notifications => {
+
+          this.socketService.notificationList = notifications;
+          this.close_loading(loadedStudy, isStudyCreated);
+        }, errorReceived => {
+
+          // Notify user
+          this.snackbarService.showError(`Notifications not loaded, the following error occurs: ${errorReceived.description}`);
+
+          this.close_loading(loadedStudy, isStudyCreated);
+        });
+      }
+      else{
+        this.close_loading(loadedStudy, isStudyCreated);
+      }
+      
+    }, errorReceived => {
+      // Reset ontology (make sure nothing was loaded)
+      this.ontologyService.resetOntology();
+
+      // Notify user
+      this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorReceived.description}`);
+
+      this.close_loading(loadedStudy, isStudyCreated);
+    });
+  }
+
+  private close_loading(loadedStudy: LoadedStudy, isStudyLoaded: any){
+    // Notify components observing study case status
+    this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+
+    isStudyLoaded(true);
+
+    this.loadingDialogService.closeLoading();
+
+  }
 
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------

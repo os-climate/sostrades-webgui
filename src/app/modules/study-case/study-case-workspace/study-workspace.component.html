@@ -1,4 +1,5 @@
-<div #tabGroup style="height: 100%; width: 100%; background-color: white">
+<div #tabGroup style="height: 100%; width: 100%; background-color: white"
+*ngIf="!showSearch">
   <mat-tab-group
     class="container-workspace"
     *ngIf="showView"
@@ -19,13 +20,6 @@
       <app-post-processing
         *ngIf="showPostProcessingContent"
       ></app-post-processing>
-    </mat-tab>
-    <mat-tab
-      label="Data & Graph Validation"
-      aria-label="tab-study-workspace-data-validation"
-      *ngIf="showDataValidation"
-    >
-      <app-study-case-validation-sum-up></app-study-case-validation-sum-up>
     </mat-tab>
     <mat-tab
       label="Visualisation"
@@ -51,11 +45,11 @@
     *ngIf="
       showView && !isFullScreenOn && !calculationService.logFullSizeViewActive
     "
-    aria-label="Show fullscreen"
+    aria-label="fullscreen"
     class="fullscreen-button"
     (click)="goFullScreen()"
   >
-    Show Fullscreen
+    Fullscreen
     <mat-icon
       style="float: right; font-size: 16px; height: 26px; line-height: unset"
       >fullscreen</mat-icon
@@ -69,10 +63,25 @@
     class="fullscreen-button"
     (click)="exitFullScreen()"
   >
-    Exit Fullscreen
+    Exit fullscreen
     <mat-icon
       style="float: right; font-size: 16px; height: 26px; line-height: unset"
       >fullscreen_exit</mat-icon
     >
   </button>
+</div>
+<div style="height: 100%; width: 100%; background-color: white"
+*ngIf="showSearch">
+  <div style="float: right;">
+    <button
+        mat-icon-button
+        color="accent"
+        
+        matTooltip="Close search panel"
+        (click)="closeSearchPanel()"
+      >
+        <i class="far fa-window-close"> </i>
+      </button>
+  </div>
+  <app-search-panel></app-search-panel>
 </div>

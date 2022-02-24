@@ -20,6 +20,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
 
   public showView: boolean;
+  public showSearch: boolean;
   public isFullScreenOn: boolean;
   public tabNameSelected: string;
   public studyIsLoaded: boolean;
@@ -31,6 +32,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public showDataValidation: boolean;
   public hasDocumentation: boolean;
   private onStudyCaseChangeSubscription: Subscription;
+  private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
   public markdownDocumentation: MardownDocumentation[];
 
@@ -50,6 +52,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private treeNodeDataService: TreeNodeDataService) {
     this.showView = false;
+    this.showSearch = false;
     this.showPostProcessing = false;
     this.showVisualisation = false;
     this.showPostProcessingContent = false;
@@ -67,17 +70,22 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tabNameSelected = 'Data management';
+    this.showSearch = false;
     this.setDiplayableItems();
 
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(studyLoaded => {
       this.setDiplayableItems();
+    });
+
+    this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(searchVariable => {
+      this.showSearch = true;
     });
   }
 
   setDiplayableItems() {
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.showView = true;
-
+      this.showSearch = false;
       // Check  study status to display or not post processing
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
         this.showPostProcessing = true;
@@ -109,6 +117,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
     this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treenode => {
       this.showVisualisation = false;
+      this.showSearch = false;
       this.showDataValidation = false;
       this.showDocumentation = false;
       this.hasDocumentation = false;
@@ -165,6 +174,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       /* IE/Edge */
       this.tabGroup.nativeElement.msRequestFullscreen();
     }
+  }
+
+  closeSearchPanel(){
+    this.showSearch = false;
   }
 
   exitFullScreen() {

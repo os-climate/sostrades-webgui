@@ -85,36 +85,62 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
           this.rowData.push(row);
         });
       } else {
-        // Create empty list
-        const emptyList = [{ 'value': '' }];
-
-        this.columnsDef = JSpreadSheetColumns.Create(
-          emptyList[0],
-          this.data.nodeData.dataframeDescriptor,
-          this.data.nodeData.type).columnsData;
-
-        const newRows = JSpreadSheetRowData.Create(emptyList, this.data.nodeData.dataframeDescriptor).rowsData;
-        newRows.forEach(row => {
-          this.rowData.push(row);
-        });
+        this.createEmptyArray();
       }
       setTimeout(() => {
         this.initializeJSpreadSheet();
       }, 0);
+
     } else {
-      const options = {
-        chunk: (results, parser) => {
-          this.addRowsByChunk(results);
-        },
-        complete: () => {
+      if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null && this.data.file === null)) {
+        this.createEmptyArray();
+        setTimeout(() => {
           this.initializeJSpreadSheet();
-        },
-        header: true,
-        chunkSize: 1024 * 1024 * 2,
-        skipEmptyLines: true // Removing issue with PapaParse leaving empty lines at end of file
-      };
-      this.papa.parse(this.data.file, options);
+        }, 0);
+      }
+      else {
+        const options = {
+          chunk: (results, parser) => {
+            this.addRowsByChunk(results);
+          },
+          complete: () => {
+            this.initializeJSpreadSheet();
+          },
+          header: true,
+          chunkSize: 1024 * 1024 * 2,
+          skipEmptyLines: true // Removing issue with PapaParse leaving empty lines at end of file
+        };
+        this.papa.parse(this.data.file, options);
+      }
     }
+  }
+
+  createEmptyArray()
+  {
+    // Create empty array
+    let emptyList = [];
+    let columns = Object.keys(this.data.nodeData.dataframeDescriptor.columns);
+    if (columns.length > 0){
+      columns.forEach(column_name => {
+        let row = {};
+        row[column_name] = '';
+        emptyList.push(row);
+      });
+    }
+    else
+    {
+      emptyList = [{ 'value': '' }];
+    }
+    this.columnsDef = JSpreadSheetColumns.Create(
+      emptyList[0],
+      this.data.nodeData.dataframeDescriptor,
+      this.data.nodeData.type).columnsData;
+
+    const newRows = JSpreadSheetRowData.Create(emptyList, this.data.nodeData.dataframeDescriptor).rowsData;
+    newRows.forEach(row => {
+      this.rowData.push(row);
+    });
+
   }
 
   addRowsByChunk(results) {
@@ -127,6 +153,9 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       newRows.forEach(row => {
         this.rowData.push(row);
       });
+    }
+    else {
+      this.createEmptyArray();
     }
   }
 
@@ -166,7 +195,24 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   }
 
   unlockSaveButton() {
-    this.hasCsvChanges = true;
+    let doSave = true;
+    let atLeastOneColNotEmpty = false;
+    //check that array have at least one row not empty
+    if (this.data.nodeData.type.includes('array')) {
+      const columnData = this.jExcelSpreadSheet.getColumnData(0);
+      columnData.forEach((element) => {
+        if (element === null || element === '') {
+          doSave = false;
+        }
+        else{
+          atLeastOneColNotEmpty = true;
+        }
+      });
+    }
+    if (!doSave && !atLeastOneColNotEmpty){
+      this.snackbarService.showInformation(`${this.data.nodeData.displayName} value is required`);
+    }
+    this.hasCsvChanges = doSave || atLeastOneColNotEmpty;
   }
 
   onCellAfterChanges(instance, records) {
@@ -218,7 +264,32 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
                 errorRecords[columnName].errorInt = `Integer intended `;
               }
             }
+              
+            //check value array and float format in it
+            if (columnDataFrameDescriptor.columnType.includes('array')) {
+              let array_data = rec.newValue;
+              if (rec.newValue !== undefined && rec.newValue !== null) {
+                let array_data_str = array_data.toString().trim();
+                if (array_data_str.startsWith("[")){
+                  array_data_str = array_data_str.replace("[", "");
+                }
+                if (array_data_str.endsWith("]")){
+                  array_data_str = array_data_str.replace("]", "");
+                }
+                let array_data_check = array_data_str.split(",");
+                for(let i = 0;i<array_data_check.length;i++){
+                  array_data_check[i] = array_data_check[i].trim();
+                  if (!TypeCheckingTools.isFloat(array_data_check[i])) {
+                    if (!(columnName in errorRecords)) {
+                      errorRecords[columnName] = new JSpreadSheetValueError();
+                    }
+                    errorRecords[columnName].errorFloat = `Array of Float intended `;
+                  }
+                }
+              }
+            }
           }
+          
         }
       });
     }
@@ -237,7 +308,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       this.jExcelSpreadSheet.undo();
     } else {
       // Show csv changes button
-      this.hasCsvChanges = true;
+      this.unlockSaveButton();
     }
   }
 
@@ -288,34 +359,38 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     } else {
-      // Saving dataframe, array or dict type
-      this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.data.nodeData.displayName}.csv`);
-      // Generate string b64 file for local storage
-      let updateItem: StudyUpdateParameter;
-      updateItem = new StudyUpdateParameter(
-        this.data.nodeData.identifier,
-        UpdateParameterType.CSV,
-        UpdateParameterType.CSV,
-        this.data.namespace,
-        this.data.discipline,
-        null,
-        this.data.nodeData.oldValue,
-        null,
-        new Date());
 
-      updateItem.newValue = this.generateBase64file();
+        // Saving dataframe, array or dict type
+        this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.data.nodeData.displayName}.csv`);
+        // Generate string b64 file for local storage
+        let updateItem: StudyUpdateParameter;
+        updateItem = new StudyUpdateParameter(
+          this.data.nodeData.identifier,
+          UpdateParameterType.CSV,
+          UpdateParameterType.CSV,
+          this.data.namespace,
+          this.data.discipline,
+          null,
+          this.data.nodeData.oldValue,
+          null,
+          new Date());
 
-      // Saving edited table in local storage
-      this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
-        updateItem,
-        this.data.nodeData.identifier,
-        this.studyCaseDataService.loadedStudy.studyCase.id.toString());
+        updateItem.newValue = this.generateBase64file();
+
+        if(this.data.nodeData.type.includes('array')) {
+          this.data.nodeData.value = '://ndarray';
+        }
+
+        // Saving edited table in local storage
+        this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
+          updateItem,
+          this.data.nodeData.identifier,
+          this.studyCaseDataService.loadedStudy.studyCase.id.toString());
     }
-
     this.loadingDialogService.closeLoading();
     this.snackbarService.showInformation(`${this.data.nodeData.displayName} value saved in temporary changes`);
-
     this.dialogRef.close(this.data);
+
   }
 
   generateBase64file(): string {

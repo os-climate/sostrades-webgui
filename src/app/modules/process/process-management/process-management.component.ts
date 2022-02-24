@@ -260,34 +260,12 @@ export class ProcessManagementComponent implements OnInit {
 
   createFromCopyStudy(studyId: number, studyName: string, groupId: number) {
 
-    this.loadingDialogService.showLoading(
-      `Creating copy of study case : "${studyName}"`
-    );
-    this.StudyCaseMainService
-      .copyStudy(studyId, studyName, groupId)
-      .subscribe(
-        (study) => {
-          this.loadingDialogService.closeLoading();
-          this.appDataService.loadCompleteStudy(study.id, study.name, isStudyCreated => {
-            if (isStudyCreated) {
-              // Joining room
-              this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
-            }
-          });
-        },
-        (errorReceived) => {
-          this.loadingDialogService.closeLoading();
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError(
-              'Error creating copy of study case : ' +
-              error.description
-            );
-          }
-        }
-      );
+    this.appDataService.copyCompleteStudy(studyId, studyName, groupId, isStudyCreated => {
+      if (isStudyCreated) {
+        // Joining room
+        this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
+      }
+    });
   }
 
   handleUnsavedChanges(changeHandled: any) {

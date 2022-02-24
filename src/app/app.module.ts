@@ -93,6 +93,7 @@ import { PostProcessingBundleComponent } from './modules/post-processings/post-p
 import { StudyCaseDirectAccessComponent } from './modules/study-case/study-case-direct-access/study-case-direct-access.component';
 import { StudyCaseLinkInformationComponent } from './modules/study-case/study-case-link-information/study-case-link-information.component';
 import { PostProcessingParetoFrontComponent } from './shared/post-processing-pareto-front/post-processing-pareto-front.component';
+import { SearchPanelComponent } from './modules/search-panel/search-panel.component'
 
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { SlideToggleComponent } from './shared/slide-toggle/slide-toggle.component';
@@ -104,7 +105,6 @@ import { OntologyParametersComponent } from './modules/ontology/ontology-paramet
 import { OntologyProcessesComponent } from './modules/ontology/ontology-processes/ontology-processes.component';
 import { OntologyModelsComponent } from './modules//ontology/ontology-models/ontology-models.component';
 import { StudyCaseValidationDialogComponent } from './modules/study-case/study-case-validation-dialog/study-case-validation-dialog.component';
-import { StudyCaseValidationSumUpComponent } from './modules/study-case/study-case-validation-sum-up/study-case-validation-sum-up.component';
 import { SpreadsheetComponent } from './modules/spreadsheet/spreadsheet.component';
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ScientificNotationPipe } from './pipes/scientific-notation/scientific-notation.pipe';
@@ -173,6 +173,7 @@ registerLocaleData(fr);
     ReferenceManagementComponent,
     DataManagementContainerComponent,
     DataManagementDisciplineComponent,
+    SearchPanelComponent,
     DocumentationComponent,
     OntologyParameterConverterPipe,
     OntologyDisciplineConverterPipe,
@@ -189,7 +190,6 @@ registerLocaleData(fr);
     OntologyProcessesComponent,
     OntologyModelsComponent,
     StudyCaseValidationDialogComponent,
-    StudyCaseValidationSumUpComponent,
     SpreadsheetComponent,
     ResetPasswordComponent,
     ScientificNotationPipe,

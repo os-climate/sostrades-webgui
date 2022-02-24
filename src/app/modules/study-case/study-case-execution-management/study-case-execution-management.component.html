@@ -133,7 +133,7 @@
             (click)="showLogs(element)"
             color="accent"
           >
-            <i class="far fa-file-alt fa-fw"> </i>
+            <i class="fa-regular fa-file-lines fa-fw"> </i>
           </button>
           <button
             mat-icon-button
@@ -142,7 +142,7 @@
             (click)="downloadRawLogs(element)"
             color="warn"
           >
-            <i class="fas fa-download fa-fw"> </i>
+            <i class="fa-solid fa-download fa-fw"> </i>
           </button>
 
           <div class="separator"></div>
@@ -155,7 +155,7 @@
             (click)="stopStudyExecution(element)"
             color="warn"
           >
-            <i class="fas fa-stop fa-fw"> </i>
+            <i class="fa-solid fa-stop fa-fw"> </i>
           </button>
           <button
             *ngIf="element.executionStatus !== 'RUNNING'"
