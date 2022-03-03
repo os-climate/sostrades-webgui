@@ -1,20 +1,19 @@
-import { Study, PostStudy, LoadedStudy } from 'src/app/models/study.model';
+import { Study, LoadedStudy } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IconMapping } from 'src/app/models/icon-mapping.model';
 import { Router } from '@angular/router';
-import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
-import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
 import { Scenario } from 'src/app/models/scenario.model';
 import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
+import { StudyFavorite } from 'src/app/models/study-case-favorite';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +35,8 @@ export class StudyCaseDataService extends DataHttpService {
   public studyManagementColumnFiltered: string;
 
   public dataSearchResults: NodeData[];
-  public dataSearchInput: string
+  public dataSearchInput: string;
+  public favoriteStudy: StudyFavorite[]
 
   constructor(
     private http: HttpClient,
@@ -241,6 +241,25 @@ export class StudyCaseDataService extends DataHttpService {
     this.dataSearchInput = "";
     this.dataSearchResults = [];
   }
+  
+  getStudyOfFavoriteStudybyUser(user_id : number): Observable<StudyFavorite[]> { 
+    return this.http.get<StudyFavorite[]>(`${this.apiRoute}/favorite`).pipe(map(
+      response => {
+        const studies: StudyFavorite[] = [];
+        response.forEach(study => {
+          studies.push(study);
+        });
+        return studies;
+      }));
+  }
 
+  addFavoriteStudy(study_id : number,user_id : number){
+    const createData = {study_id, user_id };
+    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, createData)
+  }
+
+  removeFavoriteStudy(study_id : number,user_id : number) {
+    return this.http.delete(`${this.apiRoute}/favorite`)
+  }
 
 }
