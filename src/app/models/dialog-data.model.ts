@@ -247,6 +247,7 @@ export class ExecutionDialogData extends AbstractDialogData {
 
 export class OntologyInformationsDialogData extends AbstractDialogData {
   nodeData: NodeData;
+  variableName: string;
   displayName: string;
   name: string;
   unit: string;
@@ -256,6 +257,7 @@ export class OntologyInformationsDialogData extends AbstractDialogData {
   public constructor() {
     super();
     this.nodeData = null;
+    this.variableName = null;
     this.displayName = null;
     this.name = null;
     this.unit = null;
