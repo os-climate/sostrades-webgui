@@ -41,7 +41,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit {
   ngOnInit(): void {
 
     const emptyProcessRef = new Study(null, this.EMPTY_STUDY_NAME, '', '', '', null, null, '',
-      'Reference', '', 0, false, '', '', false, null, null, false, false, false, false);
+      'Reference', '', 0, false, '', '', false, null, null, false, false, false, false,false);
     this.referenceList.push(emptyProcessRef);
     this.data.referenceList.forEach(ref => {
       this.referenceList.push(ref);
