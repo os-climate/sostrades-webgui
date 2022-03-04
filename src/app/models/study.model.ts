@@ -25,7 +25,8 @@ export class Study {
     public isManager: boolean,
     public isContributor: boolean,
     public isCommenter: boolean,
-    public isRestrictedViewer: boolean
+    public isRestrictedViewer: boolean,
+    public isFavorite : boolean
   ) {
   }
 
@@ -51,7 +52,9 @@ export class Study {
       jsonData[StudyAttributes.ISMANAGER],
       jsonData[StudyAttributes.ISCONTRIBUTOR],
       jsonData[StudyAttributes.ISCOMMENTER],
-      jsonData[StudyAttributes.ISRESTRICTEDVIEWER]);
+      jsonData[StudyAttributes.ISRESTRICTEDVIEWER],
+      jsonData[StudyAttributes.ISFAVORITE]
+      );
     return result;
   }
 }
@@ -125,6 +128,7 @@ export enum StudyAttributes {
   ISCONTRIBUTOR = 'is_contributor',
   ISCOMMENTER = 'is_commenter',
   ISRESTRICTEDVIEWER = 'is_restricted_viewer',
+  ISFAVORITE = 'isFavorite'
 }
 
 export enum LoadedStudyAttributes {

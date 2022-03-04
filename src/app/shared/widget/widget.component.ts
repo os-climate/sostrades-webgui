@@ -109,6 +109,7 @@ export class WidgetComponent implements OnInit {
   }
   showOntologyInformations() {
     const dialogData: OntologyInformationsDialogData = new OntologyInformationsDialogData();
+    dialogData.variableName = this.nodeData.variableName;
     dialogData.displayName = this.nodeData.displayName;
     dialogData.name = this.nodeData.identifier;
     dialogData.unit = this.nodeData.unit;

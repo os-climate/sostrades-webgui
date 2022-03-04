@@ -27,6 +27,7 @@ import { StudyDialogService } from 'src/app/services/study-dialog/study-dialog.s
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
+import { UserService } from 'src/app/services/user/user.service';
 
 
 @Component({
@@ -40,6 +41,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line: max-line-length
   public displayedColumns = [
     'selected',
+    'favorite',
     'name',
     'groupName',
     'repository',
@@ -56,7 +58,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     'Process',
     'Type',
   ];
-
+  public isFavorite : boolean = false;
   public selection = new SelectionModel<Study>(true, []);
 
   public dataSourceStudies = new MatTableDataSource<Study>();
@@ -91,14 +93,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private appDataService: AppDataService,
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
-    private studyDialogService: StudyDialogService
+    private studyDialogService: StudyDialogService,
+    private userService: UserService
   ) {
     this.isLoading = true;
     this.onCurrentStudyDeletedSubscription = null;
   }
 
   ngOnInit(): void {
-
+    
     // Load data first time component initialised
     if (this.studyCaseDataService.studyManagementData === null
       || this.studyCaseDataService.studyManagementData === undefined
@@ -108,10 +111,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.dataSourceStudies = new MatTableDataSource<Study>(
         this.studyCaseDataService.studyManagementData
       );
-      this.dataSourceStudies.sortingDataAccessor = (item, property) => {
+      this.dataSourceStudies.sortingDataAccessor = (item, property) => {   
         return typeof item[property] === 'string'
           ? item[property].toLowerCase()
-          : item[property];
+          : item[property];        
       };
       this.dataSourceStudies.sort = this.sort;
       // Initialising filter with 'All columns'
@@ -147,6 +150,27 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.selection.select(row);
         }
       });
+  }
+
+  addFavoriteStudy(study : Study){
+  const userId = this.userService.getCurrentUserId()
+    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe(
+      (response)=>{
+      study.isFavorite = true
+      // this.snackbarService.showInformation(`The study "${study.name}" has been successfully added to your favorite study`)
+      }, error=>{
+      this.snackbarService.showWarning(error.description);
+    });
+  }
+  removeFavoriteStudy(study : Study){
+    const userId = this.userService.getCurrentUserId()
+    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe(
+      ()=>{
+      study.isFavorite = false
+      //  this.snackbarService.showInformation(`The study has been successfully removed from your favorite study`)
+      }, error=>{
+      this.snackbarService.showError(error.description)
+    });   
   }
 
   loadStudyManagementData() {

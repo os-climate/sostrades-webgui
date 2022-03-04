@@ -96,6 +96,23 @@
           </td>
         </ng-container>
 
+        <!-- Favorite Column -->
+        <ng-container matColumnDef="favorite">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Favorite</th>
+          <td mat-cell *matCellDef="let element">
+            <i class="fa-solid fa-star favorite"   
+            *ngIf="element.isFavorite"
+            style="color: gold;" 
+            (click)="removeFavoriteStudy(element)"
+            matTooltip="Favorite"></i>
+            <i 
+            class="fa-regular fa-star favorite"   
+            *ngIf="!element.isFavorite"
+            (click)="addFavoriteStudy(element)"
+            matTooltip="Not favorite"></i>
+          </td>
+        </ng-container>
+        
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name</th>

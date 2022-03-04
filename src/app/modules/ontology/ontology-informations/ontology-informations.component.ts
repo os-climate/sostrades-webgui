@@ -77,12 +77,13 @@ export class OntologyInformationsComponent implements OnInit {
     });
 
     // Retrieve ontology information
-    if (this.ontologyService.getParameter(this.data.displayName) !== null) {
-      this.ontologyInstance = this.ontologyService.getParameter(this.data.displayName);
-      this.infoList = Object.entries(this.ontologyService.getParameter(this.data.displayName))
+    if (this.ontologyService.getParameter(this.data.variableName) !== null) {
+      this.ontologyInstance = this.ontologyService.getParameter(this.data.variableName);
+      this.infoList = Object.entries(this.ontologyInstance)
         .filter(entry => typeof entry[1] === 'string').map(entry => [OntologyParameter.getKeyLabel(entry[0]), entry[1]]);
-      this.parameterName = this.ontologyService.getParameter(this.data.displayName).label;
     }
+    this.parameterName = this.data.displayName;
+    
     // Retrieve variable changes
     this.changesList = this.socketService.getParameterChangesList(this.data.name);
     this.dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>(this.changesList);
@@ -261,16 +262,16 @@ export class OntologyInformationsComponent implements OnInit {
   onShowCsvCurrentValue() {
     let name = '';
 
-    if (this.ontologyService.getParameter(this.data.nodeData.displayName) !== null
-      && this.ontologyService.getParameter(this.data.nodeData.displayName) !== undefined) {
-      if (this.ontologyService.getParameter(this.data.nodeData.displayName).label !== null
-        && this.ontologyService.getParameter(this.data.nodeData.displayName).label !== undefined) {
-        name = this.ontologyService.getParameter(this.data.nodeData.displayName).label;
+    if (this.ontologyService.getParameter(this.data.nodeData.variableName) !== null
+      && this.ontologyService.getParameter(this.data.nodeData.variableName) !== undefined) {
+      if (this.ontologyService.getParameter(this.data.nodeData.variableName).label !== null
+        && this.ontologyService.getParameter(this.data.nodeData.variableName).label !== undefined) {
+        name = this.ontologyService.getParameter(this.data.nodeData.variableName).label;
       }
     }
 
     if (name === null || name === '') {
-      name = this.data.nodeData.displayName;
+      name = this.data.nodeData.variableName;
     }
 
     const spreadsheetDialogData: SpreadsheetDialogData = new SpreadsheetDialogData();
@@ -328,7 +329,7 @@ export class OntologyInformationsComponent implements OnInit {
 
   onShowConnectorData() {
     const connectorDialogData: ConnectorDialogData = new ConnectorDialogData()
-    connectorDialogData.parameterName = this.data.nodeData.displayName;
+    connectorDialogData.parameterName = this.data.nodeData.variableName;
     connectorDialogData.connectorData = this.data.nodeData.connector_data;
     connectorDialogData.nodeData = this.data.nodeData;
     connectorDialogData.namespace = this.data.namespace;
@@ -343,7 +344,7 @@ export class OntologyInformationsComponent implements OnInit {
   onShowConnectorChange(updateParameter: StudyUpdateParameter) {
     const connectorDialogData: ConnectorDialogData = new ConnectorDialogData()
 
-    connectorDialogData.parameterName = this.data.nodeData.displayName;
+    connectorDialogData.parameterName = this.data.nodeData.variableName;
     connectorDialogData.connectorData = updateParameter.oldValue;
     connectorDialogData.nodeData = this.data.nodeData;
     connectorDialogData.namespace = this.data.namespace;

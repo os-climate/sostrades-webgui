@@ -19,16 +19,16 @@ export class TreenodeTools {
 
       if (Object.keys(treenode.data).length > 0) {
         Object.keys(treenode.data).forEach(d => {
-          if (ontologyRequest.ontology_request.parameters.indexOf(treenode.data[d].displayName) < 0) {
-            ontologyRequest.ontology_request.parameters.push(treenode.data[d].displayName);
+          if (ontologyRequest.ontology_request.parameters.indexOf(treenode.data[d].variableName) < 0) {
+            ontologyRequest.ontology_request.parameters.push(treenode.data[d].variableName);
           }
         });
       }
 
       if (Object.keys(treenode.dataDisc).length > 0) {
         Object.keys(treenode.dataDisc).forEach(d => {
-          if (ontologyRequest.ontology_request.parameters.indexOf(treenode.dataDisc[d].displayName) < 0) {
-            ontologyRequest.ontology_request.parameters.push(treenode.dataDisc[d].displayName);
+          if (ontologyRequest.ontology_request.parameters.indexOf(treenode.dataDisc[d].variableName) < 0) {
+            ontologyRequest.ontology_request.parameters.push(treenode.dataDisc[d].variableName);
           }
         });
       }
