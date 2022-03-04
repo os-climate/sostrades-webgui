@@ -60,6 +60,8 @@ export class StudyCaseMainService extends MainHttpService {
           }, 2000);
         } else {
           console.log('found');
+          //reload parameter ontology
+          this.studyCaseDataService.updateParameterOntology(this.studyCaseDataService.loadedStudy);
           // Add study case to study management list
           this.studyCaseDataService.studyManagementData.unshift(this.studyCaseDataService.loadedStudy.studyCase);
           loaderObservable.next(study);
@@ -128,9 +130,14 @@ export class StudyCaseMainService extends MainHttpService {
           // Add study case to study management list
           this.studyCaseDataService.studyManagementData.unshift(this.studyCaseDataService.loadedStudy.studyCase);
         }
+
+        //reload ontology parameters
+        this.studyCaseDataService.updateParameterOntology(this.studyCaseDataService.loadedStudy);
+
         if (withEmit === true) {
           this.studyCaseDataService.onStudyCaseChange.emit(this.studyCaseDataService.loadedStudy);
         }
+       
         this.studyCaseDataService.tradeScenarioList = [];
 
         this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
@@ -147,6 +154,8 @@ export class StudyCaseMainService extends MainHttpService {
         loaderObservable.error(error);
       });
   }
+
+  
 
   private internalLoadStudy(studyId: number): Observable<LoadedStudy> {
     return this.http.get(`${this.apiRoute}/${studyId}`).pipe(map(
@@ -178,6 +187,8 @@ export class StudyCaseMainService extends MainHttpService {
           }, 2000);
         } else {
           console.log('found');
+          //reload parameter ontology
+          this.studyCaseDataService.updateParameterOntology(this.studyCaseDataService.loadedStudy);
           loaderObservable.next(study);
         }
       },
@@ -255,6 +266,8 @@ export class StudyCaseMainService extends MainHttpService {
         }, 2000);
       } else {
         console.log('found');
+        //reload parameter ontology
+        this.studyCaseDataService.updateParameterOntology(this.studyCaseDataService.loadedStudy);
         loaderObservable.next(study);
       }
     },

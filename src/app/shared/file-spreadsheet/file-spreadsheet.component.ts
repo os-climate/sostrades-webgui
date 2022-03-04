@@ -201,11 +201,11 @@ export class FileSpreadsheetComponent implements OnInit {
   openSpreadsheetEditor(readOnly: boolean) {
     let name = '';
     // Handle data naming
-    if (this.ontologyService.getParameter(this.nodeData.displayName) !== null
-      && this.ontologyService.getParameter(this.nodeData.displayName) !== undefined) {
-      if (this.ontologyService.getParameter(this.nodeData.displayName).label !== null
-        && this.ontologyService.getParameter(this.nodeData.displayName).label !== undefined) {
-        name = this.ontologyService.getParameter(this.nodeData.displayName).label;
+    if (this.ontologyService.getParameter(this.nodeData.variableName) !== null
+      && this.ontologyService.getParameter(this.nodeData.variableName) !== undefined) {
+      if (this.ontologyService.getParameter(this.nodeData.variableName).label !== null
+        && this.ontologyService.getParameter(this.nodeData.variableName).label !== undefined) {
+        name = this.ontologyService.getParameter(this.nodeData.variableName).label;
       }
     }
 
@@ -264,11 +264,11 @@ export class FileSpreadsheetComponent implements OnInit {
   onClickDownload() {
     let name = '';
 
-    if (this.ontologyService.getParameter(this.nodeData.displayName) !== null
-      && this.ontologyService.getParameter(this.nodeData.displayName) !== undefined) {
-      if (this.ontologyService.getParameter(this.nodeData.displayName).label !== null
-        && this.ontologyService.getParameter(this.nodeData.displayName).label !== undefined) {
-        name = this.ontologyService.getParameter(this.nodeData.displayName).label;
+    if (this.ontologyService.getParameter(this.nodeData.variableName) !== null
+      && this.ontologyService.getParameter(this.nodeData.variableName) !== undefined) {
+      if (this.ontologyService.getParameter(this.nodeData.variableName).label !== null
+        && this.ontologyService.getParameter(this.nodeData.variableName).label !== undefined) {
+        name = this.ontologyService.getParameter(this.nodeData.variableName).label;
       }
     }
 

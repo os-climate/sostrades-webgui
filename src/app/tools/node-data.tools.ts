@@ -29,11 +29,10 @@ export class NodeDataTools {
       });
 
       // Sorting node data first editable, then alphabetically
+      
       orderedList = orderedList.sort((a, b) => {
         if (a.editable === b.editable) {
-          if (a.displayName < b.displayName) { return -1; }
-          if (a.displayName > b.displayName) { return 1; }
-          return 0;
+          return a.displayName.localeCompare(b.displayName);
         } else if (a.editable && !b.editable) {
           return -1;
         } else if (!a.editable && b.editable) {

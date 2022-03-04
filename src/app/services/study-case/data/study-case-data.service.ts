@@ -221,10 +221,10 @@ export class StudyCaseDataService extends DataHttpService {
       // search an inpupt into all data names
       Object.values(this.loadedStudy.treeview.rootNodeDataDict).forEach(nodeData => {
         let label = '';
-        if (this.ontologyService.getParameter(nodeData.displayName)){
-          label = this.ontologyService.getParameter(nodeData.displayName).label;
+        if (this.ontologyService.getParameter(nodeData.variableName)){
+          label = this.ontologyService.getParameter(nodeData.variableName).label;
         }
-        if (nodeData.displayName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
+        if (nodeData.variableName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
         label.toLowerCase().includes(inputToSearch.toLowerCase()))
         {
           if((nodeData.ioType === IoType.OUT || showEditable || (!showEditable && nodeData.editable)) &&
@@ -260,6 +260,30 @@ export class StudyCaseDataService extends DataHttpService {
 
   removeFavoriteStudy(study_id : number,user_id : number) {
     return this.http.delete(`${this.apiRoute}/favorite`)
+  }
+  
+  public updateParameterOntology(loadedStudy: LoadedStudy){
+    // loop on each treeNode data to update ontology name
+    Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
+      let treeNodeValue = treeNode[1];
+      let treeNodeKey = treeNode[0];
+      Object.entries(treeNodeValue.data).forEach(nodeData => {
+        let nodeDataValue = nodeData[1];
+        let nodeDataKey = nodeData[0];
+        let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
+        if ( ontologyParameter !== null) {
+          loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = ontologyParameter.label;
+        }
+      });
+      Object.entries(treeNodeValue.dataDisc).forEach(nodeData => {
+        let nodeDataValue = nodeData[1];
+        let nodeDataKey = nodeData[0];
+        let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
+        if ( ontologyParameter !== null) {
+          loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = ontologyParameter.label;
+        }
+      });
+    });
   }
 
 }

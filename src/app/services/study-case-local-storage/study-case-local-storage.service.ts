@@ -205,6 +205,10 @@ export class StudyCaseLocalStorageService {
 
           // Call ontology service
           this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe(() => {
+
+            //update ontology parameters in study
+            this.studyCaseDataService.updateParameterOntology(loadedStudy);
+            
             // Notify components observing study case status
             this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
             this.removeStudyParametersFromLocalStorage(studyId);

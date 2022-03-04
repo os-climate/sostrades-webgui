@@ -180,6 +180,8 @@ export class AppDataService extends DataHttpService {
 
     // Call ontology service
     this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe(() => {
+      
+      this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
       if (getNotification){
       this.loadingDialogService.updateMessage(`Loading notifications`);
@@ -219,6 +221,8 @@ export class AppDataService extends DataHttpService {
     this.loadingDialogService.closeLoading();
 
   }
+
+  
 
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------
