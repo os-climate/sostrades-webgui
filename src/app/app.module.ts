@@ -109,6 +109,8 @@ import { SpreadsheetComponent } from './modules/spreadsheet/spreadsheet.componen
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ScientificNotationPipe } from './pipes/scientific-notation/scientific-notation.pipe';
 import { ConnectorDataComponent } from './modules/connector-data/connector-data.component';
+import { LinkComponent } from './modules/link/link/link.component';
+import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/link-create-or-edit.component';
 
 registerLocaleData(fr);
 
@@ -193,7 +195,9 @@ registerLocaleData(fr);
     SpreadsheetComponent,
     ResetPasswordComponent,
     ScientificNotationPipe,
-    ConnectorDataComponent
+    ConnectorDataComponent,
+    LinkComponent,
+    LinkCreateOrEditComponent
   ],
   imports: [
     BrowserModule,

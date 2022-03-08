@@ -1,0 +1,43 @@
+<div class="widget border-readonly" style="min-width: 320px; max-width: 320px;">
+  <div class="widget-header">
+    <div class="text-header">
+      Usefull links
+    </div>
+    <div class="spacer"></div>
+    <button mat-icon-button color="accent" matTooltip="Add a new link"
+      (click)="onCreate($event)">
+      <i class="fa-solid fa-square-plus fa-fw"></i>
+    </button>
+  </div>
+  <div class="content-separator"></div>
+  <div class="flex-container" *ngIf="!isLoading">
+    <div *ngFor="let link of links" class="card-container" >
+      <div class="widget-header emoji-font"
+              #tooltip="matTooltip"
+              matTooltip="{{link.description}}"
+              matTooltipPosition="below"
+              matTooltipClass="custom-tooltip-class"
+              aria-label="Information about the link">
+
+        <a [href]="link.url" target="_blank" style="font-size: 12px;">{{link.label}}</a>
+        <div class="spacer"></div>
+        <div>
+          <button mat-button [matMenuTriggerFor]="menuUser" aria-label="user menu">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+        </div>
+
+        <mat-menu #menuUser="matMenu">
+          <button mat-menu-item (click)="onEdit($event, link)">
+            <i class="fa-solid fa-pen" style="padding-right: 10px;" aria-hidden="true" aria-label="edit link"></i>
+            <span>Edit</span>
+          </button>
+          <button mat-menu-item (click)="onDelete($event, link)">
+            <i class="fa-solid fa-trash-can button-color-red" style="padding-right: 10px;" aria-hidden="true" aria-label="delete link"></i>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+</div>
