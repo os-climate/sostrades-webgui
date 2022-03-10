@@ -20,6 +20,7 @@ import { StudyFavorite } from 'src/app/models/study-case-favorite';
 })
 export class StudyCaseDataService extends DataHttpService {
 
+  onLoadedStudy : EventEmitter<LoadedStudy> = new EventEmitter()
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -241,6 +242,11 @@ export class StudyCaseDataService extends DataHttpService {
     this.dataSearchInput = "";
     this.dataSearchResults = [];
   }
+
+  isLoadedStudy(loadedStudy : LoadedStudy ){
+    this.onLoadedStudy.emit(loadedStudy)
+  }
+
   
   getStudyOfFavoriteStudybyUser(user_id : number): Observable<StudyFavorite[]> { 
     return this.http.get<StudyFavorite[]>(`${this.apiRoute}/favorite`).pipe(map(

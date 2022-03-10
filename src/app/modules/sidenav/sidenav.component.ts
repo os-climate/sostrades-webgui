@@ -3,6 +3,9 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { Subscription } from 'rxjs';
 import { LoadedStudy } from 'src/app/models/study.model';
 import { Router } from '@angular/router';
+import { HeaderService } from 'src/app/services/hearder/header.service';
+import { NavigationTitle } from 'src/app/models/navigation-title.model';
+import { Routing } from 'src/app/models/routing';
 
 @Component({
   selector: 'app-sidenav',
@@ -18,6 +21,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
 
   constructor(
     public studyCaseDataService: StudyCaseDataService,
+    private headerService : HeaderService,
     private router: Router) {
     this.onStudyCaseChangeSubscription = null;
     this.studyName = '';
@@ -44,50 +48,16 @@ export class SidenavComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickStudyManagement() {
-    this.router.navigate(['/']);
-  }
-
   onClickTreeview() {
-    this.router.navigate(['/study-workspace']);
-  }
-
-  onClickModelStatus() {
-    this.router.navigate(['/models-status']);
-  }
+    this.router.navigate([Routing.STUDY_WORKSPACE]);
+    this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE)
+    }
 
   setTreeviewClass() {
     if (this.studyName.length > 13) {
       return 'treeview-long-title';
     } else {
       return 'treeview-short-title';
-    }
-  }
-
-  styleZone(zoneSelected: number) {
-    if (zoneSelected === 1) {
-      if (this.router.url === '/') {
-        return 'header-treeview-active';
-      }
-    } else if (zoneSelected === 2) {
-      if (this.router.url === '/study-workspace') {
-        if (this.studyName.length > 13) {
-          return 'long-title header-treeview-active';
-        } else {
-          return 'header-treeview-active';
-        }
-
-      }
-    } else if (zoneSelected === 3) {
-      if (this.router.url === '/models-status') {
-        return 'header-treeview-active';
-      }
-    }
-  }
-
-  setBorder() {
-    if (this.router.url === '/study-workspace') {
-      return 'border-treeview-active';
     }
   }
 

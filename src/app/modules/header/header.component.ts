@@ -4,8 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
-import { UserLevel } from 'src/app/models/user-level.model';
 import { UserService } from 'src/app/services/user/user.service';
+import { NavigationTitle } from 'src/app/models/navigation-title.model';
+import { HeaderService } from 'src/app/services/hearder/header.service';
+import { Routing } from 'src/app/models/routing';
 
 
 @Component({
@@ -15,28 +17,27 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class HeaderComponent implements OnInit {
 
+  
   public username: string;
-  private userLevel: UserLevel;
-  public userLevelList: string[];
-  public selectedUserlevel: string;
   public versionDate: string;
   public platform: string;
   public hasAccessToAdmin: boolean;
-  public hasAccessToStudy: boolean;
+  public title : string
+  
 
   constructor(
     private router: Router,
     private auth: AuthService,
+    private headerService: HeaderService,
     public dialog: MatDialog,
     private userService: UserService,
     private appDataService: AppDataService,
     public filterService: FilterService) {
     this.versionDate = '';
     this.platform = '';
-    this.userLevel = new UserLevel();
-    this.userLevelList = this.userLevel.userLevelList;
     this.hasAccessToAdmin = false;
-    this.hasAccessToStudy = false;
+    this.title = "";
+
   }
 
   ngOnInit(): void {
@@ -47,11 +48,6 @@ export class HeaderComponent implements OnInit {
     } else {
       this.hasAccessToAdmin = false;
     }
-    if (this.userService.hasAccessToStudy()) {
-      this.hasAccessToStudy = true;
-    } else {
-      this.hasAccessToStudy = false;
-    }
 
     this.appDataService.getAppInfo().subscribe(res => {
       if (res !== null && res !== undefined) {
@@ -60,18 +56,79 @@ export class HeaderComponent implements OnInit {
       }
     });
 
-    this.selectedUserlevel = this.userLevelList[this.filterService.filters.userLevel - 1];
+    this.headerService.onChangeTitle.subscribe(result=>{
+      this.title = result
+    })
+    
+    if(this.router.url.includes(Routing.HOME)){
+      this.title = NavigationTitle.HOME
+    }
+    else if(this.router.url.includes(Routing.STUDY_MANAGEMENT)){
+      this.title =  NavigationTitle.STUDY_MANAGEMENT
+    }
+    else if(this.router.url.includes(Routing.MODELS_STATUS)){
+      this.title = NavigationTitle.MODEL_STATUS
+    }
+    else if(this.router.url.includes(Routing.STUDY_WORKSPACE)){
+      this.title = NavigationTitle.STUDY_WORKSPACE
+    }
+    else if(this.router.url.includes(Routing.GROUP_MANAGEMENT)){
+      this.title = NavigationTitle.GROUP_MANAGEMENT
+    }
+  }
+
+
+  // Welcome page
+  onClickWelcomePage() {
+    this.router.navigate([Routing.HOME]);
+    this.title = NavigationTitle.HOME
+    
+  }
+
+  //Study Management
+  onClickStudyManagement() {
+    this.router.navigate([Routing.STUDY_MANAGEMENT]);
+    this.title = NavigationTitle.STUDY_MANAGEMENT
+    this.headerService.changeIndexTab(0)
+  }
+  onClickStudyCase(){
+    this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.STUDY_CASE]);
+    this.title = NavigationTitle.STUDY_MANAGEMENT
+    this.headerService.changeIndexTab(0)
+
+  }
+ onClickFromProcess(){
+    this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.FROM_PROCESS]);
+    this.title = NavigationTitle.STUDY_MANAGEMENT
+    this.headerService.changeIndexTab(1)
+  } 
+   onClickReferenceManagement(){
+    this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.REFERENCE_MANAGEMENT]);
+    this.title = NavigationTitle.STUDY_MANAGEMENT
+    this.headerService.changeIndexTab(2)
+  }
+
+  //Model status
+  onClickModelsStatus() {
+    this.router.navigate([Routing.MODELS_STATUS]);
+    this.title = NavigationTitle.MODEL_STATUS
+    this.headerService.changeIndexTab(0)
+
+  }
+  onClickModelsLinks(){
+    this.router.navigate([Routing.MODELS_STATUS, Routing.MODELS_LINKS]);
+    this.title = NavigationTitle.MODEL_STATUS
+    this.headerService.changeIndexTab(1)
 
   }
 
-  changeUserLevel(newUserLevelValue: number) {
-    this.selectedUserlevel = this.userLevelList[newUserLevelValue];
-    this.filterService.filters.userLevel = newUserLevelValue + 1; // Userlevel starting at 1
+  // Group Management
+  onClickGroupManagement() {
+    this.router.navigate([Routing.GROUP_MANAGEMENT]);
+    this.title = NavigationTitle.GROUP_MANAGEMENT
   }
 
   logout() {
     this.auth.deauthenticate().subscribe();
   }
-
-
 }

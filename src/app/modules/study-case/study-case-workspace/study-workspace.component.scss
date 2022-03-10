@@ -1,18 +1,15 @@
 .container-workspace {
   height: 100%;
-  width: 100%;
   overflow-y: auto;
   padding: 5px;
 }
 
 .fullscreen-button {
-  position: absolute;
-  top: 7px;
   right: 10px;
   z-index: 1;
-  height: 28px;
-  line-height: 28px;
-  margin-top: -3px;
+  position: absolute;
+  top: 4px;
+
 }
 
 .markdown-container {
@@ -40,4 +37,27 @@
 
 .bookmarks-title {
   font-weight: bold;
+}
+.button{
+  height: 28px;
+  line-height: 28px;
+}
+.filter-level{ 
+  position: absolute;
+  top: 4px;
+  right: 145px;
+  z-index: 1;
+}
+.user-level-item {
+  font-size: 13px;
+}
+
+
+.mat-list-option {
+  height: 24px !important;
+  border-top: grey;
+}
+
+.mat-selection-list {
+  padding: 0 !important;
 }

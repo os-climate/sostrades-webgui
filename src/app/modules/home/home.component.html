@@ -12,7 +12,7 @@
           size="250"
           minSize="250"
           #area1="asSplitArea"
-          *ngIf="hasAccessToStudy"
+          *ngIf="hasAccessToStudy && isLoadedStudy"
           [order]="0"
         >
           <app-sidenav class="nopadding height-inherit"></app-sidenav>

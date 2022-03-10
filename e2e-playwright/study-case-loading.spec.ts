@@ -18,7 +18,7 @@ test('Test loading -> Witness Full', async ({ page }) => {
     `${studyName}.Damage`,
     `${studyName}.Temperature_change`,
     `${studyName}.CCUS`,
-    `${studyName}.Land_Use`,
+    `${studyName}.Land`,
     `${studyName}.Utility`,
   ];
 

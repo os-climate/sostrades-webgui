@@ -1,12 +1,9 @@
-<mat-tab-group class="container-workspace">
+<mat-tab-group class="container-workspace"  [(selectedIndex)]="index" (selectedTabChange)="selectedTabChanged($event)">
   <mat-tab label="Study cases">
     <app-study-case-management></app-study-case-management>
   </mat-tab>
   <mat-tab label="From Process">
-    <app-process-management [canCreateStudy]="true"></app-process-management>
-  </mat-tab>
-  <mat-tab label="Group management">
-    <app-group-management></app-group-management>
+    <app-process-management [canCreateStudy]="true" ></app-process-management>
   </mat-tab>
   <mat-tab label="Reference management">
     <app-reference-management></app-reference-management>

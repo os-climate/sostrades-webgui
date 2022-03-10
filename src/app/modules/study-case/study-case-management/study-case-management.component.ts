@@ -28,6 +28,8 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
+import { HeaderService } from 'src/app/services/hearder/header.service';
+import { NavigationTitle } from 'src/app/models/navigation-title.model';
 
 
 @Component({
@@ -94,6 +96,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
     private studyDialogService: StudyDialogService,
+    private headerService : HeaderService,
     private userService: UserService
   ) {
     this.isLoading = true;
@@ -230,6 +233,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             this.socketService.joinRoom(
               this.studyCaseDataService.loadedStudy.studyCase.id
             );
+            this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE)
           }
         });
       }

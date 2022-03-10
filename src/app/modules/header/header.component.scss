@@ -9,6 +9,7 @@
   height: 35px;
 }
 
+
 .version-container {
   height: 70%;
   border: solid;
@@ -35,21 +36,10 @@
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.button-user-level {
-  margin-right: 15px;
-  width: 94px;
-  padding: 0px !important;
+.blue_color{
+  color: #0B78B8
 }
-
-.mat-list-option {
-  height: 24px !important;
-  border-top: grey;
-}
-
-.mat-selection-list {
-  padding: 0 !important;
-}
-
-.user-level-item {
-  font-size: 13px;
+::ng-deep .mainMenu {
+  width: 200px;
+  margin-top: 20px;
 }

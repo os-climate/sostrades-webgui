@@ -1,4 +1,4 @@
-<mat-tab-group class="container-workspace" (selectedTabChange)="onSelectedTabChange($event)">
+<mat-tab-group class="container-workspace"  [(selectedIndex)]="index" (selectedTabChange)="onSelectedTabChange($event)">
   <mat-tab label="Models status">
     <app-models-status-table *ngIf="showModelStatusTableContent"></app-models-status-table>
   </mat-tab>

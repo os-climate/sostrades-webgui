@@ -10,29 +10,6 @@
   flex-direction: column;
 }
 
-.mat-expansion-panel-header-title {
-  font-size: 13px;
-}
-
-.mat-button {
-  width: 100%;
-  margin: 0 0 5px 0;
-  font-size: 13px;
-  background-color: white;
-}
-
-.button-content {
-  display: flex;
-  //justify-content: start;
-  align-items: center;
-}
-.button-container {
-  height: 100%;
-  width: 100%;
-  flex-grow: 1;
-  padding: 5px;
-  background-color: #f9f9f9;
-}
 
 .mat-accordion {
   min-height: 0;
@@ -42,21 +19,6 @@
   font-weight: 450 !important;
 }
 
-.button-study-management {
-  height: 30px;
-  font-size: 13px;
-  margin-bottom: 10px;
-  line-height: 30px;
-  text-align: left;
-}
-
-.button-models-status {
-  height: 30px;
-  font-size: 13px;
-  margin-bottom: 10px;
-  line-height: 30px;
-  text-align: left;
-}
 
 .treeview-container {
   flex-grow: 1;
@@ -65,8 +27,8 @@
   border-radius: 7px;
   border: solid;
   border-width: 2px;
-  border-color: lightgrey;
   border-radius: 7px 7px 7px 7px;
+  border-color: #0b78b8;
 }
 
 .header-treeview {
@@ -81,6 +43,9 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  cursor: pointer;
+  background-color: #0b78b8;  
+  color: #ffffff;
 }
 
 .long-title {

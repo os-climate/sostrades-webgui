@@ -6,6 +6,7 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { Routing } from 'src/app/models/routing';
 
 @Component({
   selector: 'app-reset-password',
@@ -86,7 +87,7 @@ export class ResetPasswordComponent implements OnInit {
       this.userService.changePassword(password, token).subscribe(
       () => {
         this.snackbarService.closeSnackbarIfOpened();
-        this.router.navigate(['/login']);
+        this.router.navigate([Routing.LOGIN]);
         this.processingResetPassword = false;
       },
       (err) => {
