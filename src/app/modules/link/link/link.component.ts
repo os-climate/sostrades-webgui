@@ -6,6 +6,7 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { LinkService } from 'src/app/services/link/link.service';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { LinkCreateOrEditComponent } from '../link-create-or-edit/link-create-or-edit.component';
 
@@ -18,15 +19,20 @@ export class LinkComponent implements OnInit {
 
   public links: Link[];
   public isLoading: Boolean;
+  public hasAccessToStudyManager: boolean;
 
   constructor(private dialog: MatDialog,
               private linkService: LinkService,
               private snackbarService: SnackbarService,
-              private loadingDialogService: LoadingDialogService) {
+              private loadingDialogService: LoadingDialogService,
+              private userService: UserService) {
     this.links = [];
+    this.hasAccessToStudyManager = false;
   }
 
   ngOnInit(): void {
+
+    this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
 
     this.linkService.loadAllLinks().subscribe(links => {
       this.links = links;

@@ -16,9 +16,9 @@
 
   <div mat-dialog-content style="height:350px !important;">
     <mat-form-field style="margin-top: 1px !important"
-      hintLabel="{{ label.value.length }} / 32 characters">
+      hintLabel="{{ label.value.length }} / 64 characters">
       <mat-label>Label</mat-label>
-      <input #label matInput formControlName="linkLabel" placeholder="Link label" class="emoji-font" maxlength="32"/>
+      <input #label matInput formControlName="linkLabel" placeholder="Link label" class="emoji-font" maxlength="64"/>
       <mat-error *ngIf="hasError('linkLabel', 'required')"
         >A label is <strong>required</strong></mat-error>
       <mat-error *ngIf="hasError('linkLabel', 'error')">

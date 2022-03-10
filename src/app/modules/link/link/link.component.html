@@ -1,10 +1,10 @@
 <div class="widget border-readonly" style="min-width: 320px; max-width: 320px;">
   <div class="widget-header">
     <div class="text-header">
-      Usefull links
+      Useful links
     </div>
     <div class="spacer"></div>
-    <button mat-icon-button color="accent" matTooltip="Add a new link"
+    <button mat-icon-button color="accent" matTooltip="Add a new link" *ngIf="hasAccessToStudyManager"
       (click)="onCreate($event)">
       <i class="fa-solid fa-square-plus fa-fw"></i>
     </button>
@@ -19,9 +19,9 @@
               matTooltipClass="custom-tooltip-class"
               aria-label="Information about the link">
 
-        <a [href]="link.url" target="_blank" style="font-size: 12px;">{{link.label}}</a>
+        <a [href]="link.url" target="_blank" style="font-size: 12px; overflow-wrap: anywhere;">{{link.label}}</a>
         <div class="spacer"></div>
-        <div>
+        <div *ngIf="hasAccessToStudyManager">
           <button mat-button [matMenuTriggerFor]="menuUser" aria-label="user menu">
             <i class="fa-solid fa-ellipsis-vertical"></i>
           </button>
