@@ -149,6 +149,14 @@ export class UserService extends DataHttpService {
     }
   }
 
+  getFirstname(): string {
+    if (this.currentUserExist()) {
+      return `${this.currentUser.user.firstname}`;
+    } else {
+      return '';
+    }
+  }
+
   currentUserExist(): boolean {
     if (this.currentUser !== null && this.currentUser !== undefined) {
       return true;

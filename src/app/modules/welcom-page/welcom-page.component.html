@@ -1,0 +1,55 @@
+<body>
+  <div id="container">
+    <div id="welcome" style="text-align: center">
+      <br />
+      <h1 id="welcome-Sostrades" class="colorText">
+        Welcome on Sostrades
+        <span style="text-transform: uppercase">{{ username }}</span> !
+      </h1>
+    </div>
+
+    <br />
+    <div id="fistBlock" style="display: flex" class="col-md-12">
+      <div id="purpose" class="col-md-3" class="colorText">
+        <h2  style="text-align: center" >Purpose</h2>
+        <p id="purpose-text" >
+          SoSTrades is a web-based, multi-user, 
+          interactive publication-quality graph simulation platform. 
+          It allows users to drop new modules without additional coding, 
+          and provides embedded advanced numerical capabilities for 
+          simulation and multi-disciplinary optimization. 
+          It also has built-in collaborative capabilities to allow 
+          different experts to work together
+          <br />
+          <span style="font-size: 14px; font-style: italic"
+            >If it's your first time on the app, click
+            <a>here</a> to do your
+            onboarding.</span
+          >
+        </p>
+      </div>
+      <div class="col-md-1"></div>
+      <div id="animation" style="display: contents" class="col-md-3">
+
+        <img
+          class="rotate"
+          src="/assets/SOS_TRADES_LOGO_NOIR.svg"
+          height="150px"
+          width="100%"
+        />
+      </div>
+      <div class="col-md-1"></div>
+      <div id="onboarding" class="col-md-3">
+      <app-link></app-link>
+      </div>
+    </div>
+    <br />
+    <hr />
+    <div id="secondBlock" class="col-md-12">
+      <div id="favoriteStudy">
+        <h2 class="colorText">Your favorite studies</h2>
+        <app-study-case-management></app-study-case-management>
+      </div>
+    </div>
+  </div>
+</body>

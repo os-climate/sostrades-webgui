@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { UserService } from './user/user.service';
 import { SnackbarService } from './snackbar/snackbar.service';
+import { Routing } from '../models/routing';
 
 
 @Injectable({
@@ -17,7 +18,7 @@ export class AdminGuard implements CanActivate {
     if (this.userService.hasAccessToAdmin()) {
       return true;
     } else {
-      this.router.navigate(['/models-status']);
+      this.router.navigate([Routing.MODELS_STATUS]);
       this.snackbarService.showError('You don\'t have the permission to access this ressource');
     }
   }

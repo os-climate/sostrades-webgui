@@ -60,6 +60,8 @@ export class AppDataService extends DataHttpService {
       this.loadedStudy = loadedStudy as LoadedStudy;
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+        this.studyCaseDataService.isLoadedStudy(this.loadedStudy)
+
       }, errorReceived => {
         this.snackbarService.showError('Error creating study\n' + errorReceived.description);
         isStudyCreated(false);
@@ -83,6 +85,7 @@ export class AppDataService extends DataHttpService {
       this.loadedStudy = loadedStudy as LoadedStudy;
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+        this.studyCaseDataService.isLoadedStudy(this.loadedStudy)
       }, errorReceived => {
         this.snackbarService.showError('Error copying study\n' + errorReceived.description);
         isStudyCreated(false);
@@ -200,7 +203,7 @@ export class AppDataService extends DataHttpService {
       else{
         this.close_loading(loadedStudy, isStudyCreated);
       }
-      
+       this.studyCaseDataService.isLoadedStudy(loadedStudy)
     }, errorReceived => {
       // Reset ontology (make sure nothing was loaded)
       this.ontologyService.resetOntology();

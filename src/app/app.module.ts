@@ -111,6 +111,7 @@ import { ScientificNotationPipe } from './pipes/scientific-notation/scientific-n
 import { ConnectorDataComponent } from './modules/connector-data/connector-data.component';
 import { LinkComponent } from './modules/link/link/link.component';
 import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/link-create-or-edit.component';
+import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
 
 registerLocaleData(fr);
 
@@ -197,7 +198,8 @@ registerLocaleData(fr);
     ScientificNotationPipe,
     ConnectorDataComponent,
     LinkComponent,
-    LinkCreateOrEditComponent
+    LinkCreateOrEditComponent,
+    WelcomPageComponent
   ],
   imports: [
     BrowserModule,
