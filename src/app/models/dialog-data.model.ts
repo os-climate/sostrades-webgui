@@ -5,6 +5,7 @@ import { EntityRight, EntityResourceRights } from './entity-right.model';
 import { AccessRight } from './access-right.model';
 import { NodeData } from './node-data.model';
 import { StudyCaseValidation } from './study-case-validation.model';
+import { Link } from './link.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -334,5 +335,19 @@ export class ConnectorDialogData extends AbstractDialogData {
     this.namespace = '';
     this.discipline = '';
     this.isReadOnly = false;
+  }
+}
+
+export class LinkDialogData extends AbstractDialogData {
+  label: string;
+  url: string;
+  description: string;
+
+
+  public constructor() {
+    super();
+    this.label = '';
+    this.url ='';
+    this.description = '';
   }
 }

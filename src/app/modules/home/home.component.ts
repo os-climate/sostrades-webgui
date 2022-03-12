@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   authenticated: boolean;
   username: string;
   calculationChangeSubscription: Subscription;
+  isLoadedStudy : boolean
 
   sizes = {
     bottom: {
@@ -48,6 +49,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService) {
     this.hasAccessToStudy = false;
+    this.isLoadedStudy = false
   }
 
   ngOnInit(): void {
@@ -138,7 +140,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.hasAccessToStudy = false;
     }
+    this.studyCaseDataService.onLoadedStudy.subscribe(result=>{
+      if(result != null){
+        this.isLoadedStudy = true;
+      }
+      else{
+        this.isLoadedStudy = false;
+      }
+    })
   }
+  
 
   ngOnDestroy() {
     if ((this.calculationChangeSubscription !== null) && (this.calculationChangeSubscription !== undefined)) {

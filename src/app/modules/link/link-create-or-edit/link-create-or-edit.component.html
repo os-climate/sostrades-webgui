@@ -1,0 +1,68 @@
+
+<div class="flex-container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    progressText="Loading form information"
+  ></app-progress-bar>
+</div>
+<div class="flex-container" [formGroup]="linkForm" *ngIf="!isLoading">
+  <div mat-dialog-title>
+    <h1 style="margin-bottom: 10px !important; text-align: center">
+      Create a new link
+    </h1>
+  </div>
+
+  <div mat-dialog-content style="height:350px !important;">
+    <mat-form-field style="margin-top: 1px !important"
+      hintLabel="{{ label.value.length }} / 64 characters">
+      <mat-label>Label</mat-label>
+      <input #label matInput formControlName="linkLabel" placeholder="Link label" class="emoji-font" maxlength="64"/>
+      <mat-error *ngIf="hasError('linkLabel', 'required')"
+        >A label is <strong>required</strong></mat-error>
+      <mat-error *ngIf="hasError('linkLabel', 'error')">
+        Label already <strong>exist</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field style="margin-top: 1px !important"
+      hintLabel="{{ url.value.length }} / 512 characters">
+      <mat-label>Url</mat-label>
+      <input #url matInput formControlName="linkUrl" placeholder="Link url" maxlength="512"/>
+      <mat-error *ngIf="hasError('linkUrl', 'required')"
+        >An url is <strong>required</strong></mat-error>
+      <mat-error *ngIf="hasError('linkUrl', 'error')">
+        Url already <strong>exist</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field
+        style="margin-top: 1px !important; width: 100%;"
+        hintLabel="{{ description.value.length }} / 300 characters">
+      <mat-label>Description</mat-label>
+      <textarea
+        #description
+        matInput
+        maxlength="300"
+        formControlName="linkDescription"
+        placeholder="Description"
+        style="height: 80px; background-color: white; resize: none"
+        class="emoji-font">
+      </textarea>
+      <mat-error *ngIf="hasError('linkDescription', 'required')">
+        A description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button
+      mat-button
+      (click)="submitForm()"
+      [disabled]="!linkForm.valid"
+    >
+      Ok
+    </button>
+  </div>
+</div>

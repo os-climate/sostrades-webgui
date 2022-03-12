@@ -141,9 +141,28 @@ export class UserService extends DataHttpService {
     return isStudyAuth;
   }
 
+  hasAccessToStudyManager(): boolean {
+    let isStudyAuth = false;
+    if (this.currentUserExist()) {
+      if (this.currentUser.modules.filter(x => x === 'STUDY_MANAGER').length === 1) {
+        isStudyAuth = true;
+      }
+    }
+
+    return isStudyAuth;
+  }
+
   getFullUsername(): string {
     if (this.currentUserExist()) {
       return `${this.currentUser.user.firstname} ${this.currentUser.user.lastname}`;
+    } else {
+      return '';
+    }
+  }
+
+  getFirstname(): string {
+    if (this.currentUserExist()) {
+      return `${this.currentUser.user.firstname}`;
     } else {
       return '';
     }

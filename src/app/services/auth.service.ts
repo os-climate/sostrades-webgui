@@ -18,6 +18,7 @@ import { StudyCaseValidationService } from './study-case-validation/study-case-v
 import { SoSTradesError } from '../models/sos-trades-error.model';
 import { DataHttpService } from './http/data-http/data-http.service';
 import { Location } from '@angular/common';
+import { Routing } from '../models/routing';
 
 class LoginResponse {
   accessToken: string;
@@ -166,7 +167,7 @@ export class AuthService extends DataHttpService {
         map(response => null),
         catchError(this.errorHandler),
         finalize(() => {
-          this.router.navigate(['/login']);
+          this.router.navigate([Routing.LOGIN]);
         })
       );
   }

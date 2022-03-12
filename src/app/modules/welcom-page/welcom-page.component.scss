@@ -1,0 +1,27 @@
+#container {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.colorText{
+  color: #909090;
+}
+
+li{
+  list-style-type:none;
+}
+li:hover{
+  list-style-type:circle;
+  color: blue;
+}
+
+#purpose-text {
+  font-weight: bold;
+  font-size: 12px;
+  width: 100%;
+}
+#onboarding {
+  margin-right: 10px;
+  display: grid;
+
+}
