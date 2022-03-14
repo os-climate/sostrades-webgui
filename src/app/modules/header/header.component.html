@@ -3,7 +3,7 @@
   <div id="mainMenu-img" style="display: flex;">
     <div id="mainMenu">    
       <button 
-      id="menuButton"
+      id="main-menu-button"
       mat-button 
       [matMenuTriggerFor]="mainMenu"  
       > 
@@ -13,7 +13,7 @@
         
         
         <button 
-        mat-menu-item 
+        mat-menu-item id="study_management-menu-button"
         [matMenuTriggerFor]="StudyManagement"
         (click)="onClickStudyManagement()">
         <mat-icon class="blue_color">subject</mat-icon>
@@ -32,7 +32,7 @@
       </mat-menu>
     
       <mat-menu  #StudyManagement="matMenu">
-          <button mat-menu-item (click)="onClickStudyCase()">Study cases</button>
+          <button mat-menu-item id="study_case-menu-button" (click)="onClickStudyCase()">Study cases</button>
           <button mat-menu-item (click)="onClickFromProcess()">From process</button>
           <button mat-menu-item (click)="onClickReferenceManagement()">Reference Management</button>
       </mat-menu>
