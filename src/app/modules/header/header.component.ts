@@ -8,6 +8,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { Routing } from 'src/app/models/routing';
+import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private auth: AuthService,
     private headerService: HeaderService,
+    public contactDialogService : ContactDialogService,
     public dialog: MatDialog,
     private userService: UserService,
     private appDataService: AppDataService,
@@ -126,6 +128,11 @@ export class HeaderComponent implements OnInit {
   onClickGroupManagement() {
     this.router.navigate([Routing.GROUP_MANAGEMENT]);
     this.title = NavigationTitle.GROUP_MANAGEMENT
+  }
+
+  // Contact
+  onClickOnContact(){
+  this.contactDialogService.openContactDialog()
   }
 
   logout() {
