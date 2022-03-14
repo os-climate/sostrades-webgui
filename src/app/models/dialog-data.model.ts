@@ -114,10 +114,12 @@ export class StudyCaseDeleteDialogData extends AbstractDialogData {
 
 export class UserCreateDialogData extends AbstractDialogData {
   userCreated: User;
+  passwordLink: string;
 
   public constructor() {
     super();
     this.userCreated = null;
+    this.passwordLink = '';
   }
 }
 

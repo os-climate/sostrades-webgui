@@ -17,13 +17,13 @@ import { Routing } from 'src/app/models/routing';
 })
 export class HeaderComponent implements OnInit {
 
-  
+
   public username: string;
   public versionDate: string;
   public platform: string;
-  public hasAccessToAdmin: boolean;
   public title : string
-  
+  public hasAccessToStudyManager: boolean;
+  public hasAccessToStudy: boolean;
 
   constructor(
     private router: Router,
@@ -33,21 +33,19 @@ export class HeaderComponent implements OnInit {
     private userService: UserService,
     private appDataService: AppDataService,
     public filterService: FilterService) {
+
     this.versionDate = '';
     this.platform = '';
-    this.hasAccessToAdmin = false;
     this.title = "";
-
+    this.hasAccessToStudyManager = false;
+    this.hasAccessToStudy = false;
   }
 
   ngOnInit(): void {
 
     this.username = this.userService.getFullUsername();
-    if (this.userService.hasAccessToAdmin()) {
-      this.hasAccessToAdmin = true;
-    } else {
-      this.hasAccessToAdmin = false;
-    }
+    this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
+    this.hasAccessToStudy = this.userService.hasAccessToStudy();
 
     this.appDataService.getAppInfo().subscribe(res => {
       if (res !== null && res !== undefined) {
@@ -59,7 +57,7 @@ export class HeaderComponent implements OnInit {
     this.headerService.onChangeTitle.subscribe(result=>{
       this.title = result
     })
-    
+
     if(this.router.url.includes(Routing.HOME)){
       this.title = NavigationTitle.HOME
     }
@@ -82,7 +80,7 @@ export class HeaderComponent implements OnInit {
   onClickWelcomePage() {
     this.router.navigate([Routing.HOME]);
     this.title = NavigationTitle.HOME
-    
+
   }
 
   //Study Management
@@ -101,7 +99,7 @@ export class HeaderComponent implements OnInit {
     this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.FROM_PROCESS]);
     this.title = NavigationTitle.STUDY_MANAGEMENT
     this.headerService.changeIndexTab(1)
-  } 
+  }
    onClickReferenceManagement(){
     this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.REFERENCE_MANAGEMENT]);
     this.title = NavigationTitle.STUDY_MANAGEMENT

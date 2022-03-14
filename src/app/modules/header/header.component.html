@@ -1,28 +1,28 @@
 
 <mat-toolbar color="primary" class="d-flex justify-content-between" >
   <div id="mainMenu-img" style="display: flex;">
-    <div id="mainMenu">    
-      <button 
+    <div id="mainMenu">
+      <button
       id="main-menu-button"
-      mat-button 
-      [matMenuTriggerFor]="mainMenu"  
-      > 
+      mat-button
+      [matMenuTriggerFor]="mainMenu"
+      >
         <mat-icon>menu</mat-icon>
-      </button>  
-      <mat-menu #mainMenu="matMenu" class="mainMenu"> 
-        
-        
-        <button 
+      </button>
+      <mat-menu #mainMenu="matMenu" class="mainMenu">
+
+
+        <button
         mat-menu-item id="study_management-menu-button"
         [matMenuTriggerFor]="StudyManagement"
         (click)="onClickStudyManagement()">
         <mat-icon class="blue_color">subject</mat-icon>
         Study Management
         </button>
-        <button 
-        mat-menu-item 
+        <button
+        mat-menu-item
         [matMenuTriggerFor]="ModelsStatus"
-        (click)="onClickModelsStatus()"> 
+        (click)="onClickModelsStatus()">
         <mat-icon class="blue_color">library_books</mat-icon>
         Models status
         </button>
@@ -30,26 +30,26 @@
           <mat-icon class="blue_color">group</mat-icon>
           Group Management</button>
       </mat-menu>
-    
+
       <mat-menu  #StudyManagement="matMenu">
           <button mat-menu-item id="study_case-menu-button" (click)="onClickStudyCase()">Study cases</button>
           <button mat-menu-item (click)="onClickFromProcess()">From process</button>
           <button mat-menu-item (click)="onClickReferenceManagement()">Reference Management</button>
       </mat-menu>
-      
+
       <mat-menu #ModelsStatus="matMenu">
         <button mat-menu-item (click)="onClickModelsStatus()">Models Status</button>
         <button mat-menu-item (click)="onClickModelsLinks()">Models Links</button>
      </mat-menu>
     </div>
     <div>
-      <img src="/assets/SOS_TRADES_LOGO_BLANC.svg" 
-    height="100%" 
-    style="cursor: default; height: 45px; margin-left: 50px;" 
+      <img src="/assets/SOS_TRADES_LOGO_BLANC.svg"
+    height="100%"
+    style="cursor: default; height: 45px; margin-left: 50px;"
     />
     </div>
   </div>
-    <div id="title"> 
+    <div id="title">
       <h1 style="margin-bottom:10px"> {{title}}</h1>
     </div>
     <div id="username-SecondMenu" style="display: flex;">
@@ -62,26 +62,26 @@
         </div>
       </div>
       <div id="secondMenu">
-        <button 
+        <button
         mat-button
-        [matMenuTriggerFor]="menuUser" 
+        [matMenuTriggerFor]="menuUser"
         aria-label="user menu">
         <span style="font-size: 13px;margin-right: 20px;">{{ username }}</span>
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
-          
-        <mat-menu #menuUser="matMenu"> 
-          <button mat-menu-item routerLink="/user-management" *ngIf="hasAccessToAdmin">
+
+        <mat-menu #menuUser="matMenu">
+          <button mat-menu-item routerLink="/user-management" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-user" style="padding-right: 10px;" aria-hidden="true">
             </i>
             <span>User Management</span>
           </button>
-          <button mat-menu-item routerLink="/processes-management" *ngIf="hasAccessToAdmin">
-            <i class="fa-regular fa-gears" style="padding-right: 10px;" aria-hidden="true">
+          <button mat-menu-item routerLink="/processes-management" *ngIf="hasAccessToStudyManager">
+            <i class="fa-solid fa-gears" style="padding-right: 10px;" aria-hidden="true">
             </i>
             <span>Processes Management</span>
           </button>
-          <button mat-menu-item routerLink="/execution-management" *ngIf="hasAccessToAdmin">
+          <button mat-menu-item routerLink="/execution-management" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-server" style="padding-right: 10px;" aria-hidden="true">
             </i>
             <span>Execution Dashboard</span>
@@ -92,7 +92,7 @@
             <span>Logout</span>
           </button>
         </mat-menu>
-        
+
       </div>
   </div>
 </mat-toolbar>
