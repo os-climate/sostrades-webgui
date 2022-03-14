@@ -12,7 +12,8 @@ export class User implements AccessRightItem {
     public firstname: string,
     public lastname: string,
     public email: string,
-    public userprofile: number) {
+    public userprofile: number,
+    public internalAccount: boolean) {
     this.userprofilename = null;
     this.title = `${firstname} ${lastname}`;
     this.information = email;
@@ -25,7 +26,8 @@ export class User implements AccessRightItem {
       jsonData[UserAttributes.FIRSTNAME],
       jsonData[UserAttributes.LASTNAME],
       jsonData[UserAttributes.EMAIL],
-      jsonData[UserAttributes.USERPROFILE]);
+      jsonData[UserAttributes.USERPROFILE],
+      jsonData[UserAttributes.INTERNAL_ACCOUNT]);
     return result;
   }
 
@@ -58,7 +60,8 @@ export enum UserAttributes {
   FIRSTNAME = 'firstname',
   LASTNAME = 'lastname',
   EMAIL = 'email',
-  USERPROFILE = 'userprofile'
+  USERPROFILE = 'userprofile',
+  INTERNAL_ACCOUNT = 'internal_account'
 }
 
 export enum UserApplicationRightAttributes {

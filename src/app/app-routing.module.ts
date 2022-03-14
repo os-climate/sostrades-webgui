@@ -8,6 +8,7 @@ import { StudyCaseManagementContainerComponent } from './modules/study-case/stud
 import { ModelsContainerComponent } from './modules/models/models-container/models-container.component';
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { StudyGuard } from './services/study.guard';
+import { StudyManagerGuard } from './services/study-manager.guard';
 import { AdminGuard } from './services/admin.guard';
 import { CurrentUserNoRightsComponent } from './modules/user/user-no-rights/user-no-rights.component';
 import { NoAccessGuard } from './services/no-access.guard';
@@ -105,17 +106,17 @@ const routes: Routes = [
       {
         path: Routing.USER_MANAGEMENT,
         component: UserManagementComponent,
-        canActivate: [AdminGuard]
+        canActivate: [StudyManagerGuard]
       },
       {
         path: Routing.EXECUTION_MANAGEMENT,
         component: StudyCaseExecutionManagementComponent,
-        canActivate: [AdminGuard]
+        canActivate: [StudyManagerGuard]
       },
       {
         path: Routing.PROCESSES_MANAGEMENT,
         component: ProcessManagementComponent,
-        canActivate: [AdminGuard]
+        canActivate: [StudyManagerGuard]
       },
       {
         path: Routing.NO_ACCESS,
