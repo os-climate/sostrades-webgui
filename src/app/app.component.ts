@@ -41,7 +41,6 @@ export class AppComponent implements OnInit {
         this.socketService.openConnection('');
         const calls = [];
 
-        calls.push(this.studyCaseDataService.getDisciplineIconMapping());
         calls.push(this.groupDataService.loadAllGroups());
         calls.push(this.userService.loadAllUsers());
 
@@ -56,13 +55,39 @@ export class AppComponent implements OnInit {
     });
   }
 
-  @HostListener('window:beforeunload', ['$event'])
-  unloadHandler(event) {
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-      this.studyCaseDataService.loadedStudy = null;
-    }
-    this.socketService.closeConnection();
-    this.appDataService.stopConnectionStatusTimer();
-  }
+  // @HostListener('window:beforeunload', ['$event'])
+  // unloadHandler(event) {
+  //   if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+  //     this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+  //     this.studyCaseDataService.loadedStudy = null;
+  //   }
+  //   this.socketService.closeConnection();
+  //   this.appDataService.stopConnectionStatusTimer();
+  // }
+
+  // @HostListener('mousemove', ['$event'])
+  // onMousemove(event: MouseEvent) {
+  //   let cat = document.getElementById('cat');
+  //   let left = event.pageX;
+  //   let top = event.pageY;
+
+  //   if ((cat !== undefined) &&( cat !== null)) {
+  //     //cat.style.left = left + 'px';
+  //     //cat.style.top = top + 'px';
+  //     console.log('cat', left, top);
+
+  //     if (left <= cat.offsetLeft) {
+  //       cat.style.transform= "translate(-25%, -25%) scaleX(0.25) scaleY(0.25)";
+  //     } else {
+  //       cat.style.transform= "translate(-25%, -25%) scaleX(-0.25) scaleY(0.25)";
+  //     }
+
+  //     cat.animate({
+  //       left: left + 'px',
+  //       top: top + 'px'
+  //     }, 2000);
+  //   } else {
+  //     console.log(left, top);
+  //   }
+  // }
 }
