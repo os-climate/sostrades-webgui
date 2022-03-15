@@ -14,43 +14,43 @@
     <div style="min-width: 8px"></div>
 
     <span class="spacer"></span>
-    <i [className]="studyCaseDataService.iconMapping.get(treeNode.nodeType)"> </i>
+    <i [className]="treeNode | disciplineIconMappingConverter"> </i>
     <span class="treenode-title" style="margin-left: 5px">{{
       treeNode.name
     }}</span>
-    <span style="margin-left: 30px;"> 
-      State :    
+    <span style="margin-left: 30px;">
+      State :
     </span>
-      <button 
-        mat-button 
-        *ngIf="treeNode.isValidated" 
+      <button
+        mat-button
+        *ngIf="treeNode.isValidated"
        class="stateButton"
-       color="success" 
-       > Validated 
+       color="success"
+       > Validated
         </button>
-  
-        <button 
-        mat-button 
-        *ngIf="!treeNode.isValidated" 
+
+        <button
+        mat-button
+        *ngIf="!treeNode.isValidated"
         class="stateButton"
         color="undetermined"
-        > Not validated 
+        > Not validated
         </button>
     <span class="spacer"></span>
     <button
     mat-raised-button
-    *ngIf="!treeNode.isValidated"  
-    (click)="onClickDataValidation($event)" 
+    *ngIf="!treeNode.isValidated"
+    (click)="onClickDataValidation($event)"
     class="validationButton"
     style="margin-right: 8px;"
     color="accent"
      >
        Validate data
     </button>
-    
+
     <button
-    mat-raised-button  
-    *ngIf="treeNode.isValidated"  
+    mat-raised-button
+    *ngIf="treeNode.isValidated"
     (click)="onClickDataValidation($event)"
     class="validationButton"
     style="margin-right: 1px;"

@@ -113,6 +113,7 @@ import { LinkComponent } from './modules/link/link/link.component';
 import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/link-create-or-edit.component';
 import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
 import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
+import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
 
 registerLocaleData(fr);
 
@@ -202,7 +203,8 @@ registerLocaleData(fr);
     LinkCreateOrEditComponent,
     WelcomPageComponent,
     ContactDialogComponent,
-    
+    DisciplineIconMappingConverterPipe
+
   ],
   imports: [
     BrowserModule,
