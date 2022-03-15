@@ -26,7 +26,7 @@ export class UserService extends DataHttpService {
     this.allUsers = [];
   }
 
-  createUser(user: User): Observable<User> {
+  createUser(user: User): Observable<any> {
     return this.http.post<User>(`${this.apiRoute}`, JSON.stringify(user), this.options);
   }
 

@@ -222,8 +222,28 @@ export class UserManagementComponent implements OnInit {
 
       if ((resultCreateUser !== null) && (resultCreateUser !== undefined)) {
         if (resultCreateUser.cancel === false && resultCreateUser.userCreated !== null && resultCreateUser.userCreated !== undefined) {
-          this.usersList.push(resultCreateUser.userCreated);
+          const user = resultCreateUser.userCreated;
+
+          if (user.userprofile === null) {
+            user.userprofilename = 'No profile';
+          } else {
+            user.userprofilename = this.usersProfilesList.filter(x => x.id === user.userprofile)[0].name;
+          }
+
+          this.usersList.push(user);
           this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
+
+          const validationDialogData = new ValidationDialogData();
+          validationDialogData.title = "Informations"
+          validationDialogData.message = `Creation of user "${user.username}" successful.\nThe following password reset link has been generated.\nSend it to the user to let him change its password.\n${resultCreateUser.passwordLink}`;
+          validationDialogData.showCancelButton = false;
+          this.dialog.open(ValidationDialogComponent, {
+            disableClose: true,
+
+            width: '500px',
+            height: '220px',
+            data: validationDialogData
+          });
         }
       }
     });

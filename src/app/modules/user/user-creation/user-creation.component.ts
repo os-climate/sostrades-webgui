@@ -82,12 +82,17 @@ export class CreateUserComponent implements OnInit {
       this.createUserForm.value.firstname,
       this.createUserForm.value.lastname,
       this.createUserForm.value.email,
-      usProfile
+      usProfile,
+      true
     );
 
-    this.userService.createUser(this.data.userCreated).subscribe(resUserCreated => {
+    this.userService.createUser(this.data.userCreated).subscribe(creationResult => {
+      const user = User.Create(creationResult['user']);
+      const passwordLink = creationResult['password_link'];
+
       this.loadingDialogService.closeLoading();
-      this.data.userCreated.id = resUserCreated.id;
+      this.data.userCreated = user;
+      this.data.passwordLink = passwordLink;
       this.dialogRef.close(this.data);
       this.snackbarService.showInformation(`Creation of user "${this.createUserForm.value.username}" successful`);
     }, errorReceived => {

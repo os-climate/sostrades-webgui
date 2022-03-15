@@ -112,6 +112,7 @@ import { ConnectorDataComponent } from './modules/connector-data/connector-data.
 import { LinkComponent } from './modules/link/link/link.component';
 import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/link-create-or-edit.component';
 import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
+import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
 
 registerLocaleData(fr);
 
@@ -199,7 +200,9 @@ registerLocaleData(fr);
     ConnectorDataComponent,
     LinkComponent,
     LinkCreateOrEditComponent,
-    WelcomPageComponent
+    WelcomPageComponent,
+    ContactDialogComponent,
+    
   ],
   imports: [
     BrowserModule,

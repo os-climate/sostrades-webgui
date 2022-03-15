@@ -98,7 +98,7 @@
         >
           <i class="fa-regular fa-trash-can"> </i>
         </button>
-        <button
+        <button *ngIf="element.internalAccount"
           mat-icon-button
           color="accent"
           matTooltip="Reset user password"
