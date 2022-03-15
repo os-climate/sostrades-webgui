@@ -11,6 +11,7 @@ export class OntologyDiscipline {
     public validator: string,
     public validated: string,
     public uri: string,
+    public icon: string
   ) { }
 
   public static Create(jsonData: any): OntologyDiscipline {
@@ -24,7 +25,8 @@ export class OntologyDiscipline {
       jsonData[OntologyParameterAttributes.CLASSNAME],
       jsonData[OntologyParameterAttributes.VALIDATOR],
       jsonData[OntologyParameterAttributes.VALIDATED],
-      jsonData[OntologyParameterAttributes.URI]);
+      jsonData[OntologyParameterAttributes.URI],
+      jsonData[OntologyParameterAttributes.ICON]);
 
     return result;
   }
@@ -71,5 +73,6 @@ export enum OntologyParameterAttributes {
   CLASSNAME = 'pythonClass',
   URI = 'uri',
   VALIDATOR = 'validator',
-  VALIDATED = 'validated'
+  VALIDATED = 'validated',
+  ICON = 'icon'
 }
