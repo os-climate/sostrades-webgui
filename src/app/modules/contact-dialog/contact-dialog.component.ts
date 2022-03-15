@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
-import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
 
 @Component({
   selector: 'app-contact-dialog',
@@ -13,7 +13,7 @@ export class ContactDialogComponent implements OnInit {
   
   constructor( 
     public appDataService : AppDataService,
-    public contactDialogService : ContactDialogService
+    public dialogRef: MatDialogRef<ContactDialogComponent>,
     ) 
     { }
 
@@ -24,7 +24,11 @@ export class ContactDialogComponent implements OnInit {
       } 
     )
   }
-  closeDialog(){
-    this.contactDialogService.closeContactDialog()
+  closeContactDialog() {
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
+    }
   }
+
 }
