@@ -29,7 +29,6 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   public loadedStudy: LoadedStudy;
-  public iconMapping: IconMapping;
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -47,7 +46,6 @@ export class StudyCaseDataService extends DataHttpService {
     private location: Location) {
     super(location, 'study-case');
     this.loadedStudy = null;
-    this.iconMapping = null;
 
     this.studyManagementData = [];
     this.studyManagementFilter = '';
@@ -110,15 +108,6 @@ export class StudyCaseDataService extends DataHttpService {
           studies.push(Study.Create(study));
         });
         return studies;
-      }));
-  }
-
-  getDisciplineIconMapping(): Observable<void> {
-    return this.http.get<IconMapping>(`${this.apiRoute}/icon-mapping`).pipe(map(
-      response => {
-        this.iconMapping = IconMapping.Create(response);
-      }, error => {
-        this.iconMapping = new IconMapping();
       }));
   }
 
@@ -216,7 +205,7 @@ export class StudyCaseDataService extends DataHttpService {
   dataSearch(inputToSearch: string, showEditable: boolean, userLevel: number){
     //search a text in data names or ontology names and display search panel
 
-    
+
       this.dataSearchInput = inputToSearch;
       this.dataSearchResults = [];
       // search an inpupt into all data names
@@ -234,7 +223,7 @@ export class StudyCaseDataService extends DataHttpService {
           }
         }
       });
-    
+
     this.onSearchVariableChange.emit(inputToSearch);
   }
 
@@ -247,8 +236,8 @@ export class StudyCaseDataService extends DataHttpService {
     this.onLoadedStudy.emit(loadedStudy)
   }
 
-  
-  getStudyOfFavoriteStudybyUser(user_id : number): Observable<StudyFavorite[]> { 
+
+  getStudyOfFavoriteStudybyUser(user_id : number): Observable<StudyFavorite[]> {
     return this.http.get<StudyFavorite[]>(`${this.apiRoute}/favorite`).pipe(map(
       response => {
         const studies: StudyFavorite[] = [];
@@ -267,7 +256,7 @@ export class StudyCaseDataService extends DataHttpService {
   removeFavoriteStudy(study_id : number,user_id : number) {
     return this.http.delete(`${this.apiRoute}/favorite`)
   }
-  
+
   public updateParameterOntology(loadedStudy: LoadedStudy){
     // loop on each treeNode data to update ontology name
     Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {

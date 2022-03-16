@@ -4,6 +4,12 @@
 }
 #close{
     cursor: pointer;
-    width: 100%;
-    text-align: end;
+    color: silver;
+    margin-left: 7px;
+
+}
+#close:hover{
+background: rgb(231, 230, 230);
+border-radius: 50%;
+
 }

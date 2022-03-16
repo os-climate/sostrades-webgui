@@ -42,7 +42,7 @@ export class AppDataService extends DataHttpService {
     private loggerService: LoggerService,
     private userService: UserService,
     private location: Location) {
-    super(location, 'application/infos');
+    super(location, 'application');
     this.connectionStatusTimer = null;
     this.onStudyCaseStartLoadingSubscription = null;
     this.loadedStudy = null;
@@ -231,7 +231,10 @@ export class AppDataService extends DataHttpService {
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
   getAppInfo() {
-    return this.http.get(this.apiRoute);
+    return this.http.get(this.apiRoute + '/infos');
+  }
+  getAppSupport() {
+    return this.http.get(this.apiRoute + '/support');
   }
 
 

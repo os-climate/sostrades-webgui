@@ -31,7 +31,8 @@ export class UserService extends DataHttpService {
   }
 
   updateUser(user: User): Observable<any> {
-    return this.http.put(`${this.apiRoute}`, JSON.stringify(user), this.options);
+    return this.http.post( `${this.apiRoute}/${user.id}`, JSON.stringify(user), this.options);
+
   }
 
   loadAllUsers(): Observable<User[]> {

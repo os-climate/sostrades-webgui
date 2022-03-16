@@ -57,7 +57,7 @@ export class LinkService extends DataHttpService {
       'description': description
     };
 
-    return this.http.put<Link>(`${this.apiRoute}/${identifier}`, payload, this.options);
+    return this.http.post<Link>(`${this.apiRoute}/${identifier}`, payload, this.options);
   }
 
   deleteLink(link: Link) {

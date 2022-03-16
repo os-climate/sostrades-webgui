@@ -15,7 +15,7 @@
 
     <span class="spacer"></span>
 
-    <i [className]="studyCaseDataService.iconMapping.get(treeNodeData.nodeType)">
+    <i [className]="treeNodeData | disciplineIconMappingConverter">
     </i>
     <span class="treenode-title" style="margin-left: 5px">
       {{treeNodeData.name}}</span>
