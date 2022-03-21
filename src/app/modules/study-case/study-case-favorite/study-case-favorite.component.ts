@@ -129,13 +129,6 @@ export class StudyCaseFavoriteComponent implements OnInit, OnDestroy {
     }
     
   }
-   //Study Management
-   onClickStudyManagement() {
-    this.router.navigate([Routing.STUDY_MANAGEMENT]);
-    this.headerService.changeIndexTab(0)
-    this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT)
-
-  }
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
