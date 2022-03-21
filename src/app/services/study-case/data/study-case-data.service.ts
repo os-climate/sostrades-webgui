@@ -14,6 +14,7 @@ import { StudyCaseValidationService } from '../../study-case-validation/study-ca
 import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
+import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 
 @Injectable({
   providedIn: 'root'
@@ -267,7 +268,7 @@ export class StudyCaseDataService extends DataHttpService {
         let nodeDataKey = nodeData[0];
         let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
         if ( ontologyParameter !== null) {
-          loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = ontologyParameter.label;
+          loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
         }
       });
       Object.entries(treeNodeValue.dataDisc).forEach(nodeData => {
@@ -275,10 +276,26 @@ export class StudyCaseDataService extends DataHttpService {
         let nodeDataKey = nodeData[0];
         let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
         if ( ontologyParameter !== null) {
-          loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = ontologyParameter.label;
+          loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
         }
       });
     });
+  }
+
+  private GetOntologyParameterLabel(ontology:OntologyParameter)
+  {
+    let result = '';
+    if (ontology !== null && ontology.label !== null && ontology.label !== undefined && ontology.label.length > 0) {
+
+      result = ontology.label;
+
+      if (ontology.unit !== null && ontology.unit !== undefined && ontology.unit.length > 0) {
+        result = `${result} [${ontology.unit}]`;
+      } else {
+        result = `${result} [-]`;
+      }
+    }
+    return result;
   }
 
 }
