@@ -9,6 +9,7 @@ import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { Routing } from 'src/app/models/routing';
 import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
+import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class HeaderComponent implements OnInit {
     private auth: AuthService,
     private headerService: HeaderService,
     public contactDialogService : ContactDialogService,
+    public studyCaseDataService: StudyCaseDataService,
     public dialog: MatDialog,
     private userService: UserService,
     private appDataService: AppDataService,
@@ -75,6 +77,9 @@ export class HeaderComponent implements OnInit {
     else if(this.router.url.includes(Routing.GROUP_MANAGEMENT)){
       this.title = NavigationTitle.GROUP_MANAGEMENT
     }
+    else{
+      this.title = NavigationTitle.HOME
+    }
   }
 
 
@@ -82,7 +87,6 @@ export class HeaderComponent implements OnInit {
   onClickWelcomePage() {
     this.router.navigate([Routing.HOME]);
     this.title = NavigationTitle.HOME
-
   }
 
   //Study Management
@@ -90,18 +94,22 @@ export class HeaderComponent implements OnInit {
     this.router.navigate([Routing.STUDY_MANAGEMENT]);
     this.title = NavigationTitle.STUDY_MANAGEMENT
     this.headerService.changeIndexTab(0)
+
   }
+
   onClickStudyCase(){
     this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.STUDY_CASE]);
     this.title = NavigationTitle.STUDY_MANAGEMENT
     this.headerService.changeIndexTab(0)
 
   }
+
  onClickFromProcess(){
     this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.FROM_PROCESS]);
     this.title = NavigationTitle.STUDY_MANAGEMENT
     this.headerService.changeIndexTab(1)
   }
+  
    onClickReferenceManagement(){
     this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.REFERENCE_MANAGEMENT]);
     this.title = NavigationTitle.STUDY_MANAGEMENT
