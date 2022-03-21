@@ -133,6 +133,7 @@ export class StudyCaseFavoriteComponent implements OnInit, OnDestroy {
    onClickStudyManagement() {
     this.router.navigate([Routing.STUDY_MANAGEMENT]);
     this.headerService.changeIndexTab(0)
+    this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT)
 
   }
 
