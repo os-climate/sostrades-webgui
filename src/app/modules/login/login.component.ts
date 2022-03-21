@@ -119,7 +119,7 @@ export class LoginComponent implements OnInit {
         if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
           this.router.navigate([studyUrlRequested]);
         } else {
-          this.router.navigate([Routing.MODELS_STATUS]);
+          this.router.navigate([Routing.HOME]);
         }
         this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
         this.loadingLogin = false;

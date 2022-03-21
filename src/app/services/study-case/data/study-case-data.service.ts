@@ -21,7 +21,7 @@ import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 })
 export class StudyCaseDataService extends DataHttpService {
 
-  onLoadedStudy : EventEmitter<LoadedStudy> = new EventEmitter()
+  onLoadedStudyForTreeview : EventEmitter<LoadedStudy> = new EventEmitter()
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -37,7 +37,7 @@ export class StudyCaseDataService extends DataHttpService {
 
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
-  public favoriteStudy: StudyFavorite[]
+  public favoriteStudy: Study[]
 
   constructor(
     private http: HttpClient,
@@ -48,6 +48,7 @@ export class StudyCaseDataService extends DataHttpService {
     super(location, 'study-case');
     this.loadedStudy = null;
 
+    this.favoriteStudy = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = 'All columns';
@@ -60,6 +61,7 @@ export class StudyCaseDataService extends DataHttpService {
   clearCache() {
     this.loadedStudy = null;
     this.studyManagementData = [];
+    this.favoriteStudy = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = 'All columns';
     this.tradeScenarioList = [];
@@ -81,6 +83,26 @@ export class StudyCaseDataService extends DataHttpService {
         return studies;
       }));
   }
+
+  getFavoriteStudies(): Observable<Study[]> {
+    return this.http.get<Study[]>(`${this.apiRoute}/favorite`).pipe(map(
+      response => {
+        const favoriteStudies: Study[] = [];
+        response.forEach(study => {
+          favoriteStudies.push(Study.Create(study));
+        });
+        return favoriteStudies;
+      }));
+  }
+  addFavoriteStudy(study_id : number,user_id : number){
+    const createData = {study_id, user_id };
+    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, createData)
+  }
+
+  removeFavoriteStudy(study_id : number,user_id : number) {
+    return this.http.delete(`${this.apiRoute}/favorite`)
+  }
+
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -233,31 +255,11 @@ export class StudyCaseDataService extends DataHttpService {
     this.dataSearchResults = [];
   }
 
-  isLoadedStudy(loadedStudy : LoadedStudy ){
-    this.onLoadedStudy.emit(loadedStudy)
+  isLoadedStudyForTreeview(loadedStudyForTreeview : LoadedStudy ){
+    this.onLoadedStudyForTreeview.emit(loadedStudyForTreeview)
   }
-
-
-  getStudyOfFavoriteStudybyUser(user_id : number): Observable<StudyFavorite[]> {
-    return this.http.get<StudyFavorite[]>(`${this.apiRoute}/favorite`).pipe(map(
-      response => {
-        const studies: StudyFavorite[] = [];
-        response.forEach(study => {
-          studies.push(study);
-        });
-        return studies;
-      }));
-  }
-
-  addFavoriteStudy(study_id : number,user_id : number){
-    const createData = {study_id, user_id };
-    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, createData)
-  }
-
-  removeFavoriteStudy(study_id : number,user_id : number) {
-    return this.http.delete(`${this.apiRoute}/favorite`)
-  }
-
+  
+  
   public updateParameterOntology(loadedStudy: LoadedStudy){
     // loop on each treeNode data to update ontology name
     Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
