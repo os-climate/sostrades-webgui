@@ -5,5 +5,5 @@ export async function baseStudyCaseUnitParameterName(page: Page, parameterNameWi
 
       // Verifying correct study name for My current study place
   const currentParameterNameTextLocator = page.locator('id='+ parameterNameWithUnit);
-  await expect(currentParameterNameTextLocator).toHaveText(`: ${parameterNameWithUnit}`);
+  await expect(currentParameterNameTextLocator).toHaveText(`${parameterNameWithUnit}`);
 }

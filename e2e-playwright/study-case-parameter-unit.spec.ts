@@ -6,7 +6,7 @@ import { baseStudyCaseUnitParameterName } from './base/base-study-case-parameter
 test('Test Unit In Parameter Name -> Launch Load Witness', async ({ page }) => {
 
     const studyName = 'test_load_witness'
-    const ParameterName = "Price of CCS [$/tCO2]"
+    const ParameterName = "CO2 damage price [$/tCO2]"
   
     await baseStudyCaseLoading(page, 'group_test_e2e', studyName);
   
