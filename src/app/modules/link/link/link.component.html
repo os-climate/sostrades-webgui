@@ -1,9 +1,8 @@
-<div class="widget border-readonly" style="min-width: 320px; max-width: 320px;">
-  <div class="widget-header">
+<div class="widget border-readonly">
+  <div class="d-flex justify-content-between widget-header">
     <div class="text-header">
       Useful links
     </div>
-    <div class="spacer"></div>
     <button mat-icon-button color="accent" matTooltip="Add a new link" *ngIf="hasAccessToStudyManager"
       (click)="onCreate($event)">
       <i class="fa-solid fa-square-plus fa-fw"></i>
@@ -12,15 +11,14 @@
   <div class="content-separator"></div>
   <div class="flex-container" *ngIf="!isLoading">
     <div *ngFor="let link of links" class="card-container" >
-      <div class="widget-header emoji-font"
+      <div class="d-flex justify-content-between widget-header emoji-font"
               #tooltip="matTooltip"
               matTooltip="{{link.description}}"
               matTooltipPosition="below"
               matTooltipClass="custom-tooltip-class"
               aria-label="Information about the link">
 
-        <a [href]="link.url" target="_blank" style="font-size: 12px; overflow-wrap: anywhere;">{{link.label}}</a>
-        <div class="spacer"></div>
+        <a [href]="link.url" target="_blank"  style="font-size: 12px; overflow-wrap: anywhere;">{{link.label}}</a>
         <div *ngIf="hasAccessToStudyManager">
           <button mat-button [matMenuTriggerFor]="menuUser" aria-label="user menu">
             <i class="fa-solid fa-ellipsis-vertical"></i>

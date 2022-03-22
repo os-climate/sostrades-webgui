@@ -1,27 +1,21 @@
-#container {
-  margin-left: 10px;
-  margin-right: 10px;
-}
 
-.colorText{
-  color: #909090;
-}
 
-li{
-  list-style-type:none;
-}
-li:hover{
-  list-style-type:circle;
-  color: blue;
+#purpose{
+  width: 100%;
+  margin: auto;
+  text-align: justify;
 }
 
 #purpose-text {
-  font-weight: bold;
-  font-size: 12px;
-  width: 100%;
+  font-size: 16px;
+  font-style: italic;
 }
-#onboarding {
-  margin-right: 10px;
-  display: grid;
 
+#link{
+margin-right: 10px;
+margin: auto;
+}
+
+#favorite-studies{
+  margin-bottom: 20px;
 }

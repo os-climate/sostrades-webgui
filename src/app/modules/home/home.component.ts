@@ -140,7 +140,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.hasAccessToStudy = false;
     }
-    this.studyCaseDataService.onLoadedStudy.subscribe(result=>{
+    this.studyCaseDataService.onLoadedStudyForTreeview.subscribe(result=>{
       if(result != null){
         this.isLoadedStudy = true;
       }

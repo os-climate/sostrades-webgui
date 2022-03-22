@@ -14,13 +14,14 @@ import { StudyCaseValidationService } from '../../study-case-validation/study-ca
 import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
+import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyCaseDataService extends DataHttpService {
 
-  onLoadedStudy : EventEmitter<LoadedStudy> = new EventEmitter()
+  onLoadedStudyForTreeview : EventEmitter<LoadedStudy> = new EventEmitter()
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -36,7 +37,7 @@ export class StudyCaseDataService extends DataHttpService {
 
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
-  public favoriteStudy: StudyFavorite[]
+  public favoriteStudy: Study[]
 
   constructor(
     private http: HttpClient,
@@ -47,6 +48,7 @@ export class StudyCaseDataService extends DataHttpService {
     super(location, 'study-case');
     this.loadedStudy = null;
 
+    this.favoriteStudy = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = 'All columns';
@@ -59,6 +61,7 @@ export class StudyCaseDataService extends DataHttpService {
   clearCache() {
     this.loadedStudy = null;
     this.studyManagementData = [];
+    this.favoriteStudy = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = 'All columns';
     this.tradeScenarioList = [];
@@ -80,6 +83,26 @@ export class StudyCaseDataService extends DataHttpService {
         return studies;
       }));
   }
+
+  getFavoriteStudies(): Observable<Study[]> {
+    return this.http.get<Study[]>(`${this.apiRoute}/favorite`).pipe(map(
+      response => {
+        const favoriteStudies: Study[] = [];
+        response.forEach(study => {
+          favoriteStudies.push(Study.Create(study));
+        });
+        return favoriteStudies;
+      }));
+  }
+  addFavoriteStudy(study_id : number,user_id : number){
+    const createData = {study_id, user_id };
+    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, createData)
+  }
+
+  removeFavoriteStudy(study_id : number,user_id : number) {
+    return this.http.delete(`${this.apiRoute}/favorite`)
+  }
+
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -232,31 +255,11 @@ export class StudyCaseDataService extends DataHttpService {
     this.dataSearchResults = [];
   }
 
-  isLoadedStudy(loadedStudy : LoadedStudy ){
-    this.onLoadedStudy.emit(loadedStudy)
+  isLoadedStudyForTreeview(loadedStudyForTreeview : LoadedStudy ){
+    this.onLoadedStudyForTreeview.emit(loadedStudyForTreeview)
   }
-
-
-  getStudyOfFavoriteStudybyUser(user_id : number): Observable<StudyFavorite[]> {
-    return this.http.get<StudyFavorite[]>(`${this.apiRoute}/favorite`).pipe(map(
-      response => {
-        const studies: StudyFavorite[] = [];
-        response.forEach(study => {
-          studies.push(study);
-        });
-        return studies;
-      }));
-  }
-
-  addFavoriteStudy(study_id : number,user_id : number){
-    const createData = {study_id, user_id };
-    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, createData)
-  }
-
-  removeFavoriteStudy(study_id : number,user_id : number) {
-    return this.http.delete(`${this.apiRoute}/favorite`)
-  }
-
+  
+  
   public updateParameterOntology(loadedStudy: LoadedStudy){
     // loop on each treeNode data to update ontology name
     Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
@@ -267,7 +270,7 @@ export class StudyCaseDataService extends DataHttpService {
         let nodeDataKey = nodeData[0];
         let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
         if ( ontologyParameter !== null) {
-          loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = ontologyParameter.label;
+          loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
         }
       });
       Object.entries(treeNodeValue.dataDisc).forEach(nodeData => {
@@ -275,10 +278,26 @@ export class StudyCaseDataService extends DataHttpService {
         let nodeDataKey = nodeData[0];
         let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
         if ( ontologyParameter !== null) {
-          loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = ontologyParameter.label;
+          loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
         }
       });
     });
+  }
+
+  private GetOntologyParameterLabel(ontology:OntologyParameter)
+  {
+    let result = '';
+    if (ontology !== null && ontology.label !== null && ontology.label !== undefined && ontology.label.length > 0) {
+
+      result = ontology.label;
+
+      if (ontology.unit !== null && ontology.unit !== undefined && ontology.unit.length > 0) {
+        result = `${result} [${ontology.unit}]`;
+      } else {
+        result = `${result} [-]`;
+      }
+    }
+    return result;
   }
 
 }

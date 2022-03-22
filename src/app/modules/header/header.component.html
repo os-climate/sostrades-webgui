@@ -1,5 +1,5 @@
 
-<mat-toolbar color="primary" class="d-flex justify-content-between" >
+<mat-toolbar id="toolbar"color="primary" class="d-flex justify-content-between" >
   <div id="mainMenu-img" style="display: flex;">
     <div id="mainMenu">
       <button
@@ -11,9 +11,15 @@
       </button>
       <mat-menu #mainMenu="matMenu" class="mainMenu">
 
-
         <button
-        mat-menu-item id="study_management-menu-button"
+        mat-menu-item
+        (click)="onClickWelcomePage()">
+        <mat-icon class="blue_color">home</mat-icon>
+        Home
+        </button>
+        <button
+        id="study_management-menu-button"
+        mat-menu-item 
         [matMenuTriggerFor]="StudyManagement"
         (click)="onClickStudyManagement()">
         <mat-icon class="blue_color">subject</mat-icon>
@@ -26,9 +32,11 @@
         <mat-icon class="blue_color">library_books</mat-icon>
         Models status
         </button>
-        <button mat-menu-item  (click)="onClickGroupManagement()">
-          <mat-icon class="blue_color">group</mat-icon>
-          Group Management</button>
+        <button 
+        mat-menu-item  
+        (click)="onClickGroupManagement()">
+        <mat-icon class="blue_color">group</mat-icon>
+        Group Management</button>
       </mat-menu>
 
       <mat-menu  #StudyManagement="matMenu">
@@ -45,12 +53,13 @@
     <div>
       <img src="/assets/SOS_TRADES_LOGO_BLANC.svg"
     height="100%"
-    style="cursor: default; height: 45px; margin-left: 50px;"
+    style="cursor: pointer; height: 45px; margin-left: 50px;"
+    (click)="onClickWelcomePage()"
     />
     </div>
   </div>
     <div id="title">
-      <h1 style="margin-bottom:10px"> {{title}}</h1>
+      <h1 style="margin-bottom:10px; margin-right: 20px;" value="Home"> {{title}}</h1>
     </div>   
     <div id="username-second-menu" style="display: flex;">
  

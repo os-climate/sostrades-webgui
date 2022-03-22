@@ -9,7 +9,6 @@ import { ModelsContainerComponent } from './modules/models/models-container/mode
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { StudyGuard } from './services/study.guard';
 import { StudyManagerGuard } from './services/study-manager.guard';
-import { AdminGuard } from './services/admin.guard';
 import { CurrentUserNoRightsComponent } from './modules/user/user-no-rights/user-no-rights.component';
 import { NoAccessGuard } from './services/no-access.guard';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
@@ -34,7 +33,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: StudyCaseManagementContainerComponent,
+        component: WelcomPageComponent,
+        canActivate: [StudyGuard]
+      },
+
+      {
+        path: Routing.HOME,
+        component: WelcomPageComponent,
         canActivate: [StudyGuard]
       },
      
