@@ -12,6 +12,7 @@ import { StudyCaseValidationService } from '../../study-case-validation/study-ca
 import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
+import { Routing } from 'src/app/models/routing.model';
 
 @Injectable({
   providedIn: 'root'
@@ -214,7 +215,7 @@ export class StudyCaseMainService extends MainHttpService {
           if (studies.filter(x => x.id === this.studyCaseDataService.loadedStudy.studyCase.id).length > 0) {
             this.studyCaseDataService.loadedStudy = null;
             this.studyCaseDataService.onStudyCaseChange.emit(null);
-            this.router.navigate(['']);
+            this.router.navigate([Routing.STUDY_MANAGEMENT]);
           }
         }
       }));

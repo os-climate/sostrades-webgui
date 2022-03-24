@@ -7,7 +7,7 @@
       class="refresh-button"
       [disabled]="isLoading"
       (click)="loadFavoriteStudy()"
-      style="margin-left: 20px;"
+     
     >
       Refresh list
     </button>
@@ -42,8 +42,7 @@
             <i class="fa-solid fa-star favorite"   
             *ngIf="element.isFavorite"
             style="color: gold;" 
-            (click)="removeFavoriteStudy(element)"
-            matTooltip="Favorite"></i>
+            ></i>
           </td>
         </ng-container>
         

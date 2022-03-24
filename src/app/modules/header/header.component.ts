@@ -7,7 +7,7 @@ import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
-import { Routing } from 'src/app/models/routing';
+import { Routing } from 'src/app/models/routing.model';
 import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 
