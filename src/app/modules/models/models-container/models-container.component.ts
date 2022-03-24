@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Router } from '@angular/router';
-import { Routing } from 'src/app/models/routing';
+import { Routing } from 'src/app/models/routing.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 
 @Component({
