@@ -4,22 +4,17 @@
     (click)="onClickTreeview()"
   >
     <div
-    class="header-treeview d-flex justify-content-between"
+      class="header-treeview"
     >
-      <div style="margin-left: 5px;">
-      <span>My current study</span>
-      <span
+      My current study<span
         id="text-sidenav-study-loaded-name"
         *ngIf="studyName !== ''"
-        [ngClass]="{'long-title': studyName.length > 13}"
-        > : {{ studyName }}</span>
-      </div>
-      <div > 
-        <mat-icon  
-        class="close-button"   
-        (click)="closeStudy()"
-        >close</mat-icon> 
-      </div>
-  </div> 
+      >
+        : {{ studyName }}</span
+      >
+    </div>
     <div [ngClass]="setTreeviewClass()">
       <app-study-case-treeview></app-study-case-treeview>
+    </div>
+  </div>
+</div>

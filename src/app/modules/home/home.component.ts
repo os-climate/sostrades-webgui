@@ -13,9 +13,6 @@ import { StudyUpdateParameter } from 'src/app/models/study-update.model';
 import { StudyCaseModificationDialogComponent } from '../study-case/study-case-modification-dialog/study-case-modification-dialog.component';
 import { Subscription } from 'rxjs';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
-import { Routing } from 'src/app/models/routing.model';
-import { HeaderService } from 'src/app/services/hearder/header.service';
-import { NavigationTitle } from 'src/app/models/navigation-title.model';
 
 @Component({
   selector: 'app-home',
@@ -27,10 +24,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   public hasAccessToStudy: boolean;
   authenticated: boolean;
   username: string;
-  onCloseStudySubscription : Subscription
-  onLoadedStudyForTreeviewSubscription : Subscription
   calculationChangeSubscription: Subscription;
   isLoadedStudy : boolean
+
   sizes = {
     bottom: {
       area1: 85,
@@ -51,10 +47,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialog: MatDialog,
     private snackbarService: SnackbarService,
-    private headerService : HeaderService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService) {
     this.hasAccessToStudy = false;
-    this.isLoadedStudy = false;
+    this.isLoadedStudy = false
   }
 
   ngOnInit(): void {
@@ -145,21 +140,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.hasAccessToStudy = false;
     }
-
-      this.studyCaseDataService.onCloseStudy.subscribe(result=>{
-        if(result){
-          this.isLoadedStudy = false
-        let getUrl= this.router.url 
-        if(getUrl.includes(Routing.STUDY_WORKSPACE)){
-          this.router.navigate([Routing.STUDY_MANAGEMENT])
-          this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT)
-          }
-        else{
-          this.router.navigate([getUrl])
-        }
-       }    
-    })
-   
     this.studyCaseDataService.onLoadedStudyForTreeview.subscribe(result=>{
       if(result != null){
         this.isLoadedStudy = true;
@@ -175,16 +155,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     if ((this.calculationChangeSubscription !== null) && (this.calculationChangeSubscription !== undefined)) {
       this.calculationChangeSubscription.unsubscribe();
     }
-    if ((this.onCloseStudySubscription !== null) && (this.onCloseStudySubscription !== undefined)) {
-      this.onCloseStudySubscription.unsubscribe();
-    }
-    if ((this.onLoadedStudyForTreeviewSubscription !== null) && (this.onLoadedStudyForTreeviewSubscription !== undefined)) {
-      this.onLoadedStudyForTreeviewSubscription.unsubscribe();
-    }
   }
 
   displayLogs() {
-    if (this.router.url.includes(Routing.STUDY_WORKSPACE)) {
+    if (this.router.url === '/study-workspace') {
       return true;
     }
     return false;
