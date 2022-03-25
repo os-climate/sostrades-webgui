@@ -5,7 +5,7 @@ import { LoadedStudy } from 'src/app/models/study.model';
 import { Router } from '@angular/router';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/routing';
 
 @Component({
   selector: 'app-sidenav',
