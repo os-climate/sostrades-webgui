@@ -4,23 +4,22 @@ import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
 import { Observable } from 'rxjs';
-import { IconMapping } from 'src/app/models/icon-mapping.model';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
 import { Scenario } from 'src/app/models/scenario.model';
-import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyCaseDataService extends DataHttpService {
 
+  onCloseStudy: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview : EventEmitter<LoadedStudy> = new EventEmitter()
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
@@ -41,8 +40,6 @@ export class StudyCaseDataService extends DataHttpService {
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-    private studyCaseValidationService: StudyCaseValidationService,
     private ontologyService: OntologyService,
     private location: Location) {
     super(location, 'study-case');
@@ -102,7 +99,6 @@ export class StudyCaseDataService extends DataHttpService {
   removeFavoriteStudy(study_id : number,user_id : number) {
     return this.http.delete(`${this.apiRoute}/favorite`)
   }
-
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -228,7 +224,6 @@ export class StudyCaseDataService extends DataHttpService {
   dataSearch(inputToSearch: string, showEditable: boolean, userLevel: number){
     //search a text in data names or ontology names and display search panel
 
-
       this.dataSearchInput = inputToSearch;
       this.dataSearchResults = [];
       // search an inpupt into all data names
@@ -258,9 +253,13 @@ export class StudyCaseDataService extends DataHttpService {
   isLoadedStudyForTreeview(loadedStudyForTreeview : LoadedStudy ){
     this.onLoadedStudyForTreeview.emit(loadedStudyForTreeview)
   }
+
+  closeStudy(close : boolean){
+    this.onCloseStudy.emit(close)
+  }
   
   
-  public updateParameterOntology(loadedStudy: LoadedStudy){
+  updateParameterOntology(loadedStudy: LoadedStudy){
     // loop on each treeNode data to update ontology name
     Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
       let treeNodeValue = treeNode[1];
@@ -299,5 +298,8 @@ export class StudyCaseDataService extends DataHttpService {
     }
     return result;
   }
+
+
+  
 
 }
