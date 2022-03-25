@@ -150,13 +150,13 @@ export class HomeComponent implements OnInit, OnDestroy {
         if(result){
           this.isLoadedStudy = false
         let getUrl= this.router.url 
-        if(getUrl.includes(Routing.STUDY_WORKSPACE)){
-          this.router.navigate([Routing.STUDY_MANAGEMENT])
-          this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT)
+          if(getUrl.includes(Routing.STUDY_WORKSPACE)){
+            this.router.navigate([Routing.STUDY_MANAGEMENT])
+            this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT)
+            }
+          else{
+            this.router.navigate([getUrl])
           }
-        else{
-          this.router.navigate([getUrl])
-        }
        }    
     })
    

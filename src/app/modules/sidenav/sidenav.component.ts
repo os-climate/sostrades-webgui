@@ -86,7 +86,9 @@ export class SidenavComponent implements OnInit, OnDestroy {
   }
 
 
-    closeStudy() {
+  closeStudy(event: any) {
+    event.stopPropagation();
+    event.preventDefault();
       if (this.studyCaseLocalStorageService.studiesHaveUnsavedChanges()) {
         const validationDialogData = new ValidationDialogData();
         validationDialogData.message = `You have made unsaved changes in your study, handle changes?`;
