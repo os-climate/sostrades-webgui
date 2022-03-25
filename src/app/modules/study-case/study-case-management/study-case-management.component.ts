@@ -129,9 +129,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.dataSourceStudies = new MatTableDataSource<Study>(this.studyCaseDataService.studyManagementData);
       }
     });
-    this.studyCaseDataService.onCloseStudy.subscribe((close)=>{
-        this.handleUnsavedChanges(!close)
-    })
+    
   }
 
   ngOnDestroy() {
