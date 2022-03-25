@@ -70,11 +70,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     }
   }
   
-  checkTitleLength(studyName: string) {
-    if (studyName.length > 13) {
-      return '.long-title';
-    }
-  }
+  
 
   onClickTreeview() {
     this.router.navigate([Routing.STUDY_WORKSPACE]);
