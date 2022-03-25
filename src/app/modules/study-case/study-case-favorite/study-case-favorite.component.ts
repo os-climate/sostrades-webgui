@@ -29,7 +29,7 @@ import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
-import { Routing } from 'src/app/models/routing';
+import { Routing } from 'src/app/models/routing.model';
 import { Router } from '@angular/router';
 
 

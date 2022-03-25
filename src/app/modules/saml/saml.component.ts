@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router} from '@angular/router';
-import { Routing } from 'src/app/models/routing';
+import { Routing } from 'src/app/models/routing.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';

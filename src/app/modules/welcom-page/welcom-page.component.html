@@ -1,47 +1,43 @@
-  <div id="container">
-    <div id="welcome">
-      <br /> 
-      <h1 id="welcomes-sostrades"style="text-align: center">
-        Welcome to Sostrades
-        <span style="font-weight: bold;">{{ username }}</span> ! 
-      </h1>
-    </div>
-    <br />
-
-    <div 
-    id="fist-block" 
-    style="width: 100%;"
-    class="d-flex justify-content-around"
-    >
-      <div id="logo" class="col-3">
-        <img
-          src="/assets/SOS_TRADES_LOGO_NOIR.svg"
-        />
-      </div> 
-    </div>
-      <br />
-      <hr>
-
-    <div id="second-block" class="d-flex justify-content-around"> 
-      <div id="purpose" class='col-8' >
-          <p id="purpose-text" class="colorText">SoSTrades is a web-based, multi-user, 
-          interactive publication-quality graph simulation platform. 
-          It allows users to drop new modules without additional coding, 
-          and provides embedded advanced numerical capabilities for 
-          simulation and multi-disciplinary optimization. 
-          It also has built-in collaborative capabilities to allow 
-          different experts to work together.
-          </p>
-      </div>
-      <div class="col-1"></div>
-      <div id="link" class="col-2">
-        <app-link></app-link>
-      </div>
-    </div>
-    <br />
-    <hr />
+<div id="container">
+  <div style="display: flex; margin: 0 15px;" class="d-flex justify-content-around">
+     <div id="purpose" >
+       <br>
+           <p id="purpose-text" class="colorText"><span style="font-weight: bold;">SoSTrades</span> is a web-based, multi-user, 
+           interactive publication-quality graph simulation platform. 
+           It allows users to drop new modules without additional coding, 
+           and provides embedded advanced numerical capabilities for 
+           simulation and multi-disciplinary optimization. 
+           
+           It also has built-in collaborative capabilities to allow 
+           different experts to work together.
+           </p>
+       </div>  
     
-    <div id="favorite-studies" class="col-md-12">
-      <app-study-case-favorite ></app-study-case-favorite>
+   <div >
+     <div id="welcome">
+       <br /> 
+       <h1 id="welcomes-sostrades"style="text-align: center">
+         Welcome to SoSTrades
+         <span style="font-weight: bold;">{{ username }}</span> ! 
+       </h1>
+     </div>
+     <div id="logo" >
+           <img
+             src="/assets/SOS_TRADES_LOGO_NOIR.svg"
+             style="height: 230px; margin-top: 10px;"
+             />
+     </div> 
     </div>
+   <div >
+     <br>
+      <div id="link" >
+         <app-link></app-link>
+       </div>
+   </div>
   </div>
+ <br />
+ <hr />
+ <div id="favorite-studies" class="col-md-12">
+   <app-study-case-favorite ></app-study-case-favorite>
+ </div>  
+</div>  
