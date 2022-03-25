@@ -7,7 +7,7 @@ import { catchError, switchMap, filter, take } from 'rxjs/operators';
 import { SoSTradesError } from '../models/sos-trades-error.model';
 import { LoggerService } from './logger/logger.service';
 import { SnackbarService } from './snackbar/snackbar.service';
-import { Routing } from '../models/routing';
+import { Routing } from '../models/routing.model';
 
 
 @Injectable()

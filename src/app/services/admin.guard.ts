@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { UserService } from './user/user.service';
 import { SnackbarService } from './snackbar/snackbar.service';
-import { Routing } from '../models/routing';
+import { Routing } from '../models/routing.model';
 
 
 @Injectable({
