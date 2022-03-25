@@ -19,39 +19,42 @@
   font-weight: 450 !important;
 }
 
+.close-button{
+  cursor: pointer;
+  color: silver; 
+  background: transparent;
+  border-color: transparent;
+  font-size: 14px;
+}
+
+
 
 .treeview-container {
   flex-grow: 1;
   background-color: white;
-  overflow: auto;
   border-radius: 7px;
   border: solid;
   border-width: 2px;
   border-radius: 7px 7px 7px 7px;
   border-color: #0b78b8;
+  overflow-wrap: anywhere;
 }
 
 .header-treeview {
-  height: 30px;
   text-align: left;
   font-size: 13px;
   font-weight: 500;
-  padding-left: 16px;
-  line-height: 30px;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  line-height: 25px;
   border-radius: 5px 5px 0 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   cursor: pointer;
   background-color: #0b78b8;  
   color: #ffffff;
 }
 
-.long-title {
-  height: 60px !important;
-  white-space: unset !important;
-}
+// .long-title {
+//   height: 60px !important;
+//   white-space: unset !important;
+// }
 
 .header-treeview-active {
   background-color: #0b78b8;
