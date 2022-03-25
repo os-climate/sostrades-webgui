@@ -8,9 +8,13 @@
       [disabled]="isLoading"
       (click)="loadFavoriteStudy()"
 <<<<<<< HEAD
+<<<<<<< HEAD
      
 =======
 >>>>>>> parent of ba5cd53 (Merge branch 'develop' into integration)
+=======
+      style="margin-left: 20px;"
+>>>>>>> parent of 0646c4d (Merge branch 'develop' into integration)
     >
       Refresh list
     </button>
@@ -46,7 +50,8 @@
             <i class="fa-solid fa-star favorite"   
             *ngIf="element.isFavorite"
             style="color: gold;" 
-            ></i>
+            (click)="removeFavoriteStudy(element)"
+            matTooltip="Favorite"></i>
           </td>
         </ng-container>
         

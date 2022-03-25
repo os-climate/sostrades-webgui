@@ -29,7 +29,7 @@ import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/routing';
 import { Router } from '@angular/router';
 
 
@@ -146,7 +146,25 @@ export class StudyCaseFavoriteComponent implements OnInit, OnDestroy {
       });
   }
 
- 
+  addFavoriteStudy(study : Study){
+  const userId = this.userService.getCurrentUserId()
+    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe(
+      (response)=>{
+      study.isFavorite = true
+      }, error=>{
+      this.snackbarService.showWarning(error.description);
+    });
+  }
+  removeFavoriteStudy(study : Study){
+    const userId = this.userService.getCurrentUserId()
+    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe(
+      ()=>{
+      study.isFavorite = false
+      this.loadFavoriteStudy()
+      }, error=>{
+      this.snackbarService.showError(error.description)
+    });   
+  }
 
   loadFavoriteStudy() {
     this.studyCaseDataService.favoriteStudy = [];

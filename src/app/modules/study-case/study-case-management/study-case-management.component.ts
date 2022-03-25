@@ -129,9 +129,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.dataSourceStudies = new MatTableDataSource<Study>(this.studyCaseDataService.studyManagementData);
       }
     });
-    this.studyCaseDataService.onCloseStudy.subscribe((close)=>{
-        this.handleUnsavedChanges(!close)
-    })
   }
 
   ngOnDestroy() {
@@ -213,9 +210,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadStudy(study: Study) {    
-    // this.studyCaseDataService.handleUnsavedChanges((changeHandled) =>{
-
+  loadStudy(study: Study) {
     this.handleUnsavedChanges((changeHandled) => {
       if (changeHandled) {
         // Check user was in an another study before this one and leave room
@@ -441,7 +436,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   handleUnsavedChanges(changeHandled: any) {
-    
     if (this.studyCaseLocalStorageService.studiesHaveUnsavedChanges()) {
       const validationDialogData = new ValidationDialogData();
       validationDialogData.message = `You have made unsaved changes in your study, handle changes?`;

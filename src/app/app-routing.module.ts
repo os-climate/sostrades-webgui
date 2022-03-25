@@ -22,7 +22,7 @@ import { ReferenceManagementComponent } from './modules/reference-management/ref
 import { StudyCaseManagementComponent } from './modules/study-case/study-case-management/study-case-management.component';
 import { ModelsLinksComponent } from './modules/models/models-links/models-links.component';
 import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
-import { Routing } from './models/routing.model';
+import { Routing } from './models/routing';
 
 const routes: Routes = [
   {

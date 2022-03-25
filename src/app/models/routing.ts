@@ -19,5 +19,6 @@ export enum Routing {
     LOGOUT = 'logout',
     SAML = 'saml',
     RESET_PASSWORD ='reset-password'
+
    
 }

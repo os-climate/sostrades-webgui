@@ -8,7 +8,7 @@ import { map, finalize } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { UserApplicationRight } from '../models/user.model';
 import { StudyCaseLocalStorageService } from './study-case-local-storage/study-case-local-storage.service';
-import { Routing } from '../models/routing.model';
+import { Routing } from '../models/routing';
 
 
 @Injectable({
