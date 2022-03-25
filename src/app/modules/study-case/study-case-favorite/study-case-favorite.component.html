@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="study-header">
+  <div class="study-header" *ngIf="!favoriteStudyIsEmpty">
     <button
       mat-raised-button
       color="accent"
@@ -7,13 +7,17 @@
       class="refresh-button"
       [disabled]="isLoading"
       (click)="loadFavoriteStudy()"
+<<<<<<< HEAD
      
+=======
+>>>>>>> parent of ba5cd53 (Merge branch 'develop' into integration)
     >
       Refresh list
     </button>
       <h2 id="favorite-studies">Favorite studies</h2>
   </div>
-  <div
+
+  <div *ngIf="!favoriteStudyIsEmpty"
     [ngStyle]="
       selection.hasValue()
         ? { height: 'calc(100% - 98px)' }
@@ -69,16 +73,13 @@
         <!-- Repository Column -->
         <ng-container matColumnDef="repository">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository</th>
-          <!-- <div *ngIf="!favoriteStudyIsEmpty"> -->
-            <td
+          <td
             mat-cell
             *matCellDef="let element"
             [matTooltip]="element.repository"
-            
           >
             {{ element.repositoryDisplayName }}
           </td>
-        <!-- </div> -->
         </ng-container>
 
         <!-- Process Column -->
@@ -178,6 +179,8 @@
         ></tr>
       </table>
     </div>
-  </div>  
+  </div>
+    <h2 *ngIf="favoriteStudyIsEmpty" id="favorite-studies">Favorite studies</h2>
+  
 </div>
 
