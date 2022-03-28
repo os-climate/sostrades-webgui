@@ -146,25 +146,6 @@ export class StudyCaseFavoriteComponent implements OnInit, OnDestroy {
       });
   }
 
-  addFavoriteStudy(study : Study){
-  const userId = this.userService.getCurrentUserId()
-    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe(
-      (response)=>{
-      study.isFavorite = true
-      }, error=>{
-      this.snackbarService.showWarning(error.description);
-    });
-  }
-  removeFavoriteStudy(study : Study){
-    const userId = this.userService.getCurrentUserId()
-    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe(
-      ()=>{
-      study.isFavorite = false
-      this.loadFavoriteStudy()
-      }, error=>{
-      this.snackbarService.showError(error.description)
-    });   
-  }
 
   loadFavoriteStudy() {
     this.studyCaseDataService.favoriteStudy = [];
