@@ -3,7 +3,10 @@ import { Page, expect } from "@playwright/test";
 export async function baseStudyCaseLoading(page: Page, studyGroup: string, studyName: string) {
   await page.goto('/');
   // Go to study management
-  await page.click('id=btn-sidenav-study-management');
+  await page.click('id=main-menu-button');
+  await page.click('id=study_management-menu-button');
+  await page.click('id=study_case-menu-button');
+  
 
   // Hover on specific row to show actions buttons
   const rowToHover = `id=row-study-management-${studyGroup}-${studyName}`;

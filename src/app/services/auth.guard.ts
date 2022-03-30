@@ -8,6 +8,7 @@ import { map, finalize } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { UserApplicationRight } from '../models/user.model';
 import { StudyCaseLocalStorageService } from './study-case-local-storage/study-case-local-storage.service';
+import { Routing } from '../models/routing.model';
 
 
 @Injectable({
@@ -43,7 +44,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
             return true;
           }), finalize(() => {
             if (!this.userService.currentUserExist()) {
-              this.router.navigate(['/login']);
+              this.router.navigate([Routing.LOGIN]);
               this.snackbarService.showError('Error at reloading your credentials, please log in again');
               this.isLoadingCurrentUser = false;
             }
@@ -68,7 +69,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         // Saving in local storage study requested url
         this.studyCaseLocalStorage.setStudyUrlRequestedInLocalStorage(this.location.path());
       }
-      this.router.navigate(['/login'], { queryParams: { autologon: '' } });
+      this.router.navigate([Routing.LOGIN], { queryParams: { autologon: '' } });
       // tslint:disable-next-line: max-line-length
       this.snackbarService.showError('Authentication needed : Your access token has expired or you are not authenticated, please login again');
     }
@@ -81,7 +82,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     if (this.auth.isAuthenticated()) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate([Routing.LOGIN]);
       // tslint:disable-next-line: max-line-length
       this.snackbarService.showError('Authentication needed : Your access token has expired or you are not authenticated, please login again');
     }

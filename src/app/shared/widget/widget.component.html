@@ -15,16 +15,17 @@
     "
   >
     <div
+      [id]="nodeData.displayName"
       class="text-header"
       [matTooltip]="
-        (nodeData.displayName | ontologyParameterConverter) +
+        (nodeData.displayName) +
         '\nClick for more information'
       "
       matTooltipClass="custom-tooltip-class"
       (click)="showOntologyInformations()"
       style="cursor: pointer"
     >
-      {{ nodeData.displayName | ontologyParameterConverter }}
+      {{ nodeData.displayName }}
     </div>
 
     <div class="header-icon">

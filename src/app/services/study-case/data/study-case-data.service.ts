@@ -1,26 +1,25 @@
-import { Study, PostStudy, LoadedStudy } from 'src/app/models/study.model';
+import { Study, LoadedStudy } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { Observable, Subscriber } from 'rxjs';
-import { IconMapping } from 'src/app/models/icon-mapping.model';
-import { Router } from '@angular/router';
-import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
+import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
-import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
 import { Scenario } from 'src/app/models/scenario.model';
-import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
+import { StudyFavorite } from 'src/app/models/study-case-favorite';
+import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyCaseDataService extends DataHttpService {
 
+  onCloseStudy: EventEmitter<boolean> = new EventEmitter();
+  onLoadedStudyForTreeview : EventEmitter<LoadedStudy> = new EventEmitter()
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -29,25 +28,23 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   public loadedStudy: LoadedStudy;
-  public iconMapping: IconMapping;
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
   public studyManagementColumnFiltered: string;
 
   public dataSearchResults: NodeData[];
-  public dataSearchInput: string
+  public dataSearchInput: string;
+  public favoriteStudy: Study[]
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-    private studyCaseValidationService: StudyCaseValidationService,
     private ontologyService: OntologyService,
     private location: Location) {
     super(location, 'study-case');
     this.loadedStudy = null;
-    this.iconMapping = null;
 
+    this.favoriteStudy = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = 'All columns';
@@ -60,6 +57,7 @@ export class StudyCaseDataService extends DataHttpService {
   clearCache() {
     this.loadedStudy = null;
     this.studyManagementData = [];
+    this.favoriteStudy = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = 'All columns';
     this.tradeScenarioList = [];
@@ -80,6 +78,25 @@ export class StudyCaseDataService extends DataHttpService {
         });
         return studies;
       }));
+  }
+
+  getFavoriteStudies(): Observable<Study[]> {
+    return this.http.get<Study[]>(`${this.apiRoute}/favorite`).pipe(map(
+      response => {
+        const favoriteStudies: Study[] = [];
+        response.forEach(study => {
+          favoriteStudies.push(Study.Create(study));
+        });
+        return favoriteStudies;
+      }));
+  }
+  addFavoriteStudy(study_id : number,user_id : number){
+    const createData = {study_id, user_id };
+    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, createData)
+  }
+
+  removeFavoriteStudy(study_id : number,user_id : number) {
+    return this.http.delete(`${this.apiRoute}/favorite`)
   }
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
@@ -109,15 +126,6 @@ export class StudyCaseDataService extends DataHttpService {
           studies.push(Study.Create(study));
         });
         return studies;
-      }));
-  }
-
-  getDisciplineIconMapping(): Observable<void> {
-    return this.http.get<IconMapping>(`${this.apiRoute}/icon-mapping`).pipe(map(
-      response => {
-        this.iconMapping = IconMapping.Create(response);
-      }, error => {
-        this.iconMapping = new IconMapping();
       }));
   }
 
@@ -215,16 +223,15 @@ export class StudyCaseDataService extends DataHttpService {
   dataSearch(inputToSearch: string, showEditable: boolean, userLevel: number){
     //search a text in data names or ontology names and display search panel
 
-    
       this.dataSearchInput = inputToSearch;
       this.dataSearchResults = [];
       // search an inpupt into all data names
       Object.values(this.loadedStudy.treeview.rootNodeDataDict).forEach(nodeData => {
         let label = '';
-        if (this.ontologyService.getParameter(nodeData.displayName)){
-          label = this.ontologyService.getParameter(nodeData.displayName).label;
+        if (this.ontologyService.getParameter(nodeData.variableName)){
+          label = this.ontologyService.getParameter(nodeData.variableName).label;
         }
-        if (nodeData.displayName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
+        if (nodeData.variableName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
         label.toLowerCase().includes(inputToSearch.toLowerCase()))
         {
           if((nodeData.ioType === IoType.OUT || showEditable || (!showEditable && nodeData.editable)) &&
@@ -233,7 +240,7 @@ export class StudyCaseDataService extends DataHttpService {
           }
         }
       });
-    
+
     this.onSearchVariableChange.emit(inputToSearch);
   }
 
@@ -242,5 +249,55 @@ export class StudyCaseDataService extends DataHttpService {
     this.dataSearchResults = [];
   }
 
+  isLoadedStudyForTreeview(loadedStudyForTreeview : LoadedStudy ){
+    this.onLoadedStudyForTreeview.emit(loadedStudyForTreeview)
+  }
+
+  closeStudy(close : boolean){
+    this.onCloseStudy.emit(close)
+  }
+  
+  
+  updateParameterOntology(loadedStudy: LoadedStudy){
+    // loop on each treeNode data to update ontology name
+    Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
+      let treeNodeValue = treeNode[1];
+      let treeNodeKey = treeNode[0];
+      Object.entries(treeNodeValue.data).forEach(nodeData => {
+        let nodeDataValue = nodeData[1];
+        let nodeDataKey = nodeData[0];
+        let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
+        if ( ontologyParameter !== null) {
+          loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
+        }
+      });
+      Object.entries(treeNodeValue.dataDisc).forEach(nodeData => {
+        let nodeDataValue = nodeData[1];
+        let nodeDataKey = nodeData[0];
+        let ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName)
+        if ( ontologyParameter !== null) {
+          loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
+        }
+      });
+    });
+  }
+
+  private GetOntologyParameterLabel(ontology:OntologyParameter)
+  {
+    let result = '';
+    if (ontology !== null && ontology.label !== null && ontology.label !== undefined && ontology.label.length > 0) {
+
+      result = ontology.label;
+
+      if (ontology.unit !== null && ontology.unit !== undefined && ontology.unit.length > 0) {
+        result = `${result} [${ontology.unit}]`;
+      } else {
+        result = `${result} [-]`;
+      }
+    }
+    return result;
+  }
+
+  
 
 }

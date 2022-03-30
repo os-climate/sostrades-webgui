@@ -80,6 +80,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   public studyCanReload: boolean;
   public showStudyRefreshing: boolean;
   public filterTreeInput: string;
+  public loadedStudyForTreeview : LoadedStudy
 
   public isStudyNoData: boolean;
   public isStudyReadOnly: boolean;
@@ -220,6 +221,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.dataSource = new MatTreeNestedDataSource();
         this.originTreeNode = null;
         this.nodeClick(null);
+        this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudyForTreeview)
+
       }
     });
 

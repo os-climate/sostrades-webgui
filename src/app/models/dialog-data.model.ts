@@ -5,6 +5,7 @@ import { EntityRight, EntityResourceRights } from './entity-right.model';
 import { AccessRight } from './access-right.model';
 import { NodeData } from './node-data.model';
 import { StudyCaseValidation } from './study-case-validation.model';
+import { Link } from './link.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -113,10 +114,12 @@ export class StudyCaseDeleteDialogData extends AbstractDialogData {
 
 export class UserCreateDialogData extends AbstractDialogData {
   userCreated: User;
+  passwordLink: string;
 
   public constructor() {
     super();
     this.userCreated = null;
+    this.passwordLink = '';
   }
 }
 
@@ -247,6 +250,7 @@ export class ExecutionDialogData extends AbstractDialogData {
 
 export class OntologyInformationsDialogData extends AbstractDialogData {
   nodeData: NodeData;
+  variableName: string;
   displayName: string;
   name: string;
   unit: string;
@@ -256,6 +260,7 @@ export class OntologyInformationsDialogData extends AbstractDialogData {
   public constructor() {
     super();
     this.nodeData = null;
+    this.variableName = null;
     this.displayName = null;
     this.name = null;
     this.unit = null;
@@ -332,5 +337,19 @@ export class ConnectorDialogData extends AbstractDialogData {
     this.namespace = '';
     this.discipline = '';
     this.isReadOnly = false;
+  }
+}
+
+export class LinkDialogData extends AbstractDialogData {
+  label: string;
+  url: string;
+  description: string;
+
+
+  public constructor() {
+    super();
+    this.label = '';
+    this.url ='';
+    this.description = '';
   }
 }

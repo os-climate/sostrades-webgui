@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { UserService } from './user/user.service';
 import { SnackbarService } from './snackbar/snackbar.service';
+import { Routing } from '../models/routing.model';
 
 
 @Injectable({
@@ -16,7 +17,7 @@ export class StudyGuard implements CanActivate {
     if (this.userService.hasAccessToStudy()) {
       return true;
     } else {
-      this.router.navigate(['/no-access']);
+      this.router.navigate([Routing.NO_ACCESS]);
     }
   }
 }

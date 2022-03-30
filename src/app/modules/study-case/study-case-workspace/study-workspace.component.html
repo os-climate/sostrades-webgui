@@ -38,7 +38,54 @@
       ></app-study-case-documentation>
     </mat-tab>
   </mat-tab-group>
-
+<div *ngIf="showView" class="filter-level">
+  <button 
+  class="button"
+  mat-flat-button 
+  color="accent" 
+  [matMenuTriggerFor]="menuFilters" 
+  aria-label="filters menu"
+  style="margin-right: 15px;" 
+  *ngIf="hasAccessToStudy">
+  Filters
+  </button>
+  <mat-menu #menuFilters="matMenu">
+    <div mat-menu-item>
+      <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showReadOnly">
+        Show not editable inputs data
+      </mat-checkbox>
+    </div>
+    <div mat-menu-item>
+      <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showSimpleDisplay">
+        Show simple display for data View
+      </mat-checkbox>
+    </div>
+  </mat-menu>
+    <button 
+    mat-flat-button 
+    color="accent" 
+    [matMenuTriggerFor]="menuUserLevel" 
+    aria-label="user level menu"
+    class="button"
+      *ngIf="hasAccessToStudy">
+      <mat-icon style="
+          float: left;
+          margin-left: 2px;
+          font-size: 16px;
+          height: 24px;
+          line-height: unset;
+        ">visibility</mat-icon>
+      {{ selectedUserlevel }}
+    </button>
+    <mat-menu #menuUserLevel="matMenu">
+      <mat-selection-list multiple="false" #userLevelSelectionList
+        (selectionChange)="changeUserLevel($event.option.value)">
+        <mat-list-option class="user-level-item" *ngFor="let userLevelName of userLevelList; let i = index" [value]="i">
+          {{ userLevelName }}
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-menu>
+  </div>
   <button
     mat-raised-button
     color="accent"
@@ -46,7 +93,7 @@
       showView && !isFullScreenOn && !calculationService.logFullSizeViewActive
     "
     aria-label="fullscreen"
-    class="fullscreen-button"
+    class="fullscreen-button button"
     (click)="goFullScreen()"
   >
     Fullscreen
@@ -59,11 +106,11 @@
     mat-raised-button
     color="accent"
     *ngIf="showView && isFullScreenOn"
-    aria-label="Exit fullscreen"
-    class="fullscreen-button"
+    aria-label="Exit"
+    class="fullscreen-button button"
     (click)="exitFullScreen()"
   >
-    Exit fullscreen
+    Exit
     <mat-icon
       style="float: right; font-size: 16px; height: 26px; line-height: unset"
       >fullscreen_exit</mat-icon

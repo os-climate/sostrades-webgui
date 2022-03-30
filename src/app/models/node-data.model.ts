@@ -29,6 +29,7 @@ export enum ValueType {
 
 export class NodeData {
 
+  public variableName: string;
   public displayName: string;
   private _widgetType: WidgetType;
   public isHighlighted: boolean;
@@ -97,11 +98,11 @@ export class NodeData {
     const splitedIdentifier = identifier.split('.');
 
     if (splitedIdentifier.length > 1) {
-      this.displayName = splitedIdentifier[splitedIdentifier.length - 1];
+      this.variableName = splitedIdentifier[splitedIdentifier.length - 1];
     } else {
-      this.displayName = splitedIdentifier[0];
+      this.variableName = splitedIdentifier[0];
     }
-
+    this.displayName = this.variableName;
     this._widgetType = WidgetType.NO_WIDGET;
     this.updateWidgetType();
     this.isHighlighted = false;

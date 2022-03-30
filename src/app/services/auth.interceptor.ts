@@ -7,6 +7,7 @@ import { catchError, switchMap, filter, take } from 'rxjs/operators';
 import { SoSTradesError } from '../models/sos-trades-error.model';
 import { LoggerService } from './logger/logger.service';
 import { SnackbarService } from './snackbar/snackbar.service';
+import { Routing } from '../models/routing.model';
 
 
 @Injectable()
@@ -33,7 +34,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
           if (error.statusCode === 0) { // Case no response from server
             error.description = 'No response from server';
-            this.router.navigate(['/login']);
+            this.router.navigate([Routing.LOGIN]);
             this.auth.deauthenticate();
             error.redirect = true;
           }
@@ -74,7 +75,7 @@ export class AuthInterceptor implements HttpInterceptor {
         }),
         catchError(err => {
           const error = this.convertToSoSTradesError(err)
-          this.router.navigate(['/login']);
+          this.router.navigate([Routing.LOGIN]);
           this.auth.deauthenticate();
           error.redirect = true;
           this.snackBarService.showError(error.description);

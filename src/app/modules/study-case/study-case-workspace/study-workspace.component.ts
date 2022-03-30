@@ -8,6 +8,8 @@ import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.m
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
+import { UserService } from 'src/app/services/user/user.service';
+import { UserLevel } from 'src/app/models/user-level.model';
 
 
 @Component({
@@ -35,6 +37,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
   public markdownDocumentation: MardownDocumentation[];
+  public hasAccessToStudy: boolean;
+  private userLevel: UserLevel;
+  public userLevelList: string[];
+  public selectedUserlevel: string;
+
+
 
 
   @HostListener('document:fullscreenchange', ['$event'])
@@ -48,8 +56,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   constructor(
     public studyCaseDataService: StudyCaseDataService,
     public calculationService: CalculationService,
-    private filterService: FilterService,
+    public filterService: FilterService,
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
+    private userService: UserService,
+
     private treeNodeDataService: TreeNodeDataService) {
     this.showView = false;
     this.showSearch = false;
@@ -66,6 +76,9 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.markdownDocumentation = [];
     this.showDataManagement = true;
     this.showDataValidation = false;
+    this.hasAccessToStudy = false;
+    this.userLevel = new UserLevel();
+    this.userLevelList = this.userLevel.userLevelList;
   }
 
   ngOnInit() {
@@ -76,6 +89,13 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(studyLoaded => {
       this.setDiplayableItems();
     });
+   
+    if (this.userService.hasAccessToStudy()) {
+      this.hasAccessToStudy = true;
+    } else {
+      this.hasAccessToStudy = false;
+    }
+    this.selectedUserlevel = this.userLevelList[this.filterService.filters.userLevel - 1];
 
     this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(searchVariable => {
       this.showSearch = true;
@@ -174,6 +194,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       /* IE/Edge */
       this.tabGroup.nativeElement.msRequestFullscreen();
     }
+  }
+
+  
+  changeUserLevel(newUserLevelValue: number) {
+    this.selectedUserlevel = this.userLevelList[newUserLevelValue];
+    this.filterService.filters.userLevel = newUserLevelValue + 1; // Userlevel starting at 1
   }
 
   closeSearchPanel(){

@@ -1,0 +1,82 @@
+.card-container {
+  background-color: white;
+  padding-left: 5px;
+  margin-bottom: 10px;
+  border-radius: 7px;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  border-color: lightgray;
+  min-height: 40px;
+}
+
+.card-body {
+  min-height: 50px;
+  display: flex;
+  font-size: 12px;
+}
+
+.flex-container {
+ padding: 10px;
+ max-height: 320px;
+ overflow-y: auto;
+}
+
+.link-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-color-green {
+  color: green;
+}
+
+.button-color-red {
+  color: red;
+}
+
+.emoji-font {
+  font-family: "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+.widget {
+  background-color: #F9F9F9;
+  border-radius: 7px;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  border-color: lightgray;
+  width: 300px;
+}
+
+.content-separator {
+  border-bottom: solid 1px;
+  margin-bottom: 5px;
+}
+
+.widget-header {
+  font-size: 14px;
+  font-weight: bold;
+  align-items: center;
+  min-height: 40px;
+}
+
+.text-header {
+  margin-left: 10px;
+}
+
+.container-dialog {
+  height: 100%;
+  width: 100%;
+}
+
+.mat-menu-item {
+  font-size: 12px;
+  padding: 0 10px 0 10px;
+  line-height: 35px;
+  height: 35px;
+}

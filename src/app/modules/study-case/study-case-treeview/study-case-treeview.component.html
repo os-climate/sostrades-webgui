@@ -247,7 +247,6 @@
       </div>
     </button>
   </mat-toolbar>
-  <div class="no-data-to-display" *ngIf="!originTreeNode">No study loaded</div>
   <mat-divider width="100%" *ngIf="originTreeNode"></mat-divider>
 
   <div class="flex-container" *ngIf="originTreeNode">
@@ -269,18 +268,18 @@
               {{ node.status[0] }}
 
             </div>
-            <mat-icon 
+            <mat-icon
             *ngIf="showState && !node.isValidated"
-            class="iconValid" 
+            class="iconValid"
             style="color: darkgrey;"
             matTooltip="INVALIDATED"
             >
             highlight_off
            </mat-icon>
 
-            <mat-icon 
+            <mat-icon
             *ngIf="showState && node.isValidated"
-            class="iconValid"  
+            class="iconValid"
             style="color: #08875b;"
             matTooltip="VALIDATED"
             >
@@ -298,7 +297,7 @@
               style="margin-left: 5px !important; font-size: 13px"
             >
               <i
-                [ngClass]="studyCaseDataService.iconMapping.get(node.nodeType)"
+                [ngClass]="node | disciplineIconMappingConverter"
               >
               </i>
               {{ node.name }}
@@ -380,11 +379,7 @@
               style="margin-left: 4px !important; font-size: 13px"
             >
               <i
-                [ngClass]="
-                  'fas fa-' +
-                  studyCaseDataService.iconMapping.get(node.nodeType) +
-                  ' fa-fw'
-                "
+                [ngClass]="node | disciplineIconMappingConverter"
               >
               </i>
              {{ node.name }}

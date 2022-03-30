@@ -109,6 +109,12 @@ import { SpreadsheetComponent } from './modules/spreadsheet/spreadsheet.componen
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ScientificNotationPipe } from './pipes/scientific-notation/scientific-notation.pipe';
 import { ConnectorDataComponent } from './modules/connector-data/connector-data.component';
+import { LinkComponent } from './modules/link/link/link.component';
+import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/link-create-or-edit.component';
+import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
+import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
+import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
+import { StudyCaseFavoriteComponent } from './modules/study-case/study-case-favorite/study-case-favorite.component';
 
 registerLocaleData(fr);
 
@@ -193,7 +199,14 @@ registerLocaleData(fr);
     SpreadsheetComponent,
     ResetPasswordComponent,
     ScientificNotationPipe,
-    ConnectorDataComponent
+    ConnectorDataComponent,
+    LinkComponent,
+    LinkCreateOrEditComponent,
+    WelcomPageComponent,
+    ContactDialogComponent,
+    StudyCaseFavoriteComponent,
+    DisciplineIconMappingConverterPipe
+
   ],
   imports: [
     BrowserModule,

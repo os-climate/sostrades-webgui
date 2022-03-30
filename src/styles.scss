@@ -8,11 +8,11 @@ html {
 html,
 body {
   height: 100%;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 body {
   margin: 0 !important;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 label.mat-checkbox-layout {
@@ -468,6 +468,7 @@ ul {
   max-width: unset !important;
   white-space: pre-line !important;
   text-align: center !important;
+  font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
 
 // Jspreadsheet

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router} from '@angular/router';
+import { Routing } from 'src/app/models/routing.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -31,7 +32,7 @@ export class SamlComponent implements OnInit {
           this.loggerService.log(error);
           this.snackbarService.showError(error.description);
           if (!error.redirect) {
-            this.router.navigate(['/login']);
+            this.router.navigate([Routing.LOGIN]);
           }
         });
       }

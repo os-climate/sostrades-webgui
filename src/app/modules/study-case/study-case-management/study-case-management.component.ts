@@ -27,6 +27,9 @@ import { StudyDialogService } from 'src/app/services/study-dialog/study-dialog.s
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
+import { UserService } from 'src/app/services/user/user.service';
+import { HeaderService } from 'src/app/services/hearder/header.service';
+import { NavigationTitle } from 'src/app/models/navigation-title.model';
 
 
 @Component({
@@ -36,10 +39,12 @@ import { Subscription } from 'rxjs';
 })
 
 export class StudyCaseManagementComponent implements OnInit, OnDestroy {
-  public isLoading: boolean;
+  
+  public isLoading: boolean
   // tslint:disable-next-line: max-line-length
   public displayedColumns = [
     'selected',
+    'favorite',
     'name',
     'groupName',
     'repository',
@@ -56,7 +61,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     'Process',
     'Type',
   ];
-
   public selection = new SelectionModel<Study>(true, []);
 
   public dataSourceStudies = new MatTableDataSource<Study>();
@@ -91,14 +95,16 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private appDataService: AppDataService,
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
-    private studyDialogService: StudyDialogService
+    private studyDialogService: StudyDialogService,
+    private headerService : HeaderService,
+    private userService: UserService
   ) {
     this.isLoading = true;
     this.onCurrentStudyDeletedSubscription = null;
   }
 
   ngOnInit(): void {
-
+    
     // Load data first time component initialised
     if (this.studyCaseDataService.studyManagementData === null
       || this.studyCaseDataService.studyManagementData === undefined
@@ -108,17 +114,16 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.dataSourceStudies = new MatTableDataSource<Study>(
         this.studyCaseDataService.studyManagementData
       );
-      this.dataSourceStudies.sortingDataAccessor = (item, property) => {
+      this.dataSourceStudies.sortingDataAccessor = (item, property) => {   
         return typeof item[property] === 'string'
           ? item[property].toLowerCase()
-          : item[property];
+          : item[property];        
       };
       this.dataSourceStudies.sort = this.sort;
       // Initialising filter with 'All columns'
       this.onFilterChange();
       this.isLoading = false;
     }
-
     this.onCurrentStudyDeletedSubscription = this.socketService.onCurrentStudyDeleted.subscribe(refreshList => {
       if (refreshList) {
         this.dataSourceStudies = new MatTableDataSource<Study>(this.studyCaseDataService.studyManagementData);
@@ -149,17 +154,35 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       });
   }
 
+  addFavoriteStudy(study : Study){
+  const userId = this.userService.getCurrentUserId()
+    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe(
+      (response)=>{
+        study.isFavorite = true
+      }, error=>{
+      this.snackbarService.showWarning(error.description);
+    }); 
+    
+  }
+  removeFavoriteStudy(study : Study){
+    const userId = this.userService.getCurrentUserId()
+    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe(
+      ()=>{
+        study.isFavorite = false
+      }, error=>{
+      this.snackbarService.showError(error.description)
+    });    
+  }
+
   loadStudyManagementData() {
     this.isLoading = true;
-
     this.studyCaseDataService.studyManagementData = [];
     this.dataSourceStudies = new MatTableDataSource<Study>(null);
 
-    // Retrieving study case list
     this.studyCaseDataService.getStudies().subscribe(
       (studies) => {
+               // Retrieving study case list
         this.studyCaseDataService.studyManagementData = studies;
-
         this.dataSourceStudies = new MatTableDataSource<Study>(
           this.studyCaseDataService.studyManagementData
         );
@@ -206,6 +229,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             this.socketService.joinRoom(
               this.studyCaseDataService.loadedStudy.studyCase.id
             );
+            this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE)
           }
         });
       }

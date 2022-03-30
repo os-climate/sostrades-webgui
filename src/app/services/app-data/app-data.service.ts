@@ -42,7 +42,7 @@ export class AppDataService extends DataHttpService {
     private loggerService: LoggerService,
     private userService: UserService,
     private location: Location) {
-    super(location, 'application/infos');
+    super(location, 'application');
     this.connectionStatusTimer = null;
     this.onStudyCaseStartLoadingSubscription = null;
     this.loadedStudy = null;
@@ -60,6 +60,8 @@ export class AppDataService extends DataHttpService {
       this.loadedStudy = loadedStudy as LoadedStudy;
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+        this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy)
+
       }, errorReceived => {
         this.snackbarService.showError('Error creating study\n' + errorReceived.description);
         isStudyCreated(false);
@@ -83,6 +85,7 @@ export class AppDataService extends DataHttpService {
       this.loadedStudy = loadedStudy as LoadedStudy;
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+        this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy)
       }, errorReceived => {
         this.snackbarService.showError('Error copying study\n' + errorReceived.description);
         isStudyCreated(false);
@@ -133,9 +136,6 @@ export class AppDataService extends DataHttpService {
     });
   }
 
-
-
-
   public startConnectionStatusTimer() {
 
     this.stopConnectionStatusTimer();
@@ -180,6 +180,8 @@ export class AppDataService extends DataHttpService {
 
     // Call ontology service
     this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe(() => {
+      
+      this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
       if (getNotification){
       this.loadingDialogService.updateMessage(`Loading notifications`);
@@ -198,7 +200,7 @@ export class AppDataService extends DataHttpService {
       else{
         this.close_loading(loadedStudy, isStudyCreated);
       }
-      
+       this.studyCaseDataService.isLoadedStudyForTreeview(loadedStudy)
     }, errorReceived => {
       // Reset ontology (make sure nothing was loaded)
       this.ontologyService.resetOntology();
@@ -220,11 +222,16 @@ export class AppDataService extends DataHttpService {
 
   }
 
+  
+
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
   getAppInfo() {
-    return this.http.get(this.apiRoute);
+    return this.http.get(this.apiRoute + '/infos');
+  }
+  getAppSupport() {
+    return this.http.get(this.apiRoute + '/support');
   }
 
 

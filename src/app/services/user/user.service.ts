@@ -26,12 +26,13 @@ export class UserService extends DataHttpService {
     this.allUsers = [];
   }
 
-  createUser(user: User): Observable<User> {
+  createUser(user: User): Observable<any> {
     return this.http.post<User>(`${this.apiRoute}`, JSON.stringify(user), this.options);
   }
 
   updateUser(user: User): Observable<any> {
-    return this.http.put(`${this.apiRoute}`, JSON.stringify(user), this.options);
+    return this.http.post( `${this.apiRoute}/${user.id}`, JSON.stringify(user), this.options);
+
   }
 
   loadAllUsers(): Observable<User[]> {
@@ -141,9 +142,20 @@ export class UserService extends DataHttpService {
     return isStudyAuth;
   }
 
+  hasAccessToStudyManager(): boolean {
+    let isStudyAuth = false;
+    if (this.currentUserExist()) {
+      if (this.currentUser.modules.filter(x => x === 'STUDY_MANAGER').length === 1) {
+        isStudyAuth = true;
+      }
+    }
+
+    return isStudyAuth;
+  }
+
   getFullUsername(): string {
     if (this.currentUserExist()) {
-      return `${this.currentUser.user.firstname} ${this.currentUser.user.lastname}`;
+      return `${this.currentUser.user.firstname} ${this.currentUser.user.lastname.charAt(0).toUpperCase() + this.currentUser.user.lastname.slice(1).toLowerCase()}`;
     } else {
       return '';
     }

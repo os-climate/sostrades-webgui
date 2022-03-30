@@ -10,6 +10,7 @@ import { SamlService } from 'src/app/services/saml/saml.service';
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { RoutingState } from 'src/app/services/routing-state/routing-state.service';
+import { Routing } from 'src/app/models/routing.model';
 
 
 @Component({
@@ -99,7 +100,7 @@ export class LoginComponent implements OnInit {
         this.loggerService.log(error);
         this.snackbarService.showError(error.description);
         if (!error.redirect) {
-          this.router.navigate(['/login']);
+          this.router.navigate([Routing.LOGIN]);
         }
       });
   }
@@ -118,7 +119,7 @@ export class LoginComponent implements OnInit {
         if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
           this.router.navigate([studyUrlRequested]);
         } else {
-          this.router.navigate(['/models-status']);
+          this.router.navigate([Routing.HOME]);
         }
         this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
         this.loadingLogin = false;
