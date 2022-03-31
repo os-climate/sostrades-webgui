@@ -306,6 +306,24 @@ export class StudyCaseMainService extends MainHttpService {
     return this.http.post(url, data, options);
   }
 
+  getStudyRaw(studyId: string): Observable<Blob> {
+    const options: {
+      headers?: HttpHeaders;
+      observe?: 'body';
+      params?: HttpParams;
+      reportProgress?: boolean;
+      responseType: 'blob';
+    } = {
+      responseType: 'blob'
+    };
+    const url = `${this.apiRoute}/${studyId}/download/raw`;
+    const data = {
+      study_id: studyId
+    };
+
+    return this.http.post(url, data, options);
+  }
+
   private updateStudyCaseDataService(loadedStudy: LoadedStudy) {
     const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
 
