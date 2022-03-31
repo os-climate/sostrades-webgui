@@ -153,7 +153,7 @@ export class AuthService extends DataHttpService {
     // Removing loaded study and closing socket connection
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-      this.studyCaseDataService.loadedStudy = null;
+      this.studyCaseDataService.setCurrentStudy(null);
     }
 
     // Cleaning application cache
