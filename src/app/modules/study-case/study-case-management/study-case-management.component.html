@@ -120,7 +120,7 @@
           </i>
           </td>
         </ng-container>
-        
+
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name</th>
@@ -232,7 +232,7 @@
               mat-icon-button
               color="accent"
               matTooltip="Download study case data"
-              (click)="downloadStudy(element)"
+              (click)="downloadStudy($event, element)"
             >
               <i class="fa-solid fa-download fa-fw"> </i>
             </button>

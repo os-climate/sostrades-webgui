@@ -134,10 +134,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.dataSourceStudies = new MatTableDataSource<Study>(
         this.studyCaseDataService.studyManagementData
       );
-      this.dataSourceStudies.sortingDataAccessor = (item, property) => {   
+      this.dataSourceStudies.sortingDataAccessor = (item, property) => {
         return typeof item[property] === 'string'
           ? item[property].toLowerCase()
-          : item[property];        
+          : item[property];
       };
       this.dataSourceStudies.sort = this.sort;
       // Initialising filter with 'All columns'
@@ -149,7 +149,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.dataSourceStudies = new MatTableDataSource<Study>(this.studyCaseDataService.studyManagementData);
       }
     });
-    
+
   }
 
   ngOnDestroy() {
@@ -275,7 +275,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
   }
 
-  loadStudy(study: Study) {    
+  loadStudy(study: Study) {
     // this.studyCaseDataService.handleUnsavedChanges((changeHandled) =>{
 
     this.handleUnsavedChanges((changeHandled) => {
@@ -420,29 +420,56 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  downloadStudy(study: Study) {
+  downloadStudy(event: MouseEvent, study: Study) {
+
     this.loadingDialogService.showLoading(`Retrieving study case data"${study.name}"`);
 
-    this.studyCaseMainService
-      .getStudyZip(study.id.toString())
-      .subscribe((result) => {
-        this.loadingDialogService.closeLoading();
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(result);
-        downloadLink.setAttribute('download', study.name + '.zip');
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-      }, (errorReceived) => {
-        const error = errorReceived as SoSTradesError;
-        this.loadingDialogService.closeLoading();
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.snackbarService.showError(
-            `Error downloading study case "${study.name}" : ${error.description}`
-          );
+    if ((event.ctrlKey === true) && (event.altKey === true)) {
+      this.studyCaseMainService
+        .getStudyRaw(study.id.toString())
+        .subscribe((result) => {
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', study.name);
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+        }, (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError(
+              `Error downloading study case "${study.name}" : ${error.description}`
+            );
+          }
         }
-      });
+      );
+    } else {
+
+      this.studyCaseMainService
+        .getStudyZip(study.id.toString())
+        .subscribe((result) => {
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', study.name + '.zip');
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+        }, (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError(
+              `Error downloading study case "${study.name}" : ${error.description}`
+            );
+          }
+        }
+      );
+    }
   }
 
   applyFilter(event: Event) {
@@ -503,7 +530,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   handleUnsavedChanges(changeHandled: any) {
-    
+
     if (this.studyCaseLocalStorageService.studiesHaveUnsavedChanges()) {
       const validationDialogData = new ValidationDialogData();
       validationDialogData.message = `You have made unsaved changes in your study, handle changes?`;
