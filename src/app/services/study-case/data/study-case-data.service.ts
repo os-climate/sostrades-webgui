@@ -27,7 +27,7 @@ export class StudyCaseDataService extends DataHttpService {
 
   public tradeScenarioList: Scenario[];
 
-  public loadedStudy: LoadedStudy;
+  private _loadedStudy: LoadedStudy;
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -42,7 +42,7 @@ export class StudyCaseDataService extends DataHttpService {
     private ontologyService: OntologyService,
     private location: Location) {
     super(location, 'study-case');
-    this.loadedStudy = null;
+    this._loadedStudy = null;
 
     this.favoriteStudy = [];
     this.studyManagementData = [];
@@ -54,8 +54,18 @@ export class StudyCaseDataService extends DataHttpService {
     this.dataSearchInput = '';
   }
 
+
+  public get loadedStudy(): LoadedStudy {
+    return this._loadedStudy;
+  }
+
+  setCurrentStudy(loadedStudy: LoadedStudy) {
+    this._loadedStudy = loadedStudy;
+  }
+
+
   clearCache() {
-    this.loadedStudy = null;
+    this._loadedStudy = null;
     this.studyManagementData = [];
     this.favoriteStudy = [];
     this.studyManagementFilter = '';
@@ -256,8 +266,8 @@ export class StudyCaseDataService extends DataHttpService {
   closeStudy(close : boolean){
     this.onCloseStudy.emit(close)
   }
-  
-  
+
+
   updateParameterOntology(loadedStudy: LoadedStudy){
     // loop on each treeNode data to update ontology name
     Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
@@ -297,7 +307,4 @@ export class StudyCaseDataService extends DataHttpService {
     }
     return result;
   }
-
-  
-
 }

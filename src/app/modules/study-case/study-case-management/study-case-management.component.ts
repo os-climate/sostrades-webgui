@@ -39,7 +39,7 @@ import { NavigationTitle } from 'src/app/models/navigation-title.model';
 })
 
 export class StudyCaseManagementComponent implements OnInit, OnDestroy {
-  
+
   public isLoading: boolean
   // tslint:disable-next-line: max-line-length
   public displayedColumns = [
@@ -104,7 +104,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    
+
     // Load data first time component initialised
     if (this.studyCaseDataService.studyManagementData === null
       || this.studyCaseDataService.studyManagementData === undefined
@@ -114,10 +114,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.dataSourceStudies = new MatTableDataSource<Study>(
         this.studyCaseDataService.studyManagementData
       );
-      this.dataSourceStudies.sortingDataAccessor = (item, property) => {   
+      this.dataSourceStudies.sortingDataAccessor = (item, property) => {
         return typeof item[property] === 'string'
           ? item[property].toLowerCase()
-          : item[property];        
+          : item[property];
       };
       this.dataSourceStudies.sort = this.sort;
       // Initialising filter with 'All columns'
@@ -161,8 +161,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         study.isFavorite = true
       }, error=>{
       this.snackbarService.showWarning(error.description);
-    }); 
-    
+    });
+
   }
   removeFavoriteStudy(study : Study){
     const userId = this.userService.getCurrentUserId()
@@ -171,7 +171,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         study.isFavorite = false
       }, error=>{
       this.snackbarService.showError(error.description)
-    });    
+    });
   }
 
   loadStudyManagementData() {
@@ -353,29 +353,56 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  downloadStudy(study: Study) {
+  downloadStudy(event: MouseEvent, study: Study) {
+
     this.loadingDialogService.showLoading(`Retrieving study case data"${study.name}"`);
 
-    this.studyCaseMainService
-      .getStudyZip(study.id.toString())
-      .subscribe((result) => {
-        this.loadingDialogService.closeLoading();
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(result);
-        downloadLink.setAttribute('download', study.name + '.zip');
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-      }, (errorReceived) => {
-        const error = errorReceived as SoSTradesError;
-        this.loadingDialogService.closeLoading();
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.snackbarService.showError(
-            `Error downloading study case "${study.name}" : ${error.description}`
-          );
+    if ((event.ctrlKey === true) && (event.altKey === true)) {
+      this.studyCaseMainService
+        .getStudyRaw(study.id.toString())
+        .subscribe((result) => {
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', study.name);
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+        }, (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError(
+              `Error downloading study case "${study.name}" : ${error.description}`
+            );
+          }
         }
-      });
+      );
+    } else {
+
+      this.studyCaseMainService
+        .getStudyZip(study.id.toString())
+        .subscribe((result) => {
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', study.name + '.zip');
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+        }, (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError(
+              `Error downloading study case "${study.name}" : ${error.description}`
+            );
+          }
+        }
+      );
+    }
   }
 
   applyFilter(event: Event) {
