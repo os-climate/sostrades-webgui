@@ -106,7 +106,7 @@ export class StudyCaseDataService extends DataHttpService {
   }
 
   removeFavoriteStudy(study_id : number,user_id : number) {
-    return this.http.delete(`${this.apiRoute}/favorite`)
+    return this.http.delete(`${this.apiRoute}/${study_id}/favorite`)
   }
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {

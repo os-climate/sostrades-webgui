@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
@@ -10,6 +10,7 @@ import { HeaderService } from 'src/app/services/hearder/header.service';
 import { Routing } from 'src/app/models/routing.model';
 import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 
 @Component({
@@ -20,14 +21,16 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 export class HeaderComponent implements OnInit {
 
 
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  
   public username: string;
   public versionDate: string;
   public platform: string;
   public title : string
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;
-
   constructor(
+   
     private router: Router,
     private auth: AuthService,
     private headerService: HeaderService,
@@ -92,9 +95,10 @@ export class HeaderComponent implements OnInit {
   //Study Management
   onClickStudyManagement() {
     this.router.navigate([Routing.STUDY_MANAGEMENT]);
+    this.trigger.closeMenu()
     this.title = NavigationTitle.STUDY_MANAGEMENT
     this.headerService.changeIndexTab(0)
-
+    
   }
 
   onClickStudyCase(){
@@ -119,6 +123,7 @@ export class HeaderComponent implements OnInit {
   //Model status
   onClickModelsStatus() {
     this.router.navigate([Routing.MODELS_STATUS]);
+    this.trigger.closeMenu()
     this.title = NavigationTitle.MODEL_STATUS
     this.headerService.changeIndexTab(0)
 
