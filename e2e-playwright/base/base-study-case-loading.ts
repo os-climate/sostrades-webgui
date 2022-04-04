@@ -4,7 +4,7 @@ export async function baseStudyCaseLoading(page: Page, studyGroup: string, study
   await page.goto('/');
   // Go to study management
   await page.click('id=main-menu-button');
-  await page.click('id=study_management-menu-button');
+  await page.hover('id=study_management-menu-button');
   await page.click('id=study_case-menu-button');
   
 
