@@ -82,6 +82,11 @@ export class UserService extends DataHttpService {
     return this.http.get<UserApplicationRight>(`${this.apiRoute}/current-user`);
   }
 
+  changeDefaultGroup(group_id: number,user_id : number): Observable<any> {
+    const modifyData = {group_id, user_id };
+    return this.http.post(`${this.apiRoute}/default-group/${group_id}`, modifyData)
+  }
+
   changePassword(password: String, token: String): Observable<void> {
 
     const changeOptions = {
@@ -172,4 +177,6 @@ export class UserService extends DataHttpService {
   getCurrentUserId(): number {
     return this.currentUser.user.id;
   }
+
+
 }

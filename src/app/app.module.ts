@@ -114,6 +114,7 @@ import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/li
 import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
 import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
 import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
+import { GroupEditComponent } from './modules/group-management/group-edit/group-edit.component';
 
 registerLocaleData(fr);
 
@@ -203,7 +204,8 @@ registerLocaleData(fr);
     LinkCreateOrEditComponent,
     WelcomPageComponent,
     ContactDialogComponent,
-    DisciplineIconMappingConverterPipe
+    DisciplineIconMappingConverterPipe,
+    GroupEditComponent
 
   ],
   imports: [

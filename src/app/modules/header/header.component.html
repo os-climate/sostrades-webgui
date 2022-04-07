@@ -81,17 +81,17 @@
         </button>
 
         <mat-menu #menuUser="matMenu">
-          <button mat-menu-item routerLink="/user-management" *ngIf="hasAccessToStudyManager">
+          <button mat-menu-item (click)="onClickUserManagement()" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-user" style="padding-right: 10px;" aria-hidden="true">
             </i>
             <span>User Management</span>
           </button>
-          <button mat-menu-item routerLink="/processes-management" *ngIf="hasAccessToStudyManager">
+          <button mat-menu-item (click)="onClickProcessesManagement()" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-gears" style="padding-right: 10px;" aria-hidden="true">
             </i>
             <span>Processes Management</span>
           </button>
-          <button mat-menu-item routerLink="/execution-management" *ngIf="hasAccessToStudyManager">
+          <button mat-menu-item (click)="onClickExecutionManagement()" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-server" style="padding-right: 10px;" aria-hidden="true">
             </i>
             <span>Execution Dashboard</span>
