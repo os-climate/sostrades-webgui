@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { Study } from 'src/app/models/study.model';
@@ -40,10 +40,26 @@ import { NavigationTitle } from 'src/app/models/navigation-title.model';
 
 export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
+ 
+  @Input() getTitle = false;
+  @Input() getOnlyFavoriteStudy = false;
+  @Input() getFilter = true;
+
   public isLoading: boolean
+  public isFavorite : boolean = true
   // tslint:disable-next-line: max-line-length
   public displayedColumns = [
     'selected',
+    'favorite',
+    'name',
+    'groupName',
+    'repository',
+    'process',
+    'creationDate',
+    'modificationDate',
+    'action'
+  ];
+  public displayedColumnsForWelcomePage = [
     'favorite',
     'name',
     'groupName',
@@ -104,7 +120,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
+    
+    if(this.getOnlyFavoriteStudy){
+      this.displayedColumns = this.displayedColumnsForWelcomePage
+      this.loadStudyManagementData()
+    }
     // Load data first time component initialised
     if (this.studyCaseDataService.studyManagementData === null
       || this.studyCaseDataService.studyManagementData === undefined
@@ -154,60 +174,104 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       });
   }
 
-  addFavoriteStudy(study : Study){
+  addOrRemoveFavoriteStudy(study : Study){
   const userId = this.userService.getCurrentUserId()
-    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe(
-      (response)=>{
-        study.isFavorite = true
-      }, error=>{
-      this.snackbarService.showWarning(error.description);
-    });
+  this.isFavorite = false
+    if(!study.isFavorite){
+      this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe(
+          ()=>{
+            study.isFavorite = true
+            this.isFavorite = true
 
-  }
-  removeFavoriteStudy(study : Study){
-    const userId = this.userService.getCurrentUserId()
-    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe(
-      ()=>{
-        study.isFavorite = false
-      }, error=>{
-      this.snackbarService.showError(error.description)
-    });
+          }, error=>{
+          this.snackbarService.showWarning(error.description);
+          this.isFavorite = true
+        }); 
+    }
+    else{
+      this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe(
+        ()=>{  
+          study.isFavorite = false
+          this.isFavorite = true
+        }, error=>{
+        this.snackbarService.showWarning(error.description)
+        this.isFavorite = true
+
+      }); 
+    }
   }
 
   loadStudyManagementData() {
     this.isLoading = true;
     this.studyCaseDataService.studyManagementData = [];
     this.dataSourceStudies = new MatTableDataSource<Study>(null);
-
-    this.studyCaseDataService.getStudies().subscribe(
-      (studies) => {
-               // Retrieving study case list
-        this.studyCaseDataService.studyManagementData = studies;
-        this.dataSourceStudies = new MatTableDataSource<Study>(
-          this.studyCaseDataService.studyManagementData
-        );
-        this.dataSourceStudies.sortingDataAccessor = (item, property) => {
-          return typeof item[property] === 'string'
-            ? item[property].toLowerCase()
-            : item[property];
-        };
-        this.dataSourceStudies.sort = this.sort;
-        this.onFilterChange();
-        this.isLoading = false;
-      },
-      (errorReceived) => {
-        const error = errorReceived as SoSTradesError;
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.onFilterChange();
-          this.isLoading = false;
-          this.snackbarService.showError(
-            'Error loading study case list\n' + error.description
-          );
-        }
+      if(this.getOnlyFavoriteStudy == false){
+          this.studyCaseDataService.getStudies().subscribe(
+                (studies) => {
+                        // Retrieving study case list
+                  this.studyCaseDataService.studyManagementData = studies;
+                  this.dataSourceStudies = new MatTableDataSource<Study>(
+                    this.studyCaseDataService.studyManagementData
+                  );
+                  this.dataSourceStudies.sortingDataAccessor = (item, property) => {
+                    return typeof item[property] === 'string'
+                      ? item[property].toLowerCase()
+                      : item[property];
+                  };
+                  this.dataSourceStudies.sort = this.sort;
+                  this.onFilterChange();
+                  this.isLoading = false;
+                },
+                (errorReceived) => {
+                  const error = errorReceived as SoSTradesError;
+                  if (error.redirect) {
+                    this.snackbarService.showError(error.description);
+                  } else {
+                    this.onFilterChange();
+                    this.isLoading = false;
+                    this.snackbarService.showError(
+                      'Error loading study case list\n' + error.description
+                    );
+                  }
+                }
+              );
       }
-    );
+      else{
+        this.studyCaseDataService.getFavoriteStudies().subscribe(
+          (studies) => {
+             // Retrieving favorite study case list
+          
+            this.studyCaseDataService.favoriteStudy = studies
+            
+              this.dataSourceStudies = new MatTableDataSource<Study>(
+              this.studyCaseDataService.favoriteStudy
+              );
+            
+              this.dataSourceStudies.sortingDataAccessor = (item, property) => {
+                return typeof item[property] === 'string'
+                ? item[property].toLowerCase()
+                : item[property];
+              };
+              this.dataSourceStudies.sort = this.sort;
+              this.onFilterChange();
+              this.isLoading = false;
+            
+          },
+          (errorReceived) => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } 
+            else {
+              this.onFilterChange();
+              this.isLoading = false;
+              this.snackbarService.showError(
+                'Error loading study case list\n' + error.description
+              );
+            }
+          }
+        );
+      }
   }
 
   loadStudy(study: Study) {
