@@ -12,6 +12,7 @@ import { StudyCaseDataService } from '../study-case/data/study-case-data.service
 import { LoggerService } from '../logger/logger.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from '../snackbar/snackbar.service';
+import { Routing } from 'src/app/models/routing.model';
 
 @Injectable({
   providedIn: 'root'
@@ -175,7 +176,7 @@ export class SocketService {
           this.studyCaseDataService.setCurrentStudy(null);
           this.studyCaseDataService.onStudyCaseChange.emit(null);
           this.onCurrentStudyDeleted.emit(true);
-          this.router.navigate(['']);
+          this.router.navigate([Routing.STUDY_MANAGEMENT]);
           this.snackbarService.showWarning(`The current study case you were working in has been deleted by "${data.author}"`)
         }
       }

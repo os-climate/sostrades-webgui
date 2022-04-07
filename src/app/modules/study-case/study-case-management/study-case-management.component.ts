@@ -275,6 +275,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   loadStudy(study: Study) {
+<<<<<<< HEAD
+=======
+  
+>>>>>>> develop
     this.handleUnsavedChanges((changeHandled) => {
       if (changeHandled) {
         // Check user was in an another study before this one and leave room

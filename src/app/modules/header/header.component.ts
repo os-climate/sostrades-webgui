@@ -80,6 +80,16 @@ export class HeaderComponent implements OnInit {
     else if(this.router.url.includes(Routing.GROUP_MANAGEMENT)){
       this.title = NavigationTitle.GROUP_MANAGEMENT
     }
+    else if(this.router.url.includes(Routing.USER_MANAGEMENT)){
+      this.title = NavigationTitle.USER_MANAGEMENT
+    }
+    else if(this.router.url.includes(Routing.PROCESSES_MANAGEMENT)){
+      this.title = NavigationTitle.PROCESSES_MANAGEMENT
+    }
+    else if(this.router.url.includes(Routing.EXECUTION_MANAGEMENT)){
+      this.title = NavigationTitle.EXECUTION_MANAGEMENT
+    }
+    
     else{
       this.title = NavigationTitle.HOME
     }
@@ -139,6 +149,22 @@ export class HeaderComponent implements OnInit {
   onClickGroupManagement() {
     this.router.navigate([Routing.GROUP_MANAGEMENT]);
     this.title = NavigationTitle.GROUP_MANAGEMENT
+  }
+
+  // Group Management
+  onClickUserManagement() {
+    this.router.navigate([Routing.USER_MANAGEMENT]);
+    this.title = NavigationTitle.USER_MANAGEMENT
+  }
+  // Group Management
+  onClickProcessesManagement() {
+    this.router.navigate([Routing.PROCESSES_MANAGEMENT]);
+    this.title = NavigationTitle.PROCESSES_MANAGEMENT
+  }
+  // Group Management
+  onClickExecutionManagement() {
+    this.router.navigate([Routing.EXECUTION_MANAGEMENT]);
+    this.title = NavigationTitle.EXECUTION_MANAGEMENT
   }
 
   // Contact

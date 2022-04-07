@@ -4,7 +4,7 @@ import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Group, LoadedGroup } from 'src/app/models/group.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { UpdateEntityRightDialogData, ValidationDialogData } from 'src/app/models/dialog-data.model';
+import { EditGroupDialogData, UpdateEntityRightDialogData, ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
@@ -15,6 +15,9 @@ import { UpdateEntityRightComponent } from '../entity-right/update-entity-right/
 import { EntityRightService } from 'src/app/services/entity-right/entity-right.service';
 import { HostListener } from '@angular/core';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
+import { UserService } from 'src/app/services/user/user.service';
+import { UserApplicationRight } from 'src/app/models/user.model';
+import { GroupEditComponent } from './group-edit/group-edit.component';
 
 
 @Component({
@@ -27,8 +30,10 @@ export class GroupManagementComponent implements OnInit {
 
   public createGroupForm: FormGroup;
   public checkboxConfidential: boolean;
+  public user : UserApplicationRight
   public isLoading: boolean;
-  public displayedColumnsMyGroups = ['name', 'description', 'confidential', 'users', 'delete'];
+  public setDefaultGroup: boolean;
+  public displayedColumnsMyGroups = ['name', 'description','default', 'confidential', 'users', 'edit', 'delete'];
   public colummnsFilter = ['All columns', 'Group Name', 'Description'];
   public dataSourceMyGroups = new MatTableDataSource<LoadedGroup>();
 
@@ -54,10 +59,12 @@ export class GroupManagementComponent implements OnInit {
     private dialog: MatDialog,
     public groupDataService: GroupDataService,
     private entityRightService: EntityRightService,
+    private userService : UserService,
     private loadingDialogService: LoadingDialogService,
     private snackbarService: SnackbarService) {
     this.isLoading = true;
     this.checkboxConfidential = false;
+    this.setDefaultGroup = true
   }
 
   ngOnInit(): void {
@@ -68,11 +75,8 @@ export class GroupManagementComponent implements OnInit {
     });
 
     // Load data first time component initialised
-    if (this.groupDataService.groupManagementData === null
-      || this.groupDataService.groupManagementData === undefined
-      || this.groupDataService.groupManagementData.length === 0) {
+    
       this.loadGroupManagementData();
-    } else {
       this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(
         this.groupDataService.groupManagementData
       );
@@ -92,7 +96,7 @@ export class GroupManagementComponent implements OnInit {
       // Initialising filter with 'All columns'
       this.onFilterChange();
       this.isLoading = false;
-    }
+    
   }
 
   loadGroupManagementData() {
@@ -100,24 +104,40 @@ export class GroupManagementComponent implements OnInit {
     this.isLoading = true;
     this.groupDataService.groupManagementData = [];
     this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(null);
-
+   
+    // Get current user
+    this.userService.getCurrentUser().subscribe(currentUser=>{  
+     this.user = currentUser
+     });
+   
     this.groupDataService.getUserGroups().subscribe(grpList => {
-      grpList.forEach(group => {
-        this.groupDataService.groupManagementData.push(group);
-      });
-      this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.groupDataService.groupManagementData);
-      this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
-        switch (property) {
-          case 'name':
-            return typeof item.group.name === 'string' ? item.group.name.toLowerCase() : item.group.name;
-          case 'description':
-            return typeof item.group.description === 'string' ? item.group.description.toLowerCase() : item.group.name;
-          case 'confidential':
-            return typeof item.group.confidential;
-          default:
-            return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+      grpList.forEach(group => {    
+      this.groupDataService.groupManagementData.push(group); 
+      // get user default group
+      const defaultGroupId = this.user.user.default_group_id
+      if(defaultGroupId != null || defaultGroupId != undefined){
+        if(defaultGroupId == group.group.id){
+          group.group.isDefaultGroup = true
         }
-      };
+        else{
+          group.group.isDefaultGroup = false
+        }
+      }
+    })
+
+    this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.groupDataService.groupManagementData);
+    this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'name':
+          return typeof item.group.name === 'string' ? item.group.name.toLowerCase() : item.group.name;
+        case 'description':
+          return typeof item.group.description === 'string' ? item.group.description.toLowerCase() : item.group.name;
+        case 'confidential':
+          return typeof item.group.confidential;
+        default:
+          return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+      }
+    };
       this.dataSourceMyGroups.sort = this.sort;
       this.onFilterChange();
       this.isLoading = false;
@@ -184,6 +204,45 @@ export class GroupManagementComponent implements OnInit {
     return this.createGroupForm.controls[controlName].hasError(errorName);
   }
 
+  updateGroup(event:any, loadedGroup : LoadedGroup){
+    const dialogData : EditGroupDialogData = new EditGroupDialogData();
+    dialogData.name = loadedGroup.group.name
+    dialogData.description = loadedGroup.group.description
+
+    const dialogRef = this.dialog.open(GroupEditComponent,{
+      disableClose: false,
+      width: '350px',
+      height: '380px',
+      data: dialogData
+    })
+
+    dialogRef.afterClosed().subscribe(result =>{
+      const editGroupData : EditGroupDialogData = result as EditGroupDialogData;
+      if(editGroupData !== null && editGroupData !== undefined){
+        if(editGroupData.cancel === false){
+          this.loadingDialogService.showLoading(`Update group (${editGroupData.name}). Plaese wait`)
+          this.groupDataService.updateGroup(loadedGroup.group.id, editGroupData.name, editGroupData.description).subscribe(
+            ()=>{
+              this.loadingDialogService.closeLoading()
+              this.snackbarService.showInformation(`Group (${editGroupData.name}) has been ssuccesfully updated `)
+              this.loadGroupManagementData()
+            },
+            errorReceived =>{
+              const error = errorReceived as SoSTradesError;
+              if(error.redirect){
+                this.loadingDialogService.closeLoading()
+                this.snackbarService.showError(error.description)
+              }
+              else{
+                this.loadingDialogService.closeLoading()
+                this.snackbarService.showError(`Error updating group: ${error.description}`)
+              }
+            }
+          )
+        }
+      }
+    })
+  }
 
   deleteGroup(group: Group) {
 
@@ -233,7 +292,19 @@ export class GroupManagementComponent implements OnInit {
       }
     });
   }
+  changeDefaultGroup(loadedGroup: LoadedGroup){
 
+    const userId = this.userService.getCurrentUserId()
+    this.userService.changeDefaultGroup(loadedGroup.group.id,userId).subscribe(
+      ()=>{   
+        this.setDefaultGroup = false
+      }),
+      error=>{
+        this.snackbarService.showError(error.description);
+      }
+    
+    this.setDefaultGroup = true
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceMyGroups.filter = filterValue.trim().toLowerCase();

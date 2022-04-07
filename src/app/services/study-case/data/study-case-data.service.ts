@@ -100,9 +100,16 @@ export class StudyCaseDataService extends DataHttpService {
         return favoriteStudies;
       }));
   }
-  addFavoriteStudy(study_id : number,user_id : number){
-    const createData = {study_id, user_id };
-    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, createData)
+  
+  addFavoriteStudy(study_id : number, user_id : number):  Observable<StudyFavorite>{
+    const payload = {
+      'study_id': study_id,
+      'user_id': user_id,
+    };
+    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, payload, this.options).pipe(map(
+      response => {
+        return StudyFavorite.Create(response);
+      }));
   }
 
   removeFavoriteStudy(study_id : number,user_id : number) {
