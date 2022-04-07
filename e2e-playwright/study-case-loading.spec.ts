@@ -10,7 +10,7 @@ test('Test loading -> Witness Full', async ({ page }) => {
   // List of nodes to tests
   const namespacesList = [
     `${studyName}.Resources`,
-    `${studyName}.EnergyDemand`,
+    `${studyName}.Energy_demand`,
     `${studyName}.EnergyMix`,
     `${studyName}.Macroeconomics`,
     `${studyName}.Carboncycle`,
