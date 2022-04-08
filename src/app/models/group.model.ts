@@ -9,10 +9,14 @@ export class Group implements AccessRightItem {
     public id: number,
     public name: string,
     public description: string,
-    public confidential: boolean) {
+    public confidential: boolean,
+    public isDefaultGroup: boolean
+    ) 
+    {
     this.title = name;
     this.information = 'Group';
-  }
+    this.isDefaultGroup = false
+    }
 
 
   public static Create(jsonData: any): Group {
@@ -20,7 +24,8 @@ export class Group implements AccessRightItem {
       jsonData[GroupAttributes.ID],
       jsonData[GroupAttributes.NAME],
       jsonData[GroupAttributes.DESCRIPTION],
-      jsonData[GroupAttributes.CONFIDENTIAL]
+      jsonData[GroupAttributes.CONFIDENTIAL],
+      jsonData[GroupAttributes.IS_DEFAULT_GROUP]
     );
     return result;
   }
@@ -36,7 +41,8 @@ export enum GroupAttributes {
   ID = 'id',
   NAME = 'name',
   DESCRIPTION = 'description',
-  CONFIDENTIAL = 'confidential'
+  CONFIDENTIAL = 'confidential',
+  IS_DEFAULT_GROUP = 'is_default_group'
 }
 
 

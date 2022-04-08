@@ -135,6 +135,22 @@
             </td>
           </ng-container>
 
+            <!-- Default Group Column -->
+            <ng-container matColumnDef="default">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Default
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <mat-radio-button
+                style="margin-left: 5px;"
+                *ngIf="setDefaultGroup"
+                (click)="changeDefaultGroup(element)"
+                [checked]="element.group.isDefaultGroup"
+                >
+                </mat-radio-button>
+              </td>
+            </ng-container>
+  
           <!-- Confidential Column -->
           <ng-container matColumnDef="confidential">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -166,6 +182,21 @@
             </td>
           </ng-container>
 
+            <!-- Edit Column -->
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-icon-button
+                  color="accent"
+                  *ngIf="element.isOwner === true || element.isManager === true"
+                  (click)="updateGroup($event, element)"
+                >
+                <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+              </td>
+            </ng-container>
+  
           <!-- Delete Column -->
           <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef></th>

@@ -58,6 +58,11 @@ export class GroupDataService extends DataHttpService {
       }));
   }
 
+  updateGroup(group_id: number, name: string, description: string):Observable<LoadedGroup>{
+    const payload = {group_id, name, description};
+    return this.http.post<LoadedGroup>(`${this.apiRoute}/${group_id}`, payload, this.options);
+  }
+
   getUserGroups(): Observable<LoadedGroup[]> {
     return this.http.get<LoadedGroup[]>(`${this.apiRoute}/user`).pipe(map(
       response => {
