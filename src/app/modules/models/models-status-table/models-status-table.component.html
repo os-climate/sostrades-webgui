@@ -66,15 +66,20 @@
             [class.model-name-column-yes]="element.delivered === 'YES'"
             [class.model-name-column-no]="element.delivered === 'NO'"
           >
+          <i
+            [ngClass]=element.icon
+            *ngIf="element.icon !== ''"
+          >
+          </i>
             {{ element.name }}
           </td>
         </ng-container>
 
         <!-- Type Column -->
-        <ng-container matColumnDef="modelType">
+        <ng-container matColumnDef="type">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
           <td mat-cell *matCellDef="let element">
-            {{ element.modelType }}
+            {{ element.type }}
           </td>
         </ng-container>
 
@@ -87,7 +92,7 @@
         </ng-container>
 
         <!-- Delivered Column -->
-        <ng-container matColumnDef="delivered">
+        <!-- <ng-container matColumnDef="delivered">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Delivered</th>
           <td mat-cell *matCellDef="let element">
             <button mat-icon-button disabled="true">
@@ -103,10 +108,10 @@
               </i>
             </button>
           </td>
-        </ng-container>
+        </ng-container> -->
 
         <!-- Implemented Column -->
-        <ng-container matColumnDef="implemented">
+        <!-- <ng-container matColumnDef="implemented">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Implemented</th>
           <td mat-cell *matCellDef="let element">
             <button mat-icon-button disabled="true">
@@ -122,23 +127,53 @@
               </i>
             </button>
           </td>
-        </ng-container>
+        </ng-container> -->
 
-        <!-- LastPublicationDate Column -->
-        <ng-container matColumnDef="lastPublicationDate">
+        <!-- LastModificationDate Column -->
+        <ng-container matColumnDef="lastModificationDate">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Last Publication Date
+            Last Modification Date
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.lastPublicationDate }}
+            {{ element.lastModificationDate }}
           </td>
         </ng-container>
 
-        <!-- Validator Column -->
-        <ng-container matColumnDef="validator">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Validator</th>
+        <!-- Version Column -->
+        <ng-container matColumnDef="version">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            Version
+          </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.validator }}
+            {{ element.version }}
+          </td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            Category
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.category }}
+          </td>
+        </ng-container>
+
+        <!-- Icon Column -->
+        <!-- <ng-container matColumnDef="icon">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            Icon
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.icon }}
+          </td>
+        </ng-container> -->
+
+        <!-- Validated By Column -->
+        <ng-container matColumnDef="validatedBy">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Validated By</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.validatedBy }}
           </td>
         </ng-container>
 
@@ -161,11 +196,11 @@
           </td>
         </ng-container>
 
-        <!-- Discipline Column -->
-        <ng-container matColumnDef="discipline">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Discipline</th>
+        <!-- Code Repository Column -->
+        <ng-container matColumnDef="codeRepository">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Code Repository</th>
           <td mat-cell *matCellDef="let element">
-            {{ element.discipline }}
+            {{ element.codeRepository }}
           </td>
         </ng-container>
 
