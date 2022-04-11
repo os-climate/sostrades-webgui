@@ -74,10 +74,14 @@ export class GroupManagementComponent implements OnInit {
       groupDescription: new FormControl('', [Validators.required])
     });
 
-    // Load data first time component initialised
-    
+    if (this.groupDataService.groupManagementData === null
+      || this.groupDataService.groupManagementData === undefined
+      || this.groupDataService.groupManagementData.length === 0) {
       this.loadGroupManagementData();
-      this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(
+    } 
+    else {
+    // Load data first time component initialised
+        this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(
         this.groupDataService.groupManagementData
       );
       this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
@@ -96,7 +100,7 @@ export class GroupManagementComponent implements OnInit {
       // Initialising filter with 'All columns'
       this.onFilterChange();
       this.isLoading = false;
-    
+    }
   }
 
   loadGroupManagementData() {
@@ -115,8 +119,8 @@ export class GroupManagementComponent implements OnInit {
       this.groupDataService.groupManagementData.push(group); 
       // get user default group
       const defaultGroupId = this.user.user.default_group_id
-      if(defaultGroupId != null || defaultGroupId != undefined){
-        if(defaultGroupId == group.group.id){
+      if(defaultGroupId !== null || defaultGroupId !== undefined){
+        if(defaultGroupId === group.group.id){
           group.group.isDefaultGroup = true
         }
         else{
@@ -296,7 +300,8 @@ export class GroupManagementComponent implements OnInit {
 
     const userId = this.userService.getCurrentUserId()
     this.userService.changeDefaultGroup(loadedGroup.group.id,userId).subscribe(
-      ()=>{   
+      ()=>{  
+        this.user.user.default_group_id = loadedGroup.group.id
         this.setDefaultGroup = false
       }),
       error=>{
