@@ -18,14 +18,15 @@ export class ModelsStatusTableComponent implements OnInit {
 
   public visibleColumns = [
     'name',
-    'modelType',
+    'type',
     'source',
-    'delivered',
-    'implemented',
-    'lastPublicationDate',
-    'validator',
+    'lastModificationDate',
+    'version',
+    'category',
+    // 'icon',
+    'validatedBy',
     'validated',
-    'discipline',
+    'codeRepository',
     'processUsingModel'];
 
   public columnsFilter = [
@@ -33,8 +34,8 @@ export class ModelsStatusTableComponent implements OnInit {
     'Model Name',
     'Type',
     'Source',
-    'Validator',
-    'Discipline'
+    'Validated By',
+    'Code Repository'
   ];
 
   public dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>();
@@ -100,6 +101,7 @@ export class ModelsStatusTableComponent implements OnInit {
     this.ontologyService.getOntologyModelsStatus().subscribe(
       (models) => {
         this.ontologyService.modelStatusData = models;
+        console.log(models.length)
         // Retrieving references list
         this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(
           this.ontologyService.modelStatusData
@@ -162,20 +164,20 @@ export class ModelsStatusTableComponent implements OnInit {
         case 'Model name':
           return data.name.trim().toLowerCase().includes(filter);
         case 'Type':
-          return data.modelType.trim().toLowerCase().includes(filter);
+          return data.type.trim().toLowerCase().includes(filter);
         case 'Source':
           return data.source.trim().toLowerCase().includes(filter);
-        case 'Validator':
-          return data.validator.trim().toLowerCase().includes(filter);
-        case 'Discipline':
-          return data.discipline.trim().toLowerCase().includes(filter);
+        case 'Validated By':
+          return data.validatedBy.trim().toLowerCase().includes(filter);
+        case 'Code Repository':
+          return data.codeRepository.trim().toLowerCase().includes(filter);
         default:
           return (
             data.name.trim().toLowerCase().includes(filter) ||
-            data.modelType.trim().toLowerCase().includes(filter) ||
+            data.type.trim().toLowerCase().includes(filter) ||
             data.source.trim().toLowerCase().includes(filter) ||
-            data.validator.trim().toLowerCase().includes(filter) ||
-            data.discipline.trim().toLowerCase().includes(filter)
+            data.validatedBy.trim().toLowerCase().includes(filter) ||
+            data.codeRepository.trim().toLowerCase().includes(filter)
           );
       }
     };
