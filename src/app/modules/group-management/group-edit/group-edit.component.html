@@ -1,10 +1,10 @@
 <div class="flex-container">
-    <div mat-dialog-title>
-      <h1 style="margin-bottom: 10px !important; text-align: center">
+    <div class="row" style="margin-bottom: 10px !important;">
+      <h1 class="col-11" mat-dialog-title style="text-align: center;">
         Edit group
       </h1>
+      <mat-icon id='close'(click)="onCancelClick()">close</mat-icon>
     </div> 
-    <hr>
     <br>
     <br>
     <div class="edit-group" [formGroup]="editForm">

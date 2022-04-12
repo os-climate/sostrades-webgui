@@ -169,8 +169,8 @@ export class GroupManagementComponent implements OnInit {
 
     const dialogRef = this.dialog.open(GroupEditComponent, {
       disableClose: false,
-      width: '350px',
-      height: '380px',
+      width: '400px',
+      height: '400px',
       data: dialogData
     });
 
