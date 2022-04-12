@@ -15,7 +15,6 @@ export class GroupDataService extends DataHttpService {
   onGroupsChange: EventEmitter<boolean> = new EventEmitter();
   public allGroups: Group[];
 
-  public groupManagementData: LoadedGroup[];
   public groupManagementFilter: string;
   public groupManagementColumnFiltered: string;
 
@@ -25,13 +24,11 @@ export class GroupDataService extends DataHttpService {
     super(location, 'group');
     this.allGroups = [];
 
-    this.groupManagementData = [];
     this.groupManagementFilter = '';
     this.groupManagementColumnFiltered = 'All columns';
   }
 
   clearCache() {
-    this.groupManagementData = [];
     this.groupManagementFilter = '';
     this.groupManagementColumnFiltered = 'All columns';
   }
@@ -58,9 +55,13 @@ export class GroupDataService extends DataHttpService {
       }));
   }
 
-  updateGroup(group_id: number, name: string, description: string):Observable<LoadedGroup>{
-    const payload = {group_id, name, description};
-    return this.http.post<LoadedGroup>(`${this.apiRoute}/${group_id}`, payload, this.options);
+  updateGroup(groupId: number, groupName: string, groupDescription: string): Observable<Group> {
+    const payload = {
+      id: groupId,
+      name: groupName,
+      description: groupDescription
+    };
+    return this.http.post<Group>(`${this.apiRoute}/${groupId}`, payload, this.options);
   }
 
   getUserGroups(): Observable<LoadedGroup[]> {

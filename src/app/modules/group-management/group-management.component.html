@@ -144,13 +144,13 @@
                 <mat-radio-button
                 style="margin-left: 5px;"
                 *ngIf="setDefaultGroup"
-                (click)="changeDefaultGroup(element)"
-                [checked]="element.group.isDefaultGroup"
+                (click)="changeDefaultGroup($event, element)"
+                [checked]="element.group.id === user.user.default_group_id"
                 >
                 </mat-radio-button>
               </td>
             </ng-container>
-  
+
           <!-- Confidential Column -->
           <ng-container matColumnDef="confidential">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -196,7 +196,7 @@
                 </button>
               </td>
             </ng-container>
-  
+
           <!-- Delete Column -->
           <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef></th>

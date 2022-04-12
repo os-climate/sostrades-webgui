@@ -162,3 +162,7 @@ tr.table-row:hover {
 table td {
   border-top: 0;
 }
+
+::ng-deep.mat-radio-label {
+    margin: auto;
+    }
