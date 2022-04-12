@@ -73,37 +73,48 @@ export class ProcessStudyCaseCreationComponent implements OnInit {
             }
           }
         });
-        
-    this.userService.getCurrentUser().subscribe(currentUser=>{
-      this.user = currentUser
-    })
 
-    this.groupDataService.getUserGroups().subscribe(response => {
-      const grpList: LoadedGroup[] = response;
-      grpList.forEach(group => {
-        this.groupList.push(group);
+        this.userService.getCurrentUser().subscribe(currentUser => {
+          this.user = currentUser;
 
-        //set the default group in the dropdown 
-        const defaultGroupId = this.user.user.default_group_id
-        if(defaultGroupId != null || defaultGroupId != undefined){
-          if(group.group.id === defaultGroupId ){ 
-            this.loadedGroup = group
-            this.createStudyForm.patchValue({
-              groupId: this.loadedGroup.group.id,
-            });           
-          }
-        }
-      });
-      this.isLoading = false;
-      }, errorReceived => {
-          const error = errorReceived as SoSTradesError;
-          this.onCancelClick();
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError('Error loading group list for form : ' + error.description);
-          }
-      });
+          this.groupDataService.getUserGroups().subscribe(response => {
+            const grpList: LoadedGroup[] = response;
+            grpList.forEach(group => {
+              this.groupList.push(group);
+
+              // Set the default group in the dropdown
+              const defaultGroupId = this.user.user.default_group_id;
+              if (defaultGroupId !== null || defaultGroupId !== undefined) {
+                if (group.group.id === defaultGroupId) {
+                  this.loadedGroup = group;
+                  this.createStudyForm.patchValue({
+                    groupId: this.loadedGroup.group.id,
+                  });
+                }
+              }
+            });
+            this.isLoading = false;
+          }, errorReceived => {
+            const error = errorReceived as SoSTradesError;
+            this.onCancelClick();
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              this.snackbarService.showError('Error loading group list for form : ' + error.description);
+            }
+            this.isLoading = false;
+          });
+
+        }, errorReceived => {
+            const error = errorReceived as SoSTradesError;
+            this.onCancelClick();
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              this.snackbarService.showError('Error loading user for form : ' + error.description);
+            }
+            this.isLoading = false;
+        });
 
       }, errorReceived => {
         const error = errorReceived as SoSTradesError;
@@ -113,6 +124,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit {
         } else {
           this.snackbarService.showError('Error loading references status list for form : ' + error.description);
         }
+        this.isLoading = false;
       });
     }, errorReceived => {
       const error = errorReceived as SoSTradesError;
@@ -122,6 +134,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit {
       } else {
         this.snackbarService.showError('Error loading studies list for form : ' + error.description);
       }
+      this.isLoading = false;
     });
   }
 
