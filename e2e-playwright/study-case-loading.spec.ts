@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { baseStudyCaseLoading } from './base/base-study-case-loading';
-import { baseStudyCaseTreenodeExpand } from './base/base-study-case-treenode-expand';
 
 
 test('Test loading -> Witness Full', async ({ page }) => {
@@ -28,27 +27,27 @@ test('Test loading -> Witness Full', async ({ page }) => {
   }));
 });
 
-test('Test loading -> Business case level 3', async ({ page }) => {
-  const studyName = 'test_load_bc_lvl_3_demo';
-  await baseStudyCaseLoading(page, 'group_test_e2e', studyName);
+// test('Test loading -> Business case level 3', async ({ page }) => {
+//   const studyName = 'test_load_bc_lvl_3_demo';
+//   await baseStudyCaseLoading(page, 'group_test_e2e', studyName);
 
-  // List of nodes to tests
-  const namespacesList = [
-    `${studyName}.Manufacturer`,
-    `${studyName}.Operator`,
-    `${studyName}.Energy`,
-    `${studyName}.Market`,
-    `${studyName}.LCA`,
-    `${studyName}.Business`,
-    `${studyName}.Charlie_H2`,
-    `${studyName}.Charlie_Kero`
-  ];
+//   // List of nodes to tests
+//   const namespacesList = [
+//     `${studyName}.Manufacturer`,
+//     `${studyName}.Operator`,
+//     `${studyName}.Energy`,
+//     `${studyName}.Market`,
+//     `${studyName}.LCA`,
+//     `${studyName}.Business`,
+//     `${studyName}.Charlie_H2`,
+//     `${studyName}.Charlie_Kero`
+//   ];
 
-  // Verifying that all nodes are presents in the page
-  await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 60000 })
-  }));
-});
+//   // Verifying that all nodes are presents in the page
+//   await Promise.all(namespacesList.map(async (nsp) => {
+//     await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 60000 })
+//   }));
+// });
 
 test('Test loading -> BC Product Development Strategy', async ({ page }) => {
   const studyName = 'test_load_bsl';
