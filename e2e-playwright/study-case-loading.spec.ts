@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { baseStudyCaseLoading } from './base/base-study-case-loading';
-import { baseStudyCaseTreenodeExpand } from './base/base-study-case-treenode-expand';
 
 
 test('Test loading -> Witness Full', async ({ page }) => {
