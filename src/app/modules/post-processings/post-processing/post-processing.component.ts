@@ -8,6 +8,7 @@ import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model'
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { LoadedStudy } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-post-processing',
@@ -26,6 +27,7 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
   public loadingMessage: string;
   public displayHeader: boolean;
   public isMoreContentAvailable: boolean;
+  public loadedStudy: LoadedStudy;
 
   constructor(
     private dialog: MatDialog,
@@ -36,6 +38,7 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
     this.treeNode = null;
     this.displayHeader = false;
     this.isMoreContentAvailable = false;
+    this.loadedStudy = null;
   }
 
   ngOnInit() {
@@ -47,6 +50,7 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
       } else {
         this.displayHeader = false;
       }
+      this.loadedStudy = this.studyCaseDataService.loadedStudy;
     });
   }
 
@@ -69,10 +73,10 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     event.preventDefault();
 
-    
+
     const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
     dialogData.namespace = this.treeNode.name;
-    
+
     if (this.treeNode.isValidated) {
       dialogData.validationState = ValidationTreeNodeState.INVALIDATED;
     } else {
@@ -87,10 +91,10 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
       data: this.treeNode
     });
 
-    dialogRefValidate.afterClosed().subscribe(() => {     
+    dialogRefValidate.afterClosed().subscribe(() => {
          if(this.treeNode.isValidated){
              this.treeNode.isValidated =false
-           } 
+           }
          else {
           this.treeNode.isValidated =true
          }
