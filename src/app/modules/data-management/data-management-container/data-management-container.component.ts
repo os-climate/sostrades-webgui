@@ -13,6 +13,7 @@ import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model'
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
+import { LoadedStudy } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-data-management-container',
@@ -25,7 +26,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   @Input() disciplineData: DataManagementDiscipline;
 
 
-  public resultData: StudyCaseValidationDialogData
+  public resultData: StudyCaseValidationDialogData;
   public showMaturity: boolean;
   public countItemsInDict = NodeDataTools.countDisplayableItemsInNodeDataDict;
   public treeNodeData: TreeNode;
@@ -35,6 +36,8 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   public allDataDict: { [id: string]: DataManagementDiscipline };
   public objectKey = Object.keys;
   public objectValue = Object.values;
+
+  public loadedStudy: LoadedStudy;
 
   treeNodeDataSubscription: Subscription;
 
@@ -47,13 +50,16 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     this.treeNodeDataSubscription = null;
     this.allDisciplinesDataDict = {};
     this.allDataDict = {};
-    this.showMaturity = false;  
+    this.showMaturity = false;
+    this.loadedStudy = null;
   }
 
   ngOnInit() {
 
     // Get data from treeview clicked node
     this.treeNodeDataSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(data => {
+
+      this.loadedStudy = this.studyCaseDataService.loadedStudy;
 
       if (data !== null) {
         if (data.name !== null) {
@@ -69,7 +75,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
           // Reset all disciplines data in current node
           this.allDisciplinesDataDict = {} //this dict contains a DataManagementDiscipline for each discipline
           this.allDataDict = {};//this dict contains only one DataManagementDiscipline that contains all disciplines
-          
+
 
           // Create entry for data stored at this treenode without discipline
           this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
@@ -78,7 +84,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
           this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.Data`);
 
           //create entry for all data stored in this treenode (for standard mode view)
-          //Reset all datda in current node 
+          //Reset all datda in current node
           this.allDataDict[`Data-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
           this.allDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push('Data');
           this.allDataDict[`Data-${this.treeNodeData.identifier}`].namespace = this.treeNodeData.fullNamespace;
@@ -94,7 +100,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
             this.allDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push(discName);
           });
 
-          
+
 
 
           // Reading all data to create object config, couplingInputs, couplingOutputs
@@ -166,7 +172,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     }
                   });
                 }
-                
+
 
               } else if (discVariable.ioType === IoType.IN) { // Disciplinary inputs
                 // Add to Data
@@ -205,7 +211,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
                     }
                   });
                 }
-                
+
               }
             }
           });
@@ -238,10 +244,10 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     event.preventDefault();
 
-    
+
     const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
     dialogData.namespace = this.treeNodeData.fullNamespace;
-    
+
     if (this.treeNodeData.isValidated) {
       dialogData.validationState = ValidationTreeNodeState.INVALIDATED;
     } else {
@@ -256,10 +262,10 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
       data: this.treeNodeData
     });
 
-    dialogRefValidate.afterClosed().subscribe(() => {  
+    dialogRefValidate.afterClosed().subscribe(() => {
          if(this.treeNodeData.isValidated){
              this.treeNodeData.isValidated =false
-           } 
+           }
          else {
           this.treeNodeData.isValidated =true
          }
