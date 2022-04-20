@@ -26,6 +26,7 @@ import { EntityRightService } from 'src/app/services/entity-right/entity-right.s
 import { ProcessStudyCaseCreationComponent } from '../process-study-case-creation/process-study-case-creation.component';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -40,7 +41,7 @@ export class ProcessManagementComponent implements OnInit {
   public colummnsFilter = ['All columns', 'Process Name', 'Repository Name'];
   public dataSourceProcess = new MatTableDataSource<Process>();
 
-  @Input() canCreateStudy = false;
+  @Input() dashboard = true;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -75,36 +76,23 @@ export class ProcessManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    // Load data first time component initialised
-    if (this.processService.processManagementData === null
-      || this.processService.processManagementData === undefined
-      || this.processService.processManagementData.length === 0) {
-      this.loadProcessManagementData();
-    } else {
-      this.dataSourceProcess = new MatTableDataSource<Process>(
-        this.processService.processManagementData
-      );
-      this.dataSourceProcess.sortingDataAccessor = (item, property) => {
-        return typeof item[property] === 'string'
-          ? item[property].toLowerCase()
-          : item[property];
-      };
-      this.dataSourceProcess.sort = this.sort;
-      // Initialising filter with 'All columns'
-      this.onFilterChange();
-      this.isLoading = false;
-    }
+    this.loadProcessManagementData();
   }
 
   loadProcessManagementData() {
     this.isLoading = true;
-    this.processService.processManagementData = [];
     this.dataSourceProcess = new MatTableDataSource<Process>(null);
 
-    this.processService.getUserProcesses().subscribe(processes => {
-      this.processService.processManagementData = processes;
-      this.dataSourceProcess = new MatTableDataSource<Process>(this.processService.processManagementData);
+    let processCallback: Observable<Process[]> = null;
+
+    if (this.dashboard === true) {
+      processCallback = this.processService.getDashboardProcesses();
+    } else {
+      processCallback = this.processService.getUserProcesses();
+    }
+
+    processCallback.subscribe(processes => {
+      this.dataSourceProcess = new MatTableDataSource<Process>(processes);
       this.dataSourceProcess.sortingDataAccessor = (item, property) => {
         return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
       };
@@ -119,7 +107,6 @@ export class ProcessManagementComponent implements OnInit {
       } else {
         this.onFilterChange();
         this.isLoading = false;
-        this.processService.processManagementData = [];
         this.snackbarService.showError('Error loading processes : ' + error.description);
       }
     });
