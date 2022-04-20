@@ -83,7 +83,7 @@
           <td mat-cell *matCellDef="let element">
             <button
               mat-icon-button
-              *ngIf="canCreateStudy"
+              *ngIf="!dashboard"
               color="accent"
               matTooltip="Create study case from process"
               [matBadge]="element.referenceList.length"
