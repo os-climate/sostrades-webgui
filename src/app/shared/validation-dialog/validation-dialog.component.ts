@@ -20,7 +20,7 @@ export class ValidationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ValidationDialogData) {
     this.showSupButton = false;
     this.showCancelButton = true;
-    this.validationTitle = 'Are you sure?';
+    this.validationTitle = 'Are you sure ?';
   }
 
   ngOnInit(): void {

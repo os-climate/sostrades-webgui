@@ -21,6 +21,8 @@ import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-e
 })
 export class StudyCaseMainService extends MainHttpService {
 
+  onCloseStudy: EventEmitter<boolean> = new EventEmitter();
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -71,6 +73,39 @@ export class StudyCaseMainService extends MainHttpService {
       error => {
         loaderObservable.error(error);
       });
+  }
+
+  updateStudy(studyId: number, studyName:string, groupId:number):Observable<LoadedStudy>{
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.updateStudyTimeout(studyId, studyName, groupId, observer);
+    });
+    return loaderObservable;
+  }
+
+  private updateStudyTimeout(studyId: number, studyName:string, groupId:number,loaderObservable: Subscriber<LoadedStudy>){
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    }
+    const url = `${this.apiRoute}/${studyId}`
+    return this.http.post<LoadedStudy>(url, payload, this.options).pipe(map(
+      response => {
+        return LoadedStudy.Create(response);
+      }))
+      .subscribe(loadedStudy => {
+        if (loadedStudy.loadInProgress === true){
+          setTimeout(() => {
+            this.loadStudyTimeout(studyId, false, loaderObservable, true);
+          }, 2000);
+        }
+        else{
+          loaderObservable.next(loadedStudy);
+        }
+      },
+        error => {
+          loaderObservable.error(error);
+        }); 
   }
 
   //#endregion create study
@@ -191,6 +226,9 @@ export class StudyCaseMainService extends MainHttpService {
         });
   }
 
+  closeStudy(close : boolean){
+      this.onCloseStudy.emit(close)
+  }
 
   deleteStudy(studies: Study[]): Observable<void> {
     const studiesIdList = [];

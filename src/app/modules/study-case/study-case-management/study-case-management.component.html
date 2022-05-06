@@ -200,6 +200,17 @@
             >
               <i class="fa-regular fa-folder-open fa-fw"> </i>
             </button>
+            
+            <button
+            style="margin-right: 5px"
+            mat-icon-button
+            color="accent"
+            *ngIf="element.isManager"
+            (click)="updateStudy(element)"
+            matTooltip="edit study case"
+          >
+          <i class="fa-solid fa-pen-to-square"></i>
+          </button>
 
             <button
               style="margin-right: 5px"

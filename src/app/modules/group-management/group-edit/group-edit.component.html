@@ -3,7 +3,6 @@
       <h1 class="col-11" mat-dialog-title style="text-align: center;">
         Edit group
       </h1>
-      <mat-icon id='close'(click)="onCancelClick()">close</mat-icon>
     </div> 
     <br>
     <br>
@@ -55,7 +54,6 @@
             mat-button
             (click)="submitForm()"
             [disabled]="!editForm.valid"
-            color="success"
             >
             Save
             </button>

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { Subscription } from 'rxjs';
-import { LoadedStudy } from 'src/app/models/study.model';
+import { LoadedStudy} from 'src/app/models/study.model';
 import { Router } from '@angular/router';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
@@ -14,6 +14,7 @@ import { StudyCaseModificationDialogComponent } from '../study-case/study-case-m
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -23,12 +24,17 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 export class SidenavComponent implements OnInit, OnDestroy {
 
   private onStudyCaseChangeSubscription: Subscription;
+  private onEditStudychangeSubscription: Subscription;
+  private unSavedChangesSubscription : Subscription;
   public studyName: string;
   public isLoadedStudy: boolean;
+  public loadedStudy: LoadedStudy;
   public hasUnsavedChanges: boolean
+  
 
   constructor(
     public studyCaseDataService: StudyCaseDataService,
+    public studyCaseMainService : StudyCaseMainService,
     private headerService : HeaderService,
     private socketService: SocketService,
     private snackbarService: SnackbarService,
@@ -36,30 +42,35 @@ export class SidenavComponent implements OnInit, OnDestroy {
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private router: Router) {
     this.onStudyCaseChangeSubscription = null;
+    this.unSavedChangesSubscription = null;
+    this.hasUnsavedChanges = false
     this.studyName = '';
     this.isLoadedStudy = false;
-    this.hasUnsavedChanges = false
   }
 
   ngOnInit() {
-    this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudyData => {
-      const loadedStudy = loadedStudyData as LoadedStudy;
-      if (loadedStudy !== null && loadedStudy !== undefined) {
-        this.studyName = loadedStudy.studyCase.name;
-        this.isLoadedStudy = true;
-        this.onClickTreeview();
-      } else {
-        this.studyName = '';
-        this.isLoadedStudy = false;
+
+  this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudyData => {
+     this.loadedStudy = loadedStudyData as LoadedStudy;
+    if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
+     this.studyName = this.loadedStudy.studyCase.name
+      this.isLoadedStudy = true;
+      this.onClickTreeview();
+    } 
+    else {
+      this.studyName = '';
+      this.isLoadedStudy = false;
+    }
+  });
+  
+    this.studyCaseLocalStorageService.unsavedChanges.subscribe(
+      unsavedChanges => {
+        if(unsavedChanges)
+        {
+          this.hasUnsavedChanges = unsavedChanges;
+        }
       }
-    });
-    this.studyCaseLocalStorageService.unsavedChanges.subscribe(unsavedChanges => {
-      if(unsavedChanges)
-      {
-        this.hasUnsavedChanges = unsavedChanges;
-      } 
-    })
-   
+    )
   }
 
 
@@ -68,6 +79,15 @@ export class SidenavComponent implements OnInit, OnDestroy {
       this.onStudyCaseChangeSubscription.unsubscribe();
       this.onStudyCaseChangeSubscription = null;
     }
+    if (this.onEditStudychangeSubscription !== null && (this.onEditStudychangeSubscription !== undefined)) {
+      this.onEditStudychangeSubscription.unsubscribe();
+      this.onEditStudychangeSubscription = null;
+    }
+    if (this.unSavedChangesSubscription !== null && (this.unSavedChangesSubscription !== undefined)) {
+      this.unSavedChangesSubscription.unsubscribe();
+      this.unSavedChangesSubscription = null;
+    }
+  
   }
   
   
@@ -77,13 +97,6 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE)
     }
 
-  setTreeviewClass() {
-    if (this.studyName.length > 13) {
-      return 'treeview-long-title';
-    } else {
-      return 'treeview-short-title';
-    }
-  }
 
 
   closeStudy(event: any) {
@@ -151,22 +164,23 @@ export class SidenavComponent implements OnInit, OnDestroy {
                               this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges(),
                               resultData.changes
                             );
-                            this.studyCaseDataService.closeStudy(true) 
+                             this.studyCaseMainService.closeStudy(true)
                           } 
                           else {
-                            this.studyCaseDataService.closeStudy(false)           
+                            this.studyCaseMainService.closeStudy(false)           
                           }
                         }
                       );
                     } 
                     else {
-                      this.studyCaseDataService.closeStudy(false)                    }
+                       this.studyCaseMainService.closeStudy(false)                    
+                    }
                   }
                 });
               } 
               else {
                 this.studyCaseLocalStorageService.removeStudiesFromLocalStorage();
-                this.studyCaseDataService.closeStudy(true)               
+                 this.studyCaseMainService.closeStudy(true)           
                 this.snackbarService.showInformation('Changes successfully deleted')
               }
             }
@@ -174,7 +188,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
         });
       } 
       else { 
-        this.studyCaseDataService.closeStudy(true)
+        this.studyCaseMainService.closeStudy(true)
       }
     }
 }
