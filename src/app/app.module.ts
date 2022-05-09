@@ -115,6 +115,7 @@ import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component
 import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
 import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
 import { GroupEditComponent } from './modules/group-management/group-edit/group-edit.component';
+import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
 
 registerLocaleData(fr);
 
@@ -205,8 +206,8 @@ registerLocaleData(fr);
     WelcomPageComponent,
     ContactDialogComponent,
     DisciplineIconMappingConverterPipe,
-    GroupEditComponent
-
+    GroupEditComponent,
+    StudyCaseEditComponent,
   ],
   imports: [
     BrowserModule,
