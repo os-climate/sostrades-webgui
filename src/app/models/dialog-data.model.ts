@@ -364,3 +364,16 @@ export class EditGroupDialogData extends AbstractDialogData {
     this.description = '';
   }
 }
+
+
+export class EditStudyCaseDialogData extends AbstractDialogData {
+  studyName: string;
+  groupId: number;
+
+  public constructor() {
+    super();
+    this.studyName ='';
+    this.groupId = null;
+  }
+
+}

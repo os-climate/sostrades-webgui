@@ -18,7 +18,6 @@ import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 })
 export class StudyCaseDataService extends DataHttpService {
 
-  onCloseStudy: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview : EventEmitter<LoadedStudy> = new EventEmitter()
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
@@ -269,11 +268,6 @@ export class StudyCaseDataService extends DataHttpService {
   isLoadedStudyForTreeview(loadedStudyForTreeview : LoadedStudy ){
     this.onLoadedStudyForTreeview.emit(loadedStudyForTreeview)
   }
-
-  closeStudy(close : boolean){
-    this.onCloseStudy.emit(close)
-  }
-
 
   updateParameterOntology(loadedStudy: LoadedStudy){
     // loop on each treeNode data to update ontology name
