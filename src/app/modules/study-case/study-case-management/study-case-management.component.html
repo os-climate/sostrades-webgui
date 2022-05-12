@@ -121,6 +121,8 @@
           </td>
         </ng-container>
 
+      
+
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name</th>
@@ -178,6 +180,14 @@
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.modificationDate | date: "short":"+0200" }}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="executionStatus">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="element.executionStatus">
+            {{ element.executionStatus }}
           </td>
         </ng-container>
 
