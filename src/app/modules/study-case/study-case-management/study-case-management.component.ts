@@ -60,6 +60,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     'process',
     'creationDate',
     'modificationDate',
+    'executionStatus',
     'action'
   ];
   
@@ -70,6 +71,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     'Repository',
     'Process',
     'Type',
+    'Status'
   ];
   public selection = new SelectionModel<Study>(true, []);
 
@@ -565,7 +567,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         case 'Process':
           return data.processDisplayName.trim().toLowerCase().includes(filter) || data.process.trim().toLowerCase().includes(filter);
         case 'Type':
-          return data.studyType.trim().toLowerCase().includes(filter);
+          return data.studyType.trim().toLowerCase().includes(filter); 
+        case 'Status':
+          return data.executionStatus.trim().toLowerCase().includes(filter);
         default:
           return (
             data.name.trim().toLowerCase().includes(filter) ||
@@ -574,7 +578,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             data.repository.trim().toLowerCase().includes(filter) ||
             data.processDisplayName.trim().toLowerCase().includes(filter) ||
             data.process.trim().toLowerCase().includes(filter) ||
-            data.studyType.trim().toLowerCase().includes(filter)
+            data.studyType.trim().toLowerCase().includes(filter) ||
+            data.executionStatus.trim().toLowerCase().includes(filter)
           );
       }
     };
