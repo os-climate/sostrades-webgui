@@ -7,15 +7,19 @@ import { DataHttpService } from '../http/data-http/data-http.service';
 @Injectable({
   providedIn: 'root'
 })
-export class SamlService extends DataHttpService {
+export class GithubOAuthService extends DataHttpService {
 
   constructor(
     private http: HttpClient,
     private location: Location) {
-      super(location, 'saml');
+      super(location, 'github/oauth');
    }
 
-  getSSOUrl(): Observable<string> {
-    return this.http.get<string>(`${this.apiRoute}/sso`);
+  isGithubOAuthAvailable(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiRoute}`);
+  }
+
+  loginWithGitHubOAuth() {
+    this.http.get(`${this.apiRoute}/authorize`).subscribe();
   }
 }
