@@ -26,7 +26,7 @@ export class Study {
     public isContributor: boolean,
     public isCommenter: boolean,
     public isRestrictedViewer: boolean,
-    public isFavorite : boolean
+    public isFavorite : boolean,
   ) {
   }
 
@@ -128,7 +128,7 @@ export enum StudyAttributes {
   ISCONTRIBUTOR = 'is_contributor',
   ISCOMMENTER = 'is_commenter',
   ISRESTRICTEDVIEWER = 'is_restricted_viewer',
-  ISFAVORITE = 'isFavorite'
+  ISFAVORITE = 'is_favorite'
 }
 
 export enum LoadedStudyAttributes {
