@@ -70,19 +70,21 @@
           </button>
         </a>
       </div>
-      <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="showGithubOauth">
-        <button mat-raised-button mat-button (click)="loginWithGithubOAuth()">
-          Connect with
-          <img
-            src="/assets/GitHub_Logo.png"
-            aria-label="GitHub logo"
-            style="
-              width: 50px;
-              margin-left: 5px;
-              border-radius: 5px;
-            "
-          />
-        </button>
+      <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="githubOAuthUrl !== ''">
+        <a href="{{ githubOAuthUrl }}">
+          <button mat-raised-button mat-button>
+            Connect with
+            <img
+              src="/assets/GitHub_Logo.png"
+              aria-label="GitHub logo"
+              style="
+                width: 50px;
+                margin-left: 5px;
+                border-radius: 5px;
+              "
+            />
+          </button>
+        </a>
       </div>
     </mat-card-content>
   </mat-card>

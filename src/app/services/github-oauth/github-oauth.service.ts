@@ -15,11 +15,7 @@ export class GithubOAuthService extends DataHttpService {
       super(location, 'github/oauth');
    }
 
-  isGithubOAuthAvailable(): Observable<boolean> {
-    return this.http.get<boolean>(`${this.apiRoute}`);
-  }
-
-  loginWithGitHubOAuth() {
-    this.http.get(`${this.apiRoute}/authorize`).subscribe();
+  getGithubOAuthUrl(): Observable<string> {
+    return this.http.get<string>(`${this.apiRoute}/authorize`);
   }
 }
