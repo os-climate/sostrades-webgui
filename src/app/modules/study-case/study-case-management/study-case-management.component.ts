@@ -342,7 +342,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       if(editStudyCaseData !== null && editStudyCaseData !== undefined){
         if(editStudyCaseData.cancel === false){
           this.studyCaseMainService.closeStudy(true)
-          this.loadingDialogService.showLoading(`Update group (${editStudyCaseData.studyName}). Please wait`)
+          this.loadingDialogService.showLoading(`Updating study (${editStudyCaseData.studyName}). Please wait`)
           this.studyCaseMainService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
             ()=>{
               this.socketService.updateStudy(study.id)

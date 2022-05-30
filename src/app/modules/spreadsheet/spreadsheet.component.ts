@@ -66,7 +66,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.data.nodeData.type.includes('list')) {
+    if (this.data.nodeData.type.includes('list') && (this.data.nodeData.subtype_descriptor === undefined || this.data.nodeData.subtype_descriptor === null)) {
       const listValue = this.data.nodeData.value;
       if (listValue !== undefined && listValue !== null && listValue.length > 0) {
         let valueList = [];
@@ -319,7 +319,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
   saveDataClick() {
 
-    if (this.data.nodeData.type.includes('list')) {
+    if (this.data.nodeData.type.includes('list') && (this.data.nodeData.subtype_descriptor === undefined || this.data.nodeData.subtype_descriptor === null)) {
       // Saving list type
       this.loadingDialogService.showLoading(`Saving in temporary changes : ${this.data.nodeData.displayName}`);
 
