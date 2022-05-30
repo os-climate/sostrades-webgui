@@ -179,7 +179,7 @@ export class GroupManagementComponent implements OnInit {
 
       if(editGroupData !== null && editGroupData !== undefined) {
         if (editGroupData.cancel === false){
-          this.loadingDialogService.showLoading(`Update group (${editGroupData.name}). Please wait`);
+          this.loadingDialogService.showLoading(`Updating group (${editGroupData.name}). Please wait`);
 
           this.groupDataService.updateGroup(loadedGroup.group.id, editGroupData.name, editGroupData.description).subscribe(
             _ => {

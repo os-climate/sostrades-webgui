@@ -45,6 +45,7 @@ export class NodeData {
         jsonData[NodeDataAttributes.UNIT],
         jsonData[NodeDataAttributes.POSSIBLE_VALUES],
         jsonData[NodeDataAttributes.RANGE],
+        jsonData[NodeDataAttributes.SUBTYPE_DESCRIPTOR],
         jsonData[NodeDataAttributes.USER_LEVEL],
         jsonData[NodeDataAttributes.VISIBILITY],
         jsonData[NodeDataAttributes.IO_TYPE],
@@ -76,6 +77,7 @@ export class NodeData {
     public unit: string,
     public possibleValues: any,
     public range: any,
+    public subtype_descriptor: any,
     public userLevel: number,
     public visibility: string,
     public ioType: IoType,
@@ -104,7 +106,12 @@ export class NodeData {
     }
     this.displayName = this.variableName;
     this._widgetType = WidgetType.NO_WIDGET;
-    this.updateWidgetType();
+    if(this.subtype_descriptor !== null || this.subtype_descriptor !== undefined){
+      this._widgetType = WidgetType.FILE_SPREADSHEET_WIDGET;
+    }
+    else{
+      this.updateWidgetType()
+    }
     this.isHighlighted = false;
   }
 
@@ -199,6 +206,7 @@ export enum NodeDataAttributes {
   UNIT = 'unit',
   POSSIBLE_VALUES = 'possible_values',
   RANGE = 'range',
+  SUBTYPE_DESCRIPTOR ='subtype_descriptor',
   USER_LEVEL = 'user_level',
   VISIBILITY = 'visibility',
   IO_TYPE = 'io_type',
