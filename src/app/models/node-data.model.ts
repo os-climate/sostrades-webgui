@@ -106,12 +106,9 @@ export class NodeData {
     }
     this.displayName = this.variableName;
     this._widgetType = WidgetType.NO_WIDGET;
-    if(this.subtype_descriptor !== null || this.subtype_descriptor !== undefined){
-      this._widgetType = WidgetType.FILE_SPREADSHEET_WIDGET;
-    }
-    else{
-      this.updateWidgetType()
-    }
+
+    this.updateWidgetType();
+
     this.isHighlighted = false;
   }
 
