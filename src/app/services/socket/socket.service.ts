@@ -12,6 +12,10 @@ import { StudyCaseDataService } from '../study-case/data/study-case-data.service
 import { LoggerService } from '../logger/logger.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from '../snackbar/snackbar.service';
+import { Routing } from 'src/app/models/routing.model';
+import { ValidationDialogData } from 'src/app/models/dialog-data.model';
+import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +27,8 @@ export class SocketService {
   public onNewNotification: EventEmitter<CoeditionNotification>;
   public onStudySubmissionEnd: EventEmitter<boolean>;
   public onCurrentStudyDeleted: EventEmitter<boolean>;
+  public onCurrentStudyEdited : EventEmitter<boolean>;
+
 
   public notificationList: CoeditionNotification[];
   private notificationQueue: CoeditionNotification[];
@@ -33,6 +39,7 @@ export class SocketService {
     private router: Router,
     private userService: UserService,
     private snackbarService: SnackbarService,
+    private dialog: MatDialog,
     private studyCaseDataService: StudyCaseDataService,
     private loggerService: LoggerService) {
     this.socket = null;
@@ -41,6 +48,7 @@ export class SocketService {
     this.onNewNotification = new EventEmitter<CoeditionNotification>();
     this.onStudySubmissionEnd = new EventEmitter<boolean>();
     this.onCurrentStudyDeleted = new EventEmitter<boolean>();
+    this.onCurrentStudyEdited = new EventEmitter<boolean>();
     this.notificationList = [];
     this.notificationQueue = [];
   }
@@ -167,15 +175,44 @@ export class SocketService {
       this.addNotificationToQueue(notification);
     });
 
+    this.socket.on('study-edited', (data) => {
+      if (this.userService.getFullUsername() !== data.author) {
+        if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+          const validationDialogData = new ValidationDialogData();
+          validationDialogData.message = `The study you are working on has been modified by "${data.author}". 
+          For security purpose study will be close without saving changes.`;
+          validationDialogData.title = " Warning"
+          validationDialogData.buttonOkText = 'Ok';
+          validationDialogData.showCancelButton = false
+          validationDialogData.secondaryActionConfirmationNeeded = false;          
+
+          const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+            disableClose: true,
+            width: '500px',
+            height: '200px',
+            data: validationDialogData,
+          });
+          dialogRefValidate.afterClosed().subscribe(result =>{
+            const validationData : ValidationDialogData = result as ValidationDialogData
+            if ((validationData !== null) && (validationData !== undefined)) {
+              this.onCurrentStudyEdited.emit(true)
+              this.router.navigate([Routing.STUDY_MANAGEMENT]);
+            }
+          })
+        }
+      }
+    });
+   
+
     this.socket.on('study-deleted', (data) => {
       if (this.userService.getFullUsername() !== data.author) {
         if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
           this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData
             .filter(x => x.id !== this.studyCaseDataService.loadedStudy.studyCase.id);
-          this.studyCaseDataService.loadedStudy = null;
+          this.studyCaseDataService.setCurrentStudy(null);
           this.studyCaseDataService.onStudyCaseChange.emit(null);
           this.onCurrentStudyDeleted.emit(true);
-          this.router.navigate(['']);
+          this.router.navigate([Routing.STUDY_MANAGEMENT]);
           this.snackbarService.showWarning(`The current study case you were working in has been deleted by "${data.author}"`)
         }
       }
@@ -216,6 +253,12 @@ export class SocketService {
   submitStudy(studyCaseId: number) {
     if (this.socket) {
       this.socket.emit('submit', { study_case_id: studyCaseId });
+    }
+  }
+
+  updateStudy(study_id : number){
+    if(this.socket){
+      this.socket.emit('edit', { study_case_id: study_id });
     }
   }
 

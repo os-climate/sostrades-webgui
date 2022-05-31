@@ -353,3 +353,27 @@ export class LinkDialogData extends AbstractDialogData {
     this.description = '';
   }
 }
+
+export class EditGroupDialogData extends AbstractDialogData {
+  name: string;
+  description: string;
+
+  public constructor() {
+    super();
+    this.name ='';
+    this.description = '';
+  }
+}
+
+
+export class EditStudyCaseDialogData extends AbstractDialogData {
+  studyName: string;
+  groupId: number;
+
+  public constructor() {
+    super();
+    this.studyName ='';
+    this.groupId = null;
+  }
+
+}

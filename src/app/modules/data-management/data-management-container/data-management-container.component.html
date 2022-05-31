@@ -40,7 +40,7 @@
     <span class="spacer"></span>
     <button
     mat-raised-button
-    *ngIf="!treeNodeData.isValidated"
+    *ngIf="!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
     (click)="onClickDataValidation($event)"
     color="accent"
     style="height: 25px;line-height: 5px;"
@@ -50,7 +50,7 @@
 
     <button
     mat-raised-button
-    *ngIf="treeNodeData.isValidated"
+    *ngIf="treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
     (click)="onClickDataValidation($event)"
     color="accent"
     style="height: 25px;line-height: 5px;"

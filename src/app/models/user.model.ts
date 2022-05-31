@@ -12,12 +12,15 @@ export class User implements AccessRightItem {
     public firstname: string,
     public lastname: string,
     public email: string,
+    public default_group_id: number,
     public userprofile: number,
-    public internalAccount: boolean) {
+    public internalAccount: boolean
+    ) 
+    {
     this.userprofilename = null;
     this.title = `${firstname} ${lastname}`;
     this.information = email;
-  }
+    }
 
   public static Create(jsonData: any): User {
     const result: User = new User(
@@ -26,6 +29,7 @@ export class User implements AccessRightItem {
       jsonData[UserAttributes.FIRSTNAME],
       jsonData[UserAttributes.LASTNAME],
       jsonData[UserAttributes.EMAIL],
+      jsonData[UserAttributes.DEFAULT_GROUP_ID],
       jsonData[UserAttributes.USERPROFILE],
       jsonData[UserAttributes.INTERNAL_ACCOUNT]);
     return result;
@@ -60,6 +64,7 @@ export enum UserAttributes {
   FIRSTNAME = 'firstname',
   LASTNAME = 'lastname',
   EMAIL = 'email',
+  DEFAULT_GROUP_ID ='default_group_id',
   USERPROFILE = 'userprofile',
   INTERNAL_ACCOUNT = 'internal_account'
 }

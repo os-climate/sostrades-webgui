@@ -70,6 +70,20 @@
           </button>
         </a>
       </div>
+      <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="showGitHubLogin">
+          <button mat-raised-button mat-button (click)="loginWithGithub()">
+            Connect with
+            <img
+              src="/assets/GitHub_Logo.png"
+              aria-label="GitHub logo"
+              style="
+                width: 50px;
+                margin-left: 5px;
+                border-radius: 5px;
+              "
+            />
+          </button>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>

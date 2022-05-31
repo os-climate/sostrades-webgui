@@ -33,6 +33,7 @@ export class FileSpreadsheetComponent implements OnInit {
   public isReadOnly: boolean;
   public isListType: boolean;
   public isArrayType: boolean;
+  public hasSubTypeDescriptor:boolean
 
   constructor(
     private loadingDialogService: LoadingDialogService,
@@ -47,6 +48,8 @@ export class FileSpreadsheetComponent implements OnInit {
     this.isReadOnly = true;
     this.isListType = false;
     this.isArrayType = false;
+    this.hasSubTypeDescriptor = false
+
   }
 
   ngOnInit(): void {
@@ -58,6 +61,10 @@ export class FileSpreadsheetComponent implements OnInit {
       if (this.nodeData.type.includes('list')) {
         this.isListType = true;
       }
+      
+      if (this.nodeData.subtype_descriptor !== null && this.nodeData.subtype_descriptor !== undefined){
+          this.hasSubTypeDescriptor = true
+      }
 
       if (this.nodeData.type.includes('array')) {
         this.isArrayType = true;
@@ -65,6 +72,24 @@ export class FileSpreadsheetComponent implements OnInit {
 
     }
   }
+
+  // private getKeyOfSubType(subType:any){
+  //   // Get key of subtype_desriptor.
+  //   const values =  Object.values(subType)[0]
+  //   const key = Object.keys(values)[0]
+     
+  //   if (key === 'dict') {
+  //     return true
+  //   } 
+  //   else {
+  //     if(parseInt(key) === 0 || (key === undefined && key === null)){
+  //       return false  
+  //     }
+  //     else {
+  //       return this.getKeyOfSubType(values)
+  //     }
+  //   }
+  // }
 
   onClickUpload() {
     const fileUploadElement = this.fileUpload.nativeElement;
@@ -76,7 +101,7 @@ export class FileSpreadsheetComponent implements OnInit {
       const file = event.target.files[0];
       const reader = new FileReader();
 
-      if (this.isListType) {
+      if (this.isListType && !this.hasSubTypeDescriptor) {
         // Saving list type
         this.loadingDialogService.showLoading(`Saving in temporary changes : ${this.nodeData.displayName}`);
 
@@ -225,7 +250,7 @@ export class FileSpreadsheetComponent implements OnInit {
     spreadsheetDialogData.readOnly = readOnly;
 
     if (this.nodeData) {
-      if (this.isListType || (this.isArrayType && (this.nodeData.value === null && updateParameter === null))) {
+      if ((this.isListType && !this.hasSubTypeDescriptor) || (this.isArrayType && (this.nodeData.value === null && updateParameter === null))) {
         const dialogRef = this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData

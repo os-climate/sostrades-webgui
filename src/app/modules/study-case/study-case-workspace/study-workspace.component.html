@@ -39,13 +39,13 @@
     </mat-tab>
   </mat-tab-group>
 <div *ngIf="showView" class="filter-level">
-  <button 
+  <button
   class="button"
-  mat-flat-button 
-  color="accent" 
-  [matMenuTriggerFor]="menuFilters" 
+  mat-flat-button
+  color="accent"
+  [matMenuTriggerFor]="menuFilters"
   aria-label="filters menu"
-  style="margin-right: 15px;" 
+  style="margin-right: 15px;"
   *ngIf="hasAccessToStudy">
   Filters
   </button>
@@ -61,13 +61,13 @@
       </mat-checkbox>
     </div>
   </mat-menu>
-    <button 
-    mat-flat-button 
-    color="accent" 
-    [matMenuTriggerFor]="menuUserLevel" 
+    <button
+    mat-flat-button
+    color="accent"
+    [matMenuTriggerFor]="menuUserLevel"
     aria-label="user level menu"
     class="button"
-      *ngIf="hasAccessToStudy">
+      *ngIf="hasAccessToStudy && !studyCaseDataService.loadedStudy.noData">
       <mat-icon style="
           float: left;
           margin-left: 2px;
@@ -123,7 +123,7 @@
     <button
         mat-icon-button
         color="accent"
-        
+
         matTooltip="Close search panel"
         (click)="closeSearchPanel()"
       >

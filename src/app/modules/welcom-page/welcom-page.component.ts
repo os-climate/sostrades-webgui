@@ -12,14 +12,13 @@ export class WelcomPageComponent implements OnInit {
   public username: string;
   public hasAccessToAdmin: boolean;
   public hasAccessToStudy: boolean;
-  public favoriteStudies : boolean
 
 
   constructor(    
     public studyCaseDataService: StudyCaseDataService,
     private userService: UserService,
-  
-      ) { 
+      ) 
+      {
       }
 
   ngOnInit(): void {

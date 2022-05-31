@@ -11,6 +11,7 @@ import { LoggerService } from 'src/app/services/logger/logger.service';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { RoutingState } from 'src/app/services/routing-state/routing-state.service';
 import { Routing } from 'src/app/models/routing.model';
+import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   public loadingLogin: boolean;
   public platform: string;
   public showLogin: boolean;
+  public showGitHubLogin: boolean;
   public ssoUrl: string;
   private autoLogon: boolean;
 
@@ -36,6 +38,7 @@ export class LoginComponent implements OnInit {
     private auth: AuthService,
     private studyCaseLocalStorage: StudyCaseLocalStorageService,
     private samlService: SamlService,
+    private githubOauthService: GithubOAuthService,
     private routingState: RoutingState,
     private appDataService: AppDataService,
     private router: Router,
@@ -46,6 +49,7 @@ export class LoginComponent implements OnInit {
     this.loadingLogin = false;
     this.platform = '';
     this.showLogin = false;
+    this.showGitHubLogin = false;
     this.ssoUrl = '';
     this.autoLogon = false;
   }
@@ -72,12 +76,20 @@ export class LoginComponent implements OnInit {
         if (res !== null && res !== undefined) {
           this.platform = res['platform'];
 
+
           this.samlService.getSSOUrl().subscribe(ssoUrl => {
             this.ssoUrl = ssoUrl;
 
             if (this.autoLogon === true && this.ssoUrl !== '') {
               document.location.href = this.ssoUrl;
             } else {
+
+              this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
+                this.showGitHubLogin = showGitHubLogin;
+                this.showLogin = true;
+              }, error => {
+                this.showLogin = true;
+              });
               this.showLogin = true;
             }
           },
@@ -132,7 +144,11 @@ export class LoginComponent implements OnInit {
     );
   }
 
-  loginWithSSO() {
-    this.samlService.loginWithSSO();
+  loginWithGithub() {
+    this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
+      document.location.href = githubOauthUrl
+    }, (err) => {
+      this.snackbarService.showError('Error at GitHub login : ' + err);
+    });
   }
 }

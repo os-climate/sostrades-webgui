@@ -114,7 +114,8 @@ import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/li
 import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
 import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
 import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
-import { StudyCaseFavoriteComponent } from './modules/study-case/study-case-favorite/study-case-favorite.component';
+import { GroupEditComponent } from './modules/group-management/group-edit/group-edit.component';
+import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
 
 registerLocaleData(fr);
 
@@ -204,9 +205,9 @@ registerLocaleData(fr);
     LinkCreateOrEditComponent,
     WelcomPageComponent,
     ContactDialogComponent,
-    StudyCaseFavoriteComponent,
-    DisciplineIconMappingConverterPipe
-
+    DisciplineIconMappingConverterPipe,
+    GroupEditComponent,
+    StudyCaseEditComponent,
   ],
   imports: [
     BrowserModule,

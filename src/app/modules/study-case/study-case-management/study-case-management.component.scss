@@ -144,11 +144,30 @@ tr:hover .actions-hover-row {
   border-radius: 7px;
   margin: 5px 0;
 }
-.favorite{
+.favoriteOnStudyManagementPage{
   cursor: pointer;
   margin-top: 5px;
   margin-left: 10px;
   font-size: 15px;
+  color: gold;
+}
+.notFavoriteOnStudyManagementPage{
+  cursor: pointer;
+  margin-top: 5px;
+  margin-left: 10px;
+  font-size: 15px;
+}
+
+.favoriteOnWelcomePage{
+  cursor: default;
+  margin-top: 5px;
+  margin-left: 10px;
+  font-size: 15px;
+  color: gold;
+}
+#favorite-studies-title{
+  width: 100%;
+  text-align: center;
 }
 .mat-sort-header-content ng-tns-c61-89{
   margin-left: 10px;

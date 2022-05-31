@@ -69,13 +69,13 @@ export class StudyCaseValidationDialogComponent implements OnInit {
     const validComment = this.validationForm.value.validationComment;
     let validation = ""
 
-if(this.treeNodedata.isValidated){
-  validation = this.validationStates.INVALIDATED
-}
-else{
-  validation = this.validationStates.VALIDATED
-} 
-    this.loadingDialogService.showLoading(
+    if(this.treeNodedata.isValidated){
+      validation = this.validationStates.INVALIDATED
+    }
+    else{
+      validation = this.validationStates.VALIDATED
+    } 
+        this.loadingDialogService.showLoading(
       `Saving discipline validation change`
     );
     this.studyCaseValidationService

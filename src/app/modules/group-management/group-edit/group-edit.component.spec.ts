@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StudyCaseFavoriteComponent } from './study-case-favorite.component';
+import { GroupEditComponent } from './group-edit.component';
 
-describe('StudyCaseFavoriteComponent', () => {
-  let component: StudyCaseFavoriteComponent;
-  let fixture: ComponentFixture<StudyCaseFavoriteComponent>;
+describe('GroupEditComponent', () => {
+  let component: GroupEditComponent;
+  let fixture: ComponentFixture<GroupEditComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StudyCaseFavoriteComponent ]
+      declarations: [ GroupEditComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StudyCaseFavoriteComponent);
+    fixture = TestBed.createComponent(GroupEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

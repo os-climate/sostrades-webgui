@@ -226,6 +226,7 @@
       mat-button
       aria-hidden="false"
       class="toolbar-item-shadow"
+      *ngIf="!(isStudyReadOnly || isStudyNoData)"
       [disabled]="!studyCanReload || executionStarted"
       (click)="onReloadStudy()"
     >

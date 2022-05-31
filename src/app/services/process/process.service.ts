@@ -11,7 +11,6 @@ import { DataHttpService } from '../http/data-http/data-http.service';
 })
 export class ProcessService extends DataHttpService {
 
-  public processManagementData: Process[];
   public processManagementFilter: string;
   public processManagementColumnFiltered: string;
 
@@ -20,19 +19,28 @@ export class ProcessService extends DataHttpService {
     private location: Location) {
     super(location, 'resources');
 
-    this.processManagementData = [];
     this.processManagementFilter = '';
     this.processManagementColumnFiltered = 'All columns';
   }
 
   clearCache() {
-    this.processManagementData = [];
     this.processManagementFilter = '';
     this.processManagementColumnFiltered = 'All columns';
   }
 
   getUserProcesses(): Observable<Process[]> {
     return this.http.get<Process[]>(`${this.apiRoute}/process`).pipe(map(
+      response => {
+        const processList: Process[] = [];
+        response.forEach(pro => {
+          processList.push(Process.Create(pro));
+        });
+        return processList;
+      }));
+  }
+
+  getDashboardProcesses(): Observable<Process[]> {
+    return this.http.get<Process[]>(`${this.apiRoute}/process/dashboard`).pipe(map(
       response => {
         const processList: Process[] = [];
         response.forEach(pro => {

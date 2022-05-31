@@ -9,10 +9,11 @@ export class Group implements AccessRightItem {
     public id: number,
     public name: string,
     public description: string,
-    public confidential: boolean) {
-    this.title = name;
-    this.information = 'Group';
-  }
+    public confidential: boolean
+    ) {
+      this.title = name;
+      this.information = 'Group';
+    }
 
 
   public static Create(jsonData: any): Group {

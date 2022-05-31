@@ -16,6 +16,7 @@ import { CalculationService } from 'src/app/services/calculation/calculation.ser
 import { Routing } from 'src/app/models/routing.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
+import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 @Component({
   selector: 'app-home',
@@ -47,6 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     public studyCaseDataService: StudyCaseDataService,
     private calculationService: CalculationService,
     private socketService: SocketService,
+    private studyCaseMainService : StudyCaseMainService,
     private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
@@ -146,9 +148,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.hasAccessToStudy = false;
     }
 
-      this.studyCaseDataService.onCloseStudy.subscribe(result=>{
-        if(result){
-          this.isLoadedStudy = false
+    this.studyCaseMainService.onCloseStudy.subscribe(result=>{
+      if(result){
+        this.isLoadedStudy = false
         let getUrl= this.router.url 
         if(getUrl.includes(Routing.STUDY_WORKSPACE)){
           this.router.navigate([Routing.STUDY_MANAGEMENT])
@@ -157,7 +159,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         else{
           this.router.navigate([getUrl])
         }
-       }    
+        this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+      }    
     })
    
     this.studyCaseDataService.onLoadedStudyForTreeview.subscribe(result=>{
