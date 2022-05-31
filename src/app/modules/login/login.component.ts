@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   public loadingLogin: boolean;
   public platform: string;
   public showLogin: boolean;
-  public githubOAuthUrl: string;
+  public showGitHubLogin: boolean;
   public ssoUrl: string;
   private autoLogon: boolean;
 
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
     this.loadingLogin = false;
     this.platform = '';
     this.showLogin = false;
-    this.githubOAuthUrl = '';
+    this.showGitHubLogin = false;
     this.ssoUrl = '';
     this.autoLogon = false;
   }
@@ -84,8 +84,8 @@ export class LoginComponent implements OnInit {
               document.location.href = this.ssoUrl;
             } else {
 
-              this.githubOauthService.getGithubOAuthUrl().subscribe(githubOAuthUrl => {
-                this.githubOAuthUrl = githubOAuthUrl;
+              this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
+                this.showGitHubLogin = showGitHubLogin;
                 this.showLogin = true;
               }, error => {
                 this.showLogin = true;
@@ -142,5 +142,13 @@ export class LoginComponent implements OnInit {
         this.loadingLogin = false;
       }
     );
+  }
+
+  loginWithGithub() {
+    this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
+      document.location.href = githubOauthUrl
+    }, (err) => {
+      this.snackbarService.showError('Error at GitHub login : ' + err);
+    });
   }
 }
