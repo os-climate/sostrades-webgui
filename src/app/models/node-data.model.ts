@@ -106,12 +106,10 @@ export class NodeData {
     }
     this.displayName = this.variableName;
     this._widgetType = WidgetType.NO_WIDGET;
-    
-    if(this.subtype_descriptor != null || this.subtype_descriptor != undefined){
+    if ((this.subtype_descriptor !== null) && (this.subtype_descriptor !== undefined)) {
       this._widgetType = WidgetType.FILE_SPREADSHEET_WIDGET;
-    }
-    else{
-      this.updateWidgetType()
+    } else {
+      this.updateWidgetType();
     }
 
     this.isHighlighted = false;
@@ -180,8 +178,8 @@ export class NodeData {
   }
 
   get hasConnectorData(): boolean{
-    let has_connector_data : boolean = false;
-    if (this.connector_data !== undefined){
+    let has_connector_data: boolean = false;
+    if (this.connector_data !== undefined) {
       has_connector_data = true;
     }
     return has_connector_data;
