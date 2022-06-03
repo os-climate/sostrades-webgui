@@ -63,5 +63,6 @@ export enum CoeditionType {
   SUBMISSION = 'submission',
   EXECUTION = 'execution',
   CLAIM = 'claim',
-  RELOAD = 'reload'
+  RELOAD = 'reload',
+  VALIDATION_CHANGE = 'validation_change'
 }

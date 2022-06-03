@@ -1,7 +1,6 @@
 import { Injectable, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import io from 'socket.io-client';
-import { Location } from '@angular/common';
 
 import { User } from 'src/app/models/user.model';
 import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
@@ -16,6 +15,7 @@ import { Routing } from 'src/app/models/routing.model';
 import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { StudyCaseValidationService } from '../study-case-validation/study-case-validation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,8 @@ export class SocketService {
   public onNewNotification: EventEmitter<CoeditionNotification>;
   public onStudySubmissionEnd: EventEmitter<boolean>;
   public onCurrentStudyDeleted: EventEmitter<boolean>;
-  public onCurrentStudyEdited : EventEmitter<boolean>;
+  public onCurrentStudyEdited: EventEmitter<boolean>;
+  public onNodeValidatationChange: EventEmitter<boolean>;
 
 
   public notificationList: CoeditionNotification[];
@@ -49,6 +50,7 @@ export class SocketService {
     this.onStudySubmissionEnd = new EventEmitter<boolean>();
     this.onCurrentStudyDeleted = new EventEmitter<boolean>();
     this.onCurrentStudyEdited = new EventEmitter<boolean>();
+    this.onNodeValidatationChange = new EventEmitter<boolean>();
     this.notificationList = [];
     this.notificationQueue = [];
   }
@@ -175,16 +177,25 @@ export class SocketService {
       this.addNotificationToQueue(notification);
     });
 
+    this.socket.on('validation-change', (data) => {
+      const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
+      this.notificationList.unshift(notification);
+      this.addNotificationToQueue(notification);
+      if (this.userService.getFullUsername() !== data.author) {
+        this.onNodeValidatationChange.emit(true);
+      }
+    });
+
     this.socket.on('study-edited', (data) => {
       if (this.userService.getFullUsername() !== data.author) {
         if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
           const validationDialogData = new ValidationDialogData();
-          validationDialogData.message = `The study you are working on has been modified by "${data.author}". 
+          validationDialogData.message = `The study you are working on has been modified by "${data.author}".
           For security purpose study will be close without saving changes.`;
-          validationDialogData.title = " Warning"
+          validationDialogData.title = 'Warning';
           validationDialogData.buttonOkText = 'Ok';
-          validationDialogData.showCancelButton = false
-          validationDialogData.secondaryActionConfirmationNeeded = false;          
+          validationDialogData.showCancelButton = false;
+          validationDialogData.secondaryActionConfirmationNeeded = false;
 
           const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
             disableClose: true,
@@ -192,17 +203,16 @@ export class SocketService {
             height: '200px',
             data: validationDialogData,
           });
-          dialogRefValidate.afterClosed().subscribe(result =>{
-            const validationData : ValidationDialogData = result as ValidationDialogData
+          dialogRefValidate.afterClosed().subscribe(result => {
+            const validationData: ValidationDialogData = result as ValidationDialogData;
             if ((validationData !== null) && (validationData !== undefined)) {
-              this.onCurrentStudyEdited.emit(true)
+              this.onCurrentStudyEdited.emit(true);
               this.router.navigate([Routing.STUDY_MANAGEMENT]);
             }
-          })
+          });
         }
       }
     });
-   
 
     this.socket.on('study-deleted', (data) => {
       if (this.userService.getFullUsername() !== data.author) {
@@ -213,7 +223,7 @@ export class SocketService {
           this.studyCaseDataService.onStudyCaseChange.emit(null);
           this.onCurrentStudyDeleted.emit(true);
           this.router.navigate([Routing.STUDY_MANAGEMENT]);
-          this.snackbarService.showWarning(`The current study case you were working in has been deleted by "${data.author}"`)
+          this.snackbarService.showWarning(`The current study case you were working in has been deleted by "${data.author}"`);
         }
       }
     });
@@ -256,9 +266,9 @@ export class SocketService {
     }
   }
 
-  updateStudy(study_id : number){
-    if(this.socket){
-      this.socket.emit('edit', { study_case_id: study_id });
+  updateStudy(studyId: number) {
+    if (this.socket) {
+      this.socket.emit('edit', { study_case_id: studyId });
     }
   }
 
@@ -275,10 +285,18 @@ export class SocketService {
     }
   }
 
+  validationChange(studyCaseId: number, treeNodedataName: string, validation: string) {
+    if (this.socket) {
+      this.socket.emit('validation-change',
+      { study_case_id: studyCaseId, validation_state: validation, treenode_data_name: treeNodedataName});
+    }
+  }
+
   addNotificationToQueue(notification: CoeditionNotification) {
     if (notification.type === CoeditionType.CONNECTION ||
       notification.type === CoeditionType.DISCONNECTION ||
-      notification.type === CoeditionType.CLAIM) {
+      notification.type === CoeditionType.CLAIM ||
+      notification.type === CoeditionType.VALIDATION_CHANGE) {
       this.onNewNotification.emit(notification);
     } else {
       if (this.userService.getFullUsername() !== notification.author) {
