@@ -50,7 +50,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.username = this.userService.getFullUsername();
+    this.username = this.userService.getFullUsernameWithNameInCapitalize();
     this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
     this.hasAccessToStudy = this.userService.hasAccessToStudy();
 

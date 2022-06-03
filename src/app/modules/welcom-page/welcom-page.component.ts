@@ -14,16 +14,14 @@ export class WelcomPageComponent implements OnInit {
   public hasAccessToStudy: boolean;
 
 
-  constructor(    
+  constructor(
     public studyCaseDataService: StudyCaseDataService,
     private userService: UserService,
-      ) 
-      {
-      }
+      ) {}
 
   ngOnInit(): void {
+    this.username = this.userService.getFullUsernameWithNameInCapitalize();
 
-    this.username = this.userService.getFullUsername();
     if (this.userService.hasAccessToAdmin()) {
       this.hasAccessToAdmin = true;
     } else {

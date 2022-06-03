@@ -372,12 +372,12 @@ export class StudyCaseMainService extends MainHttpService {
     this.studyCaseDataService.setCurrentStudy(loadedStudy);
   }
 
-  private validatedUpdated() {
+  public validatedUpdated() {
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
 
     Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach(
       element => {
-        const studyCaseValidation = this.studyCaseValidationService.studyValidationDict[this.studyCaseDataService.loadedStudy.studyCase.id, element.fullNamespace];
+        const studyCaseValidation = this.studyCaseValidationService.studyValidationDict[element.fullNamespace];
 
         if ((studyCaseValidation !== undefined) &&  (studyCaseValidation !== null)) {
             element.isValidated = studyCaseValidation[0].validationState === ValidationTreeNodeState.VALIDATED;

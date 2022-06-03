@@ -14,6 +14,8 @@ import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.mo
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { LoadedStudy } from 'src/app/models/study.model';
+import { SocketService } from 'src/app/services/socket/socket.service';
+import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 @Component({
   selector: 'app-data-management-container',
@@ -40,11 +42,14 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   public loadedStudy: LoadedStudy;
 
   treeNodeDataSubscription: Subscription;
+  validationChangeSubcription: Subscription;
 
   constructor(
     private dialog: MatDialog,
     private treeNodeDataService: TreeNodeDataService,
+    private socketService: SocketService,
     public studyCaseDataService: StudyCaseDataService,
+    public studyCaseMainService: StudyCaseMainService,
     public studyCaseValidationService: StudyCaseValidationService,
     public filterService: FilterService) {
     this.treeNodeDataSubscription = null;
@@ -227,6 +232,13 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.validationChangeSubcription = this.socketService.onNodeValidatationChange.subscribe(changeValidation => {
+      if (changeValidation) {
+        this.studyCaseValidationService.loadStudyValidationData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(res => {
+          this.studyCaseMainService.validatedUpdated();
+        });
+       }
+    });
   }
 
   onShowConfigureInformation() {
@@ -263,11 +275,10 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     });
 
     dialogRefValidate.afterClosed().subscribe(() => {
-         if(this.treeNodeData.isValidated){
-             this.treeNodeData.isValidated =false
-           }
-         else {
-          this.treeNodeData.isValidated =true
+         if (this.treeNodeData.isValidated) {
+             this.treeNodeData.isValidated = false;
+           } else {
+          this.treeNodeData.isValidated = true;
          }
     });
   }

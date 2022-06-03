@@ -174,17 +174,17 @@ export class GroupManagementComponent implements OnInit {
       data: dialogData
     });
 
-    dialogRef.afterClosed().subscribe(result =>{
-      const editGroupData : EditGroupDialogData = result as EditGroupDialogData;
+    dialogRef.afterClosed().subscribe(result => {
+      const editGroupData: EditGroupDialogData = result as EditGroupDialogData;
 
-      if(editGroupData !== null && editGroupData !== undefined) {
-        if (editGroupData.cancel === false){
+      if (editGroupData !== null && editGroupData !== undefined) {
+        if (editGroupData.cancel === false) {
           this.loadingDialogService.showLoading(`Updating group (${editGroupData.name}). Please wait`);
 
           this.groupDataService.updateGroup(loadedGroup.group.id, editGroupData.name, editGroupData.description).subscribe(
             _ => {
               this.loadingDialogService.closeLoading();
-              this.snackbarService.showInformation(`Group (${editGroupData.name}) has been ssuccesfully updated `);
+              this.snackbarService.showInformation(`Group (${editGroupData.name}) has been successfully updated `);
               this.loadGroupManagementData();
             },
             errorReceived => {
