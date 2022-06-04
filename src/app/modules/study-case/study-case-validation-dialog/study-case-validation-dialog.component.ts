@@ -8,6 +8,7 @@ import {StudyCaseValidation,ValidationTreeNodeState} from "src/app/models/study-
 import { TreeNode } from "src/app/models/tree-node.model";
 import { LoadingDialogService } from "src/app/services/loading-dialog/loading-dialog.service";
 import { SnackbarService } from "src/app/services/snackbar/snackbar.service";
+import { SocketService } from "src/app/services/socket/socket.service";
 import { StudyCaseValidationService } from "src/app/services/study-case-validation/study-case-validation.service";
 import { StudyCaseDataService } from "src/app/services/study-case/data/study-case-data.service";
 
@@ -19,13 +20,12 @@ import { StudyCaseDataService } from "src/app/services/study-case/data/study-cas
 export class StudyCaseValidationDialogComponent implements OnInit {
   public validationForm: FormGroup;
   public validationStates = ValidationTreeNodeState;
-  
   public displayedColumns = [
-    "userName",
-    "userDepartment",
-    "validationState",
-    "validationDate",
-    "validationComment",
+    'userName',
+    'userDepartment',
+    'validationState',
+    'validationDate',
+    'validationComment',
   ];
   public dataSourceChanges = new MatTableDataSource<StudyCaseValidation>();
   public buttonValidationText: string;
@@ -36,66 +36,64 @@ export class StudyCaseValidationDialogComponent implements OnInit {
   }
 
   constructor(
-    
     private studyCaseDataService: StudyCaseDataService,
     public snackbarService: SnackbarService,
+    private socketService: SocketService,
     private loadingDialogService: LoadingDialogService,
     private studyCaseValidationService: StudyCaseValidationService,
     public dialogRef: MatDialogRef<StudyCaseValidationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public treeNodedata: TreeNode
   ) {
-    this.buttonValidationText = "";
+    this.buttonValidationText = '';
   }
 
   ngOnInit(): void {
     this.validationForm = new FormGroup({
-      validationComment: new FormControl(""),
+      validationComment: new FormControl(''),
     });
-    this.dataSourceChanges = new MatTableDataSource<StudyCaseValidation>(this.studyCaseValidationService.studyValidationDict[this.studyCaseDataService.loadedStudy.studyCase.id, this.treeNodedata.fullNamespace])
+    this.dataSourceChanges = new MatTableDataSource<StudyCaseValidation>(
+    this.studyCaseValidationService.studyValidationDict[this.treeNodedata.fullNamespace]);
     this.dataSourceChanges.sortingDataAccessor = (item, property) => {
-      return typeof item[property] === "string"
+      return typeof item[property] === 'string'
         ? item[property].toLowerCase()
         : item[property];
     };
     this.dataSourceChanges.sort = this.sort;
     if (this.treeNodedata.isValidated) {
-      this.buttonValidationText = "Invalidate data";
+      this.buttonValidationText = 'Invalidate data';
     } else {
-      this.buttonValidationText = "Validate data";
+      this.buttonValidationText = 'Validate data';
     }
   }
 
   validateData() {
     const validComment = this.validationForm.value.validationComment;
-    let validation = ""
+    let validation = '';
 
-    if(this.treeNodedata.isValidated){
-      validation = this.validationStates.INVALIDATED
+    if (this.treeNodedata.isValidated) {
+      validation = this.validationStates.INVALIDATED;
+    } else {
+      validation = this.validationStates.VALIDATED;
     }
-    else{
-      validation = this.validationStates.VALIDATED
-    } 
-        this.loadingDialogService.showLoading(
-      `Saving discipline validation change`
-    );
+    this.loadingDialogService.showLoading( `Saving discipline validation change`);
     this.studyCaseValidationService
       .createStudyValidationData(
         this.studyCaseDataService.loadedStudy.studyCase.id,
         this.treeNodedata.fullNamespace,
         validComment,
-        validation   
-        
+        validation
         )
       .subscribe(
         (res) => {
+          this.socketService.validationChange(
+            this.studyCaseDataService.loadedStudy.studyCase.id, this.treeNodedata.name, validation);
           this.loadingDialogService.closeLoading();
           this.dialogRef.close(this.treeNodedata);
-          if (validation == ValidationTreeNodeState.VALIDATED) {
+          if (validation === ValidationTreeNodeState.VALIDATED) {
             this.snackbarService.showInformation(`${this.treeNodedata.name} datas' validation successfully done`);
           } else {
             this.snackbarService.showInformation(`${this.treeNodedata.name} datas' invalidation successfully done`);
           }
-      
         },
         (errorReceived) => {
           this.loadingDialogService.closeLoading();
@@ -104,7 +102,7 @@ export class StudyCaseValidationDialogComponent implements OnInit {
           if (error.redirect) {
             this.snackbarService.showError(error.description);
           } else {
-            this.snackbarService.showError("Error claiming study case execution : " + error.description);
+            this.snackbarService.showError('Error validation : ' + error.description);
           }
         }
       );
@@ -112,11 +110,10 @@ export class StudyCaseValidationDialogComponent implements OnInit {
 
   onCancelClick() {
     if (this.treeNodedata.isValidated) {
-      this.treeNodedata.isValidated = false
+      this.treeNodedata.isValidated = false;
     } else {
-      this.treeNodedata.isValidated = true
+      this.treeNodedata.isValidated = true;
     }
     this.dialogRef.close(this.treeNodedata);
-  
   }
 }
