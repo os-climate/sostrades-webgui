@@ -158,14 +158,19 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
     this.referenceMainService
       .reGenerateReference(study.repository, study.process, study.name)
-      .subscribe((refGenId) => {
-        this.snackbarService.showInformation(`Reference regeneration started for ` + study.process + '.' + study.name);
-        this.referenceGenerationObserverService.startStudyCaseExecutionObserver(refGenId);
-        this.subscribeToRegeneration(refGenId, study);
-      });
-    setTimeout(() => {
-      study.isRegeneratingReference = false;
-    }, 600000);
+      .subscribe(
+        (refGenId) => {
+          this.snackbarService.showInformation(`Reference regeneration started for ${study.process}.${study.name}`);
+          this.referenceGenerationObserverService.startStudyCaseExecutionObserver(refGenId);
+          this.subscribeToRegeneration(refGenId, study);
+        }, (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          // tslint:disable-next-line: max-line-length
+          this.snackbarService.showError(`Reference regeneration failed for ${study.process}.${study.name} with error ${error.description}`);
+          study.isRegeneratingReference = false;
+          study.regenerationStatus = 'FAILED';
+          study.creationDate = null;
+        });
   }
 
   private subscribeToRegeneration(refGenId: number, study: Study) {

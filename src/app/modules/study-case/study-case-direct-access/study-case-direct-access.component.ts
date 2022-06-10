@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Routing } from 'src/app/models/routing.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { SocketService } from 'src/app/services/socket/socket.service';
@@ -39,6 +40,9 @@ export class StudyCaseDirectAccessComponent implements OnInit {
                 this.socketService.joinRoom(
                   this.studyCaseDataService.loadedStudy.studyCase.id
                 );
+              }
+              else{
+                this.router.navigate([Routing.STUDY_MANAGEMENT]);
               }
             });
           } else {
