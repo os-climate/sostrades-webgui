@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { Study } from 'src/app/models/study.model';
+import { PostStudy, Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -9,6 +9,7 @@ import {
   StudyCaseModificationDialogData,
   UpdateEntityRightDialogData,
   EditStudyCaseDialogData,
+  ProcessCreateStudyDialogData,
 } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
@@ -33,6 +34,7 @@ import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { StudyCaseEditComponent } from '../study-case-edit/study-case-edit.component';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
+import { ProcessStudyCaseCreationComponent } from '../../process/process-study-case-creation/process-study-case-creation.component';
 
 
 @Component({
@@ -46,6 +48,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   @Input() getTitle = false;
   @Input() getOnlyFavoriteStudy = false;
   @Input() getFilter = true;
+  @Input() getCreateStudy = true;
 
   public isLoading: boolean;
   public isFavorite: boolean;
@@ -216,70 +219,47 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   loadStudyManagementData() {
     this.isLoading = true;
-    this.studyCaseDataService.studyManagementData = [];
+    // this.studyCaseDataService.studyManagementData = [];
     this.dataSourceStudies = new MatTableDataSource<Study>(null);
 
-    if (!this.getOnlyFavoriteStudy) {
-      this.studyCaseDataService.getStudies().subscribe(
-        (studies) => {
-                // Retrieving study case list
+    // if (!this.getOnlyFavoriteStudy) {
+    this.studyCaseDataService.getStudies().subscribe(
+      (studies) => {
+              // Retrieving study case list
+        if (this.getOnlyFavoriteStudy) {
+          this.studyCaseDataService.favoriteStudy = studies.filter(study =>
+              study.isFavorite === true);
+          this.dataSourceStudies = new MatTableDataSource<Study>(
+            this.studyCaseDataService.favoriteStudy
+          );
+        } else {
           this.studyCaseDataService.studyManagementData = studies;
           this.dataSourceStudies = new MatTableDataSource<Study>(
             this.studyCaseDataService.studyManagementData
           );
-          this.dataSourceStudies.sortingDataAccessor = (item, property) => {
-            return typeof item[property] === 'string'
-              ? item[property].toLowerCase()
-              : item[property];
-          };
-          this.dataSourceStudies.sort = this.sort;
+        }
+        this.dataSourceStudies.sortingDataAccessor = (item, property) => {
+          return typeof item[property] === 'string'
+            ? item[property].toLowerCase()
+            : item[property];
+        };
+        this.dataSourceStudies.sort = this.sort;
+        this.onFilterChange();
+        this.isLoading = false;
+      },
+      (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
           this.onFilterChange();
           this.isLoading = false;
-        },
-        (errorReceived) => {
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.onFilterChange();
-            this.isLoading = false;
-            this.snackbarService.showError(
-              'Error loading study case list\n' + error.description
-            );
-          }
+          this.snackbarService.showError(
+            'Error loading study case list\n' + error.description
+          );
         }
-      );
-      } else {
-        this.studyCaseDataService.getFavoriteStudies().subscribe(
-          (studies) => {
-             // Retrieving favorite study case list
-            this.studyCaseDataService.favoriteStudy = studies;
-            this.dataSourceStudies = new MatTableDataSource<Study>(
-            this.studyCaseDataService.favoriteStudy
-              );
-            this.dataSourceStudies.sortingDataAccessor = (item, property) => {
-                return typeof item[property] === 'string'
-                ? item[property].toLowerCase()
-                : item[property];
-              };
-            this.dataSourceStudies.sort = this.sort;
-            this.onFilterChange();
-            this.isLoading = false;
-          },
-          (errorReceived) => {
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.onFilterChange();
-              this.isLoading = false;
-              this.snackbarService.showError(
-                'Error loading study case list\n' + error.description
-              );
-            }
-          }
-        );
       }
+    );
   }
 
   loadStudy(study: Study) {
@@ -304,6 +284,103 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
           }
         });
+      }
+    });
+  }
+
+  createStudy() {
+    this.handleUnsavedChanges(changeHandled => {
+      if (changeHandled) {
+
+        const dialogData: ProcessCreateStudyDialogData = new ProcessCreateStudyDialogData();
+        const dialogRef = this.dialog.open(ProcessStudyCaseCreationComponent, {
+          disableClose: true,
+          data: dialogData
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          const resultCreateStudyRef = result as ProcessCreateStudyDialogData;
+
+          if ((resultCreateStudyRef !== null) && (resultCreateStudyRef !== undefined)) {
+
+            if (resultCreateStudyRef.cancel === false && resultCreateStudyRef.studyName !== '' && resultCreateStudyRef.groupId !== null) {
+              if (resultCreateStudyRef.studyType === 'Reference') {
+                this.createFromReference(
+                  resultCreateStudyRef.process,
+                  resultCreateStudyRef.studyName,
+                  resultCreateStudyRef.groupId,
+                  resultCreateStudyRef.reference,
+                  resultCreateStudyRef.studyType);
+              } else if (resultCreateStudyRef.studyType === 'Study') {
+                this.createFromCopyStudy(
+                  resultCreateStudyRef.studyId,
+                  resultCreateStudyRef.studyName,
+                  resultCreateStudyRef.groupId);
+              } else if (resultCreateStudyRef.studyType === 'UsecaseData') {
+                this.createFromUsesaseData(
+                  resultCreateStudyRef.process,
+                  resultCreateStudyRef.studyName,
+                  resultCreateStudyRef.groupId,
+                  resultCreateStudyRef.reference,
+                  resultCreateStudyRef.studyType);
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+  createFromUsesaseData(process, name: string, group: number, reference: string, type: string) {
+    const study: PostStudy = {
+      name,
+      repository: process.repositoryId,
+      process: process.processId,
+      group,
+      reference,
+      type
+    };
+    // Check user was in an another study before this one and leave room
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+    }
+
+    this.appDataService.createCompleteStudy(study, isStudyCreated => {
+      if (isStudyCreated) {
+        // Joining room
+        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+      }
+    });
+  }
+
+  createFromReference(process, name, group, reference, type) {
+    const study: PostStudy = {
+      name,
+      repository: process.repositoryId,
+      process: process.processId,
+      group,
+      reference,
+      type
+    };
+
+    // Check user was in an another study before this one and leave room
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+    }
+
+    this.appDataService.createCompleteStudy(study, isStudyCreated => {
+      if (isStudyCreated) {
+        // Joining room
+        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+      }
+    });
+  }
+
+  createFromCopyStudy(studyId: number, studyName: string, groupId: number) {
+
+    this.appDataService.copyCompleteStudy(studyId, studyName, groupId, isStudyCreated => {
+      if (isStudyCreated) {
+        // Joining room
+        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
       }
     });
   }
@@ -426,7 +503,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           // Call API to delete study or studies
           this.studyCaseMainService.deleteStudy(studies).subscribe(() => {
             // Update table data source
-            this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData.filter(x => !studies.map(s => s.id).includes(x.id));
+            this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData.filter(
+              x => !studies.map(s => s.id).includes(x.id));
             this.dataSourceStudies = new MatTableDataSource<Study>(this.studyCaseDataService.studyManagementData);
             // Remove local changes if current loaded study is deleted they exist
             if (isCurrentLoadedStudyDeleted) {
@@ -545,11 +623,12 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           case 'Group name':
             return data.groupName.trim().toLowerCase().includes(filter);
           case 'Repository':
-            return data.repositoryDisplayName.trim().toLowerCase().includes(filter) || data.repository.trim().toLowerCase().includes(filter);
+            return data.repositoryDisplayName.trim().toLowerCase().includes(filter)
+            || data.repository.trim().toLowerCase().includes(filter);
           case 'Process':
             return data.processDisplayName.trim().toLowerCase().includes(filter) || data.process.trim().toLowerCase().includes(filter);
           case 'Type':
-            return data.studyType.trim().toLowerCase().includes(filter); 
+            return data.studyType.trim().toLowerCase().includes(filter);
           case 'Status':
             return data.executionStatus.trim().toLowerCase().includes(filter);
           default:

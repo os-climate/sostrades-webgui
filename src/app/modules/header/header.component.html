@@ -27,10 +27,10 @@
         </button>
         <button
         mat-menu-item
-        [matMenuTriggerFor]="ModelsStatus"
-        (click)="onClickModelsStatus()">
+        [matMenuTriggerFor]="Ontology"
+        (click)="onClickOntology()">
         <mat-icon class="blue_color">library_books</mat-icon>
-        Models status
+        Ontology
         </button>
         <button 
         mat-menu-item  
@@ -41,13 +41,12 @@
 
       <mat-menu  #StudyManagement="matMenu">
           <button mat-menu-item id="study_case-menu-button" (click)="onClickStudyCase()">Study cases</button>
-          <button mat-menu-item (click)="onClickFromProcess()">From process</button>
           <button mat-menu-item (click)="onClickReferenceManagement()">Reference Management</button>
       </mat-menu>
 
-      <mat-menu #ModelsStatus="matMenu">
+      <mat-menu #Ontology="matMenu">
         <button mat-menu-item (click)="onClickModelsStatus()">Models Status</button>
-        <button mat-menu-item (click)="onClickModelsLinks()">Models Links</button>
+        <button mat-menu-item (click)="onClickFromProcess()">From process</button>
      </mat-menu>
     </div>
     <div>

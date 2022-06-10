@@ -63,11 +63,9 @@ export class ProcessManagementComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private elementRef: ElementRef,
-    private loadingDialogService: LoadingDialogService,
     private appDataService: AppDataService,
     private entityRightService: EntityRightService,
-    private StudyCaseDataService: StudyCaseDataService,
-    private StudyCaseMainService: StudyCaseMainService,
+    private studyCaseDataService: StudyCaseDataService,
     private socketService: SocketService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private snackbarService: SnackbarService,
@@ -158,10 +156,7 @@ export class ProcessManagementComponent implements OnInit {
       if (changeHandled) {
 
         const dialogData: ProcessCreateStudyDialogData = new ProcessCreateStudyDialogData();
-        dialogData.processName = process.processName;
-        dialogData.referenceList = process.referenceList;
-        dialogData.processId = process.processId;
-        dialogData.repositoryId = process.repositoryId;
+        dialogData.process = process;
 
         const dialogRef = this.dialog.open(ProcessStudyCaseCreationComponent, {
           disableClose: true,
@@ -199,6 +194,7 @@ export class ProcessManagementComponent implements OnInit {
         });
       }
     });
+    this.studyCaseDataService.getStudies();
   }
   createFromUsesaseData(process, name: string, group: number, reference: string, type: string) {
     const study: PostStudy = {
@@ -210,14 +206,14 @@ export class ProcessManagementComponent implements OnInit {
       type
     };
     // Check user was in an another study before this one and leave room
-    if (this.StudyCaseDataService.loadedStudy !== null && this.StudyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
     }
 
     this.appDataService.createCompleteStudy(study, isStudyCreated => {
       if (isStudyCreated) {
         // Joining room
-        this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
+        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
       }
     });
   }
@@ -233,14 +229,14 @@ export class ProcessManagementComponent implements OnInit {
     };
 
     // Check user was in an another study before this one and leave room
-    if (this.StudyCaseDataService.loadedStudy !== null && this.StudyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
     }
 
     this.appDataService.createCompleteStudy(study, isStudyCreated => {
       if (isStudyCreated) {
         // Joining room
-        this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
+        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
       }
     });
   }
@@ -250,7 +246,7 @@ export class ProcessManagementComponent implements OnInit {
     this.appDataService.copyCompleteStudy(studyId, studyName, groupId, isStudyCreated => {
       if (isStudyCreated) {
         // Joining room
-        this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
+        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
       }
     });
   }
@@ -278,7 +274,7 @@ export class ProcessManagementComponent implements OnInit {
             if (validationData.validate === true) { // Saving changes
               let studyParameters: StudyUpdateParameter[] = [];
               studyParameters = this.studyCaseLocalStorageService
-                .getStudyParametersFromLocalStorage(this.StudyCaseDataService.loadedStudy.studyCase.id.toString());
+                .getStudyParametersFromLocalStorage(this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
               const studyCaseModificatioDialogData = new StudyCaseModificationDialogData();
               studyCaseModificatioDialogData.changes = studyParameters;

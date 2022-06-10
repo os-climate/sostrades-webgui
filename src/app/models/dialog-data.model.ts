@@ -5,7 +5,7 @@ import { EntityRight, EntityResourceRights } from './entity-right.model';
 import { AccessRight } from './access-right.model';
 import { NodeData } from './node-data.model';
 import { StudyCaseValidation } from './study-case-validation.model';
-import { Link } from './link.model';
+import { Process } from './process.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -159,26 +159,28 @@ export class CoeditionDialogData extends AbstractDialogData {
 }
 
 export class ProcessCreateStudyDialogData extends AbstractDialogData {
-  processId: string;
-  repositoryId: string;
-  processName: string;
+  // processId: string;
+  // repositoryId: string;
+  // processName: string;
   studyName: string;
   studyType: string;
   groupId: number;
   reference: string;
-  referenceList: Study[];
+  // referenceList: Study[];
   studyId: number;
+  process: Process;
 
   public constructor() {
     super();
-    this.processId = '';
-    this.repositoryId = '';
+    // this.processId = '';
+    // this.repositoryId = '';
     this.studyName = '';
     this.groupId = null;
-    this.processName = '';
+    // this.processName = '';
     this.reference = null;
-    this.referenceList = [];
+    // this.referenceList = [];
     this.studyId = null;
+    this.process = null;
   }
 }
 
@@ -276,7 +278,7 @@ export class ValidationDialogData extends AbstractDialogData {
   buttonSecondaryActionText: string;
   secondaryActionConfirmationNeeded: boolean;
   showCancelButton: boolean;
-  title: string
+  title: string;
 
   public constructor() {
     super();
@@ -349,7 +351,7 @@ export class LinkDialogData extends AbstractDialogData {
   public constructor() {
     super();
     this.label = '';
-    this.url ='';
+    this.url = '';
     this.description = '';
   }
 }
@@ -360,7 +362,7 @@ export class EditGroupDialogData extends AbstractDialogData {
 
   public constructor() {
     super();
-    this.name ='';
+    this.name = '';
     this.description = '';
   }
 }
@@ -372,8 +374,7 @@ export class EditStudyCaseDialogData extends AbstractDialogData {
 
   public constructor() {
     super();
-    this.studyName ='';
+    this.studyName = '';
     this.groupId = null;
   }
-
 }

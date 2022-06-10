@@ -5,8 +5,9 @@ export enum Routing {
     STUDY_CASE = 'study-case',
     FROM_PROCESS = 'from-process',
     REFERENCE_MANAGEMENT = 'reference-management',
-    STUDY_WORKSPACE ='study-workspace', 
+    STUDY_WORKSPACE = 'study-workspace',
     STUDY_ID = 'study/:id',
+    ONTOLOGY = 'ontology',
     MODELS_STATUS = 'models-status',
     MODELS_LINKS = 'models-links',
     GROUP_MANAGEMENT = 'group-management',
@@ -15,9 +16,8 @@ export enum Routing {
     EXECUTION_MANAGEMENT = 'execution-management',
     PROCESSES_MANAGEMENT = 'processes-management',
     NO_ACCESS = 'no-access',
-    LOGIN ='login',
+    LOGIN = 'login',
     LOGOUT = 'logout',
     SAML = 'saml',
-    RESET_PASSWORD ='reset-password'
-   
+    RESET_PASSWORD = 'reset-password'
 }

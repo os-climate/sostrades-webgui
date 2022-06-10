@@ -1,5 +1,17 @@
 <div class="container">
   <div class="study-header">
+
+    <button
+      *ngIf="getCreateStudy"
+      mat-raised-button
+      color="accent"
+      aria-label="Create study cases"
+      id="create-study"
+      (click)="createStudy()"
+    >
+     Create study
+    </button>
+    
     <button
       mat-raised-button
       color="accent"
