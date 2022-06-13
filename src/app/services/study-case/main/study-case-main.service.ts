@@ -363,6 +363,21 @@ export class StudyCaseMainService extends MainHttpService {
     return this.http.post(url, data, options);
   }
 
+  uploadStudyRaw(studyId: string, files: FileList): Observable<string> {
+    const formData = new FormData();
+
+    if (files.length > 0) {
+      // tslint:disable-next-line: prefer-for-of
+      for (let fileIndex = 0; fileIndex < files.length; ++fileIndex) {
+
+        const file = files[fileIndex];
+        formData.append(file.name, file);
+      }
+      const url = `${this.apiRoute}/${studyId}/upload/raw`;
+      return this.http.post<string>(url, formData);
+    }
+  }
+
   private updateStudyCaseDataService(loadedStudy: LoadedStudy) {
     const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
 
