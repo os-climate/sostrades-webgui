@@ -8,6 +8,7 @@
       [disabled]="isLoading"
       (click)="loadStudyManagementData()"
     >
+    <mat-icon>refresh</mat-icon>
       Refresh list
     </button>
     <h2 *ngIf="getTitle" id="favorite-studies-title">Favorite studies</h2>
@@ -36,6 +37,18 @@
         />
       </mat-form-field>
     </div>
+    <button
+    *ngIf="getCreateStudy"
+    mat-raised-button
+    color="accent"
+    aria-label="Create study cases"
+    id="create-study"
+    style="margin-left: 10px;"
+    (click)="createStudy()"
+  >
+  <mat-icon>add</mat-icon>
+   Create study
+  </button>
   </div>
 
   <div class="action-button-bar" *ngIf="selection.hasValue()">

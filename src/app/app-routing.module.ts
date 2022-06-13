@@ -42,7 +42,6 @@ const routes: Routes = [
         component: WelcomPageComponent,
         canActivate: [StudyGuard]
       },
-     
       {
         path: Routing.STUDY_MANAGEMENT,
         component: StudyCaseManagementContainerComponent,
@@ -59,18 +58,12 @@ const routes: Routes = [
             canActivate: [StudyGuard],
           },
           {
-            path: Routing.FROM_PROCESS,
-            component: ProcessManagementComponent,
-            canActivate: [StudyGuard],
-          },
-          {
             path: Routing.REFERENCE_MANAGEMENT,
             component: ReferenceManagementComponent,
             canActivate: [StudyGuard],
           }
         ]
       },
-      
       {
         path: Routing.STUDY_WORKSPACE,
         component: StudyWorkspaceComponent,
@@ -82,7 +75,7 @@ const routes: Routes = [
         canActivate: [AuthGuard, StudyGuard]
       },
       {
-        path: Routing.MODELS_STATUS,
+        path: Routing.ONTOLOGY,
         component: ModelsContainerComponent,
         canActivate: [StudyGuard],
         children: [
@@ -97,8 +90,8 @@ const routes: Routes = [
             canActivate: [StudyGuard],
           },
           {
-            path: Routing.MODELS_LINKS,
-            component: ModelsLinksComponent,
+            path: Routing.PROCESSES,
+            component: ProcessManagementComponent,
             canActivate: [StudyGuard],
           },
         ]
