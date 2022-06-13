@@ -50,6 +50,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   @Input() getFilter = true;
   @Input() getCreateStudy = true;
 
+  @ViewChild('fileUpload', { static: false }) fileUpload: ElementRef;
+
   public isLoading: boolean;
   public isFavorite: boolean;
   // tslint:disable-next-line: max-line-length
@@ -263,30 +265,35 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadStudy(study: Study) {
-    this.handleUnsavedChanges((changeHandled) => {
-      if (changeHandled) {
-        // Check user was in an another study before this one and leave room
-        if (
-          this.studyCaseDataService.loadedStudy !== null &&
-          this.studyCaseDataService.loadedStudy !== undefined
-        ) {
-          this.socketService.leaveRoom(
-            this.studyCaseDataService.loadedStudy.studyCase.id
-          );
-        }
-
-        this.appDataService.loadCompleteStudy(study.id, study.name, (isStudyLoaded) => {
-          if (isStudyLoaded) {
-            // Joining room
-            this.socketService.joinRoom(
+  loadStudy(event: MouseEvent, study: Study) {
+    if ((event.ctrlKey === true) && (event.altKey === true)) {
+      const fileUploadElement = this.fileUpload.nativeElement;
+      fileUploadElement.click();
+    } else {
+      this.handleUnsavedChanges((changeHandled) => {
+        if (changeHandled) {
+          // Check user was in an another study before this one and leave room
+          if (
+            this.studyCaseDataService.loadedStudy !== null &&
+            this.studyCaseDataService.loadedStudy !== undefined
+          ) {
+            this.socketService.leaveRoom(
               this.studyCaseDataService.loadedStudy.studyCase.id
             );
-            this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
           }
-        });
-      }
-    });
+
+          this.appDataService.loadCompleteStudy(study.id, study.name, (isStudyLoaded) => {
+            if (isStudyLoaded) {
+              // Joining room
+              this.socketService.joinRoom(
+                this.studyCaseDataService.loadedStudy.studyCase.id
+              );
+              this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
+            }
+          });
+        }
+      });
+    }
   }
 
   createStudy() {
@@ -656,6 +663,28 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       });
     } else {
       changeHandled(true);
+    }
+  }
+
+
+  onSelection(event: any, study: Study) {
+
+    if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
+      this.loadingDialogService.showLoading(`Upload study case data "${study.name}"`);
+
+      this.studyCaseMainService.uploadStudyRaw(study.id.toString(), event.target.files).subscribe(_ => {
+        this.loadingDialogService.closeLoading();
+        this.snackbarService.showInformation('Upload successfull');
+        if (event.target.files) {
+          event.target.value = '';
+        }
+      }, error => {
+        this.loadingDialogService.closeLoading();
+        this.snackbarService.showError(error.description);
+        if (event.target.files) {
+          event.target.value = '';
+        }
+      });
     }
   }
 }
