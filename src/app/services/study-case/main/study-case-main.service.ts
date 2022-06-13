@@ -157,8 +157,10 @@ export class StudyCaseMainService extends MainHttpService {
         this.updateStudyCaseDataService(loadedStudy);
 
         if (addToStudyManagement === true) {
-          // Add study case to study management list
-          this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+
+          this.studyCaseDataService.getStudies().subscribe(studies => {
+            this.studyCaseDataService.studyManagementData = studies;
+          });
         }
 
         // Reload ontology parameters

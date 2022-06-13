@@ -159,26 +159,19 @@ export class CoeditionDialogData extends AbstractDialogData {
 }
 
 export class ProcessCreateStudyDialogData extends AbstractDialogData {
-  // processId: string;
-  // repositoryId: string;
-  // processName: string;
+
   studyName: string;
   studyType: string;
   groupId: number;
   reference: string;
-  // referenceList: Study[];
   studyId: number;
   process: Process;
 
   public constructor() {
     super();
-    // this.processId = '';
-    // this.repositoryId = '';
     this.studyName = '';
     this.groupId = null;
-    // this.processName = '';
     this.reference = null;
-    // this.referenceList = [];
     this.studyId = null;
     this.process = null;
   }

@@ -8,6 +8,7 @@
       [disabled]="isLoading"
       (click)="loadProcessManagementData()"
     >
+    <mat-icon>refresh</mat-icon>
       Refresh list
     </button>
     <div class="filterSection">
@@ -85,7 +86,7 @@
               mat-icon-button
               *ngIf="!dashboard"
               color="accent"
-              matTooltip="Create study case from process"
+              matTooltip="Create study case"
               [matBadge]="element.referenceList.length"
               [matBadgeHidden]="element.referenceList.length < 1"
               matBadgeColor="warn"

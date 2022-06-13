@@ -43,7 +43,8 @@
         </ngx-mat-select-search>
         </mat-option>
         <mat-option *ngFor="let process of filteredProcesses | async" [value]="process.id">
-          <span style="font-size: 14px;">{{process.processName}} - {{process.repositoryName}}</span>
+          <span style="font-size: 14px;">{{process.processName}} </span>
+            <div style="font-size: 11px;">{{process.repositoryName}}</div>
         </mat-option>
       </mat-select>
       <mat-error *ngIf="hasError('groupId', 'required')">

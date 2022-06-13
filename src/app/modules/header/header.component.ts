@@ -68,7 +68,7 @@ export class HeaderComponent implements OnInit {
     } else if (this.router.url.includes(Routing.STUDY_MANAGEMENT)) {
       this.title =  NavigationTitle.STUDY_MANAGEMENT;
     } else if (this.router.url.includes(Routing.ONTOLOGY)) {
-      this.title = NavigationTitle.ONTOLOGY;
+      this.title = NavigationTitle.MODELS_STATUS;
     } else if (this.router.url.includes(Routing.STUDY_WORKSPACE)) {
       this.title = NavigationTitle.STUDY_WORKSPACE;
     } else if (this.router.url.includes(Routing.GROUP_MANAGEMENT)) {
@@ -116,7 +116,7 @@ export class HeaderComponent implements OnInit {
   onClickOntology() {
     this.router.navigate([Routing.ONTOLOGY]);
     this.trigger.closeMenu();
-    this.title = NavigationTitle.ONTOLOGY;
+    this.title = NavigationTitle.MODELS_STATUS;
     this.headerService.changeIndexTab(0);
 
   }
@@ -125,14 +125,14 @@ export class HeaderComponent implements OnInit {
    onClickModelsStatus() {
     this.router.navigate([Routing.ONTOLOGY, Routing.MODELS_STATUS]);
     this.trigger.closeMenu();
-    this.title = NavigationTitle.ONTOLOGY;
+    this.title = NavigationTitle.MODELS_STATUS;
     this.headerService.changeIndexTab(0);
 
   }
 
   onClickFromProcess() {
-    this.router.navigate([Routing.ONTOLOGY, Routing.FROM_PROCESS]);
-    this.title = NavigationTitle.ONTOLOGY;
+    this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES]);
+    this.title = NavigationTitle.PROCESS;
     this.headerService.changeIndexTab(1);
   }
 

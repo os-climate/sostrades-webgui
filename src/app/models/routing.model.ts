@@ -3,7 +3,7 @@ export enum Routing {
     HOME = 'home',
     STUDY_MANAGEMENT = 'study-management',
     STUDY_CASE = 'study-case',
-    FROM_PROCESS = 'from-process',
+    PROCESSES = 'processes',
     REFERENCE_MANAGEMENT = 'reference-management',
     STUDY_WORKSPACE = 'study-workspace',
     STUDY_ID = 'study/:id',

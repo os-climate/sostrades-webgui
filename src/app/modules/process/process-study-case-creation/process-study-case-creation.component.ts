@@ -66,9 +66,6 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
     const emptyProcessRef = new Study(null, this.EMPTY_STUDY_NAME, '', '', '', null, null, '',
       'Reference', '', 0, false, '', '', false, null, null, false, false, false, false, false);
     this.referenceList.push(emptyProcessRef);
-    this.data.process.referenceList.forEach(ref => {
-      this.referenceList.push(ref);
-    });
 
     this.createStudyForm = new FormGroup({
       studyName: new FormControl('', [Validators.required, Validators.pattern(TypeCheckingTools.TEXT_LETTER_NUMBER_REGEX)]),
@@ -76,8 +73,11 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
       processId: new FormControl('', [Validators.required]),
       selectedRef: new FormControl(emptyProcessRef)
     });
-    // Check if processId is not empty (created study from process)
+    // Check if process is not empty (create study from a process)
     if (this.data.process !== null && this.data.process !== undefined ) {
+      this.data.process.referenceList.forEach(ref => {
+        this.referenceList.push(ref);
+      });
       this.studyCaseDataService.getAuthorizedStudiesForProcess(
         this.data.process.processId, this.data.process.repositoryId).subscribe(studies => {
         studies.forEach(study => {
@@ -199,7 +199,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
   public onProcessChange(event: any) {
     this.disabledReference = true;
     // Retrieve the process
-    this.process = this.processList.find(process => process.id === event );
+    this.process = this.processList.find(process => process.id === event);
 
     // Remove all element of the list except "Empty study" before push new elements.
     this.referenceList.splice(1);
@@ -232,7 +232,6 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
     }
     this.data.studyType = this.createStudyForm.value.selectedRef.studyType;
     this.data.studyId = this.createStudyForm.value.selectedRef.id;
-    this.data.process.processId = this.createStudyForm.value.processId;
     this.data.studyName = this.createStudyForm.value.studyName;
     this.data.reference = refName;
     this.data.groupId = this.createStudyForm.value.groupId;

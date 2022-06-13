@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { PostStudy, Study } from 'src/app/models/study.model';
+import { Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -34,7 +34,7 @@ import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { StudyCaseEditComponent } from '../study-case-edit/study-case-edit.component';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
-import { ProcessStudyCaseCreationComponent } from '../../process/process-study-case-creation/process-study-case-creation.component';
+import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 
 
 @Component({
@@ -112,7 +112,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private loadingDialogService: LoadingDialogService,
     private studyDialogService: StudyDialogService,
     private headerService: HeaderService,
-    private userService: UserService
+    private userService: UserService,
+    private studyCreationService: StudyCaseCreationService,
   ) {
     this.isFavorite = true;
     this.isLoading = true;
@@ -291,97 +292,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   createStudy() {
     this.handleUnsavedChanges(changeHandled => {
       if (changeHandled) {
-
-        const dialogData: ProcessCreateStudyDialogData = new ProcessCreateStudyDialogData();
-        const dialogRef = this.dialog.open(ProcessStudyCaseCreationComponent, {
-          disableClose: true,
-          data: dialogData
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-          const resultCreateStudyRef = result as ProcessCreateStudyDialogData;
-
-          if ((resultCreateStudyRef !== null) && (resultCreateStudyRef !== undefined)) {
-
-            if (resultCreateStudyRef.cancel === false && resultCreateStudyRef.studyName !== '' && resultCreateStudyRef.groupId !== null) {
-              if (resultCreateStudyRef.studyType === 'Reference') {
-                this.createFromReference(
-                  resultCreateStudyRef.process,
-                  resultCreateStudyRef.studyName,
-                  resultCreateStudyRef.groupId,
-                  resultCreateStudyRef.reference,
-                  resultCreateStudyRef.studyType);
-              } else if (resultCreateStudyRef.studyType === 'Study') {
-                this.createFromCopyStudy(
-                  resultCreateStudyRef.studyId,
-                  resultCreateStudyRef.studyName,
-                  resultCreateStudyRef.groupId);
-              } else if (resultCreateStudyRef.studyType === 'UsecaseData') {
-                this.createFromUsesaseData(
-                  resultCreateStudyRef.process,
-                  resultCreateStudyRef.studyName,
-                  resultCreateStudyRef.groupId,
-                  resultCreateStudyRef.reference,
-                  resultCreateStudyRef.studyType);
-              }
-            }
-          }
-        });
-      }
-    });
-  }
-  createFromUsesaseData(process, name: string, group: number, reference: string, type: string) {
-    const study: PostStudy = {
-      name,
-      repository: process.repositoryId,
-      process: process.processId,
-      group,
-      reference,
-      type
-    };
-    // Check user was in an another study before this one and leave room
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-    }
-
-    this.appDataService.createCompleteStudy(study, isStudyCreated => {
-      if (isStudyCreated) {
-        // Joining room
-        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-      }
-    });
-  }
-
-  createFromReference(process, name, group, reference, type) {
-    const study: PostStudy = {
-      name,
-      repository: process.repositoryId,
-      process: process.processId,
-      group,
-      reference,
-      type
-    };
-
-    // Check user was in an another study before this one and leave room
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-    }
-
-    this.appDataService.createCompleteStudy(study, isStudyCreated => {
-      if (isStudyCreated) {
-        // Joining room
-        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-      }
-    });
-  }
-
-  createFromCopyStudy(studyId: number, studyName: string, groupId: number) {
-
-    this.appDataService.copyCompleteStudy(studyId, studyName, groupId, isStudyCreated => {
-      if (isStudyCreated) {
-        // Joining room
-        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-      }
+        this.studyCreationService.creatStudyCaseFromStudyManagement();
+        }
     });
   }
 

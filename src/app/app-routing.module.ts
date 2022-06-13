@@ -90,7 +90,7 @@ const routes: Routes = [
             canActivate: [StudyGuard],
           },
           {
-            path: Routing.FROM_PROCESS,
+            path: Routing.PROCESSES,
             component: ProcessManagementComponent,
             canActivate: [StudyGuard],
           },
