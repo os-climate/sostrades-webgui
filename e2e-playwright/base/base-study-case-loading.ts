@@ -1,6 +1,6 @@
 import { Page, expect } from "@playwright/test";
 
-export async function baseStudyCaseLoading(page: Page, studyGroup: string, studyName: string) {
+export async function baseStudyCaseLoading(page: Page, studyGroup: string, studyName: string, openWithButton: boolean=true) {
   await page.goto('/');
   // Go to study management
   await page.click('id=main-menu-button');
@@ -12,10 +12,16 @@ export async function baseStudyCaseLoading(page: Page, studyGroup: string, study
   const rowToHover = `id=row-study-management-${studyGroup}-${studyName}`;
   await page.hover(rowToHover);
 
+  if (openWithButton){
   const loadButton = `id=btn-study-management-load-${studyGroup}-${studyName}`;
   // Start loading of studycase
   await page.click(loadButton);
-
+  }
+  else{
+    const loadTitle = `id=title-study-management-load-${studyGroup}-${studyName}`;
+    // Start loading of studycase
+    await page.click(loadTitle);
+  }
   // Verifying correct redirection to study workspace
   await page.waitForURL('/study-workspace');
 

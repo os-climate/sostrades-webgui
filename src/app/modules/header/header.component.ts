@@ -22,19 +22,17 @@ export class HeaderComponent implements OnInit {
 
 
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
-  
   public username: string;
   public versionDate: string;
   public platform: string;
-  public title : string
+  public title: string;
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;
   constructor(
-   
     private router: Router,
     private auth: AuthService,
     private headerService: HeaderService,
-    public contactDialogService : ContactDialogService,
+    public contactDialogService: ContactDialogService,
     public studyCaseDataService: StudyCaseDataService,
     public dialog: MatDialog,
     private userService: UserService,
@@ -43,7 +41,7 @@ export class HeaderComponent implements OnInit {
 
     this.versionDate = '';
     this.platform = '';
-    this.title = "";
+    this.title = '';
     this.hasAccessToStudyManager = false;
     this.hasAccessToStudy = false;
   }
@@ -61,37 +59,28 @@ export class HeaderComponent implements OnInit {
       }
     });
 
-    this.headerService.onChangeTitle.subscribe(result=>{
-      this.title = result
-    })
+    this.headerService.onChangeTitle.subscribe(result => {
+      this.title = result;
+    });
 
-    if(this.router.url.includes(Routing.HOME)){
-      this.title = NavigationTitle.HOME
-    }
-    else if(this.router.url.includes(Routing.STUDY_MANAGEMENT)){
-      this.title =  NavigationTitle.STUDY_MANAGEMENT
-    }
-    else if(this.router.url.includes(Routing.MODELS_STATUS)){
-      this.title = NavigationTitle.MODEL_STATUS
-    }
-    else if(this.router.url.includes(Routing.STUDY_WORKSPACE)){
-      this.title = NavigationTitle.STUDY_WORKSPACE
-    }
-    else if(this.router.url.includes(Routing.GROUP_MANAGEMENT)){
-      this.title = NavigationTitle.GROUP_MANAGEMENT
-    }
-    else if(this.router.url.includes(Routing.USER_MANAGEMENT)){
-      this.title = NavigationTitle.USER_MANAGEMENT
-    }
-    else if(this.router.url.includes(Routing.PROCESSES_MANAGEMENT)){
-      this.title = NavigationTitle.PROCESSES_MANAGEMENT
-    }
-    else if(this.router.url.includes(Routing.EXECUTION_MANAGEMENT)){
-      this.title = NavigationTitle.EXECUTION_MANAGEMENT
-    }
-    
-    else{
-      this.title = NavigationTitle.HOME
+    if (this.router.url.includes(Routing.HOME)) {
+      this.title = NavigationTitle.HOME;
+    } else if (this.router.url.includes(Routing.STUDY_MANAGEMENT)) {
+      this.title =  NavigationTitle.STUDY_MANAGEMENT;
+    } else if (this.router.url.includes(Routing.ONTOLOGY)) {
+      this.title = NavigationTitle.MODELS_STATUS;
+    } else if (this.router.url.includes(Routing.STUDY_WORKSPACE)) {
+      this.title = NavigationTitle.STUDY_WORKSPACE;
+    } else if (this.router.url.includes(Routing.GROUP_MANAGEMENT)) {
+      this.title = NavigationTitle.GROUP_MANAGEMENT;
+    } else if (this.router.url.includes(Routing.USER_MANAGEMENT)) {
+      this.title = NavigationTitle.USER_MANAGEMENT;
+    } else if (this.router.url.includes(Routing.PROCESSES_MANAGEMENT)) {
+      this.title = NavigationTitle.PROCESSES_MANAGEMENT;
+    } else if (this.router.url.includes(Routing.EXECUTION_MANAGEMENT)) {
+      this.title = NavigationTitle.EXECUTION_MANAGEMENT;
+    } else {
+      this.title = NavigationTitle.HOME;
     }
   }
 
@@ -99,77 +88,79 @@ export class HeaderComponent implements OnInit {
   // Welcome page
   onClickWelcomePage() {
     this.router.navigate([Routing.HOME]);
-    this.title = NavigationTitle.HOME
+    this.title = NavigationTitle.HOME;
   }
 
-  //Study Management
+  // Study Management
   onClickStudyManagement() {
     this.router.navigate([Routing.STUDY_MANAGEMENT]);
-    this.trigger.closeMenu()
-    this.title = NavigationTitle.STUDY_MANAGEMENT
-    this.headerService.changeIndexTab(0)
-    
+    this.trigger.closeMenu();
+    this.title = NavigationTitle.STUDY_MANAGEMENT;
+    this.headerService.changeIndexTab(0);
   }
 
-  onClickStudyCase(){
-    this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.STUDY_CASE]);
-    this.title = NavigationTitle.STUDY_MANAGEMENT
-    this.headerService.changeIndexTab(0)
+  onClickStudyCase() {
+    this.router.navigate([Routing.STUDY_MANAGEMENT, Routing.STUDY_CASE]);
+    this.title = NavigationTitle.STUDY_MANAGEMENT;
+    this.headerService.changeIndexTab(0);
 
   }
 
- onClickFromProcess(){
-    this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.FROM_PROCESS]);
-    this.title = NavigationTitle.STUDY_MANAGEMENT
-    this.headerService.changeIndexTab(1)
-  }
-  
-   onClickReferenceManagement(){
-    this.router.navigate([Routing.STUDY_MANAGEMENT,Routing.REFERENCE_MANAGEMENT]);
-    this.title = NavigationTitle.STUDY_MANAGEMENT
-    this.headerService.changeIndexTab(2)
+  onClickReferenceManagement() {
+    this.router.navigate([Routing.STUDY_MANAGEMENT, Routing.REFERENCE_MANAGEMENT]);
+    this.title = NavigationTitle.STUDY_MANAGEMENT;
+    this.headerService.changeIndexTab(2);
   }
 
-  //Model status
-  onClickModelsStatus() {
-    this.router.navigate([Routing.MODELS_STATUS]);
-    this.trigger.closeMenu()
-    this.title = NavigationTitle.MODEL_STATUS
-    this.headerService.changeIndexTab(0)
+  // Ontology
+  onClickOntology() {
+    this.router.navigate([Routing.ONTOLOGY]);
+    this.trigger.closeMenu();
+    this.title = NavigationTitle.MODELS_STATUS;
+    this.headerService.changeIndexTab(0);
 
   }
-  onClickModelsLinks(){
-    this.router.navigate([Routing.MODELS_STATUS, Routing.MODELS_LINKS]);
-    this.title = NavigationTitle.MODEL_STATUS
-    this.headerService.changeIndexTab(1)
 
+   // Model Status
+   onClickModelsStatus() {
+    this.router.navigate([Routing.ONTOLOGY, Routing.MODELS_STATUS]);
+    this.trigger.closeMenu();
+    this.title = NavigationTitle.MODELS_STATUS;
+    this.headerService.changeIndexTab(0);
+
+  }
+
+  onClickFromProcess() {
+    this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES]);
+    this.title = NavigationTitle.PROCESS;
+    this.headerService.changeIndexTab(1);
   }
 
   // Group Management
   onClickGroupManagement() {
     this.router.navigate([Routing.GROUP_MANAGEMENT]);
-    this.title = NavigationTitle.GROUP_MANAGEMENT
+    this.title = NavigationTitle.GROUP_MANAGEMENT;
   }
 
-  // Group Management
+  // User Management
   onClickUserManagement() {
     this.router.navigate([Routing.USER_MANAGEMENT]);
-    this.title = NavigationTitle.USER_MANAGEMENT
+    this.title = NavigationTitle.USER_MANAGEMENT;
   }
-  // Group Management
+  // Process Management
   onClickProcessesManagement() {
     this.router.navigate([Routing.PROCESSES_MANAGEMENT]);
-    this.title = NavigationTitle.PROCESSES_MANAGEMENT
+    this.title = NavigationTitle.PROCESSES_MANAGEMENT;
   }
-  // Group Management
+  // Execution Management
   onClickExecutionManagement() {
     this.router.navigate([Routing.EXECUTION_MANAGEMENT]);
-    this.title = NavigationTitle.EXECUTION_MANAGEMENT
+    this.title = NavigationTitle.EXECUTION_MANAGEMENT;
   }
 
   // Contact
-  onClickOnContact(){
-  this.contactDialogService.openContactDialog()
+  onClickOnContact() {
+  this.contactDialogService.openContactDialog();
   }
 
   logout() {

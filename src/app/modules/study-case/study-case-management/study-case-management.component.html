@@ -8,6 +8,7 @@
       [disabled]="isLoading"
       (click)="loadStudyManagementData()"
     >
+    <mat-icon>refresh</mat-icon>
       Refresh list
     </button>
     <h2 *ngIf="getTitle" id="favorite-studies-title">Favorite studies</h2>
@@ -36,6 +37,18 @@
         />
       </mat-form-field>
     </div>
+    <button
+    *ngIf="getCreateStudy"
+    mat-raised-button
+    color="accent"
+    aria-label="Create study cases"
+    id="create-study"
+    style="margin-left: 10px;"
+    (click)="createStudy()"
+  >
+  <mat-icon>add</mat-icon>
+   Create study
+  </button>
   </div>
 
   <div class="action-button-bar" *ngIf="selection.hasValue()">
@@ -101,33 +114,37 @@
         <!-- Favorite Column -->
         <ng-container matColumnDef="favorite">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Favorite</th>
-          <td mat-cell *matCellDef="let element">   
-          <i 
+          <td mat-cell *matCellDef="let element">
+          <i
           id='favorite-study-management-page'
           *ngIf="!getOnlyFavoriteStudy"
-          style="border: none; background-color: transparent;" 
+          style="border: none; background-color: transparent;"
           [ngClass]="element.isFavorite ? 'fa-solid fa-star favoriteOnStudyManagementPage':'fa-regular fa-star notFavoriteOnStudyManagementPage'"
           (click)="addOrRemoveFavoriteStudy(element)"
           [matTooltip]="element.isFavorite ? 'Favorite' : 'Not favorite'"
           >
           </i>
 
-          <i 
+          <i
           id='favorite-welcome-page'
-          class="fa-solid fa-star favoriteOnWelcomePage"   
+          class="fa-solid fa-star favoriteOnWelcomePage"
           *ngIf="element.isFavorite && getOnlyFavoriteStudy"
           >
           </i>
           </td>
         </ng-container>
 
-      
+
 
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name</th>
           <td mat-cell *matCellDef="let element" [matTooltip]="element.name">
-            {{ element.name }}
+            <a routerLink="/study/{{element.id}}"
+              class="link-study-title"
+              [id]="'title-study-management-load-' + element.groupName +'-' + element.name">
+              {{ element.name }}
+            </a>
           </td>
         </ng-container>
 
@@ -206,11 +223,21 @@
               mat-icon-button
               color="accent"
               matTooltip="Load study case"
-              (click)="loadStudy(element)"
+              (click)="loadStudy($event, element)"
             >
               <i class="fa-regular fa-folder-open fa-fw"> </i>
             </button>
-            
+            <input
+                type="file"
+                #fileUpload
+                id="fileUpload"
+                name="fileUpload"
+                accept=".pkl"
+                style="display: none"
+                multiple
+                (change)="onSelection($event, element)"
+              />
+
             <button
             style="margin-right: 5px"
             mat-icon-button

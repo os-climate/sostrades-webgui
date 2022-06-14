@@ -1,8 +1,8 @@
 <mat-tab-group class="container-workspace"  [(selectedIndex)]="index" (selectedTabChange)="onSelectedTabChange($event)">
   <mat-tab label="Models status">
-    <app-models-status-table *ngIf="showModelStatusTableContent"></app-models-status-table>
+    <app-models-status-table></app-models-status-table>
   </mat-tab>
-  <mat-tab label="Models links" >
-    <app-models-links *ngIf="showModelLinksContent"></app-models-links>
+  <mat-tab label="Processes">
+    <app-process-management [dashboard]="false" ></app-process-management>
   </mat-tab>
 </mat-tab-group>

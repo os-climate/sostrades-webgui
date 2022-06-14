@@ -75,37 +75,36 @@ export class StudyCaseMainService extends MainHttpService {
       });
   }
 
-  updateStudy(studyId: number, studyName:string, groupId:number):Observable<LoadedStudy>{
+  updateStudy(studyId: number, studyName: string, groupId: number): Observable<LoadedStudy> {
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
       this.updateStudyTimeout(studyId, studyName, groupId, observer);
     });
     return loaderObservable;
   }
 
-  private updateStudyTimeout(studyId: number, studyName:string, groupId:number,loaderObservable: Subscriber<LoadedStudy>){
+  private updateStudyTimeout(studyId: number, studyName: string, groupId: number, loaderObservable: Subscriber<LoadedStudy>) {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
       group_id: groupId
-    }
-    const url = `${this.apiRoute}/${studyId}`
+    };
+    const url = `${this.apiRoute}/${studyId}`;
     return this.http.post<LoadedStudy>(url, payload, this.options).pipe(map(
       response => {
         return LoadedStudy.Create(response);
       }))
       .subscribe(loadedStudy => {
-        if (loadedStudy.loadInProgress === true){
+        if (loadedStudy.loadInProgress === true) {
           setTimeout(() => {
             this.loadStudyTimeout(studyId, false, loaderObservable, true);
           }, 2000);
-        }
-        else{
+        } else {
           loaderObservable.next(loadedStudy);
         }
       },
         error => {
           loaderObservable.error(error);
-        }); 
+        });
   }
 
   //#endregion create study
@@ -158,8 +157,10 @@ export class StudyCaseMainService extends MainHttpService {
         this.updateStudyCaseDataService(loadedStudy);
 
         if (addToStudyManagement === true) {
-          // Add study case to study management list
-          this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+
+          this.studyCaseDataService.getStudies().subscribe(studies => {
+            this.studyCaseDataService.studyManagementData = studies;
+          });
         }
 
         // Reload ontology parameters
@@ -226,8 +227,8 @@ export class StudyCaseMainService extends MainHttpService {
         });
   }
 
-  closeStudy(close : boolean){
-      this.onCloseStudy.emit(close)
+  closeStudy(close: boolean) {
+      this.onCloseStudy.emit(close);
   }
 
   deleteStudy(studies: Study[]): Observable<void> {
@@ -288,7 +289,7 @@ export class StudyCaseMainService extends MainHttpService {
   // tslint:disable-next-line: max-line-length
   private updateStudyParametersTimeout(studyId: number, requestUrl: string, formData: FormData, loaderObservable: Subscriber<LoadedStudy>) {
     this.http.post(requestUrl, formData).pipe(map(response => {
-      return LoadedStudy.Create(response); ;
+      return LoadedStudy.Create(response);
     })).subscribe(loadedStudy => {
       if (loadedStudy.loadInProgress === true) {
         setTimeout(() => {
@@ -360,6 +361,21 @@ export class StudyCaseMainService extends MainHttpService {
     };
 
     return this.http.post(url, data, options);
+  }
+
+  uploadStudyRaw(studyId: string, files: FileList): Observable<string> {
+    const formData = new FormData();
+
+    if (files.length > 0) {
+      // tslint:disable-next-line: prefer-for-of
+      for (let fileIndex = 0; fileIndex < files.length; ++fileIndex) {
+
+        const file = files[fileIndex];
+        formData.append(file.name, file);
+      }
+      const url = `${this.apiRoute}/${studyId}/upload/raw`;
+      return this.http.post<string>(url, formData);
+    }
   }
 
   private updateStudyCaseDataService(loadedStudy: LoadedStudy) {
