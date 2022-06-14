@@ -185,3 +185,14 @@ tr:hover .actions-hover-row {
 }
 
 
+// default blue color (call with #{$accent-color})
+$accent-color:#0b78b8;
+
+.link-study-title{
+  font-size: 12px;
+  color:#{$accent-color};
+}
+
+.link-study-title:hover{
+  text-decoration: underline;
+}
