@@ -250,7 +250,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
       return;
     }
     // get the search keyword
-    let search = this.processFiltered.value;
+    let search = this.processFiltered.value.replace(' ', '_');
     if (!search) {
       this.filteredProcesses.next(this.processList.slice());
       return;
