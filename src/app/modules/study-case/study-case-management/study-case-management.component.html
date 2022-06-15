@@ -8,7 +8,11 @@
       [disabled]="isLoading"
       (click)="loadStudyManagementData()"
     >
-    <mat-icon>refresh</mat-icon>
+    <mat-icon 
+    class="refresh-icon"
+    >
+      refresh
+    </mat-icon>
       Refresh list
     </button>
     <h2 *ngIf="getTitle" id="favorite-studies-title">Favorite studies</h2>
@@ -46,7 +50,7 @@
     style="margin-left: 10px;"
     (click)="createStudy()"
   >
-  <mat-icon>add</mat-icon>
+  <mat-icon style="margin-left: -10px;">add</mat-icon>
    Create study
   </button>
   </div>

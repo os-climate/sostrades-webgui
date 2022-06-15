@@ -32,22 +32,15 @@ export class StudyCaseDirectAccessComponent implements OnInit {
 
       const idRequested = params['id'];
       if (idRequested !== null && idRequested !== undefined && TypeCheckingTools.isInt(idRequested)) {
-        this.studyCaseDataService.getHasStudyCaseAccessRight(idRequested).subscribe(hasAccess => {
-          if (hasAccess) {
-            this.appDataService.loadCompleteStudy(idRequested, 'requested', (isStudyLoaded) => {
-              if (isStudyLoaded) {
-                // Joining room
-                this.socketService.joinRoom(
-                  this.studyCaseDataService.loadedStudy.studyCase.id
-                );
-              }
-              else{
-                this.router.navigate([Routing.STUDY_MANAGEMENT]);
-              }
-            });
-          } else {
-            this.router.navigate(['/']);
-            this.snackbarService.showError('Error loading requested study case, study case not found')
+        this.appDataService.loadCompleteStudy(idRequested, 'requested', (isStudyLoaded) => {
+          if (isStudyLoaded) {
+            // Joining room
+            this.socketService.joinRoom(
+              this.studyCaseDataService.loadedStudy.studyCase.id
+            );
+          }
+          else{
+            this.router.navigate([Routing.STUDY_MANAGEMENT]);
           }
         })
       } else {

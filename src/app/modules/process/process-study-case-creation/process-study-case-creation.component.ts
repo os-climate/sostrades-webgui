@@ -260,7 +260,8 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
     // filter the process
     this.filteredProcesses.next(
       this.processList.filter(process =>
-        process.processId.toLowerCase().indexOf(search) > -1 || process.repositoryName.toLowerCase().indexOf(search) > -1)
+        process.processId.toLowerCase().indexOf(search) > -1 || process.repositoryName.toLowerCase().indexOf(search) > -1
+        ||  process.processName.toLowerCase().indexOf(search) > -1 || process.repositoryId.toLowerCase().indexOf(search) > -1)
     );
   }
 }
