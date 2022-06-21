@@ -6,6 +6,7 @@ import { AccessRight } from './access-right.model';
 import { NodeData } from './node-data.model';
 import { StudyCaseValidation } from './study-case-validation.model';
 import { Process } from './process.model';
+import { OntologyParameter } from './ontology-parameter.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -294,6 +295,15 @@ export class ModelStatusDialogData extends AbstractDialogData {
     super();
     this.processesDict = {};
     this.modelName = '';
+  }
+}
+
+export class OntologyParameterInformationsDialogData extends AbstractDialogData {
+  parameter: OntologyParameter;
+
+  public constructor() {
+    super();
+    this.parameter = null;
   }
 }
 
