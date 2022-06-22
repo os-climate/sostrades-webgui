@@ -49,6 +49,7 @@ import { ProcessManagementComponent } from './modules/process/process-management
 import { GroupManagementComponent } from './modules/group-management/group-management.component';
 import { StudyCaseManagementContainerComponent } from './modules/study-case/study-case-management-container/study-case-management-container.component';
 import { OntologyInformationsComponent } from './modules/ontology/ontology-informations/ontology-informations.component';
+import { OntologyParameterInformationsComponent } from './modules/ontology/ontology-parameter-informations/ontology-parameter-informations.component';
 import { StudyCaseStatusInformationComponent } from './modules/study-case/study-case-status-information/study-case-status-information.component';
 import { SelectAllOptionComponent } from './shared/select-all-option/select-all-option.component';
 
@@ -151,6 +152,7 @@ registerLocaleData(fr);
     GroupManagementComponent,
     StudyCaseManagementContainerComponent,
     OntologyInformationsComponent,
+    OntologyParameterInformationsComponent,
     StudyCaseStatusInformationComponent,
     SelectAllOptionComponent,
     StudyCaseExecutionExceptionDialogComponent,
