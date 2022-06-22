@@ -26,7 +26,9 @@
       aria-label="tab-study-workspace-visualisation"
       *ngIf="showVisualisation"
     >
-      <app-visualisation-container></app-visualisation-container>
+      <app-visualisation-container
+       *ngIf="showVisualisationContent">
+      </app-visualisation-container>
     </mat-tab>
     <mat-tab
       label="Documentation"
