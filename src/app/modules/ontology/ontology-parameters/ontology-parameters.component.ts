@@ -93,6 +93,16 @@ export class OntologyParametersComponent implements OnInit {
             : item[property];
         };
         this.dataSourceParameters.sort = this.sort;
+        //sort parameters by ID
+        this.dataSourceParameters.data.sort((a: any, b: any) => {
+          if (a.id < b.id) {
+              return -1;
+          } else if (a.id > b.id) {
+              return 1;
+          } else {
+              return 0;
+          }
+      });
         this.onFilterChange();
         this.isLoading = false;
         this.hasLoadedParameters = true;
