@@ -39,6 +39,30 @@ export class OntologyModelStatus {
       jsonData[ModelStatusAttributes.OUTPUTSPARAMETERSQUANTITY]);
     return result;
   }
+
+  public static getKeyLabel(key: string): string {
+    const keyLabelDict = {
+      definition: 'Definition',
+      version: 'Version',
+      type: 'Type',
+      category: 'Category',
+      source: 'Source',
+      lastModificationDate: 'Last Modification Date',
+      validatedBy: 'Validated By',
+      validated: 'Validated',
+      codeRepository: 'Code Repository',
+      inputsParametersQuantity: 'Inputs Parameters Quantity',
+      outputsParametersQuantity: 'Outputs Parameters Quantity',
+
+    };
+
+    if (key in keyLabelDict) {
+      return keyLabelDict[key];
+    } else {
+      return key;
+    }
+  }
+
 }
 
 export enum ModelStatusAttributes {

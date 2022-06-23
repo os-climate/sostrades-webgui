@@ -5,9 +5,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { ModelsStatusInformationComponent } from 'src/app/modules/models/models-status-information/models-status-information.component';
-import { ModelStatusDialogData } from 'src/app/models/dialog-data.model';
+import { ModelStatusDialogData, OntologyModelsStatusInformationDialogData } from 'src/app/models/dialog-data.model';
 import { MatDialog } from '@angular/material/dialog';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
+import { ProcessInformationComponent } from '../../process/process-information/process-information.component';
+import { ModelsStatusDocumentationComponent } from '../models-status-documentation/models-status-documentation.component';
 
 @Component({
   selector: 'app-models-status-table',
@@ -18,16 +20,10 @@ export class ModelsStatusTableComponent implements OnInit {
 
   public visibleColumns = [
     'name',
-    'type',
-    'source',
-    'lastModificationDate',
-    'version',
-    'category',
-    // 'icon',
-    'validatedBy',
-    'validated',
     'codeRepository',
-    'processUsingModel'];
+    'processUsingModel',
+    'information',
+    ];
 
   public columnsFilter = [
     'All columns',
@@ -63,7 +59,8 @@ export class ModelsStatusTableComponent implements OnInit {
     private elementRef: ElementRef,
     public ontologyService: OntologyService,
     private snackbarService: SnackbarService,
-    private dialog: MatDialog,) {
+    private dialog: MatDialog,
+    ) {
     this.isLoading = true;
     this.modelCount = 0;
   }
@@ -101,7 +98,7 @@ export class ModelsStatusTableComponent implements OnInit {
     this.ontologyService.getOntologyModelsStatus().subscribe(
       (models) => {
         this.ontologyService.modelStatusData = models;
-        console.log(models.length)
+        console.log(models.length);
         // Retrieving references list
         this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(
           this.ontologyService.modelStatusData
@@ -128,6 +125,19 @@ export class ModelsStatusTableComponent implements OnInit {
         }
       }
     );
+  }
+
+  displayDocumentation(modelStatus: OntologyModelStatus) {
+
+    const ontologyModelsStatusInformationDialogData = new OntologyModelsStatusInformationDialogData();
+    ontologyModelsStatusInformationDialogData.modelStatus = modelStatus;
+
+    this.dialog.open(ModelsStatusDocumentationComponent, {
+      disableClose: false,
+      data: ontologyModelsStatusInformationDialogData,
+      width: '900px',
+      height: '650px',
+    });
   }
 
   showDetails(modelStatus: OntologyModelStatus) {

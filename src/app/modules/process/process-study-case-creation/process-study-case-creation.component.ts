@@ -78,6 +78,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
       this.data.process.referenceList.forEach(ref => {
         this.referenceList.push(ref);
       });
+      this.disabledReference = true;
       this.studyCaseDataService.getAuthorizedStudiesForProcess(
         this.data.process.processId, this.data.process.repositoryId).subscribe(studies => {
         studies.forEach(study => {
@@ -121,7 +122,16 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
       this.user = currentUser;
 
        // Get list of process
-      this.processService.getUserProcesses().subscribe( processes => {
+      let refreshList: boolean;
+      // Check if processList has been already loaded
+      if (this.processService.processManagemenentData === null
+        || this.processService.processManagemenentData === undefined
+        || this.processService.processManagemenentData.length === 0) {
+          refreshList = true;
+        } else {
+          refreshList = false;
+        }
+      this.processService.getUserProcesses(refreshList).subscribe( processes => {
         this.processList = processes;
 
          // load the initial process list

@@ -30,7 +30,7 @@ export class TreeView {
   }
 }
 
-export class MardownDocumentation{
+export class MardownDocumentation {
 
 
   constructor(public name: string,
@@ -45,6 +45,14 @@ export class MardownDocumentation{
       jsonData[MardownDocumentationAttributes.DOCUMENTATION],
     );
 
+    return result;
+  }
+  public static CreateForDocumentation(jsonData: any): MardownDocumentation {
+
+    const result: MardownDocumentation = new MardownDocumentation(
+      jsonData,
+      null
+    );
     return result;
   }
 }

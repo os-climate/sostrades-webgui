@@ -7,6 +7,7 @@ import { NodeData } from './node-data.model';
 import { StudyCaseValidation } from './study-case-validation.model';
 import { Process } from './process.model';
 import { OntologyParameter } from './ontology-parameter.model';
+import { OntologyModelStatus } from './ontology-model-status.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -304,6 +305,24 @@ export class OntologyParameterInformationsDialogData extends AbstractDialogData 
   public constructor() {
     super();
     this.parameter = null;
+  }
+}
+
+export class OntologyProcessInformationDialogData extends AbstractDialogData {
+  public process: Process;
+
+  public constructor() {
+    super();
+    this.process = null;
+  }
+}
+
+export class OntologyModelsStatusInformationDialogData extends AbstractDialogData {
+  public modelStatus: OntologyModelStatus;
+
+  public constructor() {
+    super();
+    this.modelStatus = null;
   }
 }
 

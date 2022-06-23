@@ -12,7 +12,17 @@ export class Process {
     public repositoryDescription: string,
     public isManager: boolean,
     public isContributor: boolean,
-    public referenceList: Study[]
+    public referenceList: Study[],
+    public identifier: string,
+    public uri: string,
+    public label: string,
+    public description: string,
+    public category: string,
+    public version: string,
+    public processRepository: string,
+    public quantityDisciplinesUsed: number,
+    public disciplineList: {},
+    public associatedUsecases: {}
   ) {
   }
 
@@ -27,7 +37,17 @@ export class Process {
       jsonData[ProcessAttributes.REPOSITORYDESCRIPTION],
       jsonData[ProcessAttributes.ISMANAGER],
       jsonData[ProcessAttributes.ISCONTRIBUTOR],
-      []
+      [],
+      jsonData[ProcessAttributes.IDENTIFIER],
+      jsonData[ProcessAttributes.URI],
+      jsonData[ProcessAttributes.LABEL],
+      jsonData[ProcessAttributes.DESCRIPTION],
+      jsonData[ProcessAttributes.CATEGORY],
+      jsonData[ProcessAttributes.VERSION],
+      jsonData[ProcessAttributes.PROCESS_REPOSITORY],
+      jsonData[ProcessAttributes.QUANTITY_DISCIPLINES_USED],
+      jsonData[ProcessAttributes.DISCIPLINE_LIST],
+      jsonData[ProcessAttributes.ASSOCIATED_USECASES],
     );
 
     if (
@@ -42,7 +62,30 @@ export class Process {
     }
     return result;
   }
+
+  public static getKeyLabel(key: string): string {
+    const keyLabelDict = {
+      identifier: 'Identifier',
+      description: 'Description',
+      version: 'Version',
+      label: 'Label',
+      category: 'Category',
+      uri: 'URI',
+      processRepository: 'Process Repository',
+      quantityDisciplinesUsed: 'Quantity Disciplines Used',
+      disciplineList: 'Discipline List',
+      associatedUsecases: 'Associated Usecases',
+    };
+
+    if (key in keyLabelDict) {
+      return keyLabelDict[key];
+    } else {
+      return key;
+    }
+  }
 }
+
+
 
 export enum ProcessAttributes {
   ID = 'id',
@@ -54,7 +97,17 @@ export enum ProcessAttributes {
   REPOSITORYDESCRIPTION = 'repository_description',
   ISMANAGER = 'is_manager',
   ISCONTRIBUTOR = 'is_contributor',
-  REFERENCELIST = 'reference_list'
+  REFERENCELIST = 'reference_list',
+  IDENTIFIER = 'identifier',
+  URI = 'uri',
+  LABEL = 'label',
+  DESCRIPTION = 'description',
+  CATEGORY = 'category',
+  VERSION = 'version',
+  PROCESS_REPOSITORY = 'process_repository',
+  QUANTITY_DISCIPLINES_USED = 'quantity_disciplines_used',
+  DISCIPLINE_LIST = 'discipline_list',
+  ASSOCIATED_USECASES = 'associated_usecases',
 }
 
 export enum ProcessEntityRight {
