@@ -7,21 +7,6 @@
   width: 100%;
 }
 
-.flex-container-data {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.flex-container-data-content {
-  flex: 1 0 33%;
-  margin: 10px 20px;
-  
-}
-
-.param-key{
-  color:grey;
-}
-
 .informations {
   height: 500px;
   width: 100%;
@@ -83,6 +68,52 @@ th.mat-header-cell:last-of-type {
   padding-right: 5px;
 }
 
-td:first-of-type {
-  padding-left: 24px;
+.mat-column-io_type {
+  width: 10% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
+.mat-column-model_label {
+  width: 30% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.mat-column-unit {
+  width: 10% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.mat-column-datatype {
+  width: 10% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.mat-column-numerical {
+  width: 10% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.mat-column-range {
+  width: 10% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.mat-column-optional {
+  width: 10% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.mat-column-possible_values {
+  width: 10% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+

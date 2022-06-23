@@ -43,7 +43,7 @@
         </mat-form-field>
       </div>
     </div>
-    <!-- <div class="btn-load-container" *ngIf="!isLoading&&!hasLoadedParameters">
+    <div class="btn-load-container" *ngIf="!isLoading&&!hasLoadedParameters">
       <button
         mat-raised-button
         color="accent"
@@ -52,7 +52,7 @@
         (click)="loadOntologyParametersList()">
           Load Parameters
       </button>
-    </div> -->
+    </div> 
     <div class="label-load-container" *ngIf="!isLoading&&!hasLoadedParameters">
       <mat-label class="number-parameter">This may take a while</mat-label>
     </div>
@@ -72,14 +72,23 @@
           [dataSource]="dataSourceParameters"
           matSort
         >
-        
         <!-- parameter ID Column -->
-        <ng-container matColumnDef="parameterName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter Name</th>
+        <ng-container matColumnDef="parameterID">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter ID</th>
           <td
             mat-cell
             *matCellDef="let element"
             [matTooltip]="element.id"
+          >
+            {{ element.id }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="parameterName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter Label</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            [matTooltip]="element.label"
           >
             {{ element.label }}
           </td>
@@ -90,7 +99,7 @@
             mat-cell
             *matCellDef="let element"
           >
-            {{ element.nbDisciplinesUsingParameter }} Models Using Parameter
+            {{ element.nb_disciplines_using_parameter }} Models Using Parameter
           </td>
         </ng-container>
 

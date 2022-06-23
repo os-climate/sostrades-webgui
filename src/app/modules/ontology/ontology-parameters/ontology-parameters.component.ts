@@ -2,7 +2,6 @@ import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable } from 'rxjs';
 import { OntologyParameterInformationsDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
@@ -20,8 +19,8 @@ export class OntologyParametersComponent implements OnInit {
   public isLoading: boolean;
   public hasLoadedParameters: boolean;
   public parameterCount: number;
-  public displayedColumns = ['parameterName','parameterNbDisciplines','parameterInfo'];
-  public columnsFilter = ['All columns','Parameter Name'];
+  public displayedColumns = ['parameterID','parameterName','parameterNbDisciplines','parameterInfo'];
+  public columnsFilter = ['All columns','Parameter ID','Parameter Name'];
   public dataSourceParameters = new MatTableDataSource<OntologyParameter>();
 
   @Input() dashboard = true;

@@ -3,11 +3,11 @@ import { OntologyParameterUsage } from "./ontology-parameter-usage.model";
 export class OntologyParameter {
 
   //other ontology data :
-  public codeRepositories: string[];
-  public possibleUnits: string[];
-  public possibleDatatypes: string[];
-  public nbDisciplinesUsingParameter: number;
-  public disciplinesUsingParameter: string[];
+  public code_repositories: string[];
+  public possible_units: string[];
+  public possible_datatypes: string[];
+  public nb_disciplines_using_parameter: number;
+  public disciplines_using_parameter: string[];
   public parameter_usage_details : OntologyParameterUsage[];
 
   constructor(
@@ -48,11 +48,11 @@ export class OntologyParameter {
       uri: 'URI',
       definitionSource: 'Definition Source',
       ACLtag: 'Airbus Common Language Tag',
-      codeRepositories: 'Code Repositories',
-      possibleUnits: 'Possible Units',
-      possibleDatatypes: 'Possible Datatypes',
-      nbDisciplinesUsingParameter: 'Number of Disciplines Using Parameter',
-      disciplinesUsingParameter: 'Disciplines Using Parameter'
+      code_repositories: 'Code Repositories',
+      possible_units: 'Possible Units',
+      possible_datatypes: 'Possible Datatypes',
+      nb_disciplines_using_parameter: 'Number of Model Using Parameter',
+      disciplines_using_parameter: 'Models Using Parameter'
     };
 
     if (key in keyLabelDict) {
@@ -86,11 +86,11 @@ export class OntologyParameter {
     if (OntologyParameterAttributes.ACL_TAG in jsonData){
       this.ACLtag = jsonData[OntologyParameterAttributes.ACL_TAG]
     }
-    this.codeRepositories = jsonData[OntologyParameterAttributes.CODE_REPOSITORIES]
-    this.possibleUnits = jsonData[OntologyParameterAttributes.POSSIBLE_UNITS]
-    this.possibleDatatypes = jsonData[OntologyParameterAttributes.POSSIBLE_DATATYPES]
-    this.nbDisciplinesUsingParameter = jsonData[OntologyParameterAttributes.NB_DISCIPLINES_USING_PARAMETER]
-    this.disciplinesUsingParameter = jsonData[OntologyParameterAttributes.DISCIPLINES_USING_PARAMETER]
+    this.code_repositories = jsonData[OntologyParameterAttributes.CODE_REPOSITORIES]
+    this.possible_units = jsonData[OntologyParameterAttributes.POSSIBLE_UNITS]
+    this.possible_datatypes = jsonData[OntologyParameterAttributes.POSSIBLE_DATATYPES]
+    this.nb_disciplines_using_parameter = jsonData[OntologyParameterAttributes.NB_DISCIPLINES_USING_PARAMETER]
+    this.disciplines_using_parameter = jsonData[OntologyParameterAttributes.DISCIPLINES_USING_PARAMETER]
     this.parameter_usage_details = [];
     if (
       jsonData[OntologyParameterAttributes.PARAMETER_USAGE_DETAILS] !== null &&

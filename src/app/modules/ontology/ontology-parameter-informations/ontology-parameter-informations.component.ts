@@ -39,16 +39,20 @@ export class OntologyParameterInformationsComponent implements OnInit {
       // retrieve parameter str data with keys (responsive display data view)
       let parameterKeys = Object.entries(this.data.parameter);
 
-      let stringData = parameterKeys.filter(entry => (typeof entry[1] === 'string' || typeof entry[1] === 'number') && entry[1] !== " " && entry[1] !== "")
+      let stringData = parameterKeys.filter(entry => (typeof entry[1] === 'string' || typeof entry[1] === 'number')
+      && entry[0] != OntologyParameterAttributes.NB_DISCIPLINES_USING_PARAMETER)
       .map(entry => [OntologyParameter.getKeyLabel(entry[0]), entry[1]]);
 
       let listDatas = parameterKeys.filter(entry => typeof entry[1] !== 'string' 
                                                        && typeof entry[1] !== 'number'
                                                        && entry[0] != OntologyParameterAttributes.PARAMETER_USAGE_DETAILS
+                                                       && entry[0] != OntologyParameterAttributes.POSSIBLE_DATATYPES
+                                                       && entry[0] != OntologyParameterAttributes.POSSIBLE_UNITS
+                                                       && entry[0] != OntologyParameterAttributes.DISCIPLINES_USING_PARAMETER
                                                        && entry[0] != 'toString'
                                                        && entry[1] !== undefined
                                                        && entry[1] !== null);
-      let stringListDatas = listDatas.map(entry => [OntologyParameter.getKeyLabel(entry[0]), entry[1].join(', ')]).filter(entry => entry[1] !== " " && entry[1] !== "");
+      let stringListDatas = listDatas.map(entry => [OntologyParameter.getKeyLabel(entry[0]), entry[1].join(', ')]);
       this.parameterDatas = stringData.concat(stringListDatas);
       
       // retrieve parameter usage data (table with one line per usage)
