@@ -59,6 +59,15 @@ export class OntologyParameterInformationsComponent implements OnInit {
       if (this.data.parameter.parameter_usage_details != null
         && this.data.parameter.parameter_usage_details.length > 0){
         this.dataSourceparameterUsages= new MatTableDataSource<OntologyParameterUsage>(this.data.parameter.parameter_usage_details);
+        this.dataSourceparameterUsages.data.sort((a: any, b: any) => {
+          if (a.model_label < b.model_label) {
+              return -1;
+          } else if (a.model_label > b.model_label) {
+              return 1;
+          } else {
+              return 0;
+          }
+      });
       }
 
     }

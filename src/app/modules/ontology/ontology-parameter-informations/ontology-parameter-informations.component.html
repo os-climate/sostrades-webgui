@@ -25,6 +25,12 @@
             "
           >
             {{ attr[1] }}
+            <span 
+            *ngIf="attr[1] === '' || attr[1] === ' ' || attr[1] === null || attr[1] === undefined" 
+            style="font-size: 12px;"
+            > 
+            Not Avalaible
+            </span>
           </td>
         </tr>
       </ng-container>
