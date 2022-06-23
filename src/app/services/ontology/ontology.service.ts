@@ -20,6 +20,10 @@ export class OntologyService extends MainHttpService {
   public modelStatusFilter: string;
   public modelStatusColumnFiltered: string;
 
+  public parametersData: OntologyParameter[];
+  public parametersFilter: string;
+  public parametersColumnFiltered: string;
+
   constructor(
     private http: HttpClient, private location: Location) {
     super(location, 'ontology');
@@ -27,6 +31,10 @@ export class OntologyService extends MainHttpService {
     this.modelStatusData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
+
+    this.parametersData = [];
+    this.parametersColumnFiltered = 'All columns';
+    this.parametersFilter = '';
   }
 
   clearCache() {
@@ -34,6 +42,10 @@ export class OntologyService extends MainHttpService {
     this.modelStatusData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
+
+    this.parametersData = [];
+    this.parametersColumnFiltered = 'All columns';
+    this.parametersFilter = '';
   }
 
   loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
@@ -100,6 +112,36 @@ export class OntologyService extends MainHttpService {
       return null;
     }
   }
+  
+  public getParametersLabelList():  Observable<OntologyParameter[]> {
+      const parametersList: OntologyParameter[] = [];
+  
+      return this.http.get<OntologyParameter[]>(`${this.apiRoute}/full_parameter_label_list`).pipe(map(
+        params => {
+          params.forEach(param => {
+            const newParameter = OntologyParameter.Create(param);
+            parametersList.push(newParameter);
+          });
+          return parametersList;
+        }));
+  
+  }
+
+  public getParametersList():  Observable<OntologyParameter[]> {
+    const parametersList: OntologyParameter[] = [];
+
+    return this.http.get<OntologyParameter[]>(`${this.apiRoute}/full_parameter_list`).pipe(map(
+      params => {
+        params.forEach(param => {
+          const newParameter = OntologyParameter.Create(param);
+          newParameter.addOntologyInformations(param);
+          parametersList.push(newParameter);
+        });
+        return parametersList;
+      }));
+
+}
+
 
   public getDiscipline(key: string): OntologyDiscipline {
     if (key in this.ontology.studyCase.disciplines) {

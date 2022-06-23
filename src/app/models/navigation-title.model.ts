@@ -2,6 +2,7 @@ export enum NavigationTitle {
 
     HOME = 'Home',
     ONTOLOGY = 'Ontology',
+    ONTOLOGY_PARAMETERS = 'Parameters',
     PROCESS = 'Processes',
     MODELS_STATUS = 'Models Status',
     STUDY_MANAGEMENT = 'Study Management',

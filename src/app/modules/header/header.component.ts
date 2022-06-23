@@ -136,6 +136,13 @@ export class HeaderComponent implements OnInit {
     this.headerService.changeIndexTab(1);
   }
 
+    // Ontology parameters
+    onClickOntologyParameters() {
+      this.router.navigate([Routing.ONTOLOGY, Routing.ONTOLOGY_PARAMETERS]);
+      this.title = NavigationTitle.ONTOLOGY_PARAMETERS;
+      this.headerService.changeIndexTab(2);
+    }
+
   // Group Management
   onClickGroupManagement() {
     this.router.navigate([Routing.GROUP_MANAGEMENT]);
@@ -152,6 +159,8 @@ export class HeaderComponent implements OnInit {
     this.router.navigate([Routing.PROCESSES_MANAGEMENT]);
     this.title = NavigationTitle.PROCESSES_MANAGEMENT;
   }
+
+
   // Execution Management
   onClickExecutionManagement() {
     this.router.navigate([Routing.EXECUTION_MANAGEMENT]);
