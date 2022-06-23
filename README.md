@@ -30,3 +30,10 @@ Run  `npx playwright codegen` to launch test generator.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## License
+The sostrades-webgui source code is distributed under the Apache License Version 2.0.
+A copy of it can be found in the LICENSE file.
+
+The sostrades-webgui product depends on other software which have various licenses.
+The list of dependencies with their licenses is given in the CREDITS.rst file.

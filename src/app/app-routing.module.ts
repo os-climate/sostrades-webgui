@@ -23,6 +23,8 @@ import { StudyCaseManagementComponent } from './modules/study-case/study-case-ma
 import { ModelsLinksComponent } from './modules/models/models-links/models-links.component';
 import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
 import { Routing } from './models/routing.model';
+import { OntologyParametersComponent } from './modules/ontology/ontology-parameters/ontology-parameters.component';
+
 
 const routes: Routes = [
   {
@@ -92,6 +94,11 @@ const routes: Routes = [
           {
             path: Routing.PROCESSES,
             component: ProcessManagementComponent,
+            canActivate: [StudyGuard],
+          },
+          {
+            path: Routing.ONTOLOGY_PARAMETERS,
+            component: OntologyParametersComponent,
             canActivate: [StudyGuard],
           },
         ]

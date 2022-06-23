@@ -30,6 +30,10 @@ export class ModelsContainerComponent implements OnInit {
     if (this.router.url.includes(Routing.PROCESSES)) {
       this.index = 1;
       this.headerService.changeTitle(NavigationTitle.PROCESS);
+    }
+    else if (this.router.url.includes(Routing.ONTOLOGY_PARAMETERS)) {
+      this.index = 2;
+      this.headerService.changeTitle(NavigationTitle.ONTOLOGY_PARAMETERS);
     } else {
       this.index = 0;
       this.headerService.changeTitle(NavigationTitle.MODELS_STATUS);
@@ -47,7 +51,10 @@ export class ModelsContainerComponent implements OnInit {
       case 1:
         fragment = Routing.PROCESSES;
         this.headerService.changeTitle(NavigationTitle.PROCESS);
-
+        break;
+      case 2:
+        fragment = Routing.ONTOLOGY_PARAMETERS;
+        this.headerService.changeTitle(NavigationTitle.ONTOLOGY_PARAMETERS);
         break;
       default:
         fragment = Routing.MODELS_STATUS;
