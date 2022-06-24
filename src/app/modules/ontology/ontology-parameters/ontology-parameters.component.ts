@@ -19,7 +19,7 @@ export class OntologyParametersComponent implements OnInit {
   public isLoading: boolean;
   public hasLoadedParameters: boolean;
   public parameterCount: number;
-  public displayedColumns = ['parameterID','parameterName','parameterNbDisciplines','parameterInfo'];
+  public displayedColumns = ['id','label','nb_disciplines_using_parameter','parameterInfo'];
   public columnsFilter = ['All columns','Parameter ID','Parameter Name'];
   public dataSourceParameters = new MatTableDataSource<OntologyParameter>();
 
