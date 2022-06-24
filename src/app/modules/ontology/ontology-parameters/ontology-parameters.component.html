@@ -73,27 +73,29 @@
           matSort
         >
         <!-- parameter ID Column -->
-        <ng-container matColumnDef="parameterID">
+        <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter ID</th>
           <td
             mat-cell
             *matCellDef="let element"
             [matTooltip]="element.id"
+            matTooltipClass="custom-tooltip-class"
           >
             {{ element.id }}
           </td>
         </ng-container>
-        <ng-container matColumnDef="parameterName">
+        <ng-container matColumnDef="label">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter Label</th>
           <td
             mat-cell
             *matCellDef="let element"
             [matTooltip]="element.label"
+            matTooltipClass="custom-tooltip-class"
           >
             {{ element.label }}
           </td>
         </ng-container>
-        <ng-container matColumnDef="parameterNbDisciplines">
+        <ng-container matColumnDef="nb_disciplines_using_parameter">
           <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
           <td
             mat-cell
@@ -104,12 +106,13 @@
         </ng-container>
 
         <ng-container matColumnDef="parameterInfo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+          <th mat-header-cell *matHeaderCellDef></th>
           <td
             mat-cell
             *matCellDef="let element"
             [matTooltip]="(element.label) +
             '\nClick for more information'"
+            matTooltipClass="custom-tooltip-class"
           >
     
           <button
