@@ -237,8 +237,9 @@ export class StudyCaseDataService extends DataHttpService {
       if (this.ontologyService.getParameter(nodeData.variableKey)) {
         label = this.ontologyService.getParameter(nodeData.variableKey).label;
       }
+      
       if (nodeData.variableName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
-      label.toLowerCase().includes(inputToSearch.toLowerCase())) {
+      (label !== undefined && label.toLowerCase().includes(inputToSearch.toLowerCase()))) {
         if ((nodeData.ioType === IoType.OUT || showEditable || (!showEditable && nodeData.editable)) &&
         (nodeData.userLevel <= userLevel)) {
           this.dataSearchResults.push(nodeData);
