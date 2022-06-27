@@ -126,7 +126,8 @@
             <tr style="border-bottom: 1px solid lightgray">
               <td
                 style="
-                  width: 150px;
+                  width: 150px !important;
+                  min-width: 150px;
                   font-weight: 500;
                   font-family: Roboto, 'Helvetica Neue', sans-serif;
                 "
@@ -137,9 +138,12 @@
                 style="
                   width: calc(100% - 150px);
                   font-family: Roboto, 'Helvetica Neue', sans-serif;
+                  word-wrap: break-word;
                 "
               >
-                {{ attr[1] }}
+              <i class="fa-solid fa-check fa-fw mat-icon-success" *ngIf="attr[1] == 'True'"></i>
+              <i class="fa-solid fa-xmark fa-fw mat-icon-danger" *ngIf="attr[1] == 'False'"></i>
+              <span   *ngIf="attr[1] != 'True' && attr[1] != 'False'"> {{ attr[1] }}</span>
               </td>
             </tr>
           </ng-container>

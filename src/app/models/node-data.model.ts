@@ -30,6 +30,7 @@ export enum ValueType {
 export class NodeData {
 
   public variableName: string;
+  public variableKey: string;
   public displayName: string;
   private _widgetType: WidgetType;
   public isHighlighted: boolean;
@@ -105,12 +106,16 @@ export class NodeData {
       this.variableName = splitedIdentifier[0];
     }
     this.displayName = this.variableName;
+    this.variableKey = `${this.parent.modelNameFullPath}_${this.ioType}put_${this.variableName}`;
+
     this._widgetType = WidgetType.NO_WIDGET;
     if ((this.subtype_descriptor !== null) && (this.subtype_descriptor !== undefined)) {
       this._widgetType = WidgetType.FILE_SPREADSHEET_WIDGET;
     } else {
       this.updateWidgetType();
     }
+
+
 
     this.isHighlighted = false;
   }
