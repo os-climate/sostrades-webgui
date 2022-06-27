@@ -52,7 +52,7 @@ export class OntologyParameter {
       possible_units: 'Possible Units',
       possible_datatypes: 'Possible Datatypes',
       nb_disciplines_using_parameter: 'Number of Model Using Parameter',
-      disciplines_using_parameter: 'Models Using Parameter'
+      disciplines_using_parameter: 'Models Using Parameter',
     };
 
     if (key in keyLabelDict) {
@@ -102,7 +102,12 @@ export class OntologyParameter {
         this.parameter_usage_details.push(OntologyParameterUsage.Create(param));
       });
     }
+  }
 
+  addParameterUsage(jsonData: any){
+    this.parameter_usage_details = [];
+    this.parameter_usage_details.push(OntologyParameterUsage.Create(jsonData));
+    
   }
 }
 

@@ -46,7 +46,7 @@
 .container-workspace {
   height: calc(100% - 64px);
   width: 100%;
-  overflow-y: auto;
+  overflow: auto !important;
   padding: 5px;
 }
 
@@ -54,6 +54,10 @@
 
 .mat-column {
   flex: 1;
+}
+
+.mat-tab{
+  overflow: auto !important;
 }
 
 th.mat-header-cell {
@@ -106,4 +110,10 @@ th.mat-header-cell:last-of-type {
 
 td:first-of-type {
   padding-left: 24px;
+}
+
+.ontology-table{
+  width: 200px !important;
+  font-weight: 500;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }

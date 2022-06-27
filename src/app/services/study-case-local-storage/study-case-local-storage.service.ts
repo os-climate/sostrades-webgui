@@ -195,7 +195,7 @@ export class StudyCaseLocalStorageService {
           const ontologyRequest: PostOntology = {
             ontology_request: {
               disciplines: [],
-              parameters: []
+              parameter_usages: []
             }
           };
 
