@@ -31,50 +31,26 @@
                     overflow-wrap: anywhere;
                   "
                 >
-                  {{ attr[1] }} 
-                    <span 
-                    *ngIf="attr[1] === '' || attr[1] === null || attr[1] === undefined" 
+                  {{ attr[1] }}
+                    <span
+                    *ngIf="attr[1] === '' || attr[1] === null || attr[1] === undefined"
                     style="font-size: 12px;"
-                    > 
+                    >
                     Not Avalaible
                     </span>
                 </td>
               </tr>
-              
+
             </ng-container>
           </table>
     </div>
-    <div >
-        <h1 style="text-align: center; margin: 10px 0;"> 
-          Documentation :
-        </h1>
-      </div>   
-    <div *ngIf="hasDocumentation; else missingDocumentationMessage" style="overflow-y: auto;max-height: 300px;">   
-        <ng-container *ngTemplateOutlet="onlyDocumentation"></ng-container>
-        <ng-template #onlyDocumentation>
-            <div class="markdown-body markdown-container" >
-                <div class="markdown">
-                <h1 id="{{markdownDocumentation.name}}" style="text-align: center;">
-                    {{markdownDocumentation.name | ontologyDisciplineConverter }}
-                </h1>
-                <div appMarkdownRenderer [data]="markdownDocumentation.documentation"></div>
-                </div>
-            </div>
-        </ng-template>
-    </div>
-    <ng-template #missingDocumentationMessage>
-        <div style="padding: 5px">
-            <div class="missing-documentation">
-            <div style="font-size: 14px; line-height: unset">
-                This discipline has no documentation provided yet
-            </div>
-            </div>
-        </div>
-    </ng-template>
-    <div style="text-align: center; margin: 10px 0;" > 
-        <button  
-        mat-raised-button   
+    <app-study-case-documentation
+      [documentation]="markdownDocumentation"
+    ></app-study-case-documentation>
+    <div style="text-align: center; margin: 10px 0;" >
+        <button
+        mat-raised-button
         (click)="closeDialog()"
-        >Ok</button> 
+        >Ok</button>
     </div>
 </div>

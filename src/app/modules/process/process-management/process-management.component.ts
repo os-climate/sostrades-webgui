@@ -24,7 +24,6 @@ import { EntityRightService } from 'src/app/services/entity-right/entity-right.s
 import { Observable, Subscription } from 'rxjs';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
-import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { ProcessInformationComponent } from '../process-information/process-information.component';
 
 @Component({
@@ -40,8 +39,6 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
   public dataSourceProcess = new MatTableDataSource<Process>();
   public markdownDocumentation: MardownDocumentation;
   public expandedElement: Process;
-  public refreshList: boolean;
-  public onSearchProcessSubcription: Subscription;
   public highlightedColor: boolean;
 
   @Input() dashboard = true;
@@ -59,7 +56,7 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
     if (this.elementRef.nativeElement.offsetParent !== null) {
       // Set focus and select all text in filter
       this.filterElement.nativeElement.focus();
-      this.filterElement.nativeElement.setSelectionRange(0, this.ontologyService.processFilter.length);
+      this.filterElement.nativeElement.setSelectionRange(0, this.processService.processManagementFilter.length);
       event.preventDefault();
     }
   }
@@ -73,59 +70,21 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private snackbarService: SnackbarService,
     private studyCreationService: StudyCaseCreationService,
-    public ontologyService: OntologyService,
     public processService: ProcessService) {
     this.isLoading = true;
-    this.refreshList = true;
     this.highlightedColor = false;
     this.markdownDocumentation = null;
   }
 
   ngOnInit(): void {
-    // Check if processList has been already loaded
-    if (this.ontologyService.processData === null
-    || this.ontologyService.processData === undefined
-    || this.ontologyService.processData.length === 0) {
-      this.loadProcessManagementData();
-    } else {
-      this.dataSourceProcess = new MatTableDataSource<Process>(this.ontologyService.processData);
-      this.dataSourceProcess.sortingDataAccessor = (item, property) => {
-        return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-      };
-      this.dataSourceProcess.sort = this.sort;
-      this.onFilterChange();
-      this.isLoading = false;
-    }
-
-    this.onSearchProcessSubcription = this.ontologyService.onSearchProcess.subscribe( processTarget => {
-      if (processTarget !== '') {
-        // Fill the input filter
-        this.ontologyService.processFilter = processTarget;
-
-        // Apply the filter with the processId
-        if (this.ontologyService.processData !== null
-          && this.ontologyService.processData !== undefined
-          && this.ontologyService.processData.length !== 0) {
-          this.ontologyService.processData.forEach( process => {
-            if (process.label === processTarget) {
-              processTarget = process.label;
-            }
-          });
-          this.dataSourceProcess.filter = processTarget.trim().toLowerCase();
-        }
-      }
-    });
+    this.loadProcessManagementData(false);
   }
 
   ngOnDestroy() {
-    if (this.onSearchProcessSubcription !== null && this.onSearchProcessSubcription !== undefined) {
-      this.onSearchProcessSubcription.unsubscribe();
-      this.onSearchProcessSubcription = null;
-    }
   }
 
 
-  loadProcessManagementData() {
+  loadProcessManagementData(refreshProcess: boolean) {
     this.isLoading = true;
     this.dataSourceProcess = new MatTableDataSource<Process>(null);
 
@@ -134,7 +93,7 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
     if (this.dashboard === true) {
       processCallback = this.processService.getDashboardProcesses();
     } else {
-       processCallback = this.ontologyService.getOntologyProcess(this.refreshList);
+       processCallback = this.processService.getUserProcesses(refreshProcess);
     }
 
     processCallback.subscribe(processes => {
@@ -164,21 +123,23 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
   }
 
   applyFilterAfterReloading() {
-    this.dataSourceProcess.filter = this.ontologyService.processFilter.trim().toLowerCase();
+    this.dataSourceProcess.filter = this.processService.processManagementFilter.trim().toLowerCase();
   }
 
   onFilterChange() {
     this.dataSourceProcess.filterPredicate = (data: Process, filter: string): boolean => {
-        switch (this.ontologyService.processColumnFiltered) {
-          case 'Process Name':
-            return data.label.trim().toLowerCase().includes(filter);
-          case 'Repository Name':
-            return data.processRepository.trim().toLowerCase().includes(filter);
-          default:
-            return data.label.trim().toLowerCase().includes(filter) ||
-                data.processRepository.trim().toLowerCase().includes(filter);
-          }
-      };
+      switch (this.processService.processManagementColumnFiltered) {
+        case 'Process Name':
+          return data.processName.trim().toLowerCase().includes(filter) || data.processId.trim().toLowerCase().includes(filter);
+        case 'Repository Name':
+          return data.repositoryName.trim().toLowerCase().includes(filter) || data.repositoryId.trim().toLowerCase().includes(filter);
+        default:
+          return data.processName.trim().toLowerCase().includes(filter) ||
+              data.repositoryName.trim().toLowerCase().includes(filter) ||
+              data.processId.trim().toLowerCase().includes(filter) ||
+              data.repositoryId.trim().toLowerCase().includes(filter);
+      }
+    };
     this.applyFilterAfterReloading();
   }
 
@@ -186,7 +147,7 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
 
     const updateProcessAccessDialogData = new UpdateEntityRightDialogData();
     updateProcessAccessDialogData.ressourceId = process.id;
-    updateProcessAccessDialogData.ressourceName = process.label;
+    updateProcessAccessDialogData.ressourceName = process.processName;
     updateProcessAccessDialogData.resourceType = EntityResourceRights.PROCESS;
     updateProcessAccessDialogData.getEntitiesRightsFunction = this.entityRightService.getProcessEntitiesRights(process.id);
 

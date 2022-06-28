@@ -17,8 +17,6 @@ import { Process } from 'src/app/models/process.model';
 })
 export class OntologyService extends MainHttpService {
 
-  onSearchProcess: EventEmitter<string> = new EventEmitter();
-
   private ontology: Ontology;
   public modelStatusData: OntologyModelStatus[];
   public modelStatusFilter: string;
@@ -129,9 +127,9 @@ export class OntologyService extends MainHttpService {
   }
 
   getOntologyMarkdowndocumentation(identifier: string): Observable<MardownDocumentation> {
-    return this.http.get<MardownDocumentation>(`${this.apiRoute}/${identifier}/markdown_documentation`).pipe(map(
+    return this.http.get<string>(`${this.apiRoute}/${identifier}/markdown_documentation`).pipe(map(
       response => {
-        return MardownDocumentation.CreateForDocumentation(response);
+        return new MardownDocumentation('', response);
       }));
   }
 
@@ -202,9 +200,4 @@ export class OntologyService extends MainHttpService {
       return key;
     }
   }
-
-  searchProcess(process) {
-    this.onSearchProcess.emit(process);
-}
-
 }

@@ -14,7 +14,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 })
 export class ModelsStatusDocumentationComponent implements OnInit {
 
-  public markdownDocumentation: MardownDocumentation;
+  public markdownDocumentation: MardownDocumentation[];
   public hasDocumentation: boolean;
   public loading: boolean;
   public modelsStatusDatas: string[][];
@@ -29,7 +29,7 @@ export class ModelsStatusDocumentationComponent implements OnInit {
     public ontologyService: OntologyService,
     @Inject(MAT_DIALOG_DATA) public data: OntologyModelsStatusInformationDialogData
     ) {
-    this.markdownDocumentation = null;
+    this.markdownDocumentation = [];
     this.hasDocumentation = false;
     this.loading = true;
 
@@ -38,10 +38,14 @@ export class ModelsStatusDocumentationComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.modelStatus !== null && this.data.modelStatus !== undefined) {
       if (this.data.modelStatus.id !== '') {
-        this.ontologyService.getOntologyMarkdowndocumentation(this.data.modelStatus.id).subscribe( reponse => {
-        this.markdownDocumentation = reponse;
-        this.hasDocumentation = true;
-        this.loading = false;
+        this.ontologyService.getOntologyMarkdowndocumentation(this.data.modelStatus.id).subscribe( response => {
+          if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
+            this.markdownDocumentation = [response];
+            this.hasDocumentation = true;
+          } else {
+            this.hasDocumentation = false;
+          }
+          this.loading = false;
       }, errorReceived => {
             const error = errorReceived as SoSTradesError;
             if (error.redirect) {

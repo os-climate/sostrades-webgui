@@ -47,14 +47,6 @@ export class MardownDocumentation {
 
     return result;
   }
-  public static CreateForDocumentation(jsonData: any): MardownDocumentation {
-
-    const result: MardownDocumentation = new MardownDocumentation(
-      jsonData,
-      null
-    );
-    return result;
-  }
 }
 
 export enum MardownDocumentationAttributes {
@@ -102,7 +94,7 @@ export class TreeNode implements INodeDataValueChange {
     if (this.isValidated == undefined || this.isValidated == null){
       this.isValidated =false;
     }
-  
+
     this.status = DisciplineStatus.STATUS_NONE;
     if (jsonData !== null && jsonData !== undefined) {
       this.data = CreateNodeDataDictionary(jsonData, this, false);

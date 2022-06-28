@@ -121,18 +121,10 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
     this.userService.getCurrentUser().subscribe(currentUser => {
       this.user = currentUser;
 
-       // Get list of process
-      let refreshList: boolean;
-      // Check if processList has been already loaded
-      if (this.processService.processManagemenentData === null
-        || this.processService.processManagemenentData === undefined
-        || this.processService.processManagemenentData.length === 0) {
-          refreshList = true;
-        } else {
-          refreshList = false;
-        }
-      this.processService.getUserProcesses(refreshList).subscribe( processes => {
-        this.processList = processes;
+      this.processService.getUserProcesses(false).subscribe( processes => {
+        this.processList = processes.filter(p => p.isManager || p.isContributor);
+
+        // Filter processes to only use those where the user can access
 
          // load the initial process list
         this.filteredProcesses.next(this.processList.slice());

@@ -15,7 +15,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 })
 export class ProcessInformationComponent implements OnInit {
 
-  public markdownDocumentation: MardownDocumentation;
+  public markdownDocumentation: MardownDocumentation[];
   public hasDocumentation: boolean;
   public loading: boolean;
   public processDatas: string[][];
@@ -29,7 +29,7 @@ export class ProcessInformationComponent implements OnInit {
     public ontologyService: OntologyService,
     @Inject(MAT_DIALOG_DATA) public data: OntologyProcessInformationDialogData
     ) {
-    this.markdownDocumentation = null;
+    this.markdownDocumentation = [];
     this.hasDocumentation = false;
     this.loading = true;
 
@@ -38,9 +38,13 @@ export class ProcessInformationComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.process !== null && this.data.process !== undefined) {
       if (this.data.process.identifier !== '' && this.data.process.identifier !== null && this.data.process.identifier !== undefined ) {
-        this.ontologyService.getOntologyMarkdowndocumentation(this.data.process.identifier).subscribe( reponse => {
-          this.markdownDocumentation = reponse;
-          this.hasDocumentation = true;
+        this.ontologyService.getOntologyMarkdowndocumentation(this.data.process.identifier).subscribe( response => {
+          if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
+            this.markdownDocumentation = [response];
+            this.hasDocumentation = true;
+          } else {
+            this.hasDocumentation = false;
+          }
           this.loading = false;
           }, errorReceived => {
             const error = errorReceived as SoSTradesError;
@@ -53,23 +57,6 @@ export class ProcessInformationComponent implements OnInit {
           });
         }
       }
-    // if (this.data.process !== null && this.data.process !== undefined) {
-    //  this.processService.getdocumentationProcess(this.data.process.id).subscribe( reponse => {
-    //     reponse.forEach( doc => {
-    //       this.markdownDocumentation = doc;
-    //       });
-    //     this.hasDocumentation = true;
-    //     this.loading = false;
-    //     }, errorReceived => {
-    //       const error = errorReceived as SoSTradesError;
-    //       if (error.redirect) {
-    //         this.snackbarService.showError(error.description);
-    //       } else {
-    //         this.loading = false;
-    //         this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
-    //       }
-    //     });
-    //   }
 
     // retrieve parameter str data with keys (responsive display data view)
     const parameterKeys = Object.entries(this.data.process);

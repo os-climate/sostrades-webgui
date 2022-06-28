@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModelStatusDialogData } from 'src/app/models/dialog-data.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
-import { OntologyService } from 'src/app/services/ontology/ontology.service';
+import { ProcessService } from 'src/app/services/process/process.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 @Component({
@@ -20,7 +20,7 @@ export class ModelsStatusInformationComponent implements OnInit {
   public repoList: string[];
 
   constructor(
-    public ontologyService: OntologyService,
+    public processService: ProcessService,
     public hearderService: HeaderService,
     private snackbarService: SnackbarService,
     public dialogRef: MatDialogRef<ModelsStatusInformationComponent>,
@@ -40,38 +40,8 @@ export class ModelsStatusInformationComponent implements OnInit {
 
   goToProcess(process) {
     this.dialogRef.close();
-
-    if (this.ontologyService.processData === null
-      || this.ontologyService.processData === undefined
-      || this.ontologyService.processData.length === 0) {
-          this.ontologyService.searchProcess(process);
-          this.hearderService.changeIndexTab(1);
-      } else {
-      this.ontologyService.getOntologyProcess(this.refreshList).subscribe( processes => {
-        processes.forEach( processSelected => {
-          if (processes.indexOf(processSelected) !== -1) {
-            this.ontologyService.searchProcess(process);
-            this.hearderService.changeIndexTab(1);
-          }
-        });
-      }, errorReceived => {
-        const error = errorReceived as SoSTradesError;
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.snackbarService.showError('Error loading processes : ' + error.description);
-        }
-      });
-    }
-
-    this.ontologyService.processData.forEach(processSelected => {
-        if (this.ontologyService.processData.indexOf(processSelected) !== -1) {
-          this.ontologyService.searchProcess(process);
-          this.hearderService.changeIndexTab(1);
-        } else {
-          this.snackbarService.showWarning('You not have access to this process');
-        }
-    });
+    this.processService.processManagementFilter = process;
+    this.hearderService.changeIndexTab(1);
   }
 
 }

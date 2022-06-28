@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Location } from '@angular/common';
@@ -10,7 +10,6 @@ import { DataHttpService } from '../http/data-http/data-http.service';
   providedIn: 'root'
 })
 export class ProcessService extends DataHttpService {
-
 
   public processManagementFilter: string;
   public processManagementColumnFiltered: string;
@@ -32,7 +31,14 @@ export class ProcessService extends DataHttpService {
   }
 
   getUserProcesses(refreshList: boolean): Observable<Process[]> {
-    if (refreshList) {
+
+    let refreshStatus = refreshList;
+
+    if ((refreshStatus === false) && (this.processManagemenentData.length === 0)){
+      refreshStatus = true;
+    }
+
+    if (refreshStatus) {
         return this.http.get<Process[]>(`${this.apiRoute}/process`).pipe(map(
           response => {
             const processList: Process[] = [];
@@ -56,5 +62,4 @@ export class ProcessService extends DataHttpService {
         return processList;
       }));
   }
-
 }
