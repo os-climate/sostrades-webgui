@@ -18,6 +18,7 @@ import { DataManagementDiscipline } from 'src/app/models/data-management-discipl
 import { SpreadsheetComponent } from '../../spreadsheet/spreadsheet.component';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { ConnectorDataComponent } from '../../connector-data/connector-data.component';
+import { OntologyParameterUsage } from 'src/app/models/ontology-parameter-usage.model';
 
 @Component({
   selector: 'app-ontology-informations',
@@ -77,12 +78,28 @@ export class OntologyInformationsComponent implements OnInit {
     });
 
     // Retrieve ontology information
-    if (this.ontologyService.getParameter(this.data.variableName) !== null) {
-      this.ontologyInstance = this.ontologyService.getParameter(this.data.variableName);
+    if (this.ontologyService.getParameter(this.data.nodeData.variableKey) !== null) {
+      this.ontologyInstance = this.ontologyService.getParameter(this.data.nodeData.variableKey);
       this.infoList = Object.entries(this.ontologyInstance)
-        .filter(entry => typeof entry[1] === 'string').map(entry => [OntologyParameter.getKeyLabel(entry[0]), entry[1]]);
+        .filter(entry =>(typeof entry[1] === 'string' || typeof entry[1] === 'boolean') && entry[1] !== undefined && entry[1] !== ' ' && entry[1] !== '').map(entry => [OntologyParameter.getKeyLabel(entry[0]), entry[1]]);
+      if (this.ontologyInstance.parameter_usage_details !== null && this.ontologyInstance.parameter_usage_details != undefined &&
+        this.ontologyInstance.parameter_usage_details.length > 0){
+        let list_usages = Object.entries(this.ontologyInstance.parameter_usage_details[0])
+        .filter(entry => entry[1] !== undefined && entry[1] !== ' ' && entry[1] !== '' && entry[0] != "datatype" && entry[0] != "unit"  && entry[0] != "range")
+        .map(entry => [OntologyParameterUsage.getKeyLabel(entry[0]), this.getStringOntologyValue(entry[1])]);
+        this.infoList = this.infoList.concat(list_usages);
+
+        // add specific behavior for range
+        let range = this.ontologyInstance.parameter_usage_details[0].range;
+        if (range !== undefined && range !== ' ' && range !== ''){
+          this.infoList = this.infoList.concat([["range",`[${range}]`]]);
+        }
+        
+        
+      }
+      
     }
-    this.parameterName = this.data.displayName;
+    this.parameterName = this.data.nodeData.displayName;
     
     // Retrieve variable changes
     this.changesList = this.socketService.getParameterChangesList(this.data.name);
@@ -117,6 +134,15 @@ export class OntologyInformationsComponent implements OnInit {
 
     this.data.nodeData.parent.fullNamespace;
     this.isLoading = false;
+  }
+
+  getStringOntologyValue(entry:any){
+    let stringValue = entry;
+    if (typeof entry !== "string" && typeof entry !== "boolean"){
+      stringValue = `[${entry}]`;
+      
+    }
+    return stringValue;
   }
 
   goToEditableWidget() {
@@ -261,12 +287,12 @@ export class OntologyInformationsComponent implements OnInit {
 
   onShowCsvCurrentValue() {
     let name = '';
-
-    if (this.ontologyService.getParameter(this.data.nodeData.variableName) !== null
-      && this.ontologyService.getParameter(this.data.nodeData.variableName) !== undefined) {
-      if (this.ontologyService.getParameter(this.data.nodeData.variableName).label !== null
-        && this.ontologyService.getParameter(this.data.nodeData.variableName).label !== undefined) {
-        name = this.ontologyService.getParameter(this.data.nodeData.variableName).label;
+    let ontologyParameter = this.ontologyService.getParameter(this.data.nodeData.variableKey);
+    if (ontologyParameter !== null
+      && ontologyParameter !== undefined) {
+      if (ontologyParameter.label !== null
+        && ontologyParameter.label !== undefined) {
+        name = ontologyParameter.label;
       }
     }
 

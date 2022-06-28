@@ -226,11 +226,12 @@ export class FileSpreadsheetComponent implements OnInit {
   openSpreadsheetEditor(readOnly: boolean) {
     let name = '';
     // Handle data naming
-    if (this.ontologyService.getParameter(this.nodeData.variableName) !== null
-      && this.ontologyService.getParameter(this.nodeData.variableName) !== undefined) {
-      if (this.ontologyService.getParameter(this.nodeData.variableName).label !== null
-        && this.ontologyService.getParameter(this.nodeData.variableName).label !== undefined) {
-        name = this.ontologyService.getParameter(this.nodeData.variableName).label;
+    let ontologyParameter = this.ontologyService.getParameter(this.nodeData.variableKey);
+    if (ontologyParameter !== null
+      && ontologyParameter!== undefined) {
+      if (ontologyParameter.label !== null
+        && ontologyParameter.label !== undefined) {
+        name = ontologyParameter.label;
       }
     }
 

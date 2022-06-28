@@ -60,7 +60,7 @@ export class OntologyService extends MainHttpService {
   }
 
   loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
-    return this.http.post<{}>(this.apiRoute, ontologyRequest).pipe(map(
+    return this.http.post<{}>(`${this.apiRoute}/v1`, ontologyRequest).pipe(map(
       response => {
         this.ontology.studyCase.parameters = {};
         this.ontology.studyCase.disciplines = {};
@@ -68,7 +68,9 @@ export class OntologyService extends MainHttpService {
         Object.keys(response).forEach(ontologyType => {
           if (ontologyType === OntologyType.PARAMETERS) {
             Object.keys(response[ontologyType]).forEach(variable => {
-              this.ontology.studyCase.parameters[variable] = OntologyParameter.Create(response[ontologyType][variable]);
+              let parameter = OntologyParameter.Create(response[ontologyType][variable]);
+              parameter.addParameterUsage(response[ontologyType][variable]);
+              this.ontology.studyCase.parameters[variable] = parameter;
             });
           } else if (ontologyType === OntologyType.DISCIPLINES) {
             Object.keys(response[ontologyType]).forEach(variable => {

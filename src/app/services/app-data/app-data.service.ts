@@ -169,7 +169,7 @@ export class AppDataService extends DataHttpService {
     const ontologyRequest: PostOntology = {
       ontology_request: {
         disciplines: [],
-        parameters: []
+        parameter_usages: []
       }
     };
 
