@@ -40,6 +40,7 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
   public markdownDocumentation: MardownDocumentation;
   public expandedElement: Process;
   public highlightedColor: boolean;
+  public processCount: number;
 
   @Input() dashboard = true;
 
@@ -74,6 +75,7 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.highlightedColor = false;
     this.markdownDocumentation = null;
+    this.processCount = 0;
   }
 
   ngOnInit(): void {
@@ -107,6 +109,7 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
 
     }, errorReceived => {
       const error = errorReceived as SoSTradesError;
+      this.processCount = 0;
       if (error.redirect) {
         this.snackbarService.showError(error.description);
       } else {
@@ -120,10 +123,14 @@ export class ProcessManagementComponent implements OnInit, OnDestroy {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceProcess.filter = filterValue.trim().toLowerCase();
+    this.processCount = this.dataSourceProcess.filteredData.length;
+
   }
 
   applyFilterAfterReloading() {
     this.dataSourceProcess.filter = this.processService.processManagementFilter.trim().toLowerCase();
+    this.processCount = this.dataSourceProcess.filteredData.length;
+
   }
 
   onFilterChange() {

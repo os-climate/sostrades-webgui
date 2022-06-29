@@ -68,7 +68,7 @@ export class OntologyService extends MainHttpService {
         Object.keys(response).forEach(ontologyType => {
           if (ontologyType === OntologyType.PARAMETERS) {
             Object.keys(response[ontologyType]).forEach(variable => {
-              let parameter = OntologyParameter.Create(response[ontologyType][variable]);
+              const parameter = OntologyParameter.Create(response[ontologyType][variable]);
               parameter.addParameterUsage(response[ontologyType][variable]);
               this.ontology.studyCase.parameters[variable] = parameter;
             });

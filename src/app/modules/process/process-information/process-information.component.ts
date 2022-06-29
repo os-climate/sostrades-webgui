@@ -55,28 +55,30 @@ export class ProcessInformationComponent implements OnInit {
               this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
             }
           });
-        }
+      } else {
+          this.loading = false;
       }
 
-    // retrieve parameter str data with keys (responsive display data view)
-    const parameterKeys = Object.entries(this.data.process);
+      // retrieve parameter str data with keys (responsive display data view)
+      const parameterKeys = Object.entries(this.data.process);
 
-    const stringData = parameterKeys
-    .filter(entry => (typeof entry[1] === 'string' || typeof entry[1] === 'number')
-      && entry[1] !== ' '
-      && entry[1] !== undefined
-      && entry[1] !== null
-      && entry[0] !== 'id'
-      && entry[0] !== 'processId'
-      && entry[0] !== 'processName'
-      && entry[0] !== 'processDescription'
-      && entry[0] !== 'repositoryId'
-      && entry[0] !== 'repositoryName'
-      && entry[0] !== 'repositoryDescription')
-    .map(entry => [Process.getKeyLabel(entry[0]), entry[1]]);
+      const stringData = parameterKeys
+      .filter(entry => (typeof entry[1] === 'string' || typeof entry[1] === 'number')
+        && entry[1] !== ' '
+        && entry[1] !== undefined
+        && entry[1] !== null
+        && entry[0] !== 'id'
+        && entry[0] !== 'processId'
+        && entry[0] !== 'processName'
+        && entry[0] !== 'processDescription'
+        && entry[0] !== 'repositoryId'
+        && entry[0] !== 'repositoryName'
+        && entry[0] !== 'repositoryDescription')
+      .map(entry => [Process.getKeyLabel(entry[0]), entry[1]]);
 
-    this.processDatas = stringData;
+      this.processDatas = stringData;
     }
+  }
 
   closeDialog() {
     this.data.cancel = true;

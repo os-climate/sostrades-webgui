@@ -34,7 +34,7 @@ export class ProcessService extends DataHttpService {
 
     let refreshStatus = refreshList;
 
-    if ((refreshStatus === false) && (this.processManagemenentData.length === 0)){
+    if ((refreshStatus === false) && (this.processManagemenentData.length === 0)) {
       refreshStatus = true;
     }
 

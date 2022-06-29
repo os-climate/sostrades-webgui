@@ -37,7 +37,7 @@ export class ModelsStatusDocumentationComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data.modelStatus !== null && this.data.modelStatus !== undefined) {
-      if (this.data.modelStatus.id !== '') {
+      if (this.data.modelStatus.id !== '' || this.data.modelStatus !== null || this.data.modelStatus !== undefined) {
         this.ontologyService.getOntologyMarkdowndocumentation(this.data.modelStatus.id).subscribe( response => {
           if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
             this.markdownDocumentation = [response];
@@ -55,7 +55,9 @@ export class ModelsStatusDocumentationComponent implements OnInit {
               this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
             }
           });
-        }
+        } else {
+          this.loading = false;
+      }
       const modelsStatusKeys = Object.entries(this.data.modelStatus);
 
       const stringData = modelsStatusKeys
