@@ -119,7 +119,7 @@
             *matCellDef="let element"
             style="word-wrap: break-word;"
           >
-            [{{ element.range }}]
+          <span *ngIf="element.range != '' && element.range != ' '">[{{ element.range }}]</span>
           </td>
         </ng-container>
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Ontology, OntologyType, PostOntology } from 'src/app/models/ontology.model';
 import { Observable, of } from 'rxjs';
@@ -8,6 +8,8 @@ import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { OntologyDiscipline } from 'src/app/models/ontology-discipline.model';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
 import { MainHttpService } from '../http/main-http/main-http.service';
+import { MardownDocumentation } from 'src/app/models/tree-node.model';
+import { Process } from 'src/app/models/process.model';
 
 
 @Injectable({
@@ -23,15 +25,22 @@ export class OntologyService extends MainHttpService {
   public parametersData: OntologyParameter[];
   public parametersFilter: string;
   public parametersColumnFiltered: string;
+  public processData: Process[];
+  public processFilter: string;
+  public processColumnFiltered: string;
+
+
 
   constructor(
     private http: HttpClient, private location: Location) {
     super(location, 'ontology');
     this.ontology = new Ontology();
     this.modelStatusData = [];
+    this.processData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
-
+    this.processFilter = '';
+    this.processColumnFiltered = 'All columns';
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';
@@ -42,9 +51,11 @@ export class OntologyService extends MainHttpService {
     this.modelStatusData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
-
+    this.processData = [];
+    this.processFilter = '';
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
+    this.processColumnFiltered = 'All columns';
     this.parametersFilter = '';
   }
 
@@ -57,7 +68,7 @@ export class OntologyService extends MainHttpService {
         Object.keys(response).forEach(ontologyType => {
           if (ontologyType === OntologyType.PARAMETERS) {
             Object.keys(response[ontologyType]).forEach(variable => {
-              let parameter = OntologyParameter.Create(response[ontologyType][variable]);
+              const parameter = OntologyParameter.Create(response[ontologyType][variable]);
               parameter.addParameterUsage(response[ontologyType][variable]);
               this.ontology.studyCase.parameters[variable] = parameter;
             });
@@ -101,6 +112,29 @@ export class OntologyService extends MainHttpService {
     }
   }
 
+  getOntologyProcess(refreshList: boolean): Observable<Process[]> {
+    if (refreshList) {
+      return this.http.get<Process[]>(`${this.apiRoute}/full_process_list`).pipe(map(
+        response => {
+          const processList: Process[] = [];
+          response.forEach(pro => {
+            processList.push(Process.Create(pro));
+            this.processData = processList;
+          });
+          return processList;
+        }));
+  } else {
+    return of(this.processData);
+  }
+  }
+
+  getOntologyMarkdowndocumentation(identifier: string): Observable<MardownDocumentation> {
+    return this.http.get<string>(`${this.apiRoute}/${identifier}/markdown_documentation`).pipe(map(
+      response => {
+        return new MardownDocumentation('', response);
+      }));
+  }
+
   public resetOntology() {
     this.ontology.studyCase.parameters = {};
     this.ontology.studyCase.disciplines = {};
@@ -114,10 +148,10 @@ export class OntologyService extends MainHttpService {
       return null;
     }
   }
-  
-  public getParametersLabelList():  Observable<OntologyParameter[]> {
+
+  public getParametersLabelList(): Observable<OntologyParameter[]> {
       const parametersList: OntologyParameter[] = [];
-  
+
       return this.http.get<OntologyParameter[]>(`${this.apiRoute}/full_parameter_label_list`).pipe(map(
         params => {
           params.forEach(param => {
@@ -126,10 +160,10 @@ export class OntologyService extends MainHttpService {
           });
           return parametersList;
         }));
-  
+
   }
 
-  public getParametersList():  Observable<OntologyParameter[]> {
+  public getParametersList(): Observable<OntologyParameter[]> {
     const parametersList: OntologyParameter[] = [];
 
     return this.http.get<OntologyParameter[]>(`${this.apiRoute}/full_parameter_list`).pipe(map(
@@ -168,5 +202,4 @@ export class OntologyService extends MainHttpService {
       return key;
     }
   }
-
 }
