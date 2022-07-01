@@ -66,7 +66,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.data.nodeData.type.includes('list') && (this.data.nodeData.subtype_descriptor === undefined || this.data.nodeData.subtype_descriptor === null)) {
+    if (this.data.nodeData.type.includes('list') ) {
       const listValue = this.data.nodeData.value;
       if (listValue !== undefined && listValue !== null && listValue.length > 0) {
         let valueList = [];
