@@ -234,11 +234,12 @@ export class StudyCaseDataService extends DataHttpService {
     // search an inpupt into all data names
     Object.values(this.loadedStudy.treeview.rootNodeDataDict).forEach(nodeData => {
       let label = '';
-      if (this.ontologyService.getParameter(nodeData.variableName)) {
-        label = this.ontologyService.getParameter(nodeData.variableName).label;
+      if (this.ontologyService.getParameter(nodeData.variableKey)) {
+        label = this.ontologyService.getParameter(nodeData.variableKey).label;
       }
+      
       if (nodeData.variableName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
-      label.toLowerCase().includes(inputToSearch.toLowerCase())) {
+      (label !== undefined && label.toLowerCase().includes(inputToSearch.toLowerCase()))) {
         if ((nodeData.ioType === IoType.OUT || showEditable || (!showEditable && nodeData.editable)) &&
         (nodeData.userLevel <= userLevel)) {
           this.dataSearchResults.push(nodeData);
@@ -266,17 +267,23 @@ export class StudyCaseDataService extends DataHttpService {
       Object.entries(treeNodeValue.data).forEach(nodeData => {
         const nodeDataValue = nodeData[1];
         const nodeDataKey = nodeData[0];
-        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName);
+        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
         if ( ontologyParameter !== null) {
-          loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          let displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          if (displayName !== ''){
+            loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = displayName;
+          }
         }
       });
       Object.entries(treeNodeValue.dataDisc).forEach(nodeData => {
         const nodeDataValue = nodeData[1];
         const nodeDataKey = nodeData[0];
-        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableName);
+        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
         if ( ontologyParameter !== null) {
-          loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          let displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          if (displayName !== ''){
+            loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = displayName;
+          }
         }
       });
     });
@@ -288,7 +295,7 @@ export class StudyCaseDataService extends DataHttpService {
 
       result = ontology.label;
 
-      if (ontology.unit !== null && ontology.unit !== undefined && ontology.unit.length > 0) {
+      if (ontology.unit !== null && ontology.unit !== undefined && ontology.unit.trim().length > 0) {
         result = `${result} [${ontology.unit}]`;
       } else {
         result = `${result} [-]`;

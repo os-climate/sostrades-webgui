@@ -28,7 +28,7 @@ export class OntologyStudy {
 }
 
 export enum OntologyType {
-  PARAMETERS = 'parameters',
+  PARAMETERS = 'parameter_usages',
   DISCIPLINES = 'disciplines',
   PROCESSES = 'processes',
 }
@@ -40,6 +40,6 @@ export enum OntologyType {
 export interface PostOntology {
   ontology_request: {
     disciplines: string[];
-    parameters: string[];
+    parameter_usages: string[];
   };
 }

@@ -78,6 +78,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
       this.data.process.referenceList.forEach(ref => {
         this.referenceList.push(ref);
       });
+      this.disabledReference = true;
       this.studyCaseDataService.getAuthorizedStudiesForProcess(
         this.data.process.processId, this.data.process.repositoryId).subscribe(studies => {
         studies.forEach(study => {
@@ -120,9 +121,10 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
     this.userService.getCurrentUser().subscribe(currentUser => {
       this.user = currentUser;
 
-       // Get list of process
-      this.processService.getUserProcesses().subscribe( processes => {
-        this.processList = processes;
+      this.processService.getUserProcesses(false).subscribe( processes => {
+        this.processList = processes.filter(p => p.isManager || p.isContributor);
+
+        // Filter processes to only use those where the user can access
 
          // load the initial process list
         this.filteredProcesses.next(this.processList.slice());

@@ -8,6 +8,7 @@ export enum Routing {
     STUDY_WORKSPACE = 'study-workspace',
     STUDY_ID = 'study/:id',
     ONTOLOGY = 'ontology',
+    ONTOLOGY_PARAMETERS = 'ontology-parameters',
     MODELS_STATUS = 'models-status',
     MODELS_LINKS = 'models-links',
     GROUP_MANAGEMENT = 'group-management',

@@ -1,8 +1,11 @@
 <mat-tab-group class="container-workspace"  [(selectedIndex)]="index" (selectedTabChange)="onSelectedTabChange($event)">
-  <mat-tab label="Models status">
-    <app-models-status-table></app-models-status-table>
+  <mat-tab label="{{modelsStatusTitle}}">
+    <app-models-status-table *ngIf="showModelStatus"></app-models-status-table>
   </mat-tab>
-  <mat-tab label="Processes">
-    <app-process-management [dashboard]="false" ></app-process-management>
+  <mat-tab label="{{processesTitle}}">
+    <app-process-management [dashboard]="false"  *ngIf="showProcessManagement"></app-process-management>
+  </mat-tab>
+  <mat-tab label="{{parametersTitle}}">
+    <app-ontology-parameters [dashboard]="false"  *ngIf="showOntologyparameters"></app-ontology-parameters>
   </mat-tab>
 </mat-tab-group>

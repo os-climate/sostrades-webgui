@@ -1,0 +1,164 @@
+<div class="flex-container">
+  <h2 mat-dialog-title *ngIf="isInDialog">
+    <h2>
+      <b>{{ data.parameter.label }}</b>
+    </h2>
+  </h2>
+  <div class="informations">
+    <table class="table table-sm table-borderless" style="width: 100%; background-color: white">
+      <ng-container *ngFor="let attr of parameterDatas">
+        <tr style="border-bottom: 1px solid lightgray">
+          <td
+            style="
+              width: 300px;
+              font-weight: 500;
+              font-family: Roboto, 'Helvetica Neue', sans-serif;
+              vertical-align: top;
+            "
+          >
+            {{ attr[0] }} :
+          </td>
+          <td
+            style="
+              width: calc(100% - 300px);
+              font-family: Roboto, 'Helvetica Neue', sans-serif;
+            "
+          >
+            {{ attr[1] }}
+            <span 
+            *ngIf="attr[1] === '' || attr[1] === ' ' || attr[1] === null || attr[1] === undefined" 
+            style="font-size: 12px;"
+            > 
+            Not Avalaible
+            </span>
+          </td>
+        </tr>
+      </ng-container>
+    </table>
+
+    <div class="flex-container-data" >
+      <span style="
+      width: 200px;
+      font-weight: 500;
+      font-family: Roboto, 'Helvetica Neue', sans-serif;
+      vertical-align: top;
+    ">Parameter used in {{ data.parameter.nb_disciplines_using_parameter }} Model(s) : </span>
+    </div>
+    <table mat-table [dataSource]="dataSourceparameterUsages" matSort
+    class="table table-sm table-borderless">
+        <!-- IO Column -->
+        <ng-container  matColumnDef='io_type'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>IO Type</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="word-wrap: break-word;"
+          >
+            {{ element.io_type }}
+          </td>
+        </ng-container>
+
+        <!-- Discipline Column -->
+        <ng-container  matColumnDef='model_label'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Model</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            [matTooltip]="element.model_id"
+            matTooltipClass="custom-tooltip-class"
+            style="word-wrap: break-word;"
+          >
+            {{ element.model_label }}
+          </td>
+        </ng-container>
+
+        <!-- Unit Column -->
+        <ng-container  matColumnDef='unit'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Unit</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="word-wrap: break-word;"
+          >
+            {{ element.unit }}
+          </td>
+        </ng-container>
+
+        <!-- Datatype Column -->
+        <ng-container  matColumnDef='datatype'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Datatype</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="word-wrap: break-word;"
+          >
+            {{ element.datatype }}
+          </td>
+        </ng-container>
+        
+        <!-- Numerical Column -->
+        <ng-container  matColumnDef='numerical'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Numerical</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            [matTooltip]="element.numerical"
+            matTooltipClass="custom-tooltip-class"
+            style="word-wrap: break-word;"
+          >
+          <i class="fa-solid fa-check fa-fw mat-icon-success"*ngIf="element.numerical == 'True'"></i>
+          <i class="fa-solid fa-xmark fa-fw mat-icon-danger"*ngIf="element.numerical == 'False'"></i>
+          </td>
+        </ng-container>
+
+        <!-- Range Column -->
+        <ng-container  matColumnDef='range'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Range</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="word-wrap: break-word;"
+          >
+          <span *ngIf="element.range != '' && element.range != ' '">[{{ element.range }}]</span>
+          </td>
+        </ng-container>
+
+        <!-- Optional Column -->
+        <ng-container  matColumnDef='optional'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Optional</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            [matTooltip]="element.optional"
+            matTooltipClass="custom-tooltip-class"
+            style="word-wrap: break-word;"
+          >
+          <i class="fa-solid fa-check fa-fw mat-icon-success"*ngIf="element.optional == 'True'"></i>
+          <i class="fa-solid fa-xmark fa-fw mat-icon-danger"*ngIf="element.optional == 'False'"></i>
+          </td>
+        </ng-container>
+
+        <!-- Possible values Column -->
+        <ng-container  matColumnDef='possible_values'>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Possible Values</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="word-wrap: break-word;"
+          >
+            {{ element.possible_values }}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
+        <tr
+          mat-row
+          class="table-row"
+          *matRowDef="let row; columns: visibleColumns"
+        ></tr>
+    </table> 
+    
+  </div>
+  <mat-dialog-actions  style="margin: 0" *ngIf="isInDialog">
+    <button mat-button (click)="okClick()">Ok</button>
+  </mat-dialog-actions>
+</div>
