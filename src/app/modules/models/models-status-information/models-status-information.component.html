@@ -32,7 +32,7 @@
             >
               <ng-container *ngFor="let process of data.processesDict[repo]">
                 <tr>
-                  <td style="width: 100%; padding-left: 5px">{{ process }}</td>
+                  <td (click)="goToProcess(process)" style="width: 100%; padding-left: 5px; cursor: pointer; text-decoration: underline;">{{ process }}</td>
                 </tr>
               </ng-container>
             </table>

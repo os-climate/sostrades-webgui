@@ -11,35 +11,25 @@ import { HeaderService } from 'src/app/services/hearder/header.service';
 })
 export class StudyCaseManagementContainerComponent implements OnInit {
 
-  public index : number
+  public index: number;
 
   constructor(
     private router: Router,
-    private location : Location,
-    private headerService : HeaderService
-  ) { 
+    private location: Location,
+    private headerService: HeaderService
+  ) {
     this.index = 0;
   }
 
-  ngOnInit(): void { 
-    
-    this.headerService.onChangeIndexTab.subscribe(result=>{
-      this.index = result
-    })
-    if(this.router.url.includes(Routing.STUDY_CASE)){
+  ngOnInit(): void {
+    this.headerService.onChangeIndexTab.subscribe(result => {
+      this.index = result;
+    });
+    if (this.router.url.includes(Routing.REFERENCE_MANAGEMENT)) {
+      this.index = 1;
+    } else {
       this.index = 0;
     }
-    else if(this.router.url.includes(Routing.FROM_PROCESS)){
-      this.index = 1;
-    }
-    else if(this.router.url.includes(Routing.REFERENCE_MANAGEMENT)){
-      this.index = 2;
-    }
-    else{
-      this.index = 0
-    }
-
-   
   }
 
   selectedTabChanged(event) {
@@ -50,23 +40,14 @@ export class StudyCaseManagementContainerComponent implements OnInit {
         fragment = Routing.STUDY_CASE;
         break;
       case 1:
-        fragment = Routing.FROM_PROCESS;
-        break;
-      case 2:
         fragment = Routing.REFERENCE_MANAGEMENT;
-        break;
-      case 3:
-        fragment = Routing.STUDY_MANAGEMENT;
         break;
       default:
         fragment = Routing.STUDY_CASE;
         break;
     }
-    
     this.index = event.index;
     this.location.go(
-        this.router.createUrlTree([Routing.STUDY_MANAGEMENT]).toString() + "/" + fragment
-        )
-  
+      this.router.createUrlTree([Routing.STUDY_MANAGEMENT]).toString() + '/' + fragment);
   }
 }

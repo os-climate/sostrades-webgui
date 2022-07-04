@@ -158,9 +158,17 @@ export class UserService extends DataHttpService {
     return isStudyAuth;
   }
 
-  getFullUsername(): string {
+  getFullUsernameWithNameInCapitalize(): string {
     if (this.currentUserExist()) {
       return `${this.currentUser.user.firstname} ${this.currentUser.user.lastname.charAt(0).toUpperCase() + this.currentUser.user.lastname.slice(1).toLowerCase()}`;
+    } else {
+      return '';
+    }
+  }
+
+  getFullUsername(): string {
+    if (this.currentUserExist()) {
+      return `${this.currentUser.user.firstname} ${this.currentUser.user.lastname}`;
     } else {
       return '';
     }

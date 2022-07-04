@@ -8,6 +8,11 @@
       [disabled]="isLoading"
       (click)="loadModelStatusData()"
     >
+      <mat-icon 
+      class="refresh-icon"
+      >
+        refresh
+      </mat-icon>
       Refresh list
     </button>
     <mat-label class="number-model">
@@ -75,127 +80,6 @@
           </td>
         </ng-container>
 
-        <!-- Type Column -->
-        <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.type }}
-          </td>
-        </ng-container>
-
-        <!-- Source Column -->
-        <ng-container matColumnDef="source">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.source }}
-          </td>
-        </ng-container>
-
-        <!-- Delivered Column -->
-        <!-- <ng-container matColumnDef="delivered">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Delivered</th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button disabled="true">
-              <i
-                class="fa-solid fa-check fa-fw mat-icon-success"
-                *ngIf="element.delivered === 'YES'"
-              >
-              </i>
-              <i
-                class="fa-solid fa-xmark fa-fw mat-icon-danger"
-                *ngIf="element.delivered === 'NO'"
-              >
-              </i>
-            </button>
-          </td>
-        </ng-container> -->
-
-        <!-- Implemented Column -->
-        <!-- <ng-container matColumnDef="implemented">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Implemented</th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button disabled="true">
-              <i
-                class="fa-solid fa-check fa-fw mat-icon-success"
-                *ngIf="element.implemented === 'YES'"
-              >
-              </i>
-              <i
-                class="fa-solid fa-xmark fa-fw mat-icon-danger"
-                *ngIf="element.implemented === 'NO'"
-              >
-              </i>
-            </button>
-          </td>
-        </ng-container> -->
-
-        <!-- LastModificationDate Column -->
-        <ng-container matColumnDef="lastModificationDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Last Modification Date
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.lastModificationDate }}
-          </td>
-        </ng-container>
-
-        <!-- Version Column -->
-        <ng-container matColumnDef="version">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Version
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.version }}
-          </td>
-        </ng-container>
-
-        <!-- Category Column -->
-        <ng-container matColumnDef="category">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Category
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.category }}
-          </td>
-        </ng-container>
-
-        <!-- Icon Column -->
-        <!-- <ng-container matColumnDef="icon">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Icon
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.icon }}
-          </td>
-        </ng-container> -->
-
-        <!-- Validated By Column -->
-        <ng-container matColumnDef="validatedBy">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Validated By</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.validatedBy }}
-          </td>
-        </ng-container>
-
-        <!-- Validated Column -->
-        <ng-container matColumnDef="validated">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Validated</th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button disabled="true">
-              <i
-                class="fa-solid fa-check fa-fw mat-icon-success"
-                *ngIf="element.validated === 'YES'"
-              >
-              </i>
-              <i
-                class="fa-solid fa-xmark fa-fw mat-icon-danger"
-                *ngIf="element.validated === 'NO'"
-              >
-              </i>
-            </button>
-          </td>
-        </ng-container>
-
         <!-- Code Repository Column -->
         <ng-container matColumnDef="codeRepository">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Code Repository</th>
@@ -204,29 +88,38 @@
           </td>
         </ng-container>
 
-        <!-- Process Using Model Column -->
         <ng-container matColumnDef="processUsingModel">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Process Using Model
           </th>
-          <td mat-cell *matCellDef="let element">
-            <div
-              style="display: flex; flex-direction: column"
-              *ngIf="element.processesUsingModel > 0"
-            >
-              <button
-                mat-mini-fab
-                matTooltip="Show processes list"
-                class="button-process"
-                color="accent"
-                (click)="showDetails(element)"
-              >
-                {{ element.processesUsingModel }}
-              </button>
-            </div>
-          </td>
+         
+            <td mat-cell *matCellDef="let element">
+                  {{ element.processesUsingModel }}  
+                  <span
+                  matTooltip="Show processes list"
+                  (click)="showDetails(element)"
+                  style="text-decoration: underline; cursor: pointer;"
+                >Process Using Model
+                </span>
+            </td>
         </ng-container>
 
+        <!-- Action Column -->
+        <ng-container matColumnDef="information">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              mat-icon-button
+              color="accent"
+              [matTooltip]="element.name + ' information'"
+              (click)="displayDocumentation(element)"
+            >
+            <i class="fa-solid fa-book"></i>
+            </button>
+          </td>
+        </ng-container>
+    
+         
+     
         <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
         <tr
           mat-row

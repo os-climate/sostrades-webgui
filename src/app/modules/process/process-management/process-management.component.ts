@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, Input, OnDestroy } from '@angular/core';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,34 +11,36 @@ import { StudyCaseModificationDialogComponent } from '../../study-case/study-cas
 import { Process } from 'src/app/models/process.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { PostStudy } from 'src/app/models/study.model';
 import {
   ValidationDialogData,
   StudyCaseModificationDialogData,
   UpdateEntityRightDialogData,
-  ProcessCreateStudyDialogData
+  OntologyProcessInformationDialogData,
 } from 'src/app/models/dialog-data.model';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { UpdateEntityRightComponent } from '../../entity-right/update-entity-right/update-entity-right.component';
 import { EntityResourceRights } from 'src/app/models/entity-right.model';
 import { EntityRightService } from 'src/app/services/entity-right/entity-right.service';
-import { ProcessStudyCaseCreationComponent } from '../process-study-case-creation/process-study-case-creation.component';
-import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
-import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
-import { Observable } from 'rxjs';
-
+import { Observable, Subscription } from 'rxjs';
+import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
+import { MardownDocumentation } from 'src/app/models/tree-node.model';
+import { ProcessInformationComponent } from '../process-information/process-information.component';
 
 @Component({
   selector: 'app-process-management',
   templateUrl: './process-management.component.html',
   styleUrls: ['./process-management.component.scss']
 })
-export class ProcessManagementComponent implements OnInit {
+export class ProcessManagementComponent implements OnInit, OnDestroy {
 
   public isLoading: boolean;
-  public displayedColumns = ['processName', 'repositoryName', 'action', 'access'];
+  public displayedColumns = ['processName', 'repositoryName', 'action', 'access', 'information'];
   public colummnsFilter = ['All columns', 'Process Name', 'Repository Name'];
   public dataSourceProcess = new MatTableDataSource<Process>();
+  public markdownDocumentation: MardownDocumentation;
+  public expandedElement: Process;
+  public highlightedColor: boolean;
+  public processCount: number;
 
   @Input() dashboard = true;
 
@@ -47,6 +48,7 @@ export class ProcessManagementComponent implements OnInit {
   set sort(v: MatSort) {
     this.dataSourceProcess.sort = v;
   }
+
 
   @ViewChild('filter', { static: true }) private filterElement: ElementRef;
 
@@ -63,23 +65,28 @@ export class ProcessManagementComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private elementRef: ElementRef,
-    private loadingDialogService: LoadingDialogService,
-    private appDataService: AppDataService,
     private entityRightService: EntityRightService,
-    private StudyCaseDataService: StudyCaseDataService,
-    private StudyCaseMainService: StudyCaseMainService,
+    private studyCaseDataService: StudyCaseDataService,
     private socketService: SocketService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private snackbarService: SnackbarService,
+    private studyCreationService: StudyCaseCreationService,
     public processService: ProcessService) {
     this.isLoading = true;
+    this.highlightedColor = false;
+    this.markdownDocumentation = null;
+    this.processCount = 0;
   }
 
   ngOnInit(): void {
-    this.loadProcessManagementData();
+    this.loadProcessManagementData(false);
   }
 
-  loadProcessManagementData() {
+  ngOnDestroy() {
+  }
+
+
+  loadProcessManagementData(refreshProcess: boolean) {
     this.isLoading = true;
     this.dataSourceProcess = new MatTableDataSource<Process>(null);
 
@@ -88,7 +95,7 @@ export class ProcessManagementComponent implements OnInit {
     if (this.dashboard === true) {
       processCallback = this.processService.getDashboardProcesses();
     } else {
-      processCallback = this.processService.getUserProcesses();
+       processCallback = this.processService.getUserProcesses(refreshProcess);
     }
 
     processCallback.subscribe(processes => {
@@ -102,6 +109,7 @@ export class ProcessManagementComponent implements OnInit {
 
     }, errorReceived => {
       const error = errorReceived as SoSTradesError;
+      this.processCount = 0;
       if (error.redirect) {
         this.snackbarService.showError(error.description);
       } else {
@@ -115,15 +123,18 @@ export class ProcessManagementComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceProcess.filter = filterValue.trim().toLowerCase();
+    this.processCount = this.dataSourceProcess.filteredData.length;
+
   }
 
   applyFilterAfterReloading() {
     this.dataSourceProcess.filter = this.processService.processManagementFilter.trim().toLowerCase();
+    this.processCount = this.dataSourceProcess.filteredData.length;
+
   }
 
   onFilterChange() {
     this.dataSourceProcess.filterPredicate = (data: Process, filter: string): boolean => {
-
       switch (this.processService.processManagementColumnFiltered) {
         case 'Process Name':
           return data.processName.trim().toLowerCase().includes(filter) || data.processId.trim().toLowerCase().includes(filter);
@@ -156,104 +167,24 @@ export class ProcessManagementComponent implements OnInit {
   createStudy(process: Process) {
     this.handleUnsavedChanges(changeHandled => {
       if (changeHandled) {
-
-        const dialogData: ProcessCreateStudyDialogData = new ProcessCreateStudyDialogData();
-        dialogData.processName = process.processName;
-        dialogData.referenceList = process.referenceList;
-        dialogData.processId = process.processId;
-        dialogData.repositoryId = process.repositoryId;
-
-        const dialogRef = this.dialog.open(ProcessStudyCaseCreationComponent, {
-          disableClose: true,
-          data: dialogData
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-          const resultCreateStudyRef = result as ProcessCreateStudyDialogData;
-
-          if ((resultCreateStudyRef !== null) && (resultCreateStudyRef !== undefined)) {
-
-            if (resultCreateStudyRef.cancel === false && resultCreateStudyRef.studyName !== '' && resultCreateStudyRef.groupId !== null) {
-              if (resultCreateStudyRef.studyType === 'Reference') {
-                this.createFromReference(
-                  process,
-                  resultCreateStudyRef.studyName,
-                  resultCreateStudyRef.groupId,
-                  resultCreateStudyRef.reference,
-                  resultCreateStudyRef.studyType);
-              } else if (resultCreateStudyRef.studyType === 'Study') {
-                this.createFromCopyStudy(
-                  resultCreateStudyRef.studyId,
-                  resultCreateStudyRef.studyName,
-                  resultCreateStudyRef.groupId);
-              } else if (resultCreateStudyRef.studyType === 'UsecaseData') {
-                this.createFromUsesaseData(
-                  process,
-                  resultCreateStudyRef.studyName,
-                  resultCreateStudyRef.groupId,
-                  resultCreateStudyRef.reference,
-                  resultCreateStudyRef.studyType);
-              }
-            }
-          }
-        });
-      }
-    });
-  }
-  createFromUsesaseData(process, name: string, group: number, reference: string, type: string) {
-    const study: PostStudy = {
-      name,
-      repository: process.repositoryId,
-      process: process.processId,
-      group,
-      reference,
-      type
-    };
-    // Check user was in an another study before this one and leave room
-    if (this.StudyCaseDataService.loadedStudy !== null && this.StudyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
-    }
-
-    this.appDataService.createCompleteStudy(study, isStudyCreated => {
-      if (isStudyCreated) {
-        // Joining room
-        this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
+        this.studyCreationService.creatStudyCaseFromProcess(process);
       }
     });
   }
 
-  createFromReference(process, name, group, reference, type) {
-    const study: PostStudy = {
-      name,
-      repository: process.repositoryId,
-      process: process.processId,
-      group,
-      reference,
-      type
-    };
+  displayDocumentation(process: Process) {
 
-    // Check user was in an another study before this one and leave room
-    if (this.StudyCaseDataService.loadedStudy !== null && this.StudyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
-    }
+    const ontologyProcessInformationDialogData = new OntologyProcessInformationDialogData();
+    ontologyProcessInformationDialogData.process = process;
 
-    this.appDataService.createCompleteStudy(study, isStudyCreated => {
-      if (isStudyCreated) {
-        // Joining room
-        this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
-      }
+    this.dialog.open(ProcessInformationComponent, {
+      disableClose: false,
+      data: ontologyProcessInformationDialogData,
+      width: '950px',
+      height: '650px',
     });
   }
 
-  createFromCopyStudy(studyId: number, studyName: string, groupId: number) {
-
-    this.appDataService.copyCompleteStudy(studyId, studyName, groupId, isStudyCreated => {
-      if (isStudyCreated) {
-        // Joining room
-        this.socketService.joinRoom(this.StudyCaseDataService.loadedStudy.studyCase.id);
-      }
-    });
-  }
 
   handleUnsavedChanges(changeHandled: any) {
 
@@ -278,7 +209,7 @@ export class ProcessManagementComponent implements OnInit {
             if (validationData.validate === true) { // Saving changes
               let studyParameters: StudyUpdateParameter[] = [];
               studyParameters = this.studyCaseLocalStorageService
-                .getStudyParametersFromLocalStorage(this.StudyCaseDataService.loadedStudy.studyCase.id.toString());
+                .getStudyParametersFromLocalStorage(this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
               const studyCaseModificatioDialogData = new StudyCaseModificationDialogData();
               studyCaseModificatioDialogData.changes = studyParameters;

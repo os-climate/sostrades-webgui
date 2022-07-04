@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Routing } from 'src/app/models/routing.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { SocketService } from 'src/app/services/socket/socket.service';
@@ -31,19 +32,15 @@ export class StudyCaseDirectAccessComponent implements OnInit {
 
       const idRequested = params['id'];
       if (idRequested !== null && idRequested !== undefined && TypeCheckingTools.isInt(idRequested)) {
-        this.studyCaseDataService.getHasStudyCaseAccessRight(idRequested).subscribe(hasAccess => {
-          if (hasAccess) {
-            this.appDataService.loadCompleteStudy(idRequested, 'requested', (isStudyLoaded) => {
-              if (isStudyLoaded) {
-                // Joining room
-                this.socketService.joinRoom(
-                  this.studyCaseDataService.loadedStudy.studyCase.id
-                );
-              }
-            });
-          } else {
-            this.router.navigate(['/']);
-            this.snackbarService.showError('Error loading requested study case, study case not found')
+        this.appDataService.loadCompleteStudy(idRequested, 'requested', (isStudyLoaded) => {
+          if (isStudyLoaded) {
+            // Joining room
+            this.socketService.joinRoom(
+              this.studyCaseDataService.loadedStudy.studyCase.id
+            );
+          }
+          else{
+            this.router.navigate([Routing.STUDY_MANAGEMENT]);
           }
         })
       } else {

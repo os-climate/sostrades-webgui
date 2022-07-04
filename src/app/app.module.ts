@@ -49,6 +49,7 @@ import { ProcessManagementComponent } from './modules/process/process-management
 import { GroupManagementComponent } from './modules/group-management/group-management.component';
 import { StudyCaseManagementContainerComponent } from './modules/study-case/study-case-management-container/study-case-management-container.component';
 import { OntologyInformationsComponent } from './modules/ontology/ontology-informations/ontology-informations.component';
+import { OntologyParameterInformationsComponent } from './modules/ontology/ontology-parameter-informations/ontology-parameter-informations.component';
 import { StudyCaseStatusInformationComponent } from './modules/study-case/study-case-status-information/study-case-status-information.component';
 import { SelectAllOptionComponent } from './shared/select-all-option/select-all-option.component';
 
@@ -93,7 +94,7 @@ import { PostProcessingBundleComponent } from './modules/post-processings/post-p
 import { StudyCaseDirectAccessComponent } from './modules/study-case/study-case-direct-access/study-case-direct-access.component';
 import { StudyCaseLinkInformationComponent } from './modules/study-case/study-case-link-information/study-case-link-information.component';
 import { PostProcessingParetoFrontComponent } from './shared/post-processing-pareto-front/post-processing-pareto-front.component';
-import { SearchPanelComponent } from './modules/search-panel/search-panel.component'
+import { SearchPanelComponent } from './modules/search-panel/search-panel.component';
 
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { SlideToggleComponent } from './shared/slide-toggle/slide-toggle.component';
@@ -116,6 +117,8 @@ import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.
 import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
 import { GroupEditComponent } from './modules/group-management/group-edit/group-edit.component';
 import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
+import { ProcessInformationComponent } from './modules/process/process-information/process-information.component';
+import { ModelsStatusDocumentationComponent } from './modules/models/models-status-documentation/models-status-documentation.component';
 
 registerLocaleData(fr);
 
@@ -151,6 +154,7 @@ registerLocaleData(fr);
     GroupManagementComponent,
     StudyCaseManagementContainerComponent,
     OntologyInformationsComponent,
+    OntologyParameterInformationsComponent,
     StudyCaseStatusInformationComponent,
     SelectAllOptionComponent,
     StudyCaseExecutionExceptionDialogComponent,
@@ -208,6 +212,8 @@ registerLocaleData(fr);
     DisciplineIconMappingConverterPipe,
     GroupEditComponent,
     StudyCaseEditComponent,
+    ProcessInformationComponent,
+    ModelsStatusDocumentationComponent,
   ],
   imports: [
     BrowserModule,

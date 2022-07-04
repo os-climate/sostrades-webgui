@@ -1,9 +1,12 @@
 export enum NavigationTitle {
 
     HOME = 'Home',
-    MODEL_STATUS = 'Model Status',
+    ONTOLOGY = 'Ontology',
+    ONTOLOGY_PARAMETERS = 'Parameters',
+    PROCESS = 'Processes',
+    MODELS_STATUS = 'Models Status',
     STUDY_MANAGEMENT = 'Study Management',
-    STUDY_WORKSPACE ='Study Workspace',
+    STUDY_WORKSPACE = 'Study Workspace',
     GROUP_MANAGEMENT = 'Group Management',
     USER_MANAGEMENT = 'User Management',
     PROCESSES_MANAGEMENT = 'Processes Management',

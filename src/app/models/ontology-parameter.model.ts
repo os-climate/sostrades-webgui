@@ -1,4 +1,14 @@
+import { OntologyParameterUsage } from "./ontology-parameter-usage.model";
+
 export class OntologyParameter {
+
+  //other ontology data :
+  public code_repositories: string[];
+  public possible_units: string[];
+  public possible_datatypes: string[];
+  public nb_disciplines_using_parameter: number;
+  public disciplines_using_parameter: string[];
+  public parameter_usage_details : OntologyParameterUsage[];
 
   constructor(
     public id: string,
@@ -9,7 +19,7 @@ export class OntologyParameter {
     public unit: string,
     public uri: string,
     public definitionSource: string,
-    public ACLtag: string,
+    public ACLtag: string
   ) { }
 
   public static Create(jsonData: any): OntologyParameter {
@@ -37,7 +47,12 @@ export class OntologyParameter {
       unit: 'Unit',
       uri: 'URI',
       definitionSource: 'Definition Source',
-      ACLtag: 'Airbus Common Language Tag'
+      ACLtag: 'Airbus Common Language Tag',
+      code_repositories: 'Code Repositories',
+      possible_units: 'Possible Units',
+      possible_datatypes: 'Possible Datatypes',
+      nb_disciplines_using_parameter: 'Number of Model Using Parameter',
+      disciplines_using_parameter: 'Models Using Parameter',
     };
 
     if (key in keyLabelDict) {
@@ -66,6 +81,34 @@ export class OntologyParameter {
     }
     return strings.join('\n');
   }
+
+  addOntologyInformations(jsonData: any){
+    if (OntologyParameterAttributes.ACL_TAG in jsonData){
+      this.ACLtag = jsonData[OntologyParameterAttributes.ACL_TAG]
+    }
+    this.code_repositories = jsonData[OntologyParameterAttributes.CODE_REPOSITORIES]
+    this.possible_units = jsonData[OntologyParameterAttributes.POSSIBLE_UNITS]
+    this.possible_datatypes = jsonData[OntologyParameterAttributes.POSSIBLE_DATATYPES]
+    this.nb_disciplines_using_parameter = jsonData[OntologyParameterAttributes.NB_DISCIPLINES_USING_PARAMETER]
+    this.disciplines_using_parameter = jsonData[OntologyParameterAttributes.DISCIPLINES_USING_PARAMETER]
+    this.parameter_usage_details = [];
+    if (
+      jsonData[OntologyParameterAttributes.PARAMETER_USAGE_DETAILS] !== null &&
+      jsonData[OntologyParameterAttributes.PARAMETER_USAGE_DETAILS] !== undefined &&
+      jsonData[OntologyParameterAttributes.PARAMETER_USAGE_DETAILS].length > 0
+    ) {
+      const pList = jsonData[OntologyParameterAttributes.PARAMETER_USAGE_DETAILS];
+      pList.forEach(param => {
+        this.parameter_usage_details.push(OntologyParameterUsage.Create(param));
+      });
+    }
+  }
+
+  addParameterUsage(jsonData: any){
+    this.parameter_usage_details = [];
+    this.parameter_usage_details.push(OntologyParameterUsage.Create(jsonData));
+    
+  }
 }
 
 export enum OntologyParameterAttributes {
@@ -76,6 +119,13 @@ export enum OntologyParameterAttributes {
   QUANTITYKIND = 'quantityKind',
   UNIT = 'unit',
   URI = 'uri',
+  ACLTAG = 'ACLTag',
+  ACL_TAG = 'ACL_Tag',
   DEFINITIONSOURCE = 'definitionSource',
-  ACLTAG = 'ACLTag'
+  CODE_REPOSITORIES = 'code_repositories',
+  POSSIBLE_UNITS = 'possible_units',
+  POSSIBLE_DATATYPES = 'possible_datatypes',
+  NB_DISCIPLINES_USING_PARAMETER = 'nb_disciplines_using_parameter',
+  DISCIPLINES_USING_PARAMETER = 'disciplines_using_parameter',
+  PARAMETER_USAGE_DETAILS = 'parameter_usage_details',
 }

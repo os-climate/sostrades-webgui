@@ -30,7 +30,7 @@ export class TreeView {
   }
 }
 
-export class MardownDocumentation{
+export class MardownDocumentation {
 
 
   constructor(public name: string,
@@ -94,7 +94,7 @@ export class TreeNode implements INodeDataValueChange {
     if (this.isValidated == undefined || this.isValidated == null){
       this.isValidated =false;
     }
-  
+
     this.status = DisciplineStatus.STATUS_NONE;
     if (jsonData !== null && jsonData !== undefined) {
       this.data = CreateNodeDataDictionary(jsonData, this, false);

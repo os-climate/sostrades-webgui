@@ -23,6 +23,8 @@ import { StudyCaseManagementComponent } from './modules/study-case/study-case-ma
 import { ModelsLinksComponent } from './modules/models/models-links/models-links.component';
 import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
 import { Routing } from './models/routing.model';
+import { OntologyParametersComponent } from './modules/ontology/ontology-parameters/ontology-parameters.component';
+
 
 const routes: Routes = [
   {
@@ -42,7 +44,6 @@ const routes: Routes = [
         component: WelcomPageComponent,
         canActivate: [StudyGuard]
       },
-     
       {
         path: Routing.STUDY_MANAGEMENT,
         component: StudyCaseManagementContainerComponent,
@@ -59,18 +60,12 @@ const routes: Routes = [
             canActivate: [StudyGuard],
           },
           {
-            path: Routing.FROM_PROCESS,
-            component: ProcessManagementComponent,
-            canActivate: [StudyGuard],
-          },
-          {
             path: Routing.REFERENCE_MANAGEMENT,
             component: ReferenceManagementComponent,
             canActivate: [StudyGuard],
           }
         ]
       },
-      
       {
         path: Routing.STUDY_WORKSPACE,
         component: StudyWorkspaceComponent,
@@ -82,7 +77,7 @@ const routes: Routes = [
         canActivate: [AuthGuard, StudyGuard]
       },
       {
-        path: Routing.MODELS_STATUS,
+        path: Routing.ONTOLOGY,
         component: ModelsContainerComponent,
         canActivate: [StudyGuard],
         children: [
@@ -97,8 +92,13 @@ const routes: Routes = [
             canActivate: [StudyGuard],
           },
           {
-            path: Routing.MODELS_LINKS,
-            component: ModelsLinksComponent,
+            path: Routing.PROCESSES,
+            component: ProcessManagementComponent,
+            canActivate: [StudyGuard],
+          },
+          {
+            path: Routing.ONTOLOGY_PARAMETERS,
+            component: OntologyParametersComponent,
             canActivate: [StudyGuard],
           },
         ]

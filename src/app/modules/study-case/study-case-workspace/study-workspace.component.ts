@@ -29,6 +29,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public showPostProcessing: boolean;
   public showVisualisation: boolean;
   public showPostProcessingContent: boolean;
+  public showVisualisationContent: boolean;
   public showDataManagement: boolean;
   public showDocumentation: boolean;
   public showDataValidation: boolean;
@@ -66,6 +67,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showPostProcessing = false;
     this.showVisualisation = false;
     this.showPostProcessingContent = false;
+    this.showVisualisationContent = false;
     this.onStudyCaseChangeSubscription = null;
     this.studyIsLoaded = false;
     this.onTreeNodeChangeSubscription = null;
@@ -89,7 +91,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(studyLoaded => {
       this.setDiplayableItems();
     });
-   
+
     if (this.userService.hasAccessToStudy()) {
       this.hasAccessToStudy = true;
     } else {
@@ -174,9 +176,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.tabNameSelected = event.tab.textLabel;
 
       this.showPostProcessingContent = false;
+      this.showVisualisationContent = false;
 
       if (event.tab.textLabel === 'Post processing') {
         this.showPostProcessingContent = true;
+      } else if (event.tab.textLabel === 'Visualisation') {
+        this.showVisualisationContent = true;
       }
     }
   }
@@ -196,7 +201,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     }
   }
 
-  
+
   changeUserLevel(newUserLevelValue: number) {
     this.selectedUserlevel = this.userLevelList[newUserLevelValue];
     this.filterService.filters.userLevel = newUserLevelValue + 1; // Userlevel starting at 1

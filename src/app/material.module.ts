@@ -29,6 +29,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MAT_EXPANSION_PANEL_DEFAULT_OPTIONS } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @NgModule({
   imports: [
@@ -59,7 +60,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatProgressSpinnerModule,
     MatChipsModule,
     MatRadioModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    NgxMatSelectSearchModule
   ],
   exports: [
     MatSliderModule,
@@ -89,7 +91,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatProgressSpinnerModule,
     MatChipsModule,
     MatRadioModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    NgxMatSelectSearchModule
   ],
   providers: [
     {

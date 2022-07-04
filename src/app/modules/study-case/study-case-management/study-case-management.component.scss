@@ -23,6 +23,17 @@
   line-height: 28px;
   margin-right: 10px;
 }
+.refresh-icon {
+  margin-left: -10px;
+  font-size: 19px; 
+  height: 22px;
+}
+
+#create-study {
+  height: 28px;
+  line-height: 28px;
+  margin-right: 10px;
+}
 
 .filterSection {
   flex: 1;
@@ -173,3 +184,15 @@ tr:hover .actions-hover-row {
   margin-left: 10px;
 }
 
+
+// default blue color (call with #{$accent-color})
+$accent-color:#0b78b8;
+
+.link-study-title{
+  font-size: 12px;
+  color:#{$accent-color};
+}
+
+.link-study-title:hover{
+  text-decoration: underline;
+}
