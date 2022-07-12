@@ -1,5 +1,6 @@
 <div class="parameter-text">
   <mat-slide-toggle
+    [id]="nodeData.identifier"
     class="text-zone"
     [ngModel]="nodeData.value"
     (change)="onInputChange($event.checked)"

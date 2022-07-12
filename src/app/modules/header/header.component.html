@@ -26,6 +26,7 @@
         Study Management
         </button>
         <button
+        id="ontology-menu-button"
         mat-menu-item
         [matMenuTriggerFor]="Ontology"
         (click)="onClickOntology()">
@@ -46,7 +47,7 @@
 
       <mat-menu #Ontology="matMenu">
         <button mat-menu-item (click)="onClickModelsStatus()">Models Status</button>
-        <button mat-menu-item (click)="onClickOntologyProcesses()">Processes</button>
+        <button mat-menu-item id="processes-menu-button" (click)="onClickOntologyProcesses()">Processes</button>
         <button mat-menu-item (click)="onClickOntologyParameters()">Parameters</button>
        
      </mat-menu>
