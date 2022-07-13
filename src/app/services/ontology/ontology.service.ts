@@ -25,9 +25,6 @@ export class OntologyService extends MainHttpService {
   public parametersData: OntologyParameter[];
   public parametersFilter: string;
   public parametersColumnFiltered: string;
-  public processData: Process[];
-  public processFilter: string;
-  public processColumnFiltered: string;
 
 
 
@@ -36,11 +33,8 @@ export class OntologyService extends MainHttpService {
     super(location, 'ontology');
     this.ontology = new Ontology();
     this.modelStatusData = [];
-    this.processData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
-    this.processFilter = '';
-    this.processColumnFiltered = 'All columns';
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';
@@ -51,11 +45,8 @@ export class OntologyService extends MainHttpService {
     this.modelStatusData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
-    this.processData = [];
-    this.processFilter = '';
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
-    this.processColumnFiltered = 'All columns';
     this.parametersFilter = '';
   }
 
@@ -112,21 +103,6 @@ export class OntologyService extends MainHttpService {
     }
   }
 
-  getOntologyProcess(refreshList: boolean): Observable<Process[]> {
-    if (refreshList) {
-      return this.http.get<Process[]>(`${this.apiRoute}/full_process_list`).pipe(map(
-        response => {
-          const processList: Process[] = [];
-          response.forEach(pro => {
-            processList.push(Process.Create(pro));
-            this.processData = processList;
-          });
-          return processList;
-        }));
-  } else {
-    return of(this.processData);
-  }
-  }
 
   getOntologyMarkdowndocumentation(identifier: string): Observable<MardownDocumentation> {
     return this.http.get<string>(`${this.apiRoute}/${identifier}/markdown_documentation`).pipe(map(

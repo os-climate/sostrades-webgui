@@ -1,23 +1,21 @@
-import { Page, expect } from "@playwright/test";
+import { Page, expect } from '@playwright/test';
 
-export async function baseStudyCaseLoading(page: Page, studyGroup: string, studyName: string, openWithButton: boolean=true) {
+export async function baseStudyCaseLoading(page: Page, studyGroup: string, studyName: string, openWithButton: boolean= true) {
   await page.goto('/');
   // Go to study management
   await page.click('id=main-menu-button');
   await page.hover('id=study_management-menu-button');
   await page.click('id=study_case-menu-button');
-  
 
   // Hover on specific row to show actions buttons
   const rowToHover = `id=row-study-management-${studyGroup}-${studyName}`;
   await page.hover(rowToHover);
 
-  if (openWithButton){
+  if (openWithButton) {
   const loadButton = `id=btn-study-management-load-${studyGroup}-${studyName}`;
   // Start loading of studycase
   await page.click(loadButton);
-  }
-  else{
+  } else {
     const loadTitle = `id=title-study-management-load-${studyGroup}-${studyName}`;
     // Start loading of studycase
     await page.click(loadTitle);
