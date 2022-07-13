@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
 
 export async function baseStudyCaseStartCalculation(page: Page, studyName: string) {
-  // This function consider study case is already loaded
+  // This function considers that the study case is already loaded
 
   // Launch calculation
   const startCalculationId = `id=btn-treeview-start-calculation`;
