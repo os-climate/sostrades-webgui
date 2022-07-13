@@ -86,6 +86,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   public onCurrentStudyEditedSubscription: Subscription;
   public onCurrentStudyDeletedSubscription: Subscription;
+  public onCurrentStudyCreatedSubscription: Subscription;
 
   @ViewChild('filter', { static: true }) private filterElement: ElementRef;
 
@@ -121,6 +122,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.onCurrentStudyDeletedSubscription = null;
     this.onCurrentStudyEditedSubscription = null;
+    this.onCurrentStudyCreatedSubscription = null;
 
   }
 
@@ -158,6 +160,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.loadStudyManagementData();
     }
     });
+    this.onCurrentStudyCreatedSubscription = this.studyCaseMainService.onCreateStudy.subscribe(refreshList => {
+      if (refreshList) {
+        this.loadStudyManagementData();
+      }
+      });
 
     this.socketService.onCurrentStudyEdited.subscribe(refreshList => {
       if (refreshList) {
