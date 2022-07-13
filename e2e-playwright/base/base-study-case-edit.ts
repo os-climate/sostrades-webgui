@@ -63,6 +63,6 @@ export async function baseStudyCaseEdition(page: Page, studyName: string, newStu
 
     // Verifying root node is present
     const rootNodeButton = `id=btn-treeview-node-${newStudyName}`;
-    await page.waitForSelector(rootNodeButton);
+    await page.waitForSelector(rootNodeButton, { timeout: 15000 });
 
 }

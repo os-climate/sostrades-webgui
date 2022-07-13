@@ -36,4 +36,9 @@ await expect(title).toHaveText(/Are you sur ?/, { timeout: 15000 });
 const buttonOk = page.locator('id=buttonOk');
 await buttonOk.click();
 
+// Verify deletion is done
+await Promise.all([
+    page.waitForResponse(resp => resp.url().includes('/api/main/study-case') && resp.status() === 200, { timeout: 30000 }),
+]);
+
 }
