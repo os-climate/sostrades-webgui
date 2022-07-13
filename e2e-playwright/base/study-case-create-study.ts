@@ -88,7 +88,7 @@ export async function baseStudyCaseCreation(
     await closeButton.click();
 
     // Verifying correct redirection to study management
-    await page.waitForURL('/study-management');
+    await page.waitForURL('/study-management', { timeout: 15000 });
 
 }
 
