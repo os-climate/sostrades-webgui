@@ -22,7 +22,6 @@ import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-e
 export class StudyCaseMainService extends MainHttpService {
 
   onCloseStudy: EventEmitter<boolean> = new EventEmitter();
-  onCreateStudy: EventEmitter<boolean> = new EventEmitter();
 
   constructor(
     private http: HttpClient,
@@ -67,8 +66,7 @@ export class StudyCaseMainService extends MainHttpService {
           this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
           // Add study case to study management list
-          this.onCreateStudy.emit(true);
-          // this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+          this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
           loaderObservable.next(loadedStudy);
         }
       },
