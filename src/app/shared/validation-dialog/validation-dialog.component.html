@@ -8,13 +8,13 @@
     <div class="message emoji-font">{{ data.message }}</div>
   </div>
   <div mat-dialog-actions>
-    <button *ngIf="showCancelButton" mat-button (click)="onCancelClick()">
+    <button id="cancel" *ngIf="showCancelButton" mat-button (click)="onCancelClick()">
       Cancel
     </button>
     <button *ngIf="showSupButton" mat-button (click)="onSupClick()">
       {{ data.buttonSecondaryActionText }}
     </button>
-    <button mat-raised-button color="danger" (click)="onOkClick()">
+    <button id="buttonOk" mat-raised-button color="danger" (click)="onOkClick()">
       {{ data.buttonOkText }}
     </button>
   </div>

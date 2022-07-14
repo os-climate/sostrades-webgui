@@ -17,7 +17,8 @@
         <div id="name">   
           <mat-form-field style="width: 100%;">
             <mat-label>Study name</mat-label>
-            <input 
+            <input
+            id='studyName' 
             matInput 
             formControlName="studyName" 
             placeholder="Study name" 
@@ -35,7 +36,7 @@
         <br>
         <br>
         <mat-form-field style="width: 100%;">
-            <mat-select placeholder="Group name" formControlName="groupId" (selectionChange)="onChange($event.value)">
+            <mat-select id='group' placeholder="Group name" formControlName="groupId" (selectionChange)="onChange($event.value)">
               <mat-option
                 *ngFor="let group of this.groupList"
                 [value]="group.group.id"
@@ -50,12 +51,14 @@
           </mat-form-field>
         <br>
         <div id="saveOrCancel" class="d-flex justify-content-around">
-            <button 
+            <button
+            id='cancel' 
             mat-button 
             (click)="onCancelClick()"
             >Cancel
             </button>
             <button
+            id='submit'
             mat-button
             (click)="submitForm()"
             [disabled]="!editForm.valid || !editForm.dirty || this.disableForm"
