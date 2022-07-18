@@ -51,7 +51,7 @@ export async function baseStudyCaseCreation(
         await searchOption.click();
         await searchOption.fill(process);
 
-        const optionSelected = page.locator(`mat-option:has-text("${searchedProcess}")`);
+        const optionSelected = page.locator(`mat-option:has-text("${searchedProcess}")`).first();
         await optionSelected.click();
 
     }
@@ -65,7 +65,7 @@ export async function baseStudyCaseCreation(
 
     const references = page.locator('id=reference');
     await references.click();
-    const selectedReference = page.locator(`mat-option:has-text("${reference}")`);
+    const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
     await selectedReference.click();
     await expect(references).toHaveText(reference, { timeout: 15000 });
 
