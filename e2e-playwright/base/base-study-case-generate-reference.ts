@@ -12,6 +12,9 @@ export async function baseStudyCaseGenerateReference(page: Page, studyName: stri
   await page.hover('id=study_management-menu-button');
   await page.click('id=reference-menu-button');
 
+  await Promise.all([
+    page.waitForResponse(resp => resp.url().includes('/api/data/reference') && resp.status() === 200),
+  ]);
   // Research the study to regenerate ref
   await page.click('id=filter-bar');
   await page.fill('id=filter-bar', `${studyName}`);
