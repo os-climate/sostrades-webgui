@@ -26,7 +26,7 @@ export class Study {
     public isContributor: boolean,
     public isCommenter: boolean,
     public isRestrictedViewer: boolean,
-    public isFavorite : boolean,
+    public isFavorite: boolean,
   ) {
   }
 

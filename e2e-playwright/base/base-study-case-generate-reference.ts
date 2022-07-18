@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
 
-export async function baseStudyCaseGenerateReference(page: Page, studyName: string, repositoryName: string) {
-  const rowToHover = `id=row-reference-management-${studyName}-${repositoryName}`;
-  const generateRefButton = `id=btn-generate-reference-${studyName}-${repositoryName}`;
-  const generateRefStatus = `id=execution-bullet-${studyName}-${repositoryName}-DONE`;
+export async function baseStudyCaseGenerateReference(page: Page, studyName: string, processName: string) {
+  const rowToHover = `id=row-reference-management-${studyName}-${processName}`;
+  const generateRefButton = `id=btn-generate-reference-${studyName}-${processName}`;
+  const generateRefStatus = `id=execution-bullet-${studyName}-${processName}-DONE`;
 
   await page.goto('/');
   // Go to reference management
