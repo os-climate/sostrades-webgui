@@ -3,7 +3,8 @@ import { Page } from '@playwright/test';
 export async function baseStudyCaseGenerateReference(page: Page, studyName: string, processName: string) {
   const rowToHover = `id=row-reference-management-${studyName}-${processName}`;
   const generateRefButton = `id=btn-generate-reference-${studyName}-${processName}`;
-  const generateRefStatus = `id=execution-bullet-${studyName}-${processName}-DONE`;
+  const generateRefStatusPending = `id=execution-bullet-${studyName}-${processName}-PENDING`;
+  const generateRefStatusFinished = `id=execution-bullet-${studyName}-${processName}-FINISHED`;
 
   await page.goto('/');
   // Go to reference management
@@ -20,5 +21,10 @@ export async function baseStudyCaseGenerateReference(page: Page, studyName: stri
 
   // Start reference generation
   await page.click(generateRefButton);
-  await page.waitForSelector(generateRefStatus);
+
+  // Verify if the generation is pending
+  await page.waitForSelector(generateRefStatusPending);
+
+  // Then verify if the generation is finished
+  await page.waitForSelector(generateRefStatusFinished);
 }
