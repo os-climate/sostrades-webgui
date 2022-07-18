@@ -169,6 +169,7 @@
     mat-button
     (click)="onShowState()"
     *ngIf="!showState"
+    [id]="'show-validation-state'"
     class="toolbar-item-shadow"
   >
   <i
@@ -273,6 +274,7 @@
             </div>
             <mat-icon
             *ngIf="showState && !node.isValidated"
+            [id]="'node-invalidated-' + node.name"
             class="iconValid"
             style="color: darkgrey;"
             matTooltip="INVALIDATED"
@@ -282,6 +284,7 @@
 
             <mat-icon
             *ngIf="showState && node.isValidated"
+            [id]="'node-validated-' + node.name"
             class="iconValid"
             style="color: #08875b;"
             matTooltip="VALIDATED"
@@ -354,6 +357,7 @@
             </div>
             <mat-icon
             *ngIf="showState && !node.isValidated"
+            [id]="'node-invalidated-' + node.name"
             class="iconValid"
             style="color: darkgrey;"
             matTooltip="INVALIDATED"
@@ -364,6 +368,7 @@
             <mat-icon
             *ngIf="showState && node.isValidated"
             mat-button
+            [id]="'node-validated-' + node.name"
             class="iconValid"
             style="color: #08875b;"
             matTooltip="VALIDATED"
