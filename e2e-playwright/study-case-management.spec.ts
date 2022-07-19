@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { baseStudyCaseStartCalculation } from './base/base-study-case-calculation';
 import { baseStudyCaseDeletion } from './base/base-study-case-delete';
 import { baseStudyCaseEdition } from './base/base-study-case-edit';
-import { baseStudyCaseCreation } from './base/study-case-create-study';
+import { baseStudyCaseCreation } from './base/base-study-case-create-study';
 
 const studyNameEmpty = 'Test_biodiesel_empty_from_study_management';
 const studyNameUsecase = 'Test_ratatouille_usecase_from_study_management';
