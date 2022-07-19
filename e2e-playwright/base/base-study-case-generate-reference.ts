@@ -17,6 +17,7 @@ export async function baseStudyCaseGenerateReference(page: Page, studyName: stri
   ]);
   await response.json().then(json => {
     console.log('number of reference = ' + JSON.stringify(json).split('},').length);
+    console.log(JSON.stringify(json).split('},'));
   });
   // Research the study to regenerate ref
   await page.click('id=filter-bar');
