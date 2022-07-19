@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
 
 export async function baseStudyCaseCreation(
-    page: Page, studyName: string, process: string, searchedProcess: string, reference: string, createFromStudyManagement: boolean) {
+    page: Page, studyName: string, process: string, reference: string, createFromStudyManagement: boolean) {
 
     if (!page.url().includes('/study-management')) {
 
@@ -29,7 +29,7 @@ export async function baseStudyCaseCreation(
         await filter.fill(process);
 
         // Click on Create button
-        const createStudy = page.locator(`id=btn-process-create-${searchedProcess}`);
+        const createStudy = page.locator(`id=btn-process-create-${process}`);
         await createStudy.click();
     }
 
@@ -51,7 +51,7 @@ export async function baseStudyCaseCreation(
         await searchOption.click();
         await searchOption.fill(process);
 
-        const optionSelected = page.locator(`mat-option:has-text("${searchedProcess}")`).first();
+        const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
 
     }
