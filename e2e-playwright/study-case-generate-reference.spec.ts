@@ -3,8 +3,8 @@ import { baseStudyCaseGenerateReference } from './base/base-study-case-generate-
 
 test('Generate reference', async ({ page }) => {
 
-    const studyName = 'usecase_simple_mda';
-    const processName = 'test_simple_mda';
+    const studyName = 'usecase_witness';
+    const processName = 'witness';
 
     await baseStudyCaseGenerateReference(page, studyName, processName);
 });
