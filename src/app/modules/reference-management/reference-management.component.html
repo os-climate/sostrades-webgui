@@ -70,7 +70,7 @@
               [id]="'execution-bullet-'  +
               element.name +
               '-' +
-              element.repository +
+              element.process +
               '-' + element.regenerationStatus"
             ></div>
           </td>
@@ -135,7 +135,7 @@
               'btn-generate-reference-' +
               element.name +
               '-' +
-              element.repository
+              element.process
               "
               mat-icon-button
               [disabled]="
@@ -165,7 +165,7 @@
         <tr
           mat-row
           class="table-row"
-          [id]="'row-reference-management-' + row.name + '-' + row.repository"
+          [id]="'row-reference-management-' + row.name + '-' + row.process"
           *matRowDef="let row; columns: displayedColumns"
         ></tr>
       </table>

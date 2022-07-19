@@ -1,9 +1,10 @@
 import { Page } from '@playwright/test';
 
-export async function baseStudyCaseGenerateReference(page: Page, studyName: string, repositoryName: string) {
-  const rowToHover = `id=row-reference-management-${studyName}-${repositoryName}`;
-  const generateRefButton = `id=btn-generate-reference-${studyName}-${repositoryName}`;
-  const generateRefStatus = `id=execution-bullet-${studyName}-${repositoryName}-DONE`;
+export async function baseStudyCaseGenerateReference(page: Page, studyName: string, processName: string) {
+  const rowToHover = `id=row-reference-management-${studyName}-${processName}`;
+  const generateRefButton = `id=btn-generate-reference-${studyName}-${processName}`;
+  const generateRefStatusPending = `id=execution-bullet-${studyName}-${processName}-PENDING`;
+  const generateRefStatusFinished = `id=execution-bullet-${studyName}-${processName}-FINISHED`;
 
   await page.goto('/');
   // Go to reference management
@@ -11,6 +12,9 @@ export async function baseStudyCaseGenerateReference(page: Page, studyName: stri
   await page.hover('id=study_management-menu-button');
   await page.click('id=reference-menu-button');
 
+  await Promise.all([
+    page.waitForResponse(resp => resp.url().includes('/api/data/reference') && resp.status() === 200),
+  ]);
   // Research the study to regenerate ref
   await page.click('id=filter-bar');
   await page.fill('id=filter-bar', `${studyName}`);
@@ -20,5 +24,10 @@ export async function baseStudyCaseGenerateReference(page: Page, studyName: stri
 
   // Start reference generation
   await page.click(generateRefButton);
-  await page.waitForSelector(generateRefStatus);
+
+  // Verify if the generation is pending
+  await page.waitForSelector(generateRefStatusPending);
+
+  // Then verify if the generation is finished
+  await page.waitForSelector(generateRefStatusFinished);
 }

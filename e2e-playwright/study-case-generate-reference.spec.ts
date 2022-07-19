@@ -3,8 +3,8 @@ import { baseStudyCaseGenerateReference } from './base/base-study-case-generate-
 
 test('Generate reference', async ({ page }) => {
 
-    const studyName = 'usecase_ZEROe_grid_search';
-    const repositoryName = 'business_case.v3.sos_processes.business_case';
+    const studyName = 'usecase_simple_mda';
+    const processName = 'test_simple_mda';
 
-    await baseStudyCaseGenerateReference(page, studyName, repositoryName);
+    await baseStudyCaseGenerateReference(page, studyName, processName);
 });

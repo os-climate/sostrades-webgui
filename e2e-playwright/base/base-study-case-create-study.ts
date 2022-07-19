@@ -3,10 +3,12 @@ import { Page, expect } from '@playwright/test';
 export async function baseStudyCaseCreation(
     page: Page, studyName: string, process: string, searchedProcess: string, reference: string, createFromStudyManagement: boolean) {
 
-    if (createFromStudyManagement) {
+    if (!page.url().includes('/study-management')) {
 
-        // Go to study management
         await page.goto('/');
+    }
+    if (createFromStudyManagement) {
+        // Go to study_management
         await page.click('id=main-menu-button');
         await page.hover('id=study_management-menu-button');
         await page.click('id=study_case-menu-button');
@@ -16,15 +18,14 @@ export async function baseStudyCaseCreation(
         await page.click(createStudy);
 
     } else {
-
         // Go to process list
-        await page.goto('/');
         await page.click('id=main-menu-button');
         await page.hover('id=ontology-menu-button');
         await page.click('id=processes-menu-button');
 
         // Filtre process
         const filter = page.locator('id=filter');
+        await filter.fill('');
         await filter.fill(process);
 
         // Click on Create button
@@ -50,7 +51,7 @@ export async function baseStudyCaseCreation(
         await searchOption.click();
         await searchOption.fill(process);
 
-        const optionSelected = page.locator(`mat-option:has-text("${searchedProcess}")`);
+        const optionSelected = page.locator(`mat-option:has-text("${searchedProcess}")`).first();
         await optionSelected.click();
 
     }
@@ -64,7 +65,7 @@ export async function baseStudyCaseCreation(
 
     const references = page.locator('id=reference');
     await references.click();
-    const selectedReference = page.locator(`mat-option:has-text("${reference}")`);
+    const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
     await selectedReference.click();
     await expect(references).toHaveText(reference, { timeout: 15000 });
 
