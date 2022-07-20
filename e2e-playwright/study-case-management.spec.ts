@@ -48,21 +48,17 @@ test('Test Edition Study -> Test_edition + Test_calculation', async ({ page }) =
 
 });
 
-// test.only('Test Deletion -> Test_multiple_deletion', async ({page}) => {
+// test('Test Deletion -> Test_multiple_deletion', async ({page}) => {
 
-//   // const listStudiesFromProcess = {
-//   //   copieStudyProcess: [studyNameCopieFromProcess, studyGroup],
-//   //   usecaseProcess: [studyNameUsecaseFromProcess, studyGroup],
-//   //   emptyStudyProcess: [studyNameEmptyFromProcess, studyGroup],
-//   // };
-//   // await baseStudyCaseDeletion(page, listStudiesFromProcess);
-
-//   const listStudiesFromStudyManagement = {
+//   const listStudiesToDelete = {
+//     copieStudyProcess: [studyNameCopieFromProcess, studyGroup],
+//     usecaseProcess: [studyNameUsecaseFromProcess, studyGroup],
+//     emptyStudyProcess: [studyNameEmptyFromProcess, studyGroup],
 //     copieStudy: [editStudyName, editStudyGroup],
 //     emptyStudy: [studyNameEmpty, studyGroup],
 //     usecase: [studyNameUsecase, studyGroup],
 //   };
-//   await baseStudyCaseDeletion(page, listStudiesFromStudyManagement);
+//   await baseStudyCaseDeletion(page, listStudiesToDelete);
 // });
 
 

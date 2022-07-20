@@ -71,6 +71,7 @@ export async function baseStudyCaseCreation(
 
     // Valid the creation
     const submit = page.locator('id=submit');
+    await expect(submit).toBeEnabled({ timeout: 15000 });
     await submit.click();
 
     // Verifying correct redirection to study workspace
