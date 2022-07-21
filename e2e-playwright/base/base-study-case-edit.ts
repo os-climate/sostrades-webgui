@@ -10,7 +10,7 @@ export async function baseStudyCaseEdition(page: Page, studyName: string, newStu
 
     // Hover on specific row to show actions buttons
     const rowToHover = `id=row-study-management-${studyGroup}-${studyName}`;
-    await page.hover(rowToHover);
+    await page.hover(rowToHover, { timeout: 15000 });
 
     // Start loading of studycase
     const editButton = `id=btn-study-management-edit-${studyGroup}-${studyName}`;

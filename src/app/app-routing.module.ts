@@ -13,7 +13,6 @@ import { CurrentUserNoRightsComponent } from './modules/user/user-no-rights/user
 import { NoAccessGuard } from './services/no-access.guard';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
 import { SamlComponent } from './modules/saml/saml.component';
-import { ProcessManagementComponent } from './modules/process/process-management/process-management.component';
 import { StudyCaseDirectAccessComponent } from './modules/study-case/study-case-direct-access/study-case-direct-access.component';
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
@@ -24,6 +23,7 @@ import { ModelsLinksComponent } from './modules/models/models-links/models-links
 import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
 import { Routing } from './models/routing.model';
 import { OntologyParametersComponent } from './modules/ontology/ontology-parameters/ontology-parameters.component';
+import { OntologyProcessesComponent } from './modules/ontology/ontology-processes/ontology-processes.component';
 
 
 const routes: Routes = [
@@ -93,7 +93,7 @@ const routes: Routes = [
           },
           {
             path: Routing.PROCESSES,
-            component: ProcessManagementComponent,
+            component: OntologyProcessesComponent,
             canActivate: [StudyGuard],
           },
           {
@@ -120,7 +120,7 @@ const routes: Routes = [
       },
       {
         path: Routing.PROCESSES_MANAGEMENT,
-        component: ProcessManagementComponent,
+        component: OntologyProcessesComponent,
         canActivate: [StudyManagerGuard]
       },
       {

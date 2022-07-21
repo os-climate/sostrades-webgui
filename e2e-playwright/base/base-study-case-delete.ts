@@ -10,6 +10,7 @@ await page.click('id=main-menu-button');
 await page.hover('id=study_management-menu-button');
 await page.click('id=study_case-menu-button');
 
+// Push each study from dictonnary on a array
 Object.values(listStudies).forEach(element => {
     const name = element[0];
     const group = element[1];
@@ -21,10 +22,12 @@ await Promise.all([
     page.waitForResponse(resp => resp.url().includes('/api/data/study-case') && resp.status() === 200),
 ]);
 
+// Click on checkbox of each study
 selectCheckbox.forEach( async e => {
     await page.click(e);
 });
 
+// Click on delete
 const deletion = page.locator('id=deletion');
 deletion.click();
 
