@@ -45,7 +45,6 @@ import { CustomTooltipComponent } from './shared/custom-tooltip/custom-tooltip.c
 import { StudyWorkspaceComponent } from './modules/study-case/study-case-workspace/study-workspace.component';
 import { ButtonSpinnerDirective } from './directives/button-spinner/button-spinner.directive';
 import { StudyCaseManagementComponent } from './modules/study-case/study-case-management/study-case-management.component';
-import { ProcessManagementComponent } from './modules/process/process-management/process-management.component';
 import { GroupManagementComponent } from './modules/group-management/group-management.component';
 import { StudyCaseManagementContainerComponent } from './modules/study-case/study-case-management-container/study-case-management-container.component';
 import { OntologyInformationsComponent } from './modules/ontology/ontology-informations/ontology-informations.component';
@@ -150,7 +149,6 @@ registerLocaleData(fr);
     StudyWorkspaceComponent,
     ButtonSpinnerDirective,
     StudyCaseManagementComponent,
-    ProcessManagementComponent,
     GroupManagementComponent,
     StudyCaseManagementContainerComponent,
     OntologyInformationsComponent,

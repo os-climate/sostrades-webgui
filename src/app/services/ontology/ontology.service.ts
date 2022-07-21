@@ -9,13 +9,14 @@ import { OntologyDiscipline } from 'src/app/models/ontology-discipline.model';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
 import { MainHttpService } from '../http/main-http/main-http.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
-import { Process } from 'src/app/models/process.model';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class OntologyService extends MainHttpService {
+
+  onSearchModel: EventEmitter<OntologyModelStatus> = new EventEmitter();
 
   private ontology: Ontology;
   public modelStatusData: OntologyModelStatus[];
@@ -177,5 +178,9 @@ export class OntologyService extends MainHttpService {
     } else {
       return key;
     }
+  }
+
+  searchModel(model: OntologyModelStatus) {
+    this.onSearchModel.emit(model);
   }
 }
