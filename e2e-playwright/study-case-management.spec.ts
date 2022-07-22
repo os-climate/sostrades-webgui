@@ -4,20 +4,17 @@ import { baseStudyCaseDeletion } from './base/base-study-case-delete';
 import { baseStudyCaseEdition } from './base/base-study-case-edit';
 import { baseStudyCaseCreation } from './base/base-study-case-create-study';
 
-const studyNameEmpty = 'Test_biodiesel_empty_from_study_management';
-const studyNameUsecase = 'Test_ratatouille_usecase_from_study_management';
-const studyNameCopie = 'Test_ratatouille_copie_from_study_management';
-const studyNameEmptyFromProcess = 'Test_biodiesel_empty_from_processes';
-const studyNameUsecaseFromProcess = 'Test_ratatouille_usecase_from_processes';
-const studyNameCopieFromProcess = 'Test_biodiesel_copie_from_processes';
+const studyNameEmpty = 'Test_witness_empty_from_study_management';
+const studyNameUsecase = 'Test_witness_usecase_from_study_management';
+const studyNameCopie = 'Test_witness_copie_from_study_management';
+const studyNameEmptyFromProcess = 'Test_witness_empty_from_processes';
+const studyNameUsecaseFromProcess = 'Test_witness_usecase_from_processes';
+const studyNameCopieFromProcess = 'Test_witness_copie_from_processes';
 const studyGroup = 'group_test_e2e';
-const processBiodiesel = 'biodiesel_mix';
-const searchProcessBiodiesel = 'Energy Technology Mix - Biodiesel Mix';
-const searchProcessValueAssessment = 'Generic Value Assessment Process';
-const processValueAssessment = 'Generic Value Assessment Process';
+const processWitness = 'WITNESS Process';
 const referenceEmpty = 'Empty Study';
-const referenceUsecase = 'usecase_RATATOUILLE';
-const editStudyName = 'Test_ratatouille_copie_edit';
+const referenceUsecase = 'usecase_witness';
+const editStudyName = 'Test_witness_copie_edit';
 const editStudyGroup = 'SoSTrades_Dev';
 
 
@@ -25,75 +22,63 @@ const editStudyGroup = 'SoSTrades_Dev';
 test('Test Create Study -> Test creation empty, usecase, copie from study management and processes', async ({ page }) => {
 
   // Creation study Empty
-  await baseStudyCaseCreation(page, studyNameEmpty, processBiodiesel, searchProcessBiodiesel, referenceEmpty, true);
+  await baseStudyCaseCreation(page, studyNameEmpty, processWitness, referenceEmpty, true);
 
   // Creation usecase
-  await baseStudyCaseCreation(page, studyNameUsecase, processValueAssessment, searchProcessValueAssessment, referenceUsecase, true);
+  await baseStudyCaseCreation(page, studyNameUsecase, processWitness, referenceUsecase, true);
 
   // Creation copie
-  await baseStudyCaseCreation(page, studyNameCopie, processValueAssessment, searchProcessValueAssessment, studyNameUsecase, true);
+  await baseStudyCaseCreation(page, studyNameCopie, processWitness, studyNameUsecase, true);
 
   // Creation study Empty from process
-  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processBiodiesel, searchProcessBiodiesel, referenceEmpty, false);
+  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processWitness, referenceEmpty, false);
 
   // Creation usecase from process
-  await baseStudyCaseCreation(
-  page, studyNameUsecaseFromProcess, processValueAssessment, searchProcessValueAssessment, referenceUsecase, false
-  );
+  await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processWitness, referenceUsecase, false);
 
   // Creation copie from process
-  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processBiodiesel, searchProcessBiodiesel, studyNameEmptyFromProcess, false);
+  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processWitness, studyNameEmptyFromProcess, false);
 
 });
 
-test('Test Edition Study -> Test_edition', async ({ page }) => {
+test('Test Edition Study -> Test_edition + Test_calculation', async ({ page }) => {
 
   await baseStudyCaseEdition(page, studyNameCopie, editStudyName, studyGroup, editStudyGroup);
   await baseStudyCaseStartCalculation(page, editStudyName);
 
 });
 
-// test.only('Test Deletion -> Test_multiple_deletion', async ({page}) => {
+// test('Test Deletion -> Test_multiple_deletion', async ({page}) => {
 
-//   // const listStudiesFromProcess = {
-//   //   copieStudyProcess: [studyNameCopieFromProcess, studyGroup],
-//   //   usecaseProcess: [studyNameUsecaseFromProcess, studyGroup],
-//   //   emptyStudyProcess: [studyNameEmptyFromProcess, studyGroup],
-//   // };
-//   // await baseStudyCaseDeletion(page, listStudiesFromProcess);
-
-//   const listStudiesFromStudyManagement = {
+//   const listStudiesToDelete = {
+//     copieStudyProcess: [studyNameCopieFromProcess, studyGroup],
+//     usecaseProcess: [studyNameUsecaseFromProcess, studyGroup],
+//     emptyStudyProcess: [studyNameEmptyFromProcess, studyGroup],
 //     copieStudy: [editStudyName, editStudyGroup],
 //     emptyStudy: [studyNameEmpty, studyGroup],
 //     usecase: [studyNameUsecase, studyGroup],
 //   };
-//   await baseStudyCaseDeletion(page, listStudiesFromStudyManagement);
+//   await baseStudyCaseDeletion(page, listStudiesToDelete);
 // });
 
 
 test('Test Deletion -> Test_deletion_one_by_one', async ({page}) => {
-  const copieStudy = {
-    copieStudy: [editStudyName, editStudyGroup]};
+  const copieStudy = { copieStudy: [editStudyName, editStudyGroup]};
   await baseStudyCaseDeletion(page, copieStudy);
 
-  const emptyStudy = {
-    emptyStudy: [studyNameEmpty, studyGroup]};
+  const emptyStudy = { emptyStudy: [studyNameEmpty, studyGroup]};
   await baseStudyCaseDeletion(page, emptyStudy);
 
-  const usecase = {
-    usecase: [studyNameUsecase, studyGroup]};
+  const usecase = { usecase: [studyNameUsecase, studyGroup]};
   await baseStudyCaseDeletion(page, usecase);
 
-  const copieStudyProcess = {
-    copieStudyProcess: [studyNameCopieFromProcess, studyGroup]};
+  const copieStudyProcess = { copieStudyProcess: [studyNameCopieFromProcess, studyGroup]};
   await baseStudyCaseDeletion(page, copieStudyProcess);
 
-  const emptyStudyProcess = {
-    emptyStudyProcess: [studyNameEmptyFromProcess, studyGroup]};
+  const emptyStudyProcess = { emptyStudyProcess: [studyNameEmptyFromProcess, studyGroup]};
   await baseStudyCaseDeletion(page, emptyStudyProcess);
 
-  const usecaseProcess = {
-    usecaseProcess: [studyNameUsecaseFromProcess, studyGroup]};
+  const usecaseProcess = { usecaseProcess: [studyNameUsecaseFromProcess, studyGroup]};
   await baseStudyCaseDeletion(page, usecaseProcess);
 });
 
