@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './models-status-table.component.html',
   styleUrls: ['./models-status-table.component.scss']
 })
-export class ModelsStatusTableComponent implements OnInit, OnDestroy {
+export class ModelsStatusTableComponent implements OnInit {
 
   public visibleColumns = [
     'name',
@@ -38,6 +38,7 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
   public isLoading: boolean;
   public modelCount: number;
   public onSearchModelStatusSubscription: Subscription;
+  public fromProcessInformation: boolean;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -65,6 +66,7 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.modelCount = 0;
     this.onSearchModelStatusSubscription = null;
+    this.fromProcessInformation = false;
   }
 
   ngOnInit(): void {
@@ -90,16 +92,14 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     }
     this.onSearchModelStatusSubscription = this.ontologyService.onSearchModel.subscribe( modelStatus => {
       if (modelStatus !== null && modelStatus !== undefined) {
-        this.displayDocumentation(modelStatus);
+        this.fromProcessInformation = true;
+        const searchModel = this.ontologyService.modelStatusData.find( model => model.name === modelStatus);
+        if (searchModel !== null && searchModel !== undefined) {
+          this.ontologyService.modelStatusFilter = searchModel.name;
+          this.displayDocumentation(searchModel);
+        }
       }
-      });
-  }
-
-  ngOnDestroy() {
-    if (this.onSearchModelStatusSubscription !== null) {
-      this.onSearchModelStatusSubscription.unsubscribe();
-      this.onSearchModelStatusSubscription = null;
-    }
+    });
   }
 
   loadModelStatusData() {
@@ -146,11 +146,19 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     const ontologyModelsStatusInformationDialogData = new OntologyModelsStatusInformationDialogData();
     ontologyModelsStatusInformationDialogData.modelStatus = modelStatus;
 
-    this.dialog.open(ModelsStatusDocumentationComponent, {
+    const dialogref = this.dialog.open(ModelsStatusDocumentationComponent, {
       disableClose: false,
       data: ontologyModelsStatusInformationDialogData,
       width: '900px',
       height: '650px',
+    });
+    dialogref.afterClosed().subscribe( () => {
+      if (this.fromProcessInformation) {
+        if ((this.onSearchModelStatusSubscription !== null) && (this.onSearchModelStatusSubscription !== undefined)) {
+          this.onSearchModelStatusSubscription.unsubscribe();
+          this.onSearchModelStatusSubscription = null;
+        }
+      }
     });
   }
 

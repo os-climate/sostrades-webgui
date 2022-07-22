@@ -42,7 +42,7 @@
       font-weight: 500;
       font-family: Roboto, 'Helvetica Neue', sans-serif;
       vertical-align: top;
-    ">Parameter used in {{ data.parameter.nb_disciplines_using_parameter }} Model(s) : </span>
+    ">Parameter used by {{ data.parameter.nb_disciplines_using_parameter }} Model<span *ngIf="data.parameter.nb_disciplines_using_parameter > 1" >s</span> : </span>
     </div>
     <table mat-table [dataSource]="dataSourceparameterUsages" matSort
     class="table table-sm table-borderless">
