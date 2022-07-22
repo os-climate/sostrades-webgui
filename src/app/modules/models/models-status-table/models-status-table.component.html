@@ -92,13 +92,13 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
           </th>
          
-            <td mat-cell *matCellDef="let element">
-                  {{ element.processesUsingModel }}  
+            <td mat-cell *matCellDef="let element"> 
                   <span
                   matTooltip="Show processes list"
                   (click)="showDetails(element)"
                   style="text-decoration: underline; cursor: pointer;"
-                >Process Using Model
+                >
+                Model used by {{ element.processesUsingModel }} process<span *ngIf="element.processesUsingModel > 1" >es</span>
                 </span>
             </td>
         </ng-container>

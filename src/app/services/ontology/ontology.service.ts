@@ -16,7 +16,7 @@ import { MardownDocumentation } from 'src/app/models/tree-node.model';
 })
 export class OntologyService extends MainHttpService {
 
-  onSearchModel: EventEmitter<OntologyModelStatus> = new EventEmitter();
+  onSearchModel: EventEmitter<string> = new EventEmitter();
 
   private ontology: Ontology;
   public modelStatusData: OntologyModelStatus[];
@@ -155,7 +155,6 @@ export class OntologyService extends MainHttpService {
 
 }
 
-
   public getDiscipline(key: string): OntologyDiscipline {
     if (key in this.ontology.studyCase.disciplines) {
       return this.ontology.studyCase.disciplines[key];
@@ -180,7 +179,7 @@ export class OntologyService extends MainHttpService {
     }
   }
 
-  searchModel(model: OntologyModelStatus) {
+  searchModel(model: string) {
     this.onSearchModel.emit(model);
   }
 }
