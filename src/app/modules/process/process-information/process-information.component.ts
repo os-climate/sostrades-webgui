@@ -5,10 +5,11 @@ import { OntologyProcessInformationDialogData } from 'src/app/models/dialog-data
 import { Process } from 'src/app/models/process.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
-import { HeaderService } from 'src/app/services/hearder/header.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { HeaderService } from 'src/app/services/hearder/header.service';
+
 
 @Component({
   selector: 'app-process-information',
@@ -120,24 +121,8 @@ export class ProcessInformationComponent implements OnInit {
 
   goToModelsStatus(model) {
     this.dialogRef.close();
-    this.ontologyService.modelStatusFilter = model;
     this.headerService.changeIndexTab(0);
-    if (this.ontologyService.modelStatusData.length > 0) {
-      this.ontologyService.modelStatusData.forEach( modelStatus => {
-        if (modelStatus.name === model ) {
-          this.ontologyService.searchModel(modelStatus);
-        }
-      });
-    } else {
-      this.ontologyService.getOntologyModelsStatus().subscribe( models => {
-        models.forEach( modelStatus => {
-          if (modelStatus.name === model) {
-            this.ontologyService.searchModel(modelStatus);
-          }
-        });
-      });
-    }
-
+    this.ontologyService.searchModel(model);
   }
 
 }
