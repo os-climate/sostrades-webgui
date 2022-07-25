@@ -22,22 +22,22 @@ const editStudyGroup = 'SoSTrades_Dev';
 test('Test Create Study -> Test creation empty, usecase, copie from study management and processes', async ({ page }) => {
 
   // Creation study Empty
-  await baseStudyCaseCreation(page, studyNameEmpty, processWitness, referenceEmpty, true);
+  await baseStudyCaseCreation(page, studyNameEmpty, processWitness, referenceEmpty, studyGroup, true);
 
   // Creation usecase
-  await baseStudyCaseCreation(page, studyNameUsecase, processWitness, referenceUsecase, true);
+  await baseStudyCaseCreation(page, studyNameUsecase, processWitness, referenceUsecase, studyGroup, true);
 
   // Creation copie
-  await baseStudyCaseCreation(page, studyNameCopie, processWitness, studyNameUsecase, true);
+  await baseStudyCaseCreation(page, studyNameCopie, processWitness, studyNameUsecase, studyGroup, true);
 
   // Creation study Empty from process
-  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processWitness, referenceEmpty, false);
+  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processWitness, referenceEmpty, studyGroup, false);
 
   // Creation usecase from process
-  await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processWitness, referenceUsecase, false);
+  await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processWitness, referenceUsecase, studyGroup, false);
 
   // Creation copie from process
-  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processWitness, studyNameEmptyFromProcess, false);
+  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processWitness, studyNameEmptyFromProcess, studyGroup, false);
 
 });
 
