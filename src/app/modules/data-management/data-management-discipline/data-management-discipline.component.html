@@ -41,7 +41,11 @@
           <ng-container *ngFor="let attr of modelDetails">
             <tr>
               <td>{{ attr[0] }} :</td>
-              <td>{{ attr[1] }}</td>
+              <td *ngIf="attr[0] !== 'icon'">{{ attr[1] }}</td>
+              <td *ngIf="attr[0] === 'icon'">
+                <i [ngClass]="attr[1]"></i>
+              </td>
+              
             </tr>
           </ng-container>
         </table>
