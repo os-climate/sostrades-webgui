@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, HostListener, OnDestroy } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,8 +8,8 @@ import { ModelsStatusInformationComponent } from 'src/app/modules/models/models-
 import { ModelStatusDialogData, OntologyModelsStatusInformationDialogData } from 'src/app/models/dialog-data.model';
 import { MatDialog } from '@angular/material/dialog';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
-import { ProcessInformationComponent } from '../../process/process-information/process-information.component';
 import { ModelsStatusDocumentationComponent } from '../models-status-documentation/models-status-documentation.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-models-status-table',
@@ -37,6 +37,8 @@ export class ModelsStatusTableComponent implements OnInit {
   public dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>();
   public isLoading: boolean;
   public modelCount: number;
+  public onSearchModelStatusSubscription: Subscription;
+  public fromProcessInformation: boolean;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -63,6 +65,8 @@ export class ModelsStatusTableComponent implements OnInit {
     ) {
     this.isLoading = true;
     this.modelCount = 0;
+    this.onSearchModelStatusSubscription = null;
+    this.fromProcessInformation = false;
   }
 
   ngOnInit(): void {
@@ -86,6 +90,16 @@ export class ModelsStatusTableComponent implements OnInit {
       this.onFilterChange();
       this.isLoading = false;
     }
+    this.onSearchModelStatusSubscription = this.ontologyService.onSearchModel.subscribe( modelStatus => {
+      if (modelStatus !== null && modelStatus !== undefined) {
+        this.fromProcessInformation = true;
+        const searchModel = this.ontologyService.modelStatusData.find( model => model.name === modelStatus);
+        if (searchModel !== null && searchModel !== undefined) {
+          this.ontologyService.modelStatusFilter = searchModel.name;
+          this.displayDocumentation(searchModel);
+        }
+      }
+    });
   }
 
   loadModelStatusData() {
@@ -132,11 +146,19 @@ export class ModelsStatusTableComponent implements OnInit {
     const ontologyModelsStatusInformationDialogData = new OntologyModelsStatusInformationDialogData();
     ontologyModelsStatusInformationDialogData.modelStatus = modelStatus;
 
-    this.dialog.open(ModelsStatusDocumentationComponent, {
+    const dialogref = this.dialog.open(ModelsStatusDocumentationComponent, {
       disableClose: false,
       data: ontologyModelsStatusInformationDialogData,
       width: '900px',
       height: '650px',
+    });
+    dialogref.afterClosed().subscribe( () => {
+      if (this.fromProcessInformation) {
+        if ((this.onSearchModelStatusSubscription !== null) && (this.onSearchModelStatusSubscription !== undefined)) {
+          this.onSearchModelStatusSubscription.unsubscribe();
+          this.onSearchModelStatusSubscription = null;
+        }
+      }
     });
   }
 
@@ -173,6 +195,8 @@ export class ModelsStatusTableComponent implements OnInit {
       switch (this.ontologyService.modelStatusColumnFiltered) {
         case 'Model name':
           return data.name.trim().toLowerCase().includes(filter);
+        case 'Id':
+            return data.id.trim().toLowerCase().includes(filter);
         case 'Type':
           return data.type.trim().toLowerCase().includes(filter);
         case 'Source':
@@ -184,6 +208,7 @@ export class ModelsStatusTableComponent implements OnInit {
         default:
           return (
             data.name.trim().toLowerCase().includes(filter) ||
+            data.id.trim().toLowerCase().includes(filter) ||
             data.type.trim().toLowerCase().includes(filter) ||
             data.source.trim().toLowerCase().includes(filter) ||
             data.validatedBy.trim().toLowerCase().includes(filter) ||

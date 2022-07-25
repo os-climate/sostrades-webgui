@@ -1,5 +1,6 @@
 <mat-form-field floatLabel="never" style="margin-right: 10px">
   <input
+    [id]="nodeData.identifier"
     *ngIf="nodeData.type === 'float'; else nonFloatManagement"
     matInput
     [formControl]="inputFormControl"
@@ -15,6 +16,7 @@
   />
   <ng-template #nonFloatManagement>
     <input
+      [id]="nodeData.identifier"
       matInput
       [formControl]="inputFormControl"
       [type]="nodeData.type"

@@ -57,6 +57,7 @@
 
   <div class="action-button-bar" *ngIf="selection.hasValue()">
     <button
+      id='deletion'
       style="margin-left: 5px"
       mat-icon-button
       color="accent"
@@ -106,6 +107,7 @@
 
           <td mat-cell *matCellDef="let element" style="padding: 0 6px">
             <mat-checkbox
+              [id]="'checkbox-study-management-' + element.name +'-' + element.groupName"
               (click)="$event.stopPropagation()"
               (change)="$event ? selection.toggle(element) : null"
               [checked]="selection.isSelected(element)"
@@ -243,6 +245,7 @@
               />
 
             <button
+            [id]="'btn-study-management-edit-' + element.groupName + '-' + element.name"
             style="margin-right: 5px"
             mat-icon-button
             color="accent"
@@ -254,6 +257,7 @@
           </button>
 
             <button
+              [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"
               style="margin-right: 5px"
               mat-icon-button
               color="accent"

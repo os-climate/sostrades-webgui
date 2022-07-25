@@ -11,7 +11,7 @@
         </h2>
       </h2>
     <div>
-        <table style="width: 100%; background-color: white">
+        <table style="width: 100%; background-color: white; ">
             <ng-container *ngFor="let attr of processDatas">
               <tr style="border-bottom: 1px solid lightgray">
                 <td
@@ -27,7 +27,7 @@
                 <td
                   style="
                     width: calc(100% - 150px);
-                    font-family: Roboto, 'Helvetica Neue', sans-serif;
+                    font-size: 12px;
                     overflow-wrap: anywhere;
                   "
                 >
@@ -44,13 +44,117 @@
             </ng-container>
           </table>
     </div>
-    <app-study-case-documentation
-      [documentation]="markdownDocumentation"
-    ></app-study-case-documentation>
+
+    <div *ngIf=" data.process.disciplineList !== null && data.process.disciplineList !== undefined && data.process.disciplineList.length > 0">
+      <mat-accordion [ngClass]="!panelModelsOpenState ? 'mat-accordion' : ''">
+        <mat-expansion-panel (opened)="panelModelsOpenState = true" (closed)="panelModelsOpenState = false">
+          <mat-expansion-panel-header>
+            <span>
+              {{data.process.quantityDisciplinesUsed}} Model<span *ngIf="data.process.quantityDisciplinesUsed > 1" >s</span> used by process :
+            </span>
+          </mat-expansion-panel-header>
+          <table mat-table [dataSource]="dataSourceModelsUsingByProcess" matSort class="table table-sm table-borderless">
+            <ng-container  matColumnDef='disciplineList'>
+              <th mat-header-cell *matHeaderCellDef>Model(s)</th>
+              <td
+              mat-cell
+              *matCellDef="let element"
+              [matTooltip]="element.id"
+              matTooltipClass="custom-tooltip-class"
+              style="word-wrap: break-word;"
+              >
+                <i [class]="element.icon"></i>  {{ element.label }}
+              </td>
+            </ng-container>
+
+            <ng-container  matColumnDef='goToModel'>
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td
+                id="column-go-to-model"
+                mat-cell
+                *matCellDef="let element"
+                [matTooltip]="element.label + ' information\'s'"
+              >
+                <i 
+                (click)="goToModelsStatus(element.label)" 
+                class="fa-solid fa-circle-arrow-right" 
+                style="color: #0b78b8; cursor: pointer;"
+                >
+                </i>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="modelsUsingByProcessColumns; sticky: true"></tr>
+            <tr
+            mat-row
+            class="table-row"
+            *matRowDef="let row; columns: modelsUsingByProcessColumns"
+            ></tr>
+          </table> 
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div *ngIf=" data.process.associatedUsecases !== null && data.process.associatedUsecases !== undefined && data.process.associatedUsecases.length > 0">
+      <mat-accordion [ngClass]="!panelUsecaseOpenState ? 'mat-accordion' : ''">
+        <mat-expansion-panel (opened)="panelUsecaseOpenState = true" (closed)="panelUsecaseOpenState = false">
+          <mat-expansion-panel-header>
+            <span>
+              {{data.process.associatedUsecases.length}} Associated usecase<span *ngIf="data.process.associatedUsecases.length > 1" >s</span> :
+            </span>
+          </mat-expansion-panel-header>
+          <table mat-table [dataSource]="dataSourceAssociatedUsecase" matSort class="table table-sm table-borderless">
+            <ng-container  matColumnDef='name'>
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td
+              mat-cell
+              *matCellDef="let element"
+              matTooltipClass="custom-tooltip-class"
+              style="word-wrap: break-word;"
+              >
+              {{ element.name }}
+              </td>
+            </ng-container>
+            <ng-container  matColumnDef='process'>
+              <th mat-header-cell *matHeaderCellDef>Process</th>
+              <td
+                id="process"
+                mat-cell
+                *matCellDef="let element"
+              >{{element.process}}
+              </td>
+            </ng-container>
+            <ng-container  matColumnDef='repository'>
+              <th mat-header-cell *matHeaderCellDef>Repository</th>
+              <td
+                id="repository"
+                mat-cell
+                *matCellDef="let element"
+              >{{element.repository}}
+              </td>
+            </ng-container>
+            <ng-container  matColumnDef='run_usecase'>
+              <th mat-header-cell *matHeaderCellDef>Run Usecase</th>
+              <td
+                id="repository"
+                mat-cell
+                *matCellDef="let element"
+              >{{element.run_usecase}}
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="associatedUsecaseColumn; sticky: true"></tr>
+            <tr
+            mat-row
+            class="table-row"
+            *matRowDef="let row; columns: associatedUsecaseColumn"
+            ></tr>
+          </table> 
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <span style="font-weight: 500; font-family: Roboto, 'Helvetica Neue', sans-serif; vertical-align: top;">
+      Documentation : 
+    </span>
+    <app-study-case-documentation [documentation]="markdownDocumentation"></app-study-case-documentation>
     <div style="text-align: center; margin: 10px 0;" >
-        <button
-        mat-raised-button
-        (click)="closeDialog()"
-        >Ok</button>
+        <button mat-button (click)="closeDialog()">Ok</button>
     </div>
 </div>

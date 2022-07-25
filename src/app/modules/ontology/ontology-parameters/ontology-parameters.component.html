@@ -101,7 +101,7 @@
             mat-cell
             *matCellDef="let element"
           >
-            {{ element.nb_disciplines_using_parameter }} Models Using Parameter
+         Parameter used by {{ element.nb_disciplines_using_parameter }} model<span *ngIf="element.nb_disciplines_using_parameter > 1" >s</span>
           </td>
         </ng-container>
 

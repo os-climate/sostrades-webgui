@@ -19,8 +19,8 @@ export class Process {
     public category: string,
     public version: string,
     public quantityDisciplinesUsed: number,
-    public disciplineList: {},
-    public associatedUsecases: {}
+    public disciplineList: [],
+    public associatedUsecases: []
   ) {
   }
 

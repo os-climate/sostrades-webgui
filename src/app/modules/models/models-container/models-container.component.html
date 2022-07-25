@@ -3,7 +3,7 @@
     <app-models-status-table *ngIf="showModelStatus"></app-models-status-table>
   </mat-tab>
   <mat-tab label="{{processesTitle}}">
-    <app-process-management [dashboard]="false"  *ngIf="showProcessManagement"></app-process-management>
+    <app-ontology-processes [dashboard]="false"  *ngIf="showProcessManagement"></app-ontology-processes>
   </mat-tab>
   <mat-tab label="{{parametersTitle}}">
     <app-ontology-parameters [dashboard]="false"  *ngIf="showOntologyparameters"></app-ontology-parameters>

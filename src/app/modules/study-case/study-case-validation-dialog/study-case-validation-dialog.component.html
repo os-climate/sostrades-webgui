@@ -93,6 +93,7 @@
         mat-flat-button
         color="accent"
         aria-label="Create Group"
+        [id]="'validate-data'"
         (click)="validateData()"
         [disabled]="!validationForm.valid"
       >
