@@ -15,7 +15,7 @@ const processWitness = 'WITNESS Process';
 const referenceEmpty = 'Empty Study';
 const referenceUsecase = 'usecase_witness';
 const editStudyName = 'Test_witness_copie_edit';
-const editStudyGroup = 'SoSTrades_Dev';
+const editStudyGroup = 'All users';
 
 
 

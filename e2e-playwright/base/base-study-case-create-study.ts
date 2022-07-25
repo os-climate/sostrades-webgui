@@ -54,10 +54,10 @@ export async function baseStudyCaseCreation(
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
 
-    }
-    await Promise.all([
+        await Promise.all([
         page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
-    ]);
+        ]);
+    }
 
     // Selection reference
     const empty = page.locator('mat-select-trigger');
@@ -99,4 +99,3 @@ export async function baseStudyCaseCreation(
     await page.waitForURL('/study-management', { timeout: 15000 });
 
 }
-
