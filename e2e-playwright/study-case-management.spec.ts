@@ -19,7 +19,7 @@ const editStudyGroup = 'All users';
 
 
 
-test('Test Create Study -> Test creation empty, usecase, copie from study management and processes', async ({ page }) => {
+test('Test Create Study -> Test_creation empty, usecase, copie from study management and processes', async ({ page }) => {
 
   // Creation study Empty
   await baseStudyCaseCreation(page, studyNameEmpty, processWitness, referenceEmpty, studyGroup, true);
