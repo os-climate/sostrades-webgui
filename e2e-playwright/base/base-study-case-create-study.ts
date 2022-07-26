@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
 
 export async function baseStudyCaseCreation(
-    page: Page, studyName: string, process: string, reference: string, createFromStudyManagement: boolean) {
+    page: Page, studyName: string, process: string, reference: string, studyGroup: string, createFromStudyManagement: boolean) {
 
     if (!page.url().includes('/study-management')) {
 
@@ -53,11 +53,7 @@ export async function baseStudyCaseCreation(
 
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
-
     }
-    await Promise.all([
-        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
-    ]);
 
     // Selection reference
     const empty = page.locator('mat-select-trigger');
@@ -69,9 +65,15 @@ export async function baseStudyCaseCreation(
     await selectedReference.click();
     await expect(references).toHaveText(reference, { timeout: 15000 });
 
+    // Select group
+    const group = page.locator('id=group');
+    await group.click();
+    const groupSelected = page.locator(`mat-option:has-text("${studyGroup}")`).first();
+    groupSelected.click();
+    await expect(group).toHaveText(studyGroup, { timeout: 15000 });
+
     // Valid the creation
     const submit = page.locator('id=submit');
-    await expect(submit).toBeEnabled({ timeout: 15000 });
     await submit.click();
 
     // Verifying correct redirection to study workspace
@@ -93,4 +95,3 @@ export async function baseStudyCaseCreation(
     await page.waitForURL('/study-management', { timeout: 15000 });
 
 }
-
