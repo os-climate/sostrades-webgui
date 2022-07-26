@@ -30,7 +30,6 @@ export enum ValueType {
 export class NodeData {
 
   public variableName: string;
-  public variableKey: string;
   public displayName: string;
   private _widgetType: WidgetType;
   public isHighlighted: boolean;
@@ -63,6 +62,7 @@ export class NodeData {
         DataframeDescriptor.Create(jsonData[NodeDataAttributes.DATAFRAME_DESCRIPTOR]),
         jsonData[NodeDataAttributes.DATAFRAME_EDITION_LOCKED],
         jsonData[NodeDataAttributes.DISCIPLINE_FULL_PATH_LIST],
+        jsonData[NodeDataAttributes.VARIABLE_KEY],
         parent,
         isDataDisc
       );
@@ -95,6 +95,7 @@ export class NodeData {
     public dataframeDescriptor: DataframeDescriptor,
     public dataframeEditionLocked: boolean,
     public disciplineFullPathList: string[],
+    public variableKey: string,
     public parent: TreeNode,
     public isDataDisc: boolean) {
 
@@ -106,7 +107,6 @@ export class NodeData {
       this.variableName = splitedIdentifier[0];
     }
     this.displayName = this.variableName;
-    this.variableKey = `${this.parent.modelNameFullPath}_${this.ioType}put_${this.variableName}`;
 
     this._widgetType = WidgetType.NO_WIDGET;
     if ((this.subtype_descriptor !== null) && (this.subtype_descriptor !== undefined)) {
@@ -226,5 +226,6 @@ export enum NodeDataAttributes {
   CONNECTOR_DATA = 'connector_data',
   DATAFRAME_DESCRIPTOR = 'dataframe_descriptor',
   DATAFRAME_EDITION_LOCKED = 'dataframe_edition_locked',
-  DISCIPLINE_FULL_PATH_LIST = 'discipline_full_path_list'
+  DISCIPLINE_FULL_PATH_LIST = 'discipline_full_path_list',
+  VARIABLE_KEY='variable_key'
 }
