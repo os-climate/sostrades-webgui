@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "npx playwright test e2e-playwright",
+    "test": "npx playwright test e2e-playwright --workers=1",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
