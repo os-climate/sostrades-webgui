@@ -64,13 +64,6 @@ export async function baseStudyCaseCreation(
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
     await selectedReference.click();
 
-    // Select group
-    const group =  page.locator('mat-select').last();
-    await expect(group).toBeVisible({ timeout: 15000 });
-    await group.click();
-    const groupSelected = page.locator(`mat-option:has-text("${studyGroup}")`).first();
-    groupSelected.click();
-
     // Valid the creation
     const submit = page.locator('id=submit');
     await submit.click();
