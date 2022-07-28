@@ -51,7 +51,7 @@ export async function baseStudyCaseCreation(
         const searchOption = await page.locator('[aria-label="dropdown search"]');
         await searchOption.click();
         await searchOption.fill(process);
-
+        await page.waitForTimeout(200);
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
     }
@@ -59,14 +59,14 @@ export async function baseStudyCaseCreation(
     await Promise.all([
         page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
     ]);
-    
+
     // Selection reference
     const empty = page.locator('mat-select-trigger');
     await expect(empty).toHaveText(/Empty Study/, { timeout: 15000 });
 
     const references = page.locator('id=reference');
     await references.click();
-    
+    await page.waitForTimeout(200);
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
     await selectedReference.click();
     
