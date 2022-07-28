@@ -11,9 +11,9 @@ const studyNameEmptyFromProcess = 'Test_witness_empty_from_processes';
 const studyNameUsecaseFromProcess = 'Test_witness_usecase_from_processes';
 const studyNameCopieFromProcess = 'Test_witness_copie_from_processes';
 const studyGroup = 'group_test_e2e';
-const processWitness = 'WITNESS Process';
+const processWitness = 'Airbus Product Development Strategy Manual Simple v1 Process';
 const referenceEmpty = 'Empty Study';
-const referenceUsecase = 'usecase_witness';
+const referenceUsecase = 'usecase_reference_ZEROe_CSR3_BRN_BSL';
 const editStudyName = 'Test_witness_copie_edit';
 const editStudyGroup = 'All users';
 

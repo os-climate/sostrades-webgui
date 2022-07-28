@@ -54,11 +54,12 @@ export async function baseStudyCaseCreation(
         await page.waitForTimeout(200);
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
+        await Promise.all([
+            page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
+        ]);
     }
 
-    await Promise.all([
-        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
-    ]);
+    
 
     // Selection reference
     const empty = page.locator('mat-select-trigger');
@@ -68,11 +69,13 @@ export async function baseStudyCaseCreation(
     await references.click();
     await page.waitForTimeout(200);
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
+    await page.waitForTimeout(200);
     await selectedReference.click();
     
 
     // Valid the creation
     const submit = page.locator('id=submit');
+    await submit.isEnabled({ timeout: 15000 });
     await submit.click();
 
     // Verifying correct redirection to study workspace
