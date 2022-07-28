@@ -41,6 +41,7 @@ export async function baseStudyCaseCreation(
     const study = page.locator(`id=studyName`);
     await study.click();
     await study.fill(studyName);
+    
 
     // Selection process
     if (createFromStudyManagement) {
@@ -55,14 +56,20 @@ export async function baseStudyCaseCreation(
         await optionSelected.click();
     }
 
+    await Promise.all([
+        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
+    ]);
+    
     // Selection reference
     const empty = page.locator('mat-select-trigger');
     await expect(empty).toHaveText(/Empty Study/, { timeout: 15000 });
 
     const references = page.locator('id=reference');
     await references.click();
+    
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
     await selectedReference.click();
+    
 
     // Valid the creation
     const submit = page.locator('id=submit');
