@@ -1,0 +1,57 @@
+<div class="container">
+  <mat-table class="table" #table [dataSource]="dataSourceStudyCaseLogging">
+
+    <!-- Source Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.name }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Level Column -->
+    <ng-container matColumnDef="level">
+      <mat-header-cell *matHeaderCellDef> Level </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.level }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Created Column -->
+    <ng-container matColumnDef="created">
+      <mat-header-cell *matHeaderCellDef> Created </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.created | date: "dd/MM/yyyy, H:mm:ss" }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Message Column -->
+    <ng-container matColumnDef="author">
+      <mat-header-cell *matHeaderCellDef> Author </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.message }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Download Column -->
+    <ng-container matColumnDef="exception">
+      <mat-header-cell *matHeaderCellDef>Changes</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button
+          *ngIf="element.exception != null"
+          mat-icon-button
+          color="accent"
+          (click)="showException(element.exception)"
+        >
+          <i class="fa-regular fa-file-lines fa-fw"> </i>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row
+      *matHeaderRowDef="displayedColumns; sticky: true"
+      class="custom-header"
+    ></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+  </mat-table>
+</div>
