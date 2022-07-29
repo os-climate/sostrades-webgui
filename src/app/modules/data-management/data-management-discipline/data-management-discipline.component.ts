@@ -66,10 +66,12 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
       const ontologyInstance = this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]);
       this.modelDetails = Object.entries(this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]))
         .filter(entry => typeof entry[1] === 'string').map(entry => [OntologyDiscipline.getKeyLabel(entry[0]), entry[1]]);
-    }
-    // get discipline icon
-    if (this.modelDetails.find(entry => entry[0]==='icon') !== undefined){
-      this.disciplineIcon = this.modelDetails.find(entry => entry[0]==='icon')[1];
+      
+      // get discipline icon
+      if (this.modelDetails.find(entry => entry[0]==='icon') !== undefined){
+        this.disciplineIcon = this.modelDetails.find(entry => entry[0]==='icon')[1];
+      }
+    
     }
     
     if (this.disciplineData.maturity !== null && this.disciplineData.maturity.length > 0) {
