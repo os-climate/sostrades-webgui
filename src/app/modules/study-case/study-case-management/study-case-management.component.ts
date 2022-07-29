@@ -4,13 +4,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  ValidationDialogData,
-  StudyCaseModificationDialogData,
-  UpdateEntityRightDialogData,
-  EditStudyCaseDialogData,
-  ProcessCreateStudyDialogData,
-} from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData, EditStudyCaseDialogData} from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -222,10 +216,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   loadStudyManagementData() {
     this.isLoading = true;
-    // this.studyCaseDataService.studyManagementData = [];
     this.dataSourceStudies = new MatTableDataSource<Study>(null);
 
-    // if (!this.getOnlyFavoriteStudy) {
     this.studyCaseDataService.getStudies().subscribe(
       (studies) => {
               // Retrieving study case list

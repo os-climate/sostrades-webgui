@@ -1,0 +1,64 @@
+.container {
+    height: 100%;
+    width: 100%;
+    padding: 5px;
+    max-width: unset !important;
+    overflow-x: auto;
+  }
+  
+  .loading-zone {
+    height: 100%;
+    width: 100%;
+    padding: 100px 20px 100px 20px;
+  }
+  #firstColumn {
+    width: 40%; 
+    margin-left: 20px;
+  }
+  #sosTitle {
+    margin-left: 100px;
+  }
+  #ontologyTitle {
+    font-size: 25px; 
+    font-weight: bold;
+  }
+  #description {
+    line-height: 25px; 
+    font-style: 14px; 
+    width: 80%;
+  }
+  .information {
+    font-weight: bold;
+  }
+  #entityCount {
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 20px;
+    line-height: 25px;
+  }
+  #secondColumn {
+    width: 50%; 
+    margin-left: 100px;
+  }
+  .border{
+    width: 100%;
+    border-bottom: rgb(243, 243, 243) solid 1px;
+  }
+  
+  .informationEntityCount {
+    margin-left: 30px;
+    cursor: pointer;
+    color: #0090FF; 
+  }
+  .informationEntityCount:hover{
+    text-decoration: underline;
+    color: #0056B3;
+  }
+  #expansion-panel{
+    background-color: rgb(243, 243, 243);
+  }
+  .download-link{
+    font-size: 15px;
+    text-decoration: none; 
+    color: black;
+  }

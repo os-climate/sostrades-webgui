@@ -1,4 +1,7 @@
 <mat-tab-group class="container-workspace"  [(selectedIndex)]="index" (selectedTabChange)="onSelectedTabChange($event)">
+  <mat-tab label="{{ontologyMainTitle}}">
+    <app-ontology-main *ngIf="showOntolgyMain "></app-ontology-main>
+  </mat-tab>
   <mat-tab label="{{modelsStatusTitle}}">
     <app-models-status-table *ngIf="showModelStatus"></app-models-status-table>
   </mat-tab>

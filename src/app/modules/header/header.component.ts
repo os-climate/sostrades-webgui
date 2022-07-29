@@ -67,11 +67,14 @@ export class HeaderComponent implements OnInit {
       this.title = NavigationTitle.HOME;
     } else if (this.router.url.includes(Routing.STUDY_MANAGEMENT)) {
       this.title =  NavigationTitle.STUDY_MANAGEMENT;
-    } else if (this.router.url.includes(Routing.ONTOLOGY)) {
-      this.title = NavigationTitle.MODELS_STATUS;
+    } else if (this.router.url.includes(Routing.ONTOLOGY_MAIN)) {
+      this.title = NavigationTitle.ONTOLOGY_MAIN;
+    } else if (this.router.url.includes(Routing.MODELS)) {
+      this.title = NavigationTitle.MODELS;
     } else if (this.router.url.includes(Routing.PROCESSES)) {
       this.title = NavigationTitle.PROCESS;
-      this.headerService.changeIndexTab(1);
+    } else if (this.router.url.includes(Routing.ONTOLOGY_PARAMETERS)) {
+      this.title = NavigationTitle.ONTOLOGY_PARAMETERS;
     } else if (this.router.url.includes(Routing.STUDY_WORKSPACE)) {
       this.title = NavigationTitle.STUDY_WORKSPACE;
     } else if (this.router.url.includes(Routing.GROUP_MANAGEMENT)) {
@@ -117,33 +120,33 @@ export class HeaderComponent implements OnInit {
 
   // Ontology
   onClickOntology() {
-    this.router.navigate([Routing.ONTOLOGY]);
+    this.router.navigate([Routing.ONTOLOGY, Routing.ONTOLOGY_MAIN]);
     this.trigger.closeMenu();
-    this.title = NavigationTitle.MODELS_STATUS;
+    this.title = NavigationTitle.ONTOLOGY_MAIN;
     this.headerService.changeIndexTab(0);
 
   }
 
    // Model Status
    onClickModelsStatus() {
-    this.router.navigate([Routing.ONTOLOGY, Routing.MODELS_STATUS]);
+    this.router.navigate([Routing.ONTOLOGY, Routing.MODELS]);
     this.trigger.closeMenu();
-    this.title = NavigationTitle.MODELS_STATUS;
-    this.headerService.changeIndexTab(0);
+    this.title = NavigationTitle.MODELS;
+    // this.headerService.changeIndexTab(1);
 
   }
     // Ontology processes
   onClickOntologyProcesses() {
     this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES]);
     this.title = NavigationTitle.PROCESS;
-    this.headerService.changeIndexTab(1);
+    this.headerService.changeIndexTab(2);
   }
 
     // Ontology parameters
     onClickOntologyParameters() {
       this.router.navigate([Routing.ONTOLOGY, Routing.ONTOLOGY_PARAMETERS]);
       this.title = NavigationTitle.ONTOLOGY_PARAMETERS;
-      this.headerService.changeIndexTab(2);
+      this.headerService.changeIndexTab(3);
     }
 
   // Group Management
