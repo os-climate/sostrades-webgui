@@ -3,8 +3,8 @@ import { baseStudyCaseGenerateReference } from './base/base-study-case-generate-
 
 test('Generate reference', async ({ page }) => {
 
-    const studyName = 'usecase_witness';
-    const processName = 'witness';
+    const studyName = 'usecase_reference_ZEROe_CSR3_FC_BSL';
+    const processName = 'apds_manual_simple';
 
     await baseStudyCaseGenerateReference(page, studyName, processName);
 });

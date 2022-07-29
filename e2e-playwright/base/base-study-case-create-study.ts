@@ -41,6 +41,7 @@ export async function baseStudyCaseCreation(
     const study = page.locator(`id=studyName`);
     await study.click();
     await study.fill(studyName);
+    
 
     // Selection process
     if (createFromStudyManagement) {
@@ -50,10 +51,15 @@ export async function baseStudyCaseCreation(
         const searchOption = await page.locator('[aria-label="dropdown search"]');
         await searchOption.click();
         await searchOption.fill(process);
-
+        await page.waitForTimeout(200);
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
+        await Promise.all([
+            page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
+        ]);
     }
+
+    
 
     // Selection reference
     const empty = page.locator('mat-select-trigger');
@@ -61,19 +67,15 @@ export async function baseStudyCaseCreation(
 
     const references = page.locator('id=reference');
     await references.click();
+    await page.waitForTimeout(200);
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
+    await page.waitForTimeout(200);
     await selectedReference.click();
-    await expect(references).toHaveText(reference, { timeout: 15000 });
-
-    // Select group
-    const group = page.locator('id=group');
-    await group.click();
-    const groupSelected = page.locator(`mat-option:has-text("${studyGroup}")`).first();
-    groupSelected.click();
-    await expect(group).toHaveText(studyGroup, { timeout: 15000 });
+    
 
     // Valid the creation
     const submit = page.locator('id=submit');
+    await submit.isEnabled({ timeout: 15000 });
     await submit.click();
 
     // Verifying correct redirection to study workspace

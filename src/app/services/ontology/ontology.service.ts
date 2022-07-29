@@ -52,7 +52,7 @@ export class OntologyService extends MainHttpService {
   }
 
   loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
-    return this.http.post<{}>(`${this.apiRoute}/v1`, ontologyRequest).pipe(map(
+    return this.http.post<{}>(`${this.apiRoute}/ontology-usages`, ontologyRequest).pipe(map(
       response => {
         this.ontology.studyCase.parameters = {};
         this.ontology.studyCase.disciplines = {};
