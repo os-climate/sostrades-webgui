@@ -8,7 +8,9 @@
     <mat-expansion-panel-header
      style="background-color: #d9d9d9d9"
     >
+      
       <mat-panel-title style="font-size: 15px; font-weight: 550">
+        <i [ngClass]="disciplineIcon" style="margin:0 5px;margin-top: 3px;"></i>
         {{ disciplineData.modelNameFullPath[0] | ontologyDisciplineConverter }}
         <span class="spacer"></span>
 
@@ -40,8 +42,8 @@
         <table style="width: 100%; padding: 4px">
           <ng-container *ngFor="let attr of modelDetails">
             <tr>
-              <td>{{ attr[0] }} :</td>
-              <td>{{ attr[1] }}</td>
+              <td *ngIf="attr[0] !== 'icon'">{{ attr[0] }} :</td>
+              <td *ngIf="attr[0] !== 'icon'">{{ attr[1] }}</td>              
             </tr>
           </ng-container>
         </table>
