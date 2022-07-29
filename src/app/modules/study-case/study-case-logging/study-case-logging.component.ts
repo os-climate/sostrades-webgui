@@ -53,15 +53,6 @@ export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewIn
 
   ngOnInit(): void {
 
-    this.studyCaseSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-
-      if (loadedStudy !== null) {
-        this.initializeLogger();
-      } else {
-        this.dataSourceStudyCaseLogging = null;
-      }
-    });
-
     // Subscribe to log change in order to update view
     if (this.logsSubscription === null || this.logsSubscription === undefined) {
       this.logsSubscription = this.studyCaseDataService.logs$.subscribe(logs => {
@@ -111,7 +102,14 @@ export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   private getLogs() {
-    this.studyCaseDataService.getLog(this.studyCaseId);
+    //get studylog only if logger is initialized
+    if (this.studyCaseDataService.loadedStudy !== undefined){
+      this.studyCaseId = this.studyCaseDataService.loadedStudy.studyCase.id;
+    }
+    
+    if (this.studyCaseId !== -1){
+      this.studyCaseDataService.getLog(this.studyCaseId);
+    }
   }
 
   private setLogToView(logs: StudyCaseLogging[]) {

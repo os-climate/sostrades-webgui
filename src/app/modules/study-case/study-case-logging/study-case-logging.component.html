@@ -1,4 +1,25 @@
-<div class="container">
+<div class="container" >
+  <mat-toolbar class="toolbar" >
+    <button
+      mat-button
+      mat-raised-button
+      style="margin-right: 5px;"
+      color="accent"
+      class="toolbar-item-shadow"
+      [ngClass]="{ 'mat-raised-button': bottomAnchorLog }"
+      (click)="anchorToBottom()"
+    >
+      <div style="width: 24px; height: 24px; line-height: 24px">
+        <i
+          class="fa-solid fa-anchor fa-fw toolbar-icon-font-aw"
+          aria-hidden="false"
+          aria-label="Anchor to bottom"
+          matTooltip="Anchor to bottom"
+        >
+        </i>
+      </div>
+    </button>
+  </mat-toolbar>
   <mat-table class="table" #table [dataSource]="dataSourceStudyCaseLogging">
 
     <!-- Source Column -->
@@ -26,8 +47,8 @@
     </ng-container>
 
     <!-- Message Column -->
-    <ng-container matColumnDef="author">
-      <mat-header-cell *matHeaderCellDef> Author </mat-header-cell>
+    <ng-container matColumnDef="message">
+      <mat-header-cell *matHeaderCellDef> Message </mat-header-cell>
       <mat-cell *matCellDef="let element" class="custom-font">
         {{ element.message }}
       </mat-cell>
@@ -35,15 +56,15 @@
 
     <!-- Download Column -->
     <ng-container matColumnDef="exception">
-      <mat-header-cell *matHeaderCellDef>Changes</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef>Exception</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <button
-          *ngIf="element.exception != null"
+          *ngIf="element.exception !== null && element.exception !== ''"
           mat-icon-button
           color="accent"
           (click)="showException(element.exception)"
         >
-          <i class="fa-regular fa-file-lines fa-fw"> </i>
+          <i class="fa fa-exclamation-circle" style="color: red;"> </i>
         </button>
       </mat-cell>
     </ng-container>

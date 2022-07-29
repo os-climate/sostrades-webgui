@@ -170,6 +170,9 @@ export class StudyCaseMainService extends MainHttpService {
           this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
         }
 
+        //load logs
+        this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
+
         this.studyCaseDataService.tradeScenarioList = [];
 
         this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
