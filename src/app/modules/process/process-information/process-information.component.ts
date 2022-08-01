@@ -9,6 +9,8 @@ import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { HeaderService } from 'src/app/services/hearder/header.service';
+import { Router } from '@angular/router';
+import { Routing } from 'src/app/models/routing.model';
 
 
 @Component({
@@ -36,6 +38,7 @@ export class ProcessInformationComponent implements OnInit {
     private snackbarService: SnackbarService,
     private headerService: HeaderService,
     public ontologyService: OntologyService,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: OntologyProcessInformationDialogData
     ) {
     this.markdownDocumentation = [];
@@ -120,9 +123,8 @@ export class ProcessInformationComponent implements OnInit {
   }
 
   goToModelsStatus(model) {
-    this.dialogRef.close(this.data);
-    this.headerService.changeIndexTab(1);
-    this.ontologyService.modelStatusFilter = model;
+    this.dialogRef.close();
+    this.headerService.changeIndexTab(0);
+    this.router.navigate([Routing.ONTOLOGY, Routing.MODELS], {queryParams: {model: `${model}`}});
   }
-
 }

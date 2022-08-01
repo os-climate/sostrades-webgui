@@ -10,13 +10,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
 import { ModelsStatusDocumentationComponent } from '../models-status-documentation/models-status-documentation.component';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-models-status-table',
   templateUrl: './models-status-table.component.html',
   styleUrls: ['./models-status-table.component.scss']
 })
-export class ModelsStatusTableComponent implements OnInit {
+export class ModelsStatusTableComponent implements OnInit, OnDestroy {
 
   public visibleColumns = [
     'name',
@@ -37,8 +38,9 @@ export class ModelsStatusTableComponent implements OnInit {
   public dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>();
   public isLoading: boolean;
   public modelCount: number;
-  public onSearchModelStatusSubscription: Subscription;
   public fromProcessInformation: boolean;
+  private routerSubscription: Subscription;
+  private modelToShowAtStartup: string;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -62,34 +64,51 @@ export class ModelsStatusTableComponent implements OnInit {
     public ontologyService: OntologyService,
     private snackbarService: SnackbarService,
     private dialog: MatDialog,
+    private route: ActivatedRoute
     ) {
     this.isLoading = true;
     this.modelCount = 0;
-    this.onSearchModelStatusSubscription = null;
     this.fromProcessInformation = false;
+    this.routerSubscription = null;
+    this.modelToShowAtStartup = null;
   }
 
   ngOnInit(): void {
 
-    // Load data first time component initialised
-    if (this.ontologyService.modelStatusData === null
-      || this.ontologyService.modelStatusData === undefined
-      || this.ontologyService.modelStatusData.length === 0) {
-      this.loadModelStatusData();
-    } else {
-      this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(
-        this.ontologyService.modelStatusData
-      );
-      this.dataSourceModelStatus.sortingDataAccessor = (item, property) => {
-        return typeof item[property] === 'string'
-          ? item[property].toLowerCase()
-          : item[property];
-      };
-      this.dataSourceModelStatus.sort = this.sort;
-      // Initialising filter with 'All columns'
-      this.onFilterChange();
-      this.isLoading = false;
+    if (this.routerSubscription === null) {
+
+      this.routerSubscription = this.route.queryParams.subscribe(params => {
+
+        // Load data first time component initialised
+        if (this.ontologyService.modelStatusData === null
+          || this.ontologyService.modelStatusData === undefined
+          || this.ontologyService.modelStatusData.length === 0) {
+          this.loadModelStatusData();
+        } else {
+          this.initDataSource();
+        }
+
+        // If model is defined has query parameter then we filter and mount the model model information
+        if (params.hasOwnProperty('model')) {
+          if (params.model !== null && params.model !== undefined) {
+            this.fromProcessInformation = true;
+            this.modelToShowAtStartup = params.model;
+            const searchModel = this.ontologyService.modelStatusData.find( model => model.name === params.model);
+            if (searchModel !== null && searchModel !== undefined) {
+              this.ontologyService.modelStatusFilter = searchModel.name;
+              this.displayDocumentation(searchModel);
+            }
+          }
+        }
+      });
     }
+  }
+
+  ngOnDestroy(): void {
+      if (this.routerSubscription !== null) {
+        this.routerSubscription.unsubscribe();
+        this.routerSubscription = null;
+      }
   }
 
   loadModelStatusData() {
@@ -102,19 +121,8 @@ export class ModelsStatusTableComponent implements OnInit {
     this.ontologyService.getOntologyModelsStatus().subscribe(
       (models) => {
         this.ontologyService.modelStatusData = models;
-        console.log(models.length);
-        // Retrieving references list
-        this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(
-          this.ontologyService.modelStatusData
-        );
-        this.dataSourceModelStatus.sortingDataAccessor = (item, property) => {
-          return typeof item[property] === 'string'
-            ? item[property].toLowerCase()
-            : item[property];
-        };
-        this.dataSourceModelStatus.sort = this.sort;
-        this.onFilterChange();
-        this.isLoading = false;
+
+        this.initDataSource();
       },
       (errorReceived) => {
         const error = errorReceived as SoSTradesError;
@@ -129,6 +137,32 @@ export class ModelsStatusTableComponent implements OnInit {
         }
       }
     );
+  }
+
+  private initDataSource() {
+    this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(
+      this.ontologyService.modelStatusData
+    );
+    this.dataSourceModelStatus.sortingDataAccessor = (item, property) => {
+      return typeof item[property] === 'string'
+        ? item[property].toLowerCase()
+        : item[property];
+    };
+    this.dataSourceModelStatus.sort = this.sort;
+    // Initialising filter with 'All columns'
+    this.onFilterChange();
+    this.isLoading = false;
+
+    if ((this.fromProcessInformation === true) && (this.modelToShowAtStartup !== null)) {
+      const searchModel = this.ontologyService.modelStatusData.find( model => model.name === this.modelToShowAtStartup);
+      if (searchModel !== null && searchModel !== undefined) {
+        this.modelToShowAtStartup = null;
+        this.fromProcessInformation = false;
+        this.ontologyService.modelStatusFilter = searchModel.name;
+        this.onFilterChange();
+        this.displayDocumentation(searchModel);
+      }
+    }
   }
 
   displayDocumentation(modelStatus: OntologyModelStatus) {
