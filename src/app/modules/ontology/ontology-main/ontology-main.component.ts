@@ -44,6 +44,13 @@ export class OntologyMainComponent implements OnInit {
       this.loadOntologyGeneralInformation();
   } else {
       this.generalInformation = this.ontologyService.generalInformationData;
+      // Check ontology's server
+      let oneValueNotUndefined = false;
+      Object.values(this.generalInformation).forEach(value => {
+        if (value !== undefined) {
+          oneValueNotUndefined = true;          }
+      });
+      this.ontologyisUp = oneValueNotUndefined;
       this.isLoading = false;
     }
   this.urlXlsx = this.ontologyDirectService.getOntologyDowloadUrlXlsx();
@@ -55,12 +62,14 @@ export class OntologyMainComponent implements OnInit {
      // Retrieving study case list
     this.ontologyService.getOntologyGeneralInformation().subscribe(
       (informations) => {
+        // Check ontology's server
         let oneValueNotUndefined = false;
         Object.values(informations).forEach(value => {
           if (value !== undefined) {
             oneValueNotUndefined = true;          }
         });
         this.ontologyisUp = oneValueNotUndefined;
+
         this.generalInformation = informations;
         this.isLoading = false;
       },
