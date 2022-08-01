@@ -19,8 +19,6 @@ import { HeaderService } from '../hearder/header.service';
 })
 export class OntologyService extends MainHttpService {
 
-  onSearchModel: EventEmitter<string> = new EventEmitter<string>();
-  // public onSearchModel: EventEmitter<OntologyModelStatus> = new EventEmitter<OntologyModelStatus>();
 
 
   private ontology: Ontology;
@@ -185,7 +183,4 @@ export class OntologyService extends MainHttpService {
     }
   }
 
-  searchModel(model: string) {
-    this.onSearchModel.emit(model);
-  }
 }
