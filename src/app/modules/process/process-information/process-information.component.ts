@@ -120,9 +120,9 @@ export class ProcessInformationComponent implements OnInit {
   }
 
   goToModelsStatus(model) {
-    this.dialogRef.close();
-    this.headerService.changeIndexTab(0);
-    this.ontologyService.searchModel(model);
+    this.dialogRef.close(this.data);
+    this.headerService.changeIndexTab(1);
+    this.ontologyService.modelStatusFilter = model;
   }
 
 }

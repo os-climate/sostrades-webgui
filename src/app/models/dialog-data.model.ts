@@ -400,3 +400,11 @@ export class EditStudyCaseDialogData extends AbstractDialogData {
     this.groupId = null;
   }
 }
+
+export class RepositoryTraceabilityDialogData extends AbstractDialogData {
+    codeSourceTraceability: any;
+    public constructor() {
+      super();
+      this.codeSourceTraceability = null;
+    }
+}

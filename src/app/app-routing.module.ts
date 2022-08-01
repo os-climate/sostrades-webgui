@@ -19,11 +19,11 @@ import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component
 import { GroupManagementComponent } from './modules/group-management/group-management.component';
 import { ReferenceManagementComponent } from './modules/reference-management/reference-management.component';
 import { StudyCaseManagementComponent } from './modules/study-case/study-case-management/study-case-management.component';
-import { ModelsLinksComponent } from './modules/models/models-links/models-links.component';
 import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
 import { Routing } from './models/routing.model';
 import { OntologyParametersComponent } from './modules/ontology/ontology-parameters/ontology-parameters.component';
 import { OntologyProcessesComponent } from './modules/ontology/ontology-processes/ontology-processes.component';
+import { OntologyMainComponent } from './modules/ontology/ontology-main/ontology-main.component';
 
 
 const routes: Routes = [
@@ -87,7 +87,12 @@ const routes: Routes = [
             canActivate: [StudyGuard]
           },
           {
-            path: Routing.MODELS_STATUS,
+            path: Routing.ONTOLOGY_MAIN,
+            component: OntologyMainComponent,
+            canActivate: [StudyGuard]
+          },
+          {
+            path: Routing.MODELS,
             component: ModelsStatusTableComponent,
             canActivate: [StudyGuard],
           },

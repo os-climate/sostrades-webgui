@@ -1,0 +1,57 @@
+<body>
+    <div style="text-align: center;">
+        <h1> Code Repository Traceability</h1>
+    </div>
+
+    <div>
+        <table mat-table [dataSource]="dataSourceCodeRepositoryTraceability" matSort class="table table-sm table-borderless">
+            <ng-container  matColumnDef='name'>
+            <th mat-header-cell *matHeaderCellDef>Repository</th>
+            <td
+            mat-cell
+            *matCellDef="let element"
+            matTooltipClass="custom-tooltip-class"
+            style="word-wrap: break-word;"
+            >
+            <a [href]="element.url" target="_blank" style="text-transform: capitalize;">{{ element.name }}</a>
+            </td>
+            </ng-container>
+            <ng-container  matColumnDef='branch'>
+            <th mat-header-cell *matHeaderCellDef>Branch</th>
+            <td
+                id="branch"
+                mat-cell
+                *matCellDef="let element"
+            >{{element.branch}}
+            </td>
+            </ng-container>
+            <ng-container  matColumnDef='commit'>
+            <th mat-header-cell *matHeaderCellDef>Commit</th>
+            <td
+                id="commit"
+                mat-cell
+                *matCellDef="let element"
+            >{{element.commit}}
+            </td>
+            </ng-container>
+            <ng-container  matColumnDef='committedDate'>
+            <th mat-header-cell *matHeaderCellDef>Last Commit Date</th>
+            <td
+                id="committedDate"
+                mat-cell
+                *matCellDef="let element"
+            >{{element.committed_date}}
+            </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="codeRepositoryTraceabilityColumns; sticky: false"></tr>
+            <tr
+            mat-row
+            class="table-row"
+            *matRowDef="let row; columns: codeRepositoryTraceabilityColumns"
+            ></tr>
+        </table> 
+    </div>
+    <div style="text-align: center; margin: 10px 0;" >
+        <button mat-button (click)="closeDialog()" style="background-color: rgb(255, 255, 255);">Ok</button>
+    </div>
+</body>

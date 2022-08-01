@@ -18,7 +18,7 @@ export class StudyManagerGuard implements CanActivate {
     if (this.userService.hasAccessToStudyManager()) {
       return true;
     } else {
-      this.router.navigate([Routing.MODELS_STATUS]);
+      this.router.navigate([Routing.HOME]);
       this.snackbarService.showError('You don\'t have the permission to access this ressource');
     }
   }
