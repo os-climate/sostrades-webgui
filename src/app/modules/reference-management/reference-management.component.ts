@@ -37,7 +37,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     'Repository',
     'Process',
   ];
-
+  public referenceCount: number;
   public dataSourceReferences = new MatTableDataSource<Study>();
   private referenceGenerationDoneSubscription: Subscription;
   private referenceGenerationUpdateSubscription: Subscription;
@@ -71,6 +71,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.isAllReferencesRegenerating = false;
     this.referenceGenerationDoneSubscription = null;
     this.referenceGenerationUpdateSubscription = null;
+    this.referenceCount = 0;
   }
 
   ngOnInit(): void {
@@ -140,6 +141,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       },
       (errorReceived) => {
         const error = errorReceived as SoSTradesError;
+        this.referenceCount = 0;
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
@@ -201,10 +203,12 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceReferences.filter = filterValue.trim().toLowerCase();
+    this.referenceCount = this.dataSourceReferences.filteredData.length;
   }
 
   applyFilterAfterReloading() {
     this.dataSourceReferences.filter = this.referenceDataService.referenceManagementFilter.trim().toLowerCase();
+    this.referenceCount = this.dataSourceReferences.filteredData.length;
   }
 
   onFilterChange() {

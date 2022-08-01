@@ -90,16 +90,6 @@ export class ModelsStatusTableComponent implements OnInit {
       this.onFilterChange();
       this.isLoading = false;
     }
-    this.onSearchModelStatusSubscription = this.ontologyService.onSearchModel.subscribe( modelStatus => {
-      if (modelStatus !== null && modelStatus !== undefined) {
-        this.fromProcessInformation = true;
-        const searchModel = this.ontologyService.modelStatusData.find( model => model.name === modelStatus);
-        if (searchModel !== null && searchModel !== undefined) {
-          this.ontologyService.modelStatusFilter = searchModel.name;
-          this.displayDocumentation(searchModel);
-        }
-      }
-    });
   }
 
   loadModelStatusData() {
@@ -151,14 +141,6 @@ export class ModelsStatusTableComponent implements OnInit {
       data: ontologyModelsStatusInformationDialogData,
       width: '900px',
       height: '650px',
-    });
-    dialogref.afterClosed().subscribe( () => {
-      if (this.fromProcessInformation) {
-        if ((this.onSearchModelStatusSubscription !== null) && (this.onSearchModelStatusSubscription !== undefined)) {
-          this.onSearchModelStatusSubscription.unsubscribe();
-          this.onSearchModelStatusSubscription = null;
-        }
-      }
     });
   }
 

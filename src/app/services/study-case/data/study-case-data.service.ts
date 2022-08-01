@@ -3,7 +3,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
@@ -12,6 +12,7 @@ import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
+import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,15 @@ export class StudyCaseDataService extends DataHttpService {
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
   public favoriteStudy: Study[];
+
+  // Make innerLogs private so it's not accessible from the outside,
+  // expose it as logs$ observable (read-only) instead.
+  // Write to innerLogs only through specified store methods below.
+  private readonly innerLogs = new BehaviorSubject<StudyCaseLogging[]>([]);
+
+  // Exposed observable (read-only).
+  readonly logs$ = this.innerLogs.asObservable();
+
 
   constructor(
     private http: HttpClient,
@@ -237,7 +247,7 @@ export class StudyCaseDataService extends DataHttpService {
       if (this.ontologyService.getParameter(nodeData.variableKey)) {
         label = this.ontologyService.getParameter(nodeData.variableKey).label;
       }
-      
+
       if (nodeData.variableName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
       (label !== undefined && label.toLowerCase().includes(inputToSearch.toLowerCase()))) {
         if ((nodeData.ioType === IoType.OUT || showEditable || (!showEditable && nodeData.editable)) &&
@@ -302,5 +312,47 @@ export class StudyCaseDataService extends DataHttpService {
       }
     }
     return result;
+  }
+
+
+  //#regions logs
+
+  private setLogs(logs: StudyCaseLogging[]): void {
+    this.innerLogs.next(logs);
+  }
+
+  /**
+   * Return the current logs store in the service without any update from server
+   *
+   * @returns list of {@link src/app/models/study-case-logging.model#StudyCaseLogging | the StudyCaseLogging class}
+   *
+   */
+  getLogs(): StudyCaseLogging[] {
+
+    return this.innerLogs.getValue();
+  }
+
+  /**
+   * Request server to update log regarding the study identifier given as parameter
+   *
+   * @param studyCaseId - Study case identifier for whoch logs are requested
+   *
+   */
+  getLog(studyCaseId: number) {
+
+    const route = `${this.apiRoute}/logs/${studyCaseId}`;
+
+    this.http.get<StudyCaseLogging[]>(route)
+      .pipe(map(logs => {
+
+        const result: StudyCaseLogging[] = [];
+
+        logs.forEach(log => {
+          result.push(StudyCaseLogging.Create(log));
+        });
+
+        this.setLogs(result);
+
+      })).subscribe();
   }
 }

@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Ontology, OntologyType, PostOntology } from 'src/app/models/ontology.model';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
@@ -9,6 +9,9 @@ import { OntologyDiscipline } from 'src/app/models/ontology-discipline.model';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
 import { MainHttpService } from '../http/main-http/main-http.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
+import { OntologyGeneralInformation } from 'src/app/models/ontology-general-information.model';
+import { Router } from '@angular/router';
+import { HeaderService } from '../hearder/header.service';
 
 
 @Injectable({
@@ -16,7 +19,7 @@ import { MardownDocumentation } from 'src/app/models/tree-node.model';
 })
 export class OntologyService extends MainHttpService {
 
-  onSearchModel: EventEmitter<string> = new EventEmitter();
+
 
   private ontology: Ontology;
   public modelStatusData: OntologyModelStatus[];
@@ -27,10 +30,17 @@ export class OntologyService extends MainHttpService {
   public parametersFilter: string;
   public parametersColumnFiltered: string;
 
+  public generalInformationData: OntologyGeneralInformation;
+
 
 
   constructor(
-    private http: HttpClient, private location: Location) {
+    private http: HttpClient,
+    private location: Location,
+    private router: Router,
+    private headerService: HeaderService,
+
+    ) {
     super(location, 'ontology');
     this.ontology = new Ontology();
     this.modelStatusData = [];
@@ -39,6 +49,7 @@ export class OntologyService extends MainHttpService {
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';
+    this.generalInformationData = null;
   }
 
   clearCache() {
@@ -49,6 +60,7 @@ export class OntologyService extends MainHttpService {
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';
+    this.generalInformationData = null;
   }
 
   loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
@@ -86,22 +98,6 @@ export class OntologyService extends MainHttpService {
         return modelStatusList;
       }));
 
-  }
-
-  getOntologyModelsLinks(): Observable<{}> {
-    if (Object.keys(this.ontology.studyCase.n2).length === 0) {
-      return this.http.get<{}>(`${this.apiRoute}/models/links`).pipe(map(
-        response => {
-          this.ontology.studyCase.n2 = response;
-
-          return this.ontology.studyCase.n2;
-
-        }, error => {
-          this.ontology.studyCase.n2 = {};
-        }));
-    } else {
-      return of(this.ontology.studyCase.n2);
-    }
   }
 
 
@@ -154,6 +150,15 @@ export class OntologyService extends MainHttpService {
       }));
 
 }
+  public getOntologyGeneralInformation(): Observable<OntologyGeneralInformation> {
+  return this.http.get<OntologyGeneralInformation>(`${this.apiRoute}/general_information`).pipe(map(
+    information => {
+        const generalInformation = OntologyGeneralInformation.Create(information);
+        this.generalInformationData = generalInformation;
+        return generalInformation;
+    }));
+}
+
 
   public getDiscipline(key: string): OntologyDiscipline {
     if (key in this.ontology.studyCase.disciplines) {
@@ -162,7 +167,6 @@ export class OntologyService extends MainHttpService {
       return null;
     }
   }
-
 
   public getParameterAsFormated(key: string): string {
     if (key in this.ontology.studyCase.parameters) {
@@ -179,7 +183,4 @@ export class OntologyService extends MainHttpService {
     }
   }
 
-  searchModel(model: string) {
-    this.onSearchModel.emit(model);
-  }
 }

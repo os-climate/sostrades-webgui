@@ -56,7 +56,6 @@ import { AngularSplitModule } from 'angular-split';
 import { StudyCaseExecutionExceptionDialogComponent } from './modules/study-case/study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 import { ModelsContainerComponent } from './modules/models/models-container/models-container.component';
 import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
-import { ModelsLinksComponent } from './modules/models/models-links/models-links.component';
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { CreateUserComponent } from './modules/user/user-creation/user-creation.component';
 import { UserUpdateComponent } from './modules/user/user-update/user-update.component';
@@ -118,6 +117,8 @@ import { GroupEditComponent } from './modules/group-management/group-edit/group-
 import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
 import { ProcessInformationComponent } from './modules/process/process-information/process-information.component';
 import { ModelsStatusDocumentationComponent } from './modules/models/models-status-documentation/models-status-documentation.component';
+import { StudyCaseLoggingComponent } from './modules/study-case/study-case-logging/study-case-logging.component';
+import { RepositoryTraceabilityDialogComponent } from './modules/ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
 
 registerLocaleData(fr);
 
@@ -158,7 +159,6 @@ registerLocaleData(fr);
     StudyCaseExecutionExceptionDialogComponent,
     ModelsContainerComponent,
     ModelsStatusTableComponent,
-    ModelsLinksComponent,
     UserManagementComponent,
     CreateUserComponent,
     UserUpdateComponent,
@@ -212,6 +212,8 @@ registerLocaleData(fr);
     StudyCaseEditComponent,
     ProcessInformationComponent,
     ModelsStatusDocumentationComponent,
+    StudyCaseLoggingComponent,
+    RepositoryTraceabilityDialogComponent,
   ],
   imports: [
     BrowserModule,

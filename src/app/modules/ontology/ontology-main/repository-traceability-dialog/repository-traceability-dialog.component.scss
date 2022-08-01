@@ -1,0 +1,84 @@
+ // table CSS
+
+table {
+    width: 100%;
+}
+   
+.mat-column-name {
+  
+width: 30% !important;
+   
+}
+.mat-column-branch {
+  
+width: 10% !important;
+    
+}
+.mat-column-commit {
+
+width: 40% !important;
+    
+}
+.mat-column-commitDate {
+  
+width: 20% !important;
+    
+}
+.mat-column {
+flex: 1;
+}
+
+tr.mat-header-row {
+height: 40px;
+}
+
+th.mat-header-cell {
+text-align: left;
+}
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+padding-left: 0px;
+}
+
+th.mat-sort-header-sorted {
+color: black;
+text-align: left;
+}
+
+td.mat-cell {
+text-align: left;
+padding: 3px;
+vertical-align: middle;
+}
+
+
+.mat-cell {
+min-height: 20px;
+font-size: 12px;
+color: unset;
+}
+
+tr.mat-row {
+height: auto;
+}
+
+
+.mat-table {
+border-collapse: separate;
+width: 100%;
+}
+
+th.mat-header-cell:last-of-type {
+text-align: left !important;
+padding-left: 3px;
+}
+
+th.mat-header-cell:last-of-type {
+padding-right: 5px;
+}
+
+.mat-column-disciplineList {
+width: 95% !important;
+overflow-wrap: break-word;
+word-wrap: break-word;
+word-break: break-word;
+}

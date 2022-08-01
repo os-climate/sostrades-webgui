@@ -4,7 +4,7 @@ import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-e
 import { Subscription } from 'rxjs';
 import { LoadedStudy } from 'src/app/models/study.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { StudyCaseLog } from 'src/app/models/study-case-log.model';
+import { StudyCaseExecutionLogging } from 'src/app/models/study-case-execution-logging.model';
 import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -34,14 +34,14 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   private timeOut;
   private scrollContainer: any;
   private loop: boolean;
-  private logList: StudyCaseLog[];
+  private logList: StudyCaseExecutionLogging[];
   public cpuLoad: string;
   public memoryLoad: string;
   public isCalculationRunning: boolean;
 
   public bottomAnchorLog: boolean;
   public executionViewActive: boolean;
-  public dataSourceRef = new MatTableDataSource<StudyCaseLog>();
+  public dataSourceRef = new MatTableDataSource<StudyCaseExecutionLogging>();
   displayedColumns = [ 'message'];
 
   constructor(
@@ -207,10 +207,10 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.calculationService.getLog(this.studyCaseId);
   }
 
-  private setLogToView(logs: StudyCaseLog[]) {
+  private setLogToView(logs: StudyCaseExecutionLogging[]) {
 
     this.logList = logs;
-    this.dataSourceRef = new MatTableDataSource<StudyCaseLog>(this.logList);
+    this.dataSourceRef = new MatTableDataSource<StudyCaseExecutionLogging>(this.logList);
 
     this.scrollToBottom();
 
