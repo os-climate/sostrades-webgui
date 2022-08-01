@@ -118,6 +118,7 @@ import { GroupEditComponent } from './modules/group-management/group-edit/group-
 import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
 import { ProcessInformationComponent } from './modules/process/process-information/process-information.component';
 import { ModelsStatusDocumentationComponent } from './modules/models/models-status-documentation/models-status-documentation.component';
+import { StudyCaseLoggingComponent } from './modules/study-case/study-case-logging/study-case-logging.component';
 
 registerLocaleData(fr);
 
@@ -212,6 +213,7 @@ registerLocaleData(fr);
     StudyCaseEditComponent,
     ProcessInformationComponent,
     ModelsStatusDocumentationComponent,
+    StudyCaseLoggingComponent,
   ],
   imports: [
     BrowserModule,

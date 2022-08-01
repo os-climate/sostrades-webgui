@@ -1,0 +1,78 @@
+<div class="container" >
+  <mat-toolbar class="toolbar" >
+    <button
+      mat-button
+      mat-raised-button
+      style="margin-right: 5px;"
+      color="accent"
+      class="toolbar-item-shadow"
+      [ngClass]="{ 'mat-raised-button': bottomAnchorLog }"
+      (click)="anchorToBottom()"
+    >
+      <div style="width: 24px; height: 24px; line-height: 24px">
+        <i
+          class="fa-solid fa-anchor fa-fw toolbar-icon-font-aw"
+          aria-hidden="false"
+          aria-label="Anchor to bottom"
+          matTooltip="Anchor to bottom"
+        >
+        </i>
+      </div>
+    </button>
+  </mat-toolbar>
+  <mat-table class="table" #table [dataSource]="dataSourceStudyCaseLogging">
+
+    <!-- Source Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.name }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Level Column -->
+    <ng-container matColumnDef="level">
+      <mat-header-cell *matHeaderCellDef> Level </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.level }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Created Column -->
+    <ng-container matColumnDef="created">
+      <mat-header-cell *matHeaderCellDef> Created </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.created | date: "dd/MM/yyyy, H:mm:ss" }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Message Column -->
+    <ng-container matColumnDef="message">
+      <mat-header-cell *matHeaderCellDef> Message </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="custom-font">
+        {{ element.message }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Download Column -->
+    <ng-container matColumnDef="exception">
+      <mat-header-cell *matHeaderCellDef>Exception</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button
+          *ngIf="element.exception !== null && element.exception !== ''"
+          mat-icon-button
+          color="accent"
+          (click)="showException(element.exception)"
+        >
+          <i class="fa fa-exclamation-circle" style="color: red;"> </i>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row
+      *matHeaderRowDef="displayedColumns; sticky: true"
+      class="custom-header"
+    ></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+  </mat-table>
+</div>
