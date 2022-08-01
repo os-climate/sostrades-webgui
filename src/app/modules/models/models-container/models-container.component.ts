@@ -92,8 +92,11 @@ export class ModelsContainerComponent implements OnInit, OnDestroy {
     }
     this.index = event.index;
     this.setVisibility(this.index);
-    this.location.go(
-      this.router.createUrlTree([Routing.ONTOLOGY]).toString() + '/' + fragment);
+
+    // navigate only if the router url is not already up-to-date
+    if (!((this.router.url.includes(Routing.ONTOLOGY)) && (this.router.url.includes(fragment)))) {
+      this.router.navigate([Routing.ONTOLOGY, fragment]);
+    }
   }
 
   private setVisibility(tabIndex: number) {

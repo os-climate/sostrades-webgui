@@ -41,7 +41,7 @@ export class ModelsStatusInformationComponent implements OnInit {
   goToProcess(process) {
     this.dialogRef.close();
     this.processService.processManagementFilter = process;
-    this.hearderService.changeIndexTab(1);
+    this.hearderService.changeIndexTab(2);
   }
 
 }
