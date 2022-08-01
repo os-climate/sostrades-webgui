@@ -5,7 +5,7 @@
         progressText="Loading ontology information"
       ></app-progress-bar>
     </div>
-<div *ngIf="!isLoading && ontologyisUp" style="display: flex; width: 100%;">
+<div *ngIf="!isLoading" style="display: flex; width: 100%;">
     <div id="firstColumn"> 
     
         <div id="sosTitle">  
@@ -22,29 +22,34 @@
         </div>
         <br>
         <br>
-        <div>
-            <p id="description">{{generalInformation.description}}</p>
+        <div *ngIf="!ontologyisUp" style="margin-left: 100px;">
+            <h3 style="font-weight: bold;">Ontology server not available, try again later.</h3>
         </div>
-        <br>
-        <br>
-        <div> 
-            <p> <span class="information">Ontology Base IRI: </span> {{generalInformation.iri}}</p>
-            <br>
-            <div style="display: flex;">
-                <p><span class="information">Ontology Version: </span> {{generalInformation.version}}</p>
-                <p style="margin-left: 100px;"><span class="information">Last update: </span> {{generalInformation.lastUpdated}}</p>
+        <div *ngIf="ontologyisUp">
+            <div>
+                <p id="description">{{generalInformation.description}}</p>
             </div>
-        </div>
-        <br>
-        <br>
-        <div id="entityCount">
-            <p>- <span (click)="openTraceability(generalInformation.sourceCodeTraceability)" class="informationEntityCount">{{generalInformation.entityCount.code_repositories}}  Code Repositories</span></p>
-            <p>- <span (click)="goToModels()" class="informationEntityCount">{{generalInformation.entityCount.models}}  Models</span></p>
-            <p>- <span (click)="goToParameters()" class="informationEntityCount">{{generalInformation.entityCount.parameters}}  Parameters</span></p>
-            <p>- <span (click)="goToProcesses()" class="informationEntityCount">{{generalInformation.entityCount.processes}}  Processes</span></p>
-            <p>- <span style="margin-left: 30px;">{{generalInformation.entityCount.process_repositories}}  Process Repositories</span></p>
-            <p>- <span style="margin-left: 30px;">{{generalInformation.entityCount.usecases}}  Usecases</span></p>
-        
+            <br>
+            <br>
+            <div> 
+                <p> <span class="information">Ontology Base IRI: </span> {{generalInformation.iri}}</p>
+                <br>
+                <div style="display: flex;">
+                    <p><span class="information">Ontology Version: </span> {{generalInformation.version}}</p>
+                    <p style="margin-left: 100px;"><span class="information">Last update: </span> {{generalInformation.lastUpdated}}</p>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div id="entityCount">
+                <p>- <span (click)="openTraceability(generalInformation.sourceCodeTraceability)" class="informationEntityCount">{{generalInformation.entityCount.code_repositories}}  Code Repositories</span></p>
+                <p>- <span (click)="goToModels()" class="informationEntityCount">{{generalInformation.entityCount.models}}  Models</span></p>
+                <p>- <span (click)="goToParameters()" class="informationEntityCount">{{generalInformation.entityCount.parameters}}  Parameters</span></p>
+                <p>- <span (click)="goToProcesses()" class="informationEntityCount">{{generalInformation.entityCount.processes}}  Processes</span></p>
+                <p>- <span style="margin-left: 30px;">{{generalInformation.entityCount.process_repositories}}  Process Repositories</span></p>
+                <p>- <span style="margin-left: 30px;">{{generalInformation.entityCount.usecases}}  Usecases</span></p>
+            
+            </div>
         </div>  
     </div>
     <div id="secondColumn">
@@ -88,8 +93,5 @@
         </div> 
        
     </div>
-</div>
-<div *ngIf="!ontologyisUp" style="text-align: center;">
-    <h3>Ontology server not available</h3>
 </div>
 </div>

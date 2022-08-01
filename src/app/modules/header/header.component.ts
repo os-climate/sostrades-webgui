@@ -132,7 +132,7 @@ export class HeaderComponent implements OnInit {
     this.router.navigate([Routing.ONTOLOGY, Routing.MODELS]);
     this.trigger.closeMenu();
     this.title = NavigationTitle.MODELS;
-    // this.headerService.changeIndexTab(1);
+    this.headerService.changeIndexTab(1);
 
   }
     // Ontology processes

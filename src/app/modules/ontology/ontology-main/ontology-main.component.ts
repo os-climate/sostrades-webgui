@@ -55,11 +55,12 @@ export class OntologyMainComponent implements OnInit {
      // Retrieving study case list
     this.ontologyService.getOntologyGeneralInformation().subscribe(
       (informations) => {
+        let oneValueNotUndefined = false;
         Object.values(informations).forEach(value => {
-          if ( value === undefined) {
-            this.ontologyisUp = false;
-          }
-        } );
+          if (value !== undefined) {
+            oneValueNotUndefined = true;          }
+        });
+        this.ontologyisUp = oneValueNotUndefined;
         this.generalInformation = informations;
         this.isLoading = false;
       },
