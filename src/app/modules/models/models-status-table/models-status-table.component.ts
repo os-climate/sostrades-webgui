@@ -75,9 +75,20 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.fromProcessInformation = false;
+    this.modelToShowAtStartup = null;
+
     if (this.routerSubscription === null) {
 
       this.routerSubscription = this.route.queryParams.subscribe(params => {
+
+        // If model is defined has query parameter then we filter and mount the model model information
+        if (params.hasOwnProperty('model')) {
+          if (params.model !== null && params.model !== undefined) {
+            this.fromProcessInformation = true;
+            this.modelToShowAtStartup = params.model;
+          }
+        }
 
         // Load data first time component initialised
         if (this.ontologyService.modelStatusData === null
@@ -86,19 +97,6 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
           this.loadModelStatusData();
         } else {
           this.initDataSource();
-        }
-
-        // If model is defined has query parameter then we filter and mount the model model information
-        if (params.hasOwnProperty('model')) {
-          if (params.model !== null && params.model !== undefined) {
-            this.fromProcessInformation = true;
-            this.modelToShowAtStartup = params.model;
-            const searchModel = this.ontologyService.modelStatusData.find( model => model.name === params.model);
-            if (searchModel !== null && searchModel !== undefined) {
-              this.ontologyService.modelStatusFilter = searchModel.name;
-              this.displayDocumentation(searchModel);
-            }
-          }
         }
       });
     }
