@@ -124,7 +124,7 @@ export class ProcessInformationComponent implements OnInit {
 
   goToModelsStatus(model) {
     this.dialogRef.close();
-    this.headerService.changeIndexTab(0);
+    this.headerService.changeIndexTab(1);
     this.router.navigate([Routing.ONTOLOGY, Routing.MODELS], {queryParams: {model: `${model}`}});
   }
 }
