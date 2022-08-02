@@ -29,6 +29,7 @@ import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { StudyCaseEditComponent } from '../study-case-edit/study-case-edit.component';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
+import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
 
 
 @Component({
@@ -103,6 +104,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private socketService: SocketService,
     private appDataService: AppDataService,
+    private studyCasePostProcessingService: StudyCasePostProcessingService,
     public groupDataService: GroupDataService,
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
@@ -318,11 +320,16 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.studyCaseMainService.closeStudy(true);
           this.loadingDialogService.showLoading(`Updating study (${editStudyCaseData.studyName}). Please wait`);
           this.studyCaseMainService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
-            () => {
-              this.socketService.updateStudy(study.id);
-              this.loadingDialogService.closeLoading();
-              this.snackbarService.showInformation(`Study (${editStudyCaseData.studyName}) has been succesfully updated `);
-              this.loadStudyManagementData();
+            loadStudy => {
+              this.studyCasePostProcessingService.resetStudyFromCache(loadStudy.studyCase.id).subscribe(() => {
+                this.socketService.updateStudy(loadStudy.studyCase.id);
+                this.loadingDialogService.closeLoading();
+                this.snackbarService.showInformation(`Study (${loadStudy.studyCase.name}) has been succesfully updated `);
+                this.loadStudyManagementData();
+              }, errorReceived => {
+                this.snackbarService.showError('Error updating study\n' + errorReceived.description);
+                this.loadingDialogService.closeLoading();
+              });
             },
             errorReceived => {
               const error = errorReceived as SoSTradesError;
