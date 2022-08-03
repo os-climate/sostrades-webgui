@@ -49,6 +49,13 @@ export class StudyCasePostProcessingService extends PostProcessingHttpService {
     });
   }
 
+  public resetStudyFromCache(studyId: number) {
+    return this.http.get<boolean>(`${this.apiRoute}/reset-cache/${studyId}`).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
   private internalLoadStudy(studyId: number, reload: boolean): Observable<boolean> {
     if(reload){
       return this.http.get<boolean>(`${this.apiRoute}/${studyId}/reload`).pipe(map(
@@ -56,7 +63,7 @@ export class StudyCasePostProcessingService extends PostProcessingHttpService {
           return response;
         }));
     }
-    else{
+    else {
       return this.http.get<boolean>(`${this.apiRoute}/${studyId}`).pipe(map(
         response => {
           return response;
