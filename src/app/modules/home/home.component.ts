@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { StudyUpdateParameter } from 'src/app/models/study-update.model';
-import { StudyCaseModificationDialogComponent } from '../study-case/study-case-modification-dialog/study-case-modification-dialog.component';
+import { StudyCaseModificationDialogComponent} from '../study-case/study-case-modification-dialog/study-case-modification-dialog.component';
 import { Subscription } from 'rxjs';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { Routing } from 'src/app/models/routing.model';
@@ -28,10 +28,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   public hasAccessToStudy: boolean;
   authenticated: boolean;
   username: string;
-  onCloseStudySubscription : Subscription
-  onLoadedStudyForTreeviewSubscription : Subscription
+  onCloseStudySubscription: Subscription;
+  onLoadedStudyForTreeviewSubscription: Subscription;
   calculationChangeSubscription: Subscription;
-  isLoadedStudy : boolean
+  isLoadedStudy: boolean;
   sizes = {
     bottom: {
       area1: 85,
@@ -48,12 +48,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     public studyCaseDataService: StudyCaseDataService,
     private calculationService: CalculationService,
     private socketService: SocketService,
-    private studyCaseMainService : StudyCaseMainService,
+    private studyCaseMainService: StudyCaseMainService,
     private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
     private snackbarService: SnackbarService,
-    private headerService : HeaderService,
+    private headerService: HeaderService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService) {
     this.hasAccessToStudy = false;
     this.isLoadedStudy = false;
@@ -148,31 +148,28 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.hasAccessToStudy = false;
     }
 
-    this.studyCaseMainService.onCloseStudy.subscribe(result=>{
-      if(result){
-        this.isLoadedStudy = false
-        let getUrl= this.router.url 
-        if(getUrl.includes(Routing.STUDY_WORKSPACE)){
-          this.router.navigate([Routing.STUDY_MANAGEMENT])
-          this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT)
-          }
-        else{
-          this.router.navigate([getUrl])
+    this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(result => {
+      if (result) {
+        this.isLoadedStudy = false;
+        const getUrl = this.router.url;
+        if (getUrl.includes(Routing.STUDY_WORKSPACE)) {
+          this.router.navigate([Routing.STUDY_MANAGEMENT]);
+          this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT);
+          } else {
+          this.router.navigate([getUrl]);
         }
         this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-      }    
-    })
-   
-    this.studyCaseDataService.onLoadedStudyForTreeview.subscribe(result=>{
-      if(result != null){
-        this.isLoadedStudy = true;
       }
-      else{
+    });
+
+    this.onLoadedStudyForTreeviewSubscription = this.studyCaseDataService.onLoadedStudyForTreeview.subscribe(result => {
+      if (result != null) {
+        this.isLoadedStudy = true;
+      } else {
         this.isLoadedStudy = false;
       }
-    })
+    });
   }
-  
 
   ngOnDestroy() {
     if ((this.calculationChangeSubscription !== null) && (this.calculationChangeSubscription !== undefined)) {
