@@ -148,7 +148,11 @@ export class StudyCaseMainService extends MainHttpService {
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
     this.internalLoadStudy(studyId).subscribe(loadedStudy => {
       if (loadedStudy.loadInProgress === true) {
+        if (loadedStudy.loadFromFile) {
+          this.studyCaseDataService.onReadOnlyMode.emit(loadedStudy);
+        }
         setTimeout(() => {
+
           this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
         }, 2000);
       } else {

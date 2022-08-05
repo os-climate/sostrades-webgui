@@ -20,6 +20,9 @@ import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 })
 export class StudyCaseDataService extends DataHttpService {
 
+
+  onReadOnlyMode: EventEmitter<LoadedStudy> = new EventEmitter();
+  onStudyCompleted: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview: EventEmitter<LoadedStudy> = new EventEmitter();
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();

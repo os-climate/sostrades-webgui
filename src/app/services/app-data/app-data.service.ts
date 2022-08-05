@@ -29,6 +29,7 @@ export class AppDataService extends DataHttpService {
   private connectionStatusTimer;
   private onStudyCaseStartLoadingSubscription: Subscription;
   private loadedStudy: LoadedStudy;
+  private onReadOnlyModeSubsciption: Subscription;
   constructor(
     private http: HttpClient,
     private socketService: SocketService,
@@ -46,6 +47,7 @@ export class AppDataService extends DataHttpService {
     this.connectionStatusTimer = null;
     this.onStudyCaseStartLoadingSubscription = null;
     this.loadedStudy = null;
+    this.onReadOnlyModeSubsciption = null;
   }
 
   createCompleteStudy(study: PostStudy, isStudyCreated: any) {
@@ -98,13 +100,22 @@ export class AppDataService extends DataHttpService {
 
 
   loadCompleteStudy(studyId: number, studyName: string, isStudyLoaded: any) {
+
     // Display loading message
     this.loadingDialogService.showLoading(`Loading study case ${studyName}`);
 
     // subscribe to the loading of the study
     console.log('subscribe to the loading of the study after loading');
+    //
+    this.onReadOnlyModeSubsciption = this.studyCaseDataService.onReadOnlyMode.subscribe(
+      loadedStudy => {
+        this.onReadOnlyModeSubsciption.unsubscribe();
+        this.onReadOnlyModeSubsciption = null;
+        this.studyCaseDataService.setCurrentStudy(loadedStudy);
+        this.load_study_ontology(loadedStudy, true, isStudyLoaded);
 
-    // call loading of the study from main and post processing service
+      }
+    );    // call loading of the study from main and post processing service
     // and wait for both to end
     const calls = [];
     calls.push(this.studyCaseMainService.loadStudy(studyId, false));
