@@ -208,9 +208,8 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
     this.scrollToBottom();
 
-    if (this.loop === true) {
-      this.startTimeOut();
-    }
+    this.startTimeOut();
+
   }
 
   public anchorToBottom() {
