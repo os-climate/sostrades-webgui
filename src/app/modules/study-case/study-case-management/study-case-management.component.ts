@@ -282,7 +282,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               this.socketService.joinRoom(
                 this.studyCaseDataService.loadedStudy.studyCase.id
               );
-              this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
             }
           });
         }

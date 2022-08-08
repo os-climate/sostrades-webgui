@@ -76,7 +76,12 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
       // Applying rights, to start logging or not
       if (!this.studyCaseDataService.loadedStudy.noData) {
-        this.initializeLogger();
+        // Subscribe to log change in order to update view
+        if (this.logsSubscription === null || this.logsSubscription === undefined) {
+          this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
+            this.setLogToView(logs);
+          });
+        }
       } else {
         this.cleanExecutionSubscription();
       }
@@ -86,29 +91,18 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
       if (loadedStudy !== null) {
         this.studyCaseId = (loadedStudy as LoadedStudy).studyCase.id;
-        this.initializeLogger();
+        // Subscribe to log change in order to update view
+        if (this.logsSubscription === null || this.logsSubscription === undefined) {
+          this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
+            this.setLogToView(logs);
+          });
+        }
       } else {
         this.dataSourceRef = null;
       }
     });
 
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      this.studyCaseId = this.studyCaseDataService.loadedStudy.studyCase.id;
-
-      // Applying rights, to start logging or not
-      if (!this.studyCaseDataService.loadedStudy.noData) {
-        this.initializeLogger();
-      } else {
-        this.cleanExecutionSubscription();
-      }
-
-      // Subscribe to log change in order to update view
-      if (this.logsSubscription === null || this.logsSubscription === undefined) {
-        this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
-          this.setLogToView(logs);
-        });
-      }
-    }
+   
 
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
@@ -149,28 +143,28 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.scrollContainer = this.table._elementRef.nativeElement;
   }
 
-  private initializeLogger() {
+  // private initializeLogger() {
 
-    this.cleanExecutionSubscription();
+  //   this.cleanExecutionSubscription();
 
-    const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
+  //   const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
 
-    if (sco !== null && sco !== undefined) {
-      this.executionStartedSubscription = sco.executionStarted.subscribe(_ => {
-        this.loop = true;
-        this.startTimeOut();
+  //   if (sco !== null && sco !== undefined) {
+  //     this.executionStartedSubscription = sco.executionStarted.subscribe(_ => {
+  //       this.loop = true;
+  //       this.startTimeOut();
 
-      });
+  //     });
 
-      this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
-        this.loop = false;
-        this.stopTimeOut();
+  //     this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
+  //       this.loop = false;
+  //       this.stopTimeOut();
 
-      });
-    }
+  //     });
+  //   }
 
-    this.getLogs();
-  }
+  //   this.getLogs();
+  // }
 
   private cleanExecutionSubscription() {
     this.stopTimeOut();
@@ -214,9 +208,8 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
     this.scrollToBottom();
 
-    if (this.loop === true) {
-      this.startTimeOut();
-    }
+    this.startTimeOut();
+
   }
 
   public anchorToBottom() {
