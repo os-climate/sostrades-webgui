@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LoadedStudy, PostStudy } from 'src/app/models/study.model';
+import { LoadedStudy, LoadStatus, PostStudy } from 'src/app/models/study.model';
 import { StudyCaseDataService } from '../study-case/data/study-case-data.service';
 import { SnackbarService } from '../snackbar/snackbar.service';
 import { LoadingDialogService } from '../loading-dialog/loading-dialog.service';
@@ -106,23 +106,23 @@ export class AppDataService extends DataHttpService {
 
     // subscribe to the loading of the study
     console.log('subscribe to the loading of the study after loading');
-    //
-    this.onReadOnlyModeSubsciption = this.studyCaseDataService.onReadOnlyMode.subscribe(
-      loadedStudy => {
-        this.onReadOnlyModeSubsciption.unsubscribe();
-        this.onReadOnlyModeSubsciption = null;
+
+    this.studyCaseMainService.loadtudyInReadOnlyMode(studyId).subscribe( loadedStudy => {
+      if (loadedStudy !== null && loadedStudy !== undefined) {
         this.studyCaseDataService.setCurrentStudy(loadedStudy);
         this.load_study_ontology(loadedStudy, true, isStudyLoaded);
-
       }
-    );    // call loading of the study from main and post processing service
+    });
+
+
+    // call loading of the study from main and post processing service
     // and wait for both to end
     const calls = [];
     calls.push(this.studyCaseMainService.loadStudy(studyId, false));
     calls.push(this.studyCasePostProcessingService.loadStudy(studyId, false));
-
     combineLatest(calls).subscribe(([result1, isLoaded]) => {
       const loadedStudy = result1 as LoadedStudy;
+
       // Load unsaved changes
       if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
         this.loadingDialogService.updateMessage(`Loading unsaved changes`);
@@ -174,8 +174,9 @@ export class AppDataService extends DataHttpService {
 
   private load_study_ontology(loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any) {
     // Add study case to study management list
-    this.loadingDialogService.updateMessage(`Loading ontology`);
-
+    // if (this.loadingDialogService.isLoadingOpen()) {
+      this.loadingDialogService.updateMessage(`Loading ontology`);
+    // }
     // Prepare Ontology request inputs
     const ontologyRequest: PostOntology = {
       ontology_request: {
@@ -194,9 +195,11 @@ export class AppDataService extends DataHttpService {
       this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
       if (getNotification) {
-      this.loadingDialogService.updateMessage(`Loading notifications`);
-      this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id).subscribe(notifications => {
+        if (this.loadingDialogService.isLoadingOpen()) {
+          this.loadingDialogService.updateMessage(`Loading notifications`);
+        }
 
+        this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id).subscribe(notifications => {
         this.socketService.notificationList = notifications;
         this.close_loading(loadedStudy, isStudyCreated);
       }, errorReceived => {

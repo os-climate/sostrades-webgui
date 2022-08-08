@@ -1,4 +1,4 @@
-import { Study, PostStudy, LoadedStudy } from 'src/app/models/study.model';
+import { Study, PostStudy, LoadedStudy, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
@@ -14,6 +14,7 @@ import { StudyCaseDataService } from '../data/study-case-data.service';
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { Routing } from 'src/app/models/routing.model';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
+import { I } from '@angular/cdk/keycodes';
 
 
 @Injectable({
@@ -52,7 +53,7 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
-        if (loadedStudy.loadInProgress === true) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
 
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
@@ -94,7 +95,7 @@ export class StudyCaseMainService extends MainHttpService {
         return LoadedStudy.Create(response);
       }))
       .subscribe(loadedStudy => {
-        if (loadedStudy.loadInProgress === true) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(studyId, false, loaderObservable, true);
           }, 2000);
@@ -146,13 +147,10 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
-    this.internalLoadStudy(studyId).subscribe(loadedStudy => {
-      if (loadedStudy.loadInProgress === true) {
-        if (loadedStudy.loadFromFile) {
-          this.studyCaseDataService.onReadOnlyMode.emit(loadedStudy);
-        }
-        setTimeout(() => {
 
+    this.internalLoadStudy(studyId).subscribe(loadedStudy => {
+      if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+        setTimeout(() => {
           this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
         }, 2000);
       } else {
@@ -174,7 +172,7 @@ export class StudyCaseMainService extends MainHttpService {
           this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
         }
 
-        //load logs
+        // Load logs
         this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
 
         this.studyCaseDataService.tradeScenarioList = [];
@@ -200,6 +198,17 @@ export class StudyCaseMainService extends MainHttpService {
         return LoadedStudy.Create(response);
       }));
   }
+
+  public loadtudyInReadOnlyMode(studyId: number): Observable<LoadedStudy> {
+    return this.http.get(`${this.apiRoute}/read-only-mode/${studyId}`).pipe(map(
+      response => {
+        if (response !== null && response !== undefined) {
+          return LoadedStudy.Create(response);
+        } else {
+          return undefined;
+        }
+      }));
+  }
   //#endregion Load study
 
   //#region Reload study
@@ -215,7 +224,7 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
-        if (loadedStudy.loadInProgress === true) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);
           }, 2000);
@@ -298,7 +307,7 @@ export class StudyCaseMainService extends MainHttpService {
     this.http.post(requestUrl, formData).pipe(map(response => {
       return LoadedStudy.Create(response);
     })).subscribe(loadedStudy => {
-      if (loadedStudy.loadInProgress === true) {
+      if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
         setTimeout(() => {
           this.loadStudyTimeout(studyId, false, loaderObservable, false);
         }, 2000);
