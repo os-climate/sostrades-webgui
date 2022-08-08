@@ -88,8 +88,8 @@ export class LoadedStudy {
       jsonData[LoadedStudyAttributes.READONLY],
       UserStudyPreferences.Create(jsonData[LoadedStudyAttributes.PREFERENCE]),
       jsonData[LoadedStudyAttributes.LOAD_IN_PROGRESS],
-      jsonData[LoadedStudyAttributes.LOAD_FROM_FILE],
-      jsonData[LoadedStudyAttributes.CAN_RELOAD]);
+      jsonData[LoadedStudyAttributes.CAN_RELOAD],
+      jsonData[LoadedStudyAttributes.LOAD_FROM_FILE]);
     return result;
   }
 }
