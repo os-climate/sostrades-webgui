@@ -4,5 +4,5 @@ export const environment = {
   API_DATA_URL: '',
   API_MESSAGE_URL: '',
   API_POST_PROCESSING_URL: '',
-  ONLOGY_DIRECT_URL: ''
+  API_ONTOLOGY_DIRECT_URL: ''
 };
