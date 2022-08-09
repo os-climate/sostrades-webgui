@@ -149,47 +149,48 @@ export class StudyCaseMainService extends MainHttpService {
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
 
     this.internalLoadStudy(studyId).subscribe(loadedStudy => {
+      this.onCloseStudy.subscribe(() => {
+        loadedStudy.loadStatus = LoadStatus.NONE;
+      });
       if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
         setTimeout(() => {
           this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
         }, 2000);
-      } else {
+      } else if (loadedStudy.loadStatus === LoadStatus.LOADED) {
+           // Assign study to data service
+          this.updateStudyCaseDataService(loadedStudy);
 
-        // Assign study to data service
-        this.updateStudyCaseDataService(loadedStudy);
-
-        if (addToStudyManagement === true) {
+          if (addToStudyManagement === true) {
 
           this.studyCaseDataService.getStudies().subscribe(studies => {
             this.studyCaseDataService.studyManagementData = studies;
           });
-        }
-
-        // Reload ontology parameters
-        this.studyCaseDataService.updateParameterOntology(loadedStudy);
-
-        if (withEmit === true) {
-          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-        }
-
-        // Load logs
-        this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
-
-        this.studyCaseDataService.tradeScenarioList = [];
-
-        this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
-          res => {
-            this.validatedUpdated();
-            loaderObservable.next(loadedStudy);
-          }, error => {
-            loaderObservable.next(loadedStudy);
           }
-        );
+
+          // Reload ontology parameters
+          this.studyCaseDataService.updateParameterOntology(loadedStudy);
+
+          if (withEmit === true) {
+            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+          }
+
+          // Load logs
+          this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
+
+          this.studyCaseDataService.tradeScenarioList = [];
+
+          this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
+            res => {
+              this.validatedUpdated();
+              loaderObservable.next(loadedStudy);
+            }, error => {
+              loaderObservable.next(loadedStudy);
+          });
       }
     },
       error => {
         loaderObservable.error(error);
-      });
+    });
   }
 
   private internalLoadStudy(studyId: number): Observable<LoadedStudy> {

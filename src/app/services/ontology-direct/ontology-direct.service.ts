@@ -15,7 +15,7 @@ export class OntologyDirectService extends BaseHttpService {
     private location: Location,
     private http: HttpClient,
     ) {
-      super(location, 'ontology/v1', environment.ONLOGY_DIRECT_URL);
+      super(location, 'ontology/v1', environment.API_ONTOLOGY_DIRECT_URL);
     }
 
 private getOntologyDowloadUrl(type: string) {
