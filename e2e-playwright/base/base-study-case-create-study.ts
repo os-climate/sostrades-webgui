@@ -51,7 +51,7 @@ export async function baseStudyCaseCreation(
         const searchOption = await page.locator('[aria-label="dropdown search"]');
         await searchOption.click();
         await searchOption.fill(process);
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(400);
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
         await Promise.all([
@@ -67,9 +67,9 @@ export async function baseStudyCaseCreation(
 
     const references = page.locator('id=reference');
     await references.click();
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(1000);
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(400);
     await selectedReference.click();
     
 
@@ -79,7 +79,7 @@ export async function baseStudyCaseCreation(
     await submit.click();
 
     // Verifying correct redirection to study workspace
-    await page.waitForURL('**/study-workspace**');
+    await page.waitForURL('**/study-workspace**',{ timeout: 30000 });
 
     // Verifying correct study name for My current study place
     const currentStudyNameTextLocator = page.locator('id=text-sidenav-study-loaded-name');
