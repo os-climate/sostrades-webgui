@@ -11,7 +11,6 @@ import { OntologyInformationsDialogData } from 'src/app/models/dialog-data.model
 import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology-informations/ontology-informations.component';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { Subscription } from 'rxjs';
-import { StudyCalculationStatus, StudyCaseExecutionObserver } from 'src/app/models/study-case-execution-observer.model';
 
 @Component({
   selector: 'app-widget',
@@ -32,7 +31,6 @@ export class WidgetComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private calculationService: CalculationService,
-    private studyCaseExecutionObserver:StudyCaseExecutionObserver,
     private studyCaseDataService: StudyCaseDataService,
     public ontologyService: OntologyService,
     private studyCaselocalStorageService: StudyCaseLocalStorageService,
