@@ -174,9 +174,9 @@ export class AppDataService extends DataHttpService {
 
   private load_study_ontology(loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any) {
     // Add study case to study management list
-    // if (this.loadingDialogService.isLoadingOpen()) {
-      this.loadingDialogService.updateMessage(`Loading ontology`);
-    // }
+    if (this.loadingDialogService.isLoadingOpen()) {
+    this.loadingDialogService.updateMessage(`Loading ontology`);
+    }
     // Prepare Ontology request inputs
     const ontologyRequest: PostOntology = {
       ontology_request: {
