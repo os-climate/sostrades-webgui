@@ -93,9 +93,9 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
 
 
   setCalculationCss(isCalculationRunning: boolean) {
-    if (isCalculationRunning) {
-      return 'execution-running';
-    }
+    //if (isCalculationRunning) {
+    //  return 'execution-running';
+    //}
   }
 
 
