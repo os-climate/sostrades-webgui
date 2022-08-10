@@ -450,11 +450,13 @@ export class ExecutionSequenceComponent implements OnInit {
         parameterList.forEach(key => {
           if (uniqueIdList.indexOf(key) === -1) {
             const parameterDetails = this.ontologyService.getParameter(key);
+            let parameterLabel = `${key.split('.')[key.split('.').length-1]}`;
             if (parameterDetails !== undefined && parameterDetails !== null) {
-              contentText.push(`<tr><td style="padding: 1px;">${parameterDetails.label} - ${key}</td></tr>`);
-            } else {
-              contentText.push(`<tr><td style="padding: 1px;">${key}</td></tr>`);
+              if (parameterDetails.label !== undefined && parameterDetails.label !== null) {
+                parameterLabel = `${parameterDetails.label}`;
+              }
             }
+            contentText.push(`<tr><td style="padding: 1px;">${parameterLabel}</td></tr>`);
             uniqueIdList.push(key);
           }
         });
