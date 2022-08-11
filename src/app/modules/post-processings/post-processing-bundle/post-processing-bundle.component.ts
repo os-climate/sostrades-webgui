@@ -7,6 +7,7 @@ import { PostProcessingBundle } from 'src/app/models/post-processing-bundle.mode
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
+import { LoadStatus } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-post-processing-bundle',
@@ -24,8 +25,10 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayFilterButton: boolean;
   public displayFilters: boolean;
   public isCalculationRunning: boolean;
+  public isReadOnlyMode: boolean;
   calculationChangeSubscription: Subscription;
   validationChangeSubscription: Subscription;
+  studyStatusChangeSubscription: Subscription;
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
@@ -40,7 +43,9 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayFilters = false;
     this.calculationChangeSubscription = null;
     this.validationChangeSubscription = null;
+    this.studyStatusChangeSubscription = null;
     this.isCalculationRunning = false;
+    this.isReadOnlyMode = false;
   }
 
   ngOnInit() {
@@ -56,7 +61,14 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     } else {
       this.displayFilterButton = false;
     }
-
+    // check the loadStatus of the study to set the mode read only if needed
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined){
+      this.isReadOnlyMode = this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE
+    }
+    // Update the readonly mode when the status has changed
+    this.studyStatusChangeSubscription = this.studyCaseDataService.onLoadedStudyForTreeview.subscribe(loadedStudy => {
+        this.isReadOnlyMode = loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE
+    });
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
     });    
@@ -71,6 +83,9 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     }
     if ((this.validationChangeSubscription !== null) && (this.validationChangeSubscription !== undefined)) {
       this.validationChangeSubscription.unsubscribe();
+    }
+    if ((this.studyStatusChangeSubscription !== null) && (this.studyStatusChangeSubscription !== undefined)) {
+      this.studyStatusChangeSubscription.unsubscribe();
     }
   }
 

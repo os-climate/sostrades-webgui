@@ -68,7 +68,7 @@
       color="accent"
       style="margin-left: 5px"
       (click)="plot()"
-      [disabled]="isCalculationRunning"
+      [disabled]="isCalculationRunning||isReadOnlyMode"
     >
       Update chart(s)
     </button>
