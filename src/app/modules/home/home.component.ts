@@ -151,6 +151,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(result => {
       if (result) {
         this.isLoadedStudy = false;
+        this.studyCaseDataService.closeStudyLoading();
         const getUrl = this.router.url;
         if (getUrl.includes(Routing.STUDY_WORKSPACE)) {
           this.router.navigate([Routing.STUDY_MANAGEMENT]);

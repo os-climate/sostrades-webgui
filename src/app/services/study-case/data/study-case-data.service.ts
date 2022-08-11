@@ -21,7 +21,6 @@ import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 export class StudyCaseDataService extends DataHttpService {
 
 
-  onReadOnlyMode: EventEmitter<LoadedStudy> = new EventEmitter();
   onStudyCompleted: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview: EventEmitter<LoadedStudy> = new EventEmitter();
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
@@ -32,6 +31,7 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
+  private loadingStudy: string;
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -56,6 +56,7 @@ export class StudyCaseDataService extends DataHttpService {
     private location: Location) {
     super(location, 'study-case');
     this.studyLoaded = null;
+    this.loadingStudy = '';
 
     this.favoriteStudy = [];
     this.studyManagementData = [];
@@ -76,6 +77,20 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = loadedStudy;
   }
 
+  setStudyToLoad(study_id: number){
+    //Add a study into the list of loading studies
+    this.loadingStudy = study_id.toString();
+    
+  }
+
+  isStudyLoading(study_id: number){
+    //Check that a study is into the list of loading studies
+    return this.loadingStudy === study_id.toString();
+  }
+  
+  closeStudyLoading(){
+    this.loadingStudy = '';
+  }
 
   clearCache() {
     this.studyLoaded = null;
@@ -86,6 +101,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
+    this.loadingStudy = '';
   }
 
   /// -----------------------------------------------------------------------------------------------------------------------------
@@ -304,6 +320,7 @@ export class StudyCaseDataService extends DataHttpService {
   }
 
   private GetOntologyParameterLabel(ontology: OntologyParameter) {
+    // return ontology label + unit
     let result = '';
     if (ontology !== null && ontology.label !== null && ontology.label !== undefined && ontology.label.length > 0) {
 

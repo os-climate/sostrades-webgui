@@ -29,7 +29,6 @@ export class AppDataService extends DataHttpService {
   private connectionStatusTimer;
   private onStudyCaseStartLoadingSubscription: Subscription;
   private loadedStudy: LoadedStudy;
-  private onReadOnlyModeSubsciption: Subscription;
   constructor(
     private http: HttpClient,
     private socketService: SocketService,
@@ -47,17 +46,18 @@ export class AppDataService extends DataHttpService {
     this.connectionStatusTimer = null;
     this.onStudyCaseStartLoadingSubscription = null;
     this.loadedStudy = null;
-    this.onReadOnlyModeSubsciption = null;
   }
 
   createCompleteStudy(study: PostStudy, isStudyCreated: any) {
     // Display loading message
     this.loadingDialogService.showLoading(`Create study case ${study.name}`);
+    
     // Request serveur for study case data
     this.studyCaseMainService.createStudy(study, false).subscribe(loadedStudy => {
       // after creation, load the study into post processing
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
+      this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
@@ -83,6 +83,7 @@ export class AppDataService extends DataHttpService {
       // after creation, load the study into post processing
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
+      this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
@@ -106,7 +107,7 @@ export class AppDataService extends DataHttpService {
 
     // subscribe to the loading of the study
     console.log('subscribe to the loading of the study after loading');
-
+    this.studyCaseDataService.setStudyToLoad(studyId);
     this.studyCaseMainService.loadtudyInReadOnlyMode(studyId).subscribe( loadedStudy => {
       if (loadedStudy !== null && loadedStudy !== undefined) {
         this.studyCaseDataService.setCurrentStudy(loadedStudy);
@@ -122,22 +123,23 @@ export class AppDataService extends DataHttpService {
     calls.push(this.studyCasePostProcessingService.loadStudy(studyId, false));
     combineLatest(calls).subscribe(([result1, isLoaded]) => {
       const loadedStudy = result1 as LoadedStudy;
-
-      // Load unsaved changes
-      if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
-        this.loadingDialogService.updateMessage(`Loading unsaved changes`);
-        let studyParameters: StudyUpdateParameter[] = [];
-        // tslint:disable-next-line: max-line-length
-        studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(studyId.toString());
-
-        studyParameters.forEach(element => {
+      //load study if it is still open
+      if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+        // Load unsaved changes
+        if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
+          this.loadingDialogService.updateMessage(`Loading unsaved changes`);
+          let studyParameters: StudyUpdateParameter[] = [];
           // tslint:disable-next-line: max-line-length
-          this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[element.variableId].value = element.newValue;
-        });
-      }
+          studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(studyId.toString());
 
-      this.load_study_ontology(loadedStudy, true, isStudyLoaded);
+          studyParameters.forEach(element => {
+            // tslint:disable-next-line: max-line-length
+            this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[element.variableId].value = element.newValue;
+          });
+        }
 
+        this.load_study_ontology(loadedStudy, true, isStudyLoaded);
+      } 
     }, errorReceived => {
       this.loggerService.log(errorReceived);
       this.snackbarService.showError('Error loading study\n' + errorReceived.description);
@@ -225,13 +227,13 @@ export class AppDataService extends DataHttpService {
   }
 
   private close_loading(loadedStudy: LoadedStudy, isStudyLoaded: any) {
-    // Notify components observing study case status
-    this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+    if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+      // Notify components observing study case status
+      this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
 
-    isStudyLoaded(true);
-
+      isStudyLoaded(true);
+    }
     this.loadingDialogService.closeLoading();
-
   }
 
 
