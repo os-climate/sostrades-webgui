@@ -11,6 +11,7 @@ import { OntologyInformationsDialogData } from 'src/app/models/dialog-data.model
 import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology-informations/ontology-informations.component';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { Subscription } from 'rxjs';
+import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
 
 @Component({
   selector: 'app-widget',
@@ -40,6 +41,7 @@ export class WidgetComponent implements OnInit {
   }
   
   ngOnInit(): void {
+    this.isCalculationRunning = this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_RUNNING;
     this.widgetType = this.nodeData.widgetType;
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
