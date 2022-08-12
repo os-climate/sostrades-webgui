@@ -54,7 +54,8 @@ export class StudyCaseMainService extends MainHttpService {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-
+          //set current study in loading mode
+          this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
           }, 2000);
@@ -62,9 +63,6 @@ export class StudyCaseMainService extends MainHttpService {
 
           // Assign study to data service
           this.updateStudyCaseDataService(loadedStudy);
-
-          // Reload parameter ontology
-          this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
           // Add study case to study management list
           this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
@@ -127,6 +125,8 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return Study.Create(response);
       })).subscribe(study => {
+        //set current study in loading mode
+        this.studyCaseDataService.setStudyToLoad(study.id);
         setTimeout(() => {
           this.loadStudyTimeout(study.id, false, loaderObservable, true);
         }, 2000);
@@ -139,6 +139,8 @@ export class StudyCaseMainService extends MainHttpService {
 
   //#region Load study
   loadStudy(studyId: number, withEmit: boolean): Observable<LoadedStudy> {
+    //set current study in loading mode
+    this.studyCaseDataService.setStudyToLoad(studyId);
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
       // Start study case loading to other services
       this.loadStudyTimeout(studyId, withEmit, observer, false);
@@ -164,9 +166,6 @@ export class StudyCaseMainService extends MainHttpService {
                 this.studyCaseDataService.studyManagementData = studies;
             });
             }
-
-            // Reload ontology parameters
-            this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
             if (withEmit === true) {
               this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
@@ -313,8 +312,6 @@ export class StudyCaseMainService extends MainHttpService {
         }, 2000);
       } else {
         this.updateStudyCaseDataService(null);
-        // Reload parameter ontology
-        this.studyCaseDataService.updateParameterOntology(loadedStudy);
         loaderObservable.next(loadedStudy);
       }
     },
