@@ -7,17 +7,17 @@ import { Location } from '@angular/common';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { OntologyDiscipline } from 'src/app/models/ontology-discipline.model';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
-import { MainHttpService } from '../http/main-http/main-http.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { OntologyGeneralInformation } from 'src/app/models/ontology-general-information.model';
 import { Router } from '@angular/router';
 import { HeaderService } from '../hearder/header.service';
+import { DataHttpService } from '../http/data-http/data-http.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class OntologyService extends MainHttpService {
+export class OntologyService extends DataHttpService {
 
 
 

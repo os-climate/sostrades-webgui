@@ -25,7 +25,7 @@ export class PostProcessingService extends PostProcessingHttpService {
     private loggerService: LoggerService,
     private calculationService: CalculationService,
     private location: Location) {
-    super(location, 'post-processing');
+    super(location, 'study-case');
     this.keepPoolingProcessing = true;
     this.postProcessingQueue = [];
   }
@@ -68,7 +68,7 @@ export class PostProcessingService extends PostProcessingHttpService {
       };
 
       // tslint:disable-next-line: max-line-length
-      return this.http.post(`${this.apiRoute}/${study.studyCase.id}`, request, options).pipe(map(response => {
+      return this.http.post(`${this.apiRoute}/${study.studyCase.id}/by/discipline`, request, options).pipe(map(response => {
 
         // Add check regarding numpy python type that are not manage by the JSON parser
         // At least NaN and Infinity values are converted to null in order to avoid parsing error

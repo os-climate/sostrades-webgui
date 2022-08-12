@@ -51,24 +51,38 @@ export class AppDataService extends DataHttpService {
   createCompleteStudy(study: PostStudy, isStudyCreated: any) {
     // Display loading message
     this.loadingDialogService.showLoading(`Create study case ${study.name}`);
-    // Request serveur for study case data
-    this.studyCaseMainService.createStudy(study, false).subscribe(loadedStudy => {
-      // after creation, load the study into post processing
-      // must be done after the end of the creation, if not the loading cannot be done
-      this.loadedStudy = loadedStudy as LoadedStudy;
-      this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
-        this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
-        this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
-      }, errorReceived => {
-        this.snackbarService.showError('Error creating study\n' + errorReceived.description);
+
+    this.studyCaseDataService.createStudyCaseAllocation(study).subscribe(allocationResult => {
+
+      if (allocationResult === true) {
+        // Request serveur for study case data
+        this.studyCaseMainService.createStudy(study, false).subscribe(loadedStudy => {
+          // after creation, load the study into post processing
+          // must be done after the end of the creation, if not the loading cannot be done
+          this.loadedStudy = loadedStudy as LoadedStudy;
+          this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
+            this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+            this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
+          }, errorReceived => {
+            this.snackbarService.showError('Error creating study\n' + errorReceived.description);
+            isStudyCreated(false);
+            this.loadingDialogService.closeLoading();
+          });
+        }, errorReceived => {
+          this.snackbarService.showError('Error creating study\n' + errorReceived.description);
+          isStudyCreated(false);
+          this.loadingDialogService.closeLoading();
+        });
+      } else {
+        this.snackbarService.showError('Study case allocation failed');
         isStudyCreated(false);
         this.loadingDialogService.closeLoading();
-      });
+      }
     }, errorReceived => {
-        this.snackbarService.showError('Error creating study\n' + errorReceived.description);
-        isStudyCreated(false);
-        this.loadingDialogService.closeLoading();
-      });
+      this.snackbarService.showError('Error creating study\n' + errorReceived.description);
+      isStudyCreated(false);
+      this.loadingDialogService.closeLoading();
+    });
   }
 
   copyCompleteStudy(studyId: number, newName: string, groupId: number, isStudyCreated: any) {

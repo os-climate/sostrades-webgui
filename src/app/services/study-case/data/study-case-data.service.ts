@@ -1,9 +1,9 @@
-import { Study, LoadedStudy } from 'src/app/models/study.model';
+import { Study, LoadedStudy, PostStudy } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscriber, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
@@ -13,6 +13,7 @@ import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
+import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 
 
 @Injectable({
@@ -164,13 +165,6 @@ export class StudyCaseDataService extends DataHttpService {
     };
 
     return this.http.post(url, data, options);
-  }
-
-  getHasStudyCaseAccessRight(studyID: number): Observable<boolean> {
-    return this.http.get<boolean>(`${this.apiRoute}/${studyID}/access`).pipe(map(
-      response => {
-        return response;
-      }));
   }
 
   getStudyLogs(studyId): Observable<Blob> {
@@ -356,4 +350,70 @@ export class StudyCaseDataService extends DataHttpService {
 
       })).subscribe();
   }
+
+  //#endregion logs
+
+  //#region allocations
+
+  /**
+   * Create an allocation for the given study case identifier
+   * Once created, allocation status must be check with 'studyCaseAllocationStatus' method
+   *
+   * @param studyInformation Create an allocation for a new study case to create
+   * @returns boolean (allocation success)
+   */
+  createStudyCaseAllocation(studyInformation: PostStudy): Observable<boolean> {
+
+    const allocationObservable = new Observable<boolean>((observer) => {
+
+    /*} else {
+        query = this.http.post<boolean>(`${this.apiRoute}/${studyCaseId}`, {}, this.options);
+      }*/
+
+      this.http.post<StudyCaseAllocation>(this.apiRoute, studyInformation, this.options).pipe(map(
+        response => {
+          return StudyCaseAllocation.Create(response);
+        })).subscribe(allocation => {
+        setTimeout(() => {
+          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer);
+        }, 2000);
+      },
+      error => {
+        observer.error(error);
+      });
+
+    });
+
+    return allocationObservable;
+  }
+
+  private getStudyCaseAllocationStatusTimeout(studyCaseId: number, allocationObservable: Subscriber<boolean>) {
+    this.internalStudyCaseAllocationStatus(studyCaseId).subscribe(allocation => {
+      if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS) {
+        setTimeout(() => {
+          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
+        }, 2000);
+      } else {
+        allocationObservable.next(allocation.status === StudyCaseAllocationStatus.DONE);
+      }
+
+    }, error => {
+      throw(error);
+    });
+  }
+
+  /**
+   * Retrieve the current status of an allocation for the given study case identifier
+   *
+   * @param studyCaseId study case identifier for which allocation status has to be retrieve
+   * @returns StudyCaseAllocationStatus
+   */
+  private internalStudyCaseAllocationStatus(studyCaseId: number): Observable<StudyCaseAllocation> {
+    return this.http.get<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseId}/status`).pipe(map(response => {
+      return StudyCaseAllocation.Create(response);
+    }));
+  }
+
+
+  //#endregion allocations
 }
