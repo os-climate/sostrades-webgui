@@ -93,6 +93,7 @@ export class StudyCaseMainService extends MainHttpService {
         return LoadedStudy.Create(response);
       }))
       .subscribe(loadedStudy => {
+        this.studyCaseDataService.setStudyToLoad(studyId);
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(studyId, false, loaderObservable, true);
@@ -139,9 +140,10 @@ export class StudyCaseMainService extends MainHttpService {
 
   //#region Load study
   loadStudy(studyId: number, withEmit: boolean): Observable<LoadedStudy> {
-    //set current study in loading mode
-    this.studyCaseDataService.setStudyToLoad(studyId);
+    
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      //set current study in loading mode
+      this.studyCaseDataService.setStudyToLoad(studyId);
       // Start study case loading to other services
       this.loadStudyTimeout(studyId, withEmit, observer, false);
     });
@@ -213,6 +215,7 @@ export class StudyCaseMainService extends MainHttpService {
   //#region Reload study
   reloadStudy(studyid: number): Observable<LoadedStudy> {
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.studyCaseDataService.setStudyToLoad(studyid);
       this.reloadStudytimeout(studyid, observer);
     });
     return loaderObservable;
@@ -223,6 +226,7 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
+        this.studyCaseDataService.setStudyToLoad(studyid);
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);

@@ -159,7 +159,9 @@ export class HomeComponent implements OnInit, OnDestroy {
           } else {
           this.router.navigate([getUrl]);
         }
-        this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+        if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+          this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+        }
       }
     });
 
