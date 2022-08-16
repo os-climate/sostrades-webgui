@@ -216,6 +216,8 @@ export class AppDataService extends DataHttpService {
       // to update the treeview -> check if the study is still open
       if (this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)) {
         this.studyCaseDataService.isLoadedStudyForTreeview(loadedStudy);
+
+        // Message to alert when we leave the read only mode to load the study
         if (!isReadOnlyMode && !isFromCreateStudy) {
           this.snackbarService.showInformation('Refreshing study case data.');
         }
