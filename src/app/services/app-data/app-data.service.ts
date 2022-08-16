@@ -176,6 +176,10 @@ export class AppDataService extends DataHttpService {
     if (this.loadingDialogService.isLoadingOpen()) {
     this.loadingDialogService.updateMessage(`Loading ontology`);
     }
+    else
+    {
+      this.snackbarService.showInformation('Refreshing study case data.');
+    }
     // Prepare Ontology request inputs
     const ontologyRequest: PostOntology = {
       ontology_request: {
