@@ -51,14 +51,13 @@ export class AppDataService extends DataHttpService {
   createCompleteStudy(study: PostStudy, isStudyCreated: any) {
     // Display loading message
     this.loadingDialogService.showLoading(`Create study case ${study.name}`);
-    
     // Request serveur for study case data
     this.studyCaseMainService.createStudy(study, false).subscribe(loadedStudy => {
       // after creation, load the study into post processing
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
-        this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+        this.load_study_ontology(this.loadedStudy, false, isStudyCreated, false, true);
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
       }, errorReceived => {
         this.snackbarService.showError('Error creating study\n' + errorReceived.description);
@@ -83,7 +82,7 @@ export class AppDataService extends DataHttpService {
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
-        this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+        this.load_study_ontology(this.loadedStudy, false, isStudyCreated, false, true);
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
       }, errorReceived => {
         this.snackbarService.showError('Error copying study\n' + errorReceived.description);
@@ -108,7 +107,7 @@ export class AppDataService extends DataHttpService {
     this.studyCaseMainService.loadtudyInReadOnlyMode(studyId).subscribe( loadedStudy => {
       if (loadedStudy !== null && loadedStudy !== undefined) {
         this.studyCaseDataService.setCurrentStudy(loadedStudy);
-        this.load_study_ontology(loadedStudy, true, isStudyLoaded);
+        this.load_study_ontology(loadedStudy, true, isStudyLoaded, true, false);
       }
     });
 
@@ -120,8 +119,8 @@ export class AppDataService extends DataHttpService {
     calls.push(this.studyCasePostProcessingService.loadStudy(studyId, false));
     combineLatest(calls).subscribe(([result1, isLoaded]) => {
       const loadedStudy = result1 as LoadedStudy;
-      //load study if it is still open
-      if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+      // load study if it is still open
+      if (this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)) {
         // Load unsaved changes
         if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
           this.loadingDialogService.updateMessage(`Loading unsaved changes`);
@@ -135,8 +134,8 @@ export class AppDataService extends DataHttpService {
           });
         }
 
-        this.load_study_ontology(loadedStudy, true, isStudyLoaded);
-      } 
+        this.load_study_ontology(loadedStudy, true, isStudyLoaded, false, false);
+      }
     }, errorReceived => {
       this.loggerService.log(errorReceived);
       this.snackbarService.showError('Error loading study\n' + errorReceived.description);
@@ -171,14 +170,12 @@ export class AppDataService extends DataHttpService {
     this.studyCasePostProcessingService.loadStudy(studyId, false);
   }
 
-  private load_study_ontology(loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any) {
+  private load_study_ontology(
+    loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any,
+    isReadOnlyMode: boolean, isFromCreateStudy: boolean) {
     // Add study case to study management list
-    if (this.loadingDialogService.isLoadingOpen()) {
+    if ((isReadOnlyMode) || (!isReadOnlyMode && isFromCreateStudy)) {
     this.loadingDialogService.updateMessage(`Loading ontology`);
-    }
-    else
-    {
-      this.snackbarService.showInformation('Refreshing study case data.');
     }
     // Prepare Ontology request inputs
     const ontologyRequest: PostOntology = {
@@ -198,7 +195,7 @@ export class AppDataService extends DataHttpService {
       this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
       if (getNotification) {
-        if (this.loadingDialogService.isLoadingOpen()) {
+        if ((isReadOnlyMode) || (!isReadOnlyMode && isFromCreateStudy)) {
           this.loadingDialogService.updateMessage(`Loading notifications`);
         }
 
@@ -215,9 +212,13 @@ export class AppDataService extends DataHttpService {
       } else {
         this.close_loading(loadedStudy, isStudyCreated);
       }
+
       // to update the treeview -> check if the study is still open
-      if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+      if (this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)) {
         this.studyCaseDataService.isLoadedStudyForTreeview(loadedStudy);
+        if (!isReadOnlyMode && !isFromCreateStudy) {
+          this.snackbarService.showInformation('Refreshing study case data.');
+        }
       }
     }, errorReceived => {
       // Reset ontology (make sure nothing was loaded)
@@ -231,7 +232,7 @@ export class AppDataService extends DataHttpService {
   }
 
   private close_loading(loadedStudy: LoadedStudy, isStudyLoaded: any) {
-    if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+    if (this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)) {
       // Notify components observing study case status
       this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
 
