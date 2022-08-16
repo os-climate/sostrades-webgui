@@ -53,9 +53,9 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
+        //set current study in loading mode
+        this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-          //set current study in loading mode
-          this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
           }, 2000);
@@ -140,7 +140,7 @@ export class StudyCaseMainService extends MainHttpService {
 
   //#region Load study
   loadStudy(studyId: number, withEmit: boolean): Observable<LoadedStudy> {
-    
+    this.studyCaseDataService.setStudyToLoad(studyId);
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
       //set current study in loading mode
       this.studyCaseDataService.setStudyToLoad(studyId);

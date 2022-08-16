@@ -7,7 +7,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
-import { LoadedStudy, LoadStatus } from 'src/app/models/study.model';
+import { LoadedStudy } from 'src/app/models/study.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
 import { StudyCaseExecutionStatus } from 'src/app/models/study-case-execution-status.model';
@@ -597,11 +597,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             this.subscribeToExecution();
             this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(studyCase.id);
 
-            Object.values(this.root.rootDict).forEach(x => {
-            Object.values(x.dataDisc).forEach(nodeData => {
-              nodeData.editable = false;
-              });
-            });
+
 
             this.snackbarService.showInformation('Study case successfully submitted');
 
@@ -685,11 +681,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
       this.snackbarService.showInformation('Study case successfully terminated');
       studyCaseObserver.stop();
-      Object.values(this.root.rootDict).forEach(x => {
-        Object.values(x.dataDisc).forEach(element => {
-          element.editable = true;
-        });
-      });
+
       this.loadingDialogService.updateMessage(`Refreshing study case ${this.studyCaseDataService.loadedStudy.studyCase.name}.`)
     }, errorReceived => {
       const error = errorReceived as SoSTradesError;

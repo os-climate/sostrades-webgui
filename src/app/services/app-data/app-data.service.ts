@@ -57,7 +57,6 @@ export class AppDataService extends DataHttpService {
       // after creation, load the study into post processing
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
-      this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
@@ -83,7 +82,6 @@ export class AppDataService extends DataHttpService {
       // after creation, load the study into post processing
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
-      this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
@@ -107,7 +105,6 @@ export class AppDataService extends DataHttpService {
 
     // subscribe to the loading of the study
     console.log('subscribe to the loading of the study after loading');
-    this.studyCaseDataService.setStudyToLoad(studyId);
     this.studyCaseMainService.loadtudyInReadOnlyMode(studyId).subscribe( loadedStudy => {
       if (loadedStudy !== null && loadedStudy !== undefined) {
         this.studyCaseDataService.setCurrentStudy(loadedStudy);
@@ -214,7 +211,10 @@ export class AppDataService extends DataHttpService {
       } else {
         this.close_loading(loadedStudy, isStudyCreated);
       }
-      this.studyCaseDataService.isLoadedStudyForTreeview(loadedStudy);
+      // to update the treeview -> check if the study is still open
+      if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+        this.studyCaseDataService.isLoadedStudyForTreeview(loadedStudy);
+      }
     }, errorReceived => {
       // Reset ontology (make sure nothing was loaded)
       this.ontologyService.resetOntology();
