@@ -41,7 +41,8 @@ export class WidgetComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.isCalculationRunning = this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_RUNNING;
+    let status = this.studyCaseDataService.loadedStudy.treeview.rootNode.status;
+    this.isCalculationRunning = status === DisciplineStatus.STATUS_RUNNING || status === DisciplineStatus.STATUS_PENDING;
     this.widgetType = this.nodeData.widgetType;
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
