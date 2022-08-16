@@ -13,7 +13,7 @@
         *ngIf="studyName !== ''"
         [ngClass]="{'long-title': studyName.length > 13}"
         > : {{ studyName }}</span> 
-        <p *ngIf="isReadOnlyMode"> <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;"></i> <span style="font-weight: bold;">Read Only Mode</span> </p>
+        <p *ngIf="isReadOnlyMode" matTooltip="Your study is in read only mode while loading in background. It will be ready in a moment."> <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;"></i> <span style="font-weight: bold;">Read Only Mode</span> </p>
       </div>
       <div > 
         <mat-icon
