@@ -31,7 +31,7 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
-  private loadingStudy: string;
+  private loadingStudies = [];
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -56,7 +56,6 @@ export class StudyCaseDataService extends DataHttpService {
     private location: Location) {
     super(location, 'study-case');
     this.studyLoaded = null;
-    this.loadingStudy = '';
 
     this.favoriteStudy = [];
     this.studyManagementData = [];
@@ -66,6 +65,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
+    this.loadingStudies = [];
   }
 
 
@@ -78,20 +78,23 @@ export class StudyCaseDataService extends DataHttpService {
   }
 
   setStudyToLoad(study_id: number){
+    //remove previous opened study from the loading studies
+    this.closeStudyLoading();
     //Add a study into the list of loading studies
-    this.loadingStudy = study_id.toString();
-    
+    if (this.loadingStudies.indexOf(study_id.toString()) == -1){
+        this.loadingStudies.push(study_id.toString());
+    }    
   }
 
   isStudyLoading(study_id: number){
     //Check that a study is into the list of loading studies
-    return this.loadingStudy === study_id.toString();
-  }
-  
-  closeStudyLoading(){
-    this.loadingStudy = '';
+    return this.loadingStudies.indexOf(study_id.toString()) !== -1;
   }
 
+  closeStudyLoading(){
+      this.loadingStudies = [];
+  }
+  
   clearCache() {
     this.studyLoaded = null;
     this.studyManagementData = [];
@@ -101,7 +104,6 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
-    this.loadingStudy = '';
   }
 
   /// -----------------------------------------------------------------------------------------------------------------------------

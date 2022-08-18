@@ -54,16 +54,11 @@ export class StudyCaseMainService extends MainHttpService {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
         //set current study in loading mode
-        this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
           }, 2000);
         } else {
-
-          // Assign study to data service
-          this.updateStudyCaseDataService(loadedStudy);
-
           // Add study case to study management list
           this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
           loaderObservable.next(loadedStudy);
@@ -93,7 +88,6 @@ export class StudyCaseMainService extends MainHttpService {
         return LoadedStudy.Create(response);
       }))
       .subscribe(loadedStudy => {
-        this.studyCaseDataService.setStudyToLoad(studyId);
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(studyId, false, loaderObservable, true);
@@ -127,7 +121,6 @@ export class StudyCaseMainService extends MainHttpService {
         return Study.Create(response);
       })).subscribe(study => {
         //set current study in loading mode
-        this.studyCaseDataService.setStudyToLoad(study.id);
         setTimeout(() => {
           this.loadStudyTimeout(study.id, false, loaderObservable, true);
         }, 2000);
@@ -139,54 +132,31 @@ export class StudyCaseMainService extends MainHttpService {
   //#endregion copy study
 
   //#region Load study
-  loadStudy(studyId: number, withEmit: boolean): Observable<LoadedStudy> {
-    this.studyCaseDataService.setStudyToLoad(studyId);
-    const loaderObservable = new Observable<LoadedStudy>((observer) => {
-      //set current study in loading mode
-      this.studyCaseDataService.setStudyToLoad(studyId);
-      // Start study case loading to other services
-      this.loadStudyTimeout(studyId, withEmit, observer, false);
-    });
-    return loaderObservable;
+  loadStudy(studyId: number, withEmit: boolean, withTimeout = true): Observable<LoadedStudy> {
+    if (withTimeout) {
+      const loaderObservable = new Observable<LoadedStudy>((observer) => {
+        // Start study case loading to other services
+        this.loadStudyTimeout(studyId, withEmit, observer, false);
+      });
+      return loaderObservable;
+      
+    }
+    else {
+      return this.internalLoadStudy(studyId);
+    }
+    
   }
 
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
 
     this.internalLoadStudy(studyId).subscribe(loadedStudy => {
-      // check that the study is still open
-      if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
             setTimeout(() => {
               this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
             }, 2000);
         } else if (loadedStudy.loadStatus === LoadStatus.LOADED) {
-            // Assign study to data service
-            this.updateStudyCaseDataService(loadedStudy);
-
-            if (addToStudyManagement === true) {
-              this.studyCaseDataService.getStudies().subscribe(studies => {
-                this.studyCaseDataService.studyManagementData = studies;
-            });
-            }
-
-            if (withEmit === true) {
-              this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-            }
-
-            // Load logs
-            this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
-
-            this.studyCaseDataService.tradeScenarioList = [];
-
-            this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
-              res => {
-                this.validatedUpdated();
-                loaderObservable.next(loadedStudy);
-              }, error => {
-                loaderObservable.next(loadedStudy);
-            });
+            loaderObservable.next(loadedStudy);
         }
-      }
     },
       error => {
         loaderObservable.error(error);
@@ -215,7 +185,6 @@ export class StudyCaseMainService extends MainHttpService {
   //#region Reload study
   reloadStudy(studyid: number): Observable<LoadedStudy> {
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
-      this.studyCaseDataService.setStudyToLoad(studyid);
       this.reloadStudytimeout(studyid, observer);
     });
     return loaderObservable;
@@ -226,18 +195,11 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
-        this.studyCaseDataService.setStudyToLoad(studyid);
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);
           }, 2000);
         } else {
-
-          // Assign study to data service
-          this.updateStudyCaseDataService(loadedStudy);
-
-          // Reload parameter ontology
-          this.studyCaseDataService.updateParameterOntology(loadedStudy);
           loaderObservable.next(loadedStudy);
         }
       },
@@ -405,16 +367,4 @@ export class StudyCaseMainService extends MainHttpService {
     this.studyCaseDataService.setCurrentStudy(loadedStudy);
   }
 
-  public validatedUpdated() {
-    const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-
-    Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach(
-      element => {
-        const studyCaseValidation = this.studyCaseValidationService.studyValidationDict[element.fullNamespace];
-
-        if ((studyCaseValidation !== undefined) &&  (studyCaseValidation !== null)) {
-            element.isValidated = studyCaseValidation[0].validationState === ValidationTreeNodeState.VALIDATED;
-          }
-     });
-  }
 }

@@ -16,6 +16,7 @@ import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { StudyCaseValidationService } from '../study-case-validation/study-case-validation.service';
+import { StudyCaseLoadingService } from '../study-case-loading/study-case-loading.service';
 
 @Injectable({
   providedIn: 'root'

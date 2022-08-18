@@ -260,6 +260,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.onTreeNodeNavigation(nodeData);
     });
   }
+  
 
   checkTreeViewIsFiltered() {
 
