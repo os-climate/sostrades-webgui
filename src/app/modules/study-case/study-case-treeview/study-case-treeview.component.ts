@@ -36,6 +36,7 @@ import { PannelIds } from 'src/app/models/data-management-discipline.model';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-execution-system-load.model';
 import { FilterService } from 'src/app/services/filter/filter.service';
+import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
 
 
 @Component({
@@ -111,6 +112,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
     public studyCasePostProcessingService: StudyCasePostProcessingService,
+    public studyCaseLoadingService: StudyCaseLoadingService,
     public postProcessingService: PostProcessingService,
     private treeNodeDataService: TreeNodeDataService,
     public ontologyService: OntologyService,
@@ -777,7 +779,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.loadingDialogService.showLoading('Requesting study case reloading');
 
     this.studyCaseMainService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(response => {
-
+      let loadedStudy = response as LoadedStudy;
+      this.studyCaseLoadingService.updateStudyCaseDataService(loadedStudy);
+      this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
       //reload study for post processing
       this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(response => {
 

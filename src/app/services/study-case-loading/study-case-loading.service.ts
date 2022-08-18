@@ -1,6 +1,6 @@
 import { LoadedStudy} from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 import { combineLatest, Observable, Subscriber } from 'rxjs';
 import { StudyCaseValidationService } from '../study-case-validation/study-case-validation.service';
 import { StudyCaseDataService } from '../study-case/data/study-case-data.service';
@@ -13,6 +13,7 @@ import { PostOntology } from 'src/app/models/ontology.model';
 import { TreenodeTools } from 'src/app/tools/treenode.tool';
 import { SocketService } from '../socket/socket.service';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
+import { SelectComponent } from 'src/app/shared/select/select.component';
 
 
 @Injectable({
@@ -41,12 +42,13 @@ export class StudyCaseLoadingService {
      * @param loadedStudy 
      * @param getNotification 
      * @param isStudyCreated 
-     * @param isReadOnlyMode 
+     * @param showMsgInPopup 
      * @param isFromCreateStudy 
+     * @param isReadOnlyMode 
      * @param withEmit 
      */
     public finalizeLoadedStudyCase(loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any,
-        showMsgInPopup: boolean, isFromCreateStudy: boolean, withEmit: boolean) {
+        showMsgInPopup: boolean, isFromCreateStudy: boolean, isReadOnlyMode: boolean, withEmit: boolean) {
         
         const studyId = loadedStudy.studyCase.id;
         if (this.studyCaseDataService.isStudyLoading(studyId)){
@@ -63,75 +65,79 @@ export class StudyCaseLoadingService {
                 this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
             }
 
-            // Load logs
-            if (showMsgInPopup) {
-                this.loadingDialogService.updateMessage('Load study logs');
-            } 
-            this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
-            this.studyCaseDataService.tradeScenarioList = [];
-
-            if (showMsgInPopup) {
-                if (getNotification){
-                    this.loadingDialogService.updateMessage(`Loading ontology and notifications`);
-                }
-                else{
-                    this.loadingDialogService.updateMessage(`Loading ontology`);
-                }
-            }
-                 
-            const calls = [];
-            calls.push(this.loadOntology(loadedStudy));
-            calls.push(this.loadNotifications(getNotification, loadedStudy.studyCase.id));
-            calls.push(this.loadValidations(loadedStudy.studyCase.id));
             
-            combineLatest(calls).subscribe(([resultVoid,resultnotifications, resultValidation]) => {
-                
-                if (showMsgInPopup) {
-                    this.loadingDialogService.updateMessage('Loading ontology');
-                } 
-                this.studyCaseDataService.updateParameterOntology(loadedStudy);
-                
-                if (getNotification){
+
+            if (isReadOnlyMode){
+                this.loadOntology(loadedStudy).subscribe(()=>{
                     if (showMsgInPopup) {
-                        this.loadingDialogService.updateMessage('Loading notifications');
+                        this.loadingDialogService.updateMessage('Loading ontology');
                     } 
-                    const notifications = resultnotifications as CoeditionNotification[];
-                    this.socketService.notificationList = notifications;
-                }
-                if (showMsgInPopup) {
-                    this.loadingDialogService.updateMessage('Loading validation');
-                } 
-                Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach(
-                    element => {
-                      const studyCaseValidation = this.studyCaseValidationService.studyValidationDict[element.fullNamespace];
-              
-                      if ((studyCaseValidation !== undefined) &&  (studyCaseValidation !== null)) {
-                          element.isValidated = studyCaseValidation[0].validationState === ValidationTreeNodeState.VALIDATED;
-                        }
-                   });
-                    
-                // to update the treeview -> check if the study is still open
-                if (this.studyCaseDataService.isStudyLoading(studyId)){
-                    if (showMsgInPopup) {
-                        this.loadingDialogService.updateMessage('Refreshing study case data');
-                    }
-                    else {
-                        this.snackbarService.showInformation('Refreshing study case data');
-                    }   
+                    this.studyCaseDataService.updateParameterOntology(loadedStudy);
                     //end loading
-                    this.close_loading(loadedStudy, isStudyCreated);
+                    this.close_loading(loadedStudy, isStudyCreated, showMsgInPopup);
+                });
+            }    
+            else{
+                // Load logs
+                if (showMsgInPopup) {
+                    this.loadingDialogService.updateMessage('Load study logs');
+                } 
+                this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
+                this.studyCaseDataService.tradeScenarioList = [];
+                if (showMsgInPopup) {
+                    if (getNotification){
+                        this.loadingDialogService.updateMessage(`Loading ontology and notifications`);
+                    }
+                    else{
+                        this.loadingDialogService.updateMessage(`Loading ontology`);
+                    }
                 }
+                const calls = [];
+                calls.push(this.loadOntology(loadedStudy));
+                calls.push(this.loadNotifications(getNotification, loadedStudy.studyCase.id));
+                calls.push(this.loadValidations(loadedStudy.studyCase.id));
+                
+                combineLatest(calls).subscribe(([resultVoid,resultnotifications, resultValidation]) => {
+                    
+                    if (showMsgInPopup) {
+                        this.loadingDialogService.updateMessage('Loading ontology');
+                    } 
+                    this.studyCaseDataService.updateParameterOntology(loadedStudy);
+                    
+                    if (getNotification){
+                        if (showMsgInPopup) {
+                            this.loadingDialogService.updateMessage('Loading notifications');
+                        } 
+                        const notifications = resultnotifications as CoeditionNotification[];
+                        this.socketService.notificationList = notifications;
+                    }
+                    if (showMsgInPopup) {
+                        this.loadingDialogService.updateMessage('Loading validation');
+                    } 
+                    Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach(
+                        element => {
+                        const studyCaseValidation = this.studyCaseValidationService.studyValidationDict[element.fullNamespace];
+                
+                        if ((studyCaseValidation !== undefined) &&  (studyCaseValidation !== null)) {
+                            element.isValidated = studyCaseValidation[0].validationState === ValidationTreeNodeState.VALIDATED;
+                            }
+                    });
+                        
+                    
+                    //end loading
+                    this.close_loading(loadedStudy, isStudyCreated, showMsgInPopup);
+                    
 
-            }, errorReceived => {
+                }, errorReceived => {
 
-                // Notify user
-                this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
+                    // Notify user
+                    this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
 
-                this.close_loading(loadedStudy, isStudyCreated);
-            });
-        
+                    this.close_loading(loadedStudy, isStudyCreated, showMsgInPopup);
+                });
+            } 
+        }
     }
-  }
 
   private loadOntology(loadedStudy: LoadedStudy): Observable<void>{
         // Prepare Ontology request inputs
@@ -168,7 +174,7 @@ export class StudyCaseLoadingService {
 
   }
 
-  private updateStudyCaseDataService(loadedStudy: LoadedStudy) {
+  public updateStudyCaseDataService(loadedStudy: LoadedStudy) {
     const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
 
     if ((currentLoadedStudy !== null) && (currentLoadedStudy !== undefined)) {
@@ -181,12 +187,18 @@ export class StudyCaseLoadingService {
 
   
 
-  private close_loading(loadedStudy: LoadedStudy, isStudyLoaded: any) {
+  private close_loading(loadedStudy: LoadedStudy, isStudyLoaded: any, showMsgInPopup: boolean) {
     if (this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
-      // Notify components observing study case status
-      this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+        if (showMsgInPopup) {
+            this.loadingDialogService.updateMessage('Refreshing study case data');
+        }
+        else {
+            this.snackbarService.showInformation('Refreshing study case data');
+        } 
+        // Notify components observing study case status
+        this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
 
-      isStudyLoaded(true);
+        isStudyLoaded(true);
     }
     this.loadingDialogService.closeLoading();
   }

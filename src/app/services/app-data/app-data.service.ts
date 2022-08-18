@@ -61,7 +61,7 @@ export class AppDataService extends DataHttpService {
       this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         //load the last elements of the study and update current loaded study
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false, false);
 
       }, errorReceived => {
         this.snackbarService.showError('Error creating study\n' + errorReceived.description);
@@ -87,7 +87,7 @@ export class AppDataService extends DataHttpService {
       this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         //load the last elements of the study and update current loaded study
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false, false);
 
       }, errorReceived => {
         this.snackbarService.showError('Error copying study\n' + errorReceived.description);
@@ -115,18 +115,17 @@ export class AppDataService extends DataHttpService {
     firstCalls.push(this.studyCaseMainService.loadStudy(studyId, false, false));
     combineLatest(firstCalls).subscribe(([resultloadReadOnly, resultloadNormal]) => {
       const loadedStudy = resultloadNormal as LoadedStudy;
-      const loadedReadOnlyStudy = resultloadReadOnly as LoadedStudy;
-
+    
       //if the loadedstudy is loaded, no need of readonly mode
       if (loadedStudy.loadStatus === LoadStatus.LOADED)
       {
         //load the post processings then load directly the study 
         this.launchLoadStudy(false, loadedStudy, true, isStudyLoaded, true, false, false);
-        
       }
-      else if (loadedReadOnlyStudy !== null && loadedReadOnlyStudy !== undefined) {
+      else if (resultloadReadOnly !== null && resultloadReadOnly !== undefined) {
+          const loadedReadOnlyStudy = resultloadReadOnly as LoadedStudy;
           //load read only mode,
-          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedReadOnlyStudy, true, isStudyLoaded, true, false, false);
+          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedReadOnlyStudy, true, isStudyLoaded, true, false, true, false);
           // then launch load study with timeout in background
           this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, false, false, false);
       }
@@ -171,7 +170,7 @@ export class AppDataService extends DataHttpService {
         {
           loadedStudy = result1 as LoadedStudy;
         }
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, getNotification, isStudyLoaded, showMsgInPopup, isFromCreateStudy, withEmit);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, getNotification, isStudyLoaded, showMsgInPopup, isFromCreateStudy, false, withEmit);
         if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
           this.loadingDialogService.updateMessage(`Loading unsaved changes`);
           let studyParameters: StudyUpdateParameter[] = [];
