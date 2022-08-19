@@ -752,20 +752,16 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
         // Reload the study in order to get all post postprocessing data
-        const loadingCalls = [];
-        loadingCalls.push(this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true));
-        loadingCalls.push(this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false));
-        combineLatest(loadingCalls).subscribe(([resultLoadedStudy, isLoaded]) => {
+        const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
           let loadedstudyCase = resultLoadedStudy as LoadedStudy;
           this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, false, (isStudyLoaded)=>{
+              studySubscription.unsubscribe();  
               // Cleaning old subscriptions
               this.cleanExecutionSubscriptions();
               this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
               this.calculationService.onCalculationChange.emit(false);
-              this.loadingDialogService.closeLoading();
-          }, false, false, true);
-
-        }, errorReceived => {
+            }, false, false, true);
+          }, errorReceived => {
           const error = errorReceived as SoSTradesError;
           if (error.redirect) {
             this.snackbarService.showError(error.description);

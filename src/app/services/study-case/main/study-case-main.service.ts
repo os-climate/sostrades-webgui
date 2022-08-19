@@ -157,10 +157,10 @@ export class StudyCaseMainService extends MainHttpService {
               this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
             }, 2000);
         } else if (loadedStudy.loadStatus === LoadStatus.LOADED) {
-          if(withEmit && this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
-            this.updateStudyCaseDataService(loadedStudy);
-            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-          }
+            if(withEmit && this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+              this.updateStudyCaseDataService(loadedStudy);
+              this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+            }
           
             loaderObservable.next(loadedStudy);
         }
