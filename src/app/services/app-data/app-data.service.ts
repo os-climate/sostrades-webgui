@@ -58,10 +58,10 @@ export class AppDataService extends DataHttpService {
       // after creation, load the study into post processing
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
-      this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
+      
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         //load the last elements of the study and update current loaded study
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false, false);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false);
 
       }, errorReceived => {
         this.snackbarService.showError('Error creating study\n' + errorReceived.description);
@@ -84,10 +84,9 @@ export class AppDataService extends DataHttpService {
       // after creation, load the study into post processing
       // must be done after the end of the creation, if not the loading cannot be done
       this.loadedStudy = loadedStudy as LoadedStudy;
-      this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
       this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
         //load the last elements of the study and update current loaded study
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false, false);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false);
 
       }, errorReceived => {
         this.snackbarService.showError('Error copying study\n' + errorReceived.description);
@@ -120,18 +119,18 @@ export class AppDataService extends DataHttpService {
       if (loadedStudy.loadStatus === LoadStatus.LOADED)
       {
         //load the post processings then load directly the study 
-        this.launchLoadStudy(false, loadedStudy, true, isStudyLoaded, true, false, false);
+        this.launchLoadStudy(false, loadedStudy, true, isStudyLoaded, true, false);
       }
       else if (resultloadReadOnly !== null && resultloadReadOnly !== undefined) {
           const loadedReadOnlyStudy = resultloadReadOnly as LoadedStudy;
           //load read only mode,
-          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedReadOnlyStudy, true, isStudyLoaded, true, false, true, false);
+          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedReadOnlyStudy, true, isStudyLoaded, true, false, true);
           // then launch load study with timeout in background
-          this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, false, false, false);
+          this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, false, false);
       }
       else {
         // load the study normally with timeout and post processings
-        this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false, false);
+        this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false);
       }
     }, errorReceived => {
       this.loggerService.log(errorReceived);
@@ -149,10 +148,9 @@ export class AppDataService extends DataHttpService {
    * @param isStudyLoaded : function to be executed at the end of the loading or creation
    * @param showMsgInPopup : show the messages in a popup (if the loading is in background like in readonlymode, don't show the messages)
    * @param isFromCreateStudy : we are in creation mode
-   * @param withEmit : we have to emit the end of study creation (for treeview update)
    */
-  private launchLoadStudy(isstudyNeedLoaded:boolean, loadedStudy: LoadedStudy, getNotification: boolean, isStudyLoaded: any,
-    showMsgInPopup: boolean, isFromCreateStudy: boolean, withEmit: boolean) {
+  public launchLoadStudy(isstudyNeedLoaded:boolean, loadedStudy: LoadedStudy, getNotification: boolean, isStudyLoaded: any,
+    showMsgInPopup: boolean, isFromCreateStudy: boolean, loadOnlyOntology=false) {
       const studyId = loadedStudy.studyCase.id;
       const loadingCalls = [];
 
@@ -165,12 +163,12 @@ export class AppDataService extends DataHttpService {
       }
       
       loadingCalls.push(this.studyCasePostProcessingService.loadStudy(studyId, false));
-      combineLatest(loadingCalls).subscribe(([result1, isLoaded]) => {
+      combineLatest(loadingCalls).subscribe(([resultLoadedStudy, isLoaded]) => {
         if (isstudyNeedLoaded)
         {
-          loadedStudy = result1 as LoadedStudy;
+          loadedStudy = resultLoadedStudy as LoadedStudy;
         }
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, getNotification, isStudyLoaded, showMsgInPopup, isFromCreateStudy, false, withEmit);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, getNotification, isStudyLoaded, showMsgInPopup, isFromCreateStudy, loadOnlyOntology);
         if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
           this.loadingDialogService.updateMessage(`Loading unsaved changes`);
           let studyParameters: StudyUpdateParameter[] = [];

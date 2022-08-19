@@ -1,4 +1,4 @@
-import { LoadedStudy} from 'src/app/models/study.model';
+import { LoadedStudy, LoadStatus} from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { delay, map } from 'rxjs/operators';
 import { combineLatest, Observable, Subscriber } from 'rxjs';
@@ -38,17 +38,16 @@ export class StudyCaseLoadingService {
   }
 
     /**
-     * 
-     * @param loadedStudy 
-     * @param getNotification 
-     * @param isStudyCreated 
-     * @param showMsgInPopup 
-     * @param isFromCreateStudy 
-     * @param isReadOnlyMode 
-     * @param withEmit 
+     * Do post loading operation to finalize the study
+     * @param loadedStudy the loaded study
+     * @param getNotification retreive the notifications
+     * @param isStudyCreated function to do after the study is created
+     * @param showMsgInPopup show loading msg in a popup
+     * @param isFromCreateStudy if it is after creation, apdate stydumanagement data
+     * @param loadOnlyOntology load only the ontology and not the logs, validation and notifications, 
      */
     public finalizeLoadedStudyCase(loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any,
-        showMsgInPopup: boolean, isFromCreateStudy: boolean, isReadOnlyMode: boolean, withEmit: boolean) {
+        showMsgInPopup: boolean, isFromCreateStudy: boolean, loadOnlyOntology: boolean) {
         
         const studyId = loadedStudy.studyCase.id;
         if (this.studyCaseDataService.isStudyLoading(studyId)){
@@ -59,15 +58,9 @@ export class StudyCaseLoadingService {
                 this.studyCaseDataService.getStudies().subscribe(studies => {
                     this.studyCaseDataService.studyManagementData = studies;
                 });
-            }
+            }           
 
-            if (withEmit && this.studyCaseDataService.isStudyLoading(studyId)) {
-                this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-            }
-
-            
-
-            if (isReadOnlyMode){
+            if (loadOnlyOntology){
                 this.loadOntology(loadedStudy).subscribe(()=>{
                     if (showMsgInPopup) {
                         this.loadingDialogService.updateMessage('Loading ontology');
