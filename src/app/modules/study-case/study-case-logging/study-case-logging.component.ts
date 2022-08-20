@@ -103,7 +103,7 @@ export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewIn
 
   private getLogs() {
     //get studylog only if logger is initialized
-    if (this.studyCaseDataService.loadedStudy !== undefined){
+    if (this.studyCaseDataService.loadedStudy !== undefined && this.studyCaseDataService.loadedStudy !== null){
       this.studyCaseId = this.studyCaseDataService.loadedStudy.studyCase.id;
     }
     

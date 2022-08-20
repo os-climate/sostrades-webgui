@@ -55,7 +55,7 @@ export async function baseStudyCaseEdition(page: Page, studyName: string, newStu
     await page.click(loadButton);
 
     // Verifying correct redirection to study workspace
-    await page.waitForURL('/study-workspace');
+    await page.waitForURL('**/study-workspace**');
 
     // Verifying correct study name for My current study place
     const currentStudyNameTextLocator = page.locator('id=text-sidenav-study-loaded-name');
