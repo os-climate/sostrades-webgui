@@ -108,36 +108,34 @@ export class AppDataService extends DataHttpService {
     // register loading study
     this.studyCaseDataService.setStudyToLoad(studyId);
 
-    //first, get read only mode and get the loading study (if it is in cache read only mode is not necessary)
-    const firstCalls = [];
-    firstCalls.push(this.studyCaseMainService.loadtudyInReadOnlyMode(studyId));
-    firstCalls.push(this.studyCaseMainService.loadStudy(studyId, false, false));
-    combineLatest(firstCalls).subscribe(([resultloadReadOnly, resultloadNormal]) => {
+    this.studyCaseMainService.loadStudy(studyId, false, false).subscribe(resultloadNormal => {
       const loadedStudy = resultloadNormal as LoadedStudy;
-    
-      //if the loadedstudy is loaded, no need of readonly mode
       if (loadedStudy.loadStatus === LoadStatus.LOADED)
       {
         //load the post processings then load directly the study 
         this.launchLoadStudy(false, loadedStudy, true, isStudyLoaded, true, false);
       }
-      else if (resultloadReadOnly !== null && resultloadReadOnly !== undefined) {
-          const loadedReadOnlyStudy = resultloadReadOnly as LoadedStudy;
-          //load read only mode,
-          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedReadOnlyStudy, true, isStudyLoaded, true, false, true);
-          // then launch load study with timeout in background
-          this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, false, false);
-      }
       else {
-        // load the study normally with timeout and post processings
-        this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false);
+        this.studyCaseMainService.loadtudyInReadOnlyMode(studyId).subscribe(resultloadReadOnly => {
+          
+          if (resultloadReadOnly !== null && resultloadReadOnly !== undefined) {
+            const loadedReadOnlyStudy = resultloadReadOnly as LoadedStudy;
+            //load read only mode,
+            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedReadOnlyStudy, true, isStudyLoaded, true, false, true);
+            // then launch load study with timeout in background
+            this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, false, false);
+          }
+          else {
+            // load the study normally with timeout and post processings
+           this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false);
+          }
+        }, error=>{
+          // load the study normally with timeout and post processings
+          this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false);
+        });
       }
-    }, errorReceived => {
-      this.loggerService.log(errorReceived);
-      this.snackbarService.showError('Error loading study\n' + errorReceived.description);
-      isStudyLoaded(false);
-      this.loadingDialogService.closeLoading();
     });
+    
   }
 
   /**
