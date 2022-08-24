@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Directive, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -158,6 +157,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
             }
           });
           this.isLoading = false;
+          this.focusOnHtlmElement();
         }, errorReceived => {
           const error = errorReceived as SoSTradesError;
           this.onCancelClick();
@@ -190,6 +190,13 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
         }
         this.isLoading = false;
     });
+  }
+
+  private focusOnHtlmElement() {
+    // Apply a focus on element html
+    if (!this.isLoading) {
+      setTimeout( () => document.getElementById('studyName').focus());
+    }
   }
 
   ngOnDestroy() {

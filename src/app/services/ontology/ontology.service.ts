@@ -12,6 +12,7 @@ import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { OntologyGeneralInformation } from 'src/app/models/ontology-general-information.model';
 import { Router } from '@angular/router';
 import { HeaderService } from '../hearder/header.service';
+import { ColumnName } from 'src/app/models/column-name.model';
 
 
 @Injectable({
@@ -23,8 +24,10 @@ export class OntologyService extends MainHttpService {
 
   private ontology: Ontology;
   public modelStatusData: OntologyModelStatus[];
+
   public modelStatusFilter: string;
   public modelStatusColumnFiltered: string;
+  public modelStatusSelectedValue = new Map <ColumnName, string[]>();
 
   public parametersData: OntologyParameter[];
   public parametersFilter: string;
@@ -44,6 +47,7 @@ export class OntologyService extends MainHttpService {
     super(location, 'ontology');
     this.ontology = new Ontology();
     this.modelStatusData = [];
+    this.modelStatusSelectedValue.clear();
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
     this.parametersData = [];
@@ -57,6 +61,7 @@ export class OntologyService extends MainHttpService {
     this.modelStatusData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
+    this.modelStatusSelectedValue.clear();
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';

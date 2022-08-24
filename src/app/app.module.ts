@@ -119,6 +119,7 @@ import { ProcessInformationComponent } from './modules/process/process-informati
 import { ModelsStatusDocumentationComponent } from './modules/models/models-status-documentation/models-status-documentation.component';
 import { StudyCaseLoggingComponent } from './modules/study-case/study-case-logging/study-case-logging.component';
 import { RepositoryTraceabilityDialogComponent } from './modules/ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
+import { FilterDialogComponent } from './shared/filter-dialog/filter-dialog.component';
 
 registerLocaleData(fr);
 
@@ -214,6 +215,7 @@ registerLocaleData(fr);
     ModelsStatusDocumentationComponent,
     StudyCaseLoggingComponent,
     RepositoryTraceabilityDialogComponent,
+    FilterDialogComponent,
   ],
   imports: [
     BrowserModule,
