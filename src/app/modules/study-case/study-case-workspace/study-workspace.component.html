@@ -39,6 +39,13 @@
         [documentation]="markdownDocumentation"
       ></app-study-case-documentation>
     </mat-tab>
+    <mat-tab
+      label="Dashboard"
+      aria-label="tab-study-workspace-dashboard"
+      *ngIf="showDashboard"
+    >
+      <app-dashboard></app-dashboard>
+    </mat-tab>
   </mat-tab-group>
 <div *ngIf="showView" class="filter-level">
   <button

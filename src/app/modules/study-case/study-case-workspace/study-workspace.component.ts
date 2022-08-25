@@ -38,7 +38,9 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public showDataManagement: boolean;
   public showDocumentation: boolean;
   public showDataValidation: boolean;
+  public showDashboard: boolean;
   public hasDocumentation: boolean;
+  public hasDashboard: boolean;
   private onStudyCaseChangeSubscription: Subscription;
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
@@ -86,6 +88,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showDocumentation = false;
     this.hasDocumentation = false;
     this.markdownDocumentation = [];
+    this.showDashboard = false;
+    this.hasDashboard = false;
     this.showDataManagement = true;
     this.showDataValidation = false;
     this.hasAccessToStudy = false;
@@ -136,8 +140,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       // Check  study status to display or not post processing
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
         this.showPostProcessing = true;
+        this.showDashboard = true;
       } else {
         this.showPostProcessing = false;
+        this.showDashboard = false;
       }
 
       // Check if study is loaded without data
@@ -145,6 +151,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDataManagement = false;
         this.showVisualisation = false;
         this.showDataValidation = false;
+        this.showDashboard = false;
 
         // Study is loaded without data management, triggering post processing display
         this.showPostProcessingContent = true;
@@ -152,6 +159,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDataManagement = true;
         this.showVisualisation = true;
         this.showDataValidation = true;
+        this.showDashboard = true;
       }
 
       // Activate show not editable variable if study is read only
