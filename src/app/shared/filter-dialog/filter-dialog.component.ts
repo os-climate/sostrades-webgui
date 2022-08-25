@@ -67,8 +67,6 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
     if (this.datas.selectedStringValues !== null && this.datas.selectedStringValues !== undefined) {
         if (this.datas.selectedStringValues.length > 0) {
           this.researchMultiCtrl.setValue(this.datas.selectedStringValues);
-        } else if (this.datas.selectedStringValues.length === 0) {
-          this.researchMultiCtrl.setValue(this.datas.possibleStringValues);
         }
     }
   }
@@ -131,11 +129,7 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
   submitForm() {
     this.datas.cancel = false;
     this.datas.possibleStringValues = this.datas.possibleStringValues;
-    if (this.researchMultiCtrl.value.length === 0) {
-      this.datas.selectedStringValues = this.datas.possibleStringValues;
-    } else {
-      this.datas.selectedStringValues = this.researchMultiCtrl.value;
-    }
+    this.datas.selectedStringValues = this.researchMultiCtrl.value;
     this.dialogRef.close(this.datas);
   }
 

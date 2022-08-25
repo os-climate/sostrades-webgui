@@ -146,7 +146,9 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
       }
     );
   }
-  displayFilter(columnName: ColumnName) {
+  displayFilter(columnName: ColumnName, event) {
+    event.stopPropagation();
+    event.preventDefault();
     this.filterDialog.possibleStringValues =  this.setPossibleValueByColumn(columnName);
     this.filterDialog.columnName = columnName;
 
@@ -165,11 +167,10 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if ( result !== undefined && result !== null && result.cancel !== true) {
-
+      const filter: FilterDialogData = result as FilterDialogData;
+      if ( filter !== undefined && filter !== null && filter.cancel !== true) {
         // Set our dictionnary with the value selected
-        this.ontologyService.modelStatusSelectedValues.set(columnName, this.filterDialog.selectedStringValues);
-
+        this.ontologyService.modelStatusSelectedValues.set(columnName, filter.selectedStringValues);
         // Trigger the dataSourceModelStatus.filterPredicate
         if (this.dataSourceModelStatus.filter.length > 0) {
           // Apply the previous filter
@@ -186,20 +187,14 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
 
   private setPossibleValueByColumn(column: ColumnName) {
     this.filterDialog.possibleStringValues = [];
-    let datas = [];
-    if (this.dataSourceModelStatus.filter.length > 0 && this.dataSourceModelStatus.filter !== '.') {
-      datas = this.dataSourceModelStatus.filteredData;
-    } else {
-      datas = this.ontologyService.modelStatusData;
-    }
     switch (column) {
       case ColumnName.NAME:
-        datas.forEach(models => {
+        this.ontologyService.modelStatusData.forEach(models => {
         this.filterDialog.possibleStringValues.push(models.name);
           });
         return this.filterDialog.possibleStringValues;
       case ColumnName.CODE_REPOSITORY:
-        datas.forEach(models => {
+        this.ontologyService.modelStatusData.forEach(models => {
           if (!this.filterDialog.possibleStringValues.includes(models.codeRepository)) {
 
             this.filterDialog.possibleStringValues.push(models.codeRepository);
@@ -276,12 +271,13 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
   }
 
   applyFilterAfterReloading() {
-    if (this.ontologyService.modelStatusSelectedValues !== null
+    // Check if there are on filter
+    if (this.ontologyService.modelStatusFilter.length > 0 && this.ontologyService.modelStatusFilter !== '.') {
+      this.dataSourceModelStatus.filter = this.ontologyService.modelStatusFilter.trim().toLowerCase();
+    } else if (this.ontologyService.modelStatusSelectedValues !== null
       && this.ontologyService.modelStatusSelectedValues !== undefined
       && this.ontologyService.modelStatusSelectedValues.size > 0) {
         this.dataSourceModelStatus.filter = '.';
-      } else {
-        this.dataSourceModelStatus.filter = this.ontologyService.modelStatusFilter.trim().toLowerCase();
       }
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
@@ -332,18 +328,6 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
             break;
         }
       });
-      // for (const entry of this.ontologyService.modelStatusSelectedValues.entries()) {
-      //   const mapKey = entry[0];
-      //   const mapValue = entry[1];
-      //   switch (mapKey) {
-      //     case ColumnName.NAME:
-      //       isMatch = isMatch && mapValue.includes(data.name);
-      //       break;
-      //     case ColumnName.CODE_REPOSITORY:
-      //       isMatch = isMatch && mapValue.includes(data.codeRepository);
-      //       break;
-      //   }
-      // }
       return isMatch;
     };
     this.applyFilterAfterReloading();

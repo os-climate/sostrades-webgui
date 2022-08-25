@@ -18,7 +18,7 @@
             <mat-select
                 id='process'
                 [formControl]="researchMultiCtrl" 
-                placeholder="Value(s)..." 
+                [placeholder]="datas.possibleStringValues.length > 0 ? datas.possibleStringValues.length + ' Values': datas.possibleStringValues.lenght + ' Value'" 
                 (selectionChange)="onDataChange($event.value)"
                 [multiple]="true" 
                 #multiSelect 
