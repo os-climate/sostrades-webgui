@@ -1,0 +1,65 @@
+<div *ngIf="hasDashboard; else missingDashboardMessage" style="height: 100%;">
+  <div class="flex-container">
+    <div
+      *ngIf="loadedStudy.dashboard['title']"
+      style="width : 100%"
+    >
+      <div class="widget-container">
+        <div class="widget-cell">
+          <div class="h2" style="font-weight: bold; text-align: center;">
+            {{loadedStudy.dashboard['title']}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loadedStudy.dashboard['rows']">
+      <div
+
+        *ngFor="let row of loadedStudy.dashboard['rows']"
+      >
+        <div class="widget-container">
+          <div
+            *ngFor="let block of row"
+          >
+            <div class="widget-cell">
+              <div *ngIf="block['content_type'] == 'TEXT'" [className]="block['style'] ? block['style'] : ''">
+                {{block['content']}}
+              </div>
+              <div *ngIf="block['content_type'] == 'SCALAR'">
+                <strong>{{block['content']['var_name']}} :</strong>
+                {{block['content']['value']}}
+              </div>
+              <div *ngIf="block['content_type'] == 'POST_PROCESSING'" class="plot-resize-zone">
+                <app-post-processing-plotly
+                  *ngFor="let plot of [block['content']]"
+                  [class]="
+                    plot['data'] && plot['data'][0] && plot['data'][0]['type'] === 'table'
+                      ? 'table'
+                      : 'plot'
+                  "
+                  [plotData]="plot"
+                  [fullNamespace]=""
+                >
+                </app-post-processing-plotly>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #missingDashboardMessage>
+  <div style="padding: 5px">
+    <div class="missing-dashboard">
+      <div style="font-size: 12px; line-height: unset">
+        This study case has no dashboard provided yet
+      </div>
+    </div>
+  </div>
+</ng-template>
+
