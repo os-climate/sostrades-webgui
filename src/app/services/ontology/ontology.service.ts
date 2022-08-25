@@ -27,7 +27,7 @@ export class OntologyService extends MainHttpService {
 
   public modelStatusFilter: string;
   public modelStatusColumnFiltered: string;
-  public modelStatusSelectedValue = new Map <ColumnName, string[]>();
+  public modelStatusSelectedValues = new Map <ColumnName, string[]>();
 
   public parametersData: OntologyParameter[];
   public parametersFilter: string;
@@ -47,7 +47,7 @@ export class OntologyService extends MainHttpService {
     super(location, 'ontology');
     this.ontology = new Ontology();
     this.modelStatusData = [];
-    this.modelStatusSelectedValue.clear();
+    this.modelStatusSelectedValues.clear();
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
     this.parametersData = [];
@@ -61,7 +61,7 @@ export class OntologyService extends MainHttpService {
     this.modelStatusData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
-    this.modelStatusSelectedValue.clear();
+    this.modelStatusSelectedValues.clear();
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';
