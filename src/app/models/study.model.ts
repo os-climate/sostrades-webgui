@@ -70,7 +70,8 @@ export class LoadedStudy {
     public readOnly: boolean,
     public userStudyPreferences: UserStudyPreferences,
     public canReload: boolean,
-    public loadStatus: LoadStatus
+    public loadStatus: LoadStatus,
+    public dashboard: {}
   ) { }
 
   public static Create(jsonData: any): LoadedStudy {
@@ -87,7 +88,8 @@ export class LoadedStudy {
       jsonData[LoadedStudyAttributes.READONLY],
       UserStudyPreferences.Create(jsonData[LoadedStudyAttributes.PREFERENCE]),
       jsonData[LoadedStudyAttributes.CAN_RELOAD],
-      jsonData[LoadedStudyAttributes.LOAD_STATUS]);
+      jsonData[LoadedStudyAttributes.LOAD_STATUS],
+      jsonData[LoadedStudyAttributes.DASHBOARD]);
     return result;
   }
 }
@@ -142,7 +144,8 @@ export enum LoadedStudyAttributes {
   READONLY = 'read_only',
   PREFERENCE = 'preference',
   CAN_RELOAD = 'can_reload',
-  LOAD_STATUS = 'load_status'
+  LOAD_STATUS = 'load_status',
+  DASHBOARD = 'dashboard'
 }
 
 export enum LoadStatus {
