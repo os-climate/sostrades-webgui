@@ -45,7 +45,6 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   private modelToShowAtStartup: string;
   private filterDialog = new FilterDialogData();
-  public hasFilters: boolean;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -76,7 +75,6 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     this.fromProcessInformation = false;
     this.routerSubscription = null;
     this.modelToShowAtStartup = null;
-    this.hasFilters = false;
   }
 
   ngOnInit(): void {
@@ -105,11 +103,6 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
         } else {
           this.initDataSource();
         }
-        if (this.ontologyService.modelStatusSelectedValues !== null
-          && this.ontologyService.modelStatusSelectedValues !== undefined
-          && this.ontologyService.modelStatusSelectedValues.size > 0) {
-              this.hasFilters = true;
-          }
       });
     }
   }
@@ -177,33 +170,32 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
           this.dataSourceModelStatus.filter = this.dataSourceModelStatus.filter;
         } else {
           // Add a string only used to trigger filterPredicate
-          this.dataSourceModelStatus.filter = '.';
+          this.dataSourceModelStatus.filter = ' ';
         }
-        this.hasFilters = true;
         this.modelCount = this.dataSourceModelStatus.filteredData.length;
       }
     });
   }
 
-  private setPossibleValueByColumn(column: ColumnName) {
-    this.filterDialog.possibleStringValues = [];
+  private setPossibleValueByColumn(column: ColumnName) : string[]{
+    let possibleStringValues = [];
     switch (column) {
       case ColumnName.NAME:
         this.ontologyService.modelStatusData.forEach(models => {
-        this.filterDialog.possibleStringValues.push(models.name);
+        possibleStringValues.push(models.name);
           });
-        return this.filterDialog.possibleStringValues;
+        return possibleStringValues;
       case ColumnName.CODE_REPOSITORY:
         this.ontologyService.modelStatusData.forEach(models => {
-          if (!this.filterDialog.possibleStringValues.includes(models.codeRepository)) {
+          if (!possibleStringValues.includes(models.codeRepository)) {
 
-            this.filterDialog.possibleStringValues.push(models.codeRepository);
-            this.filterDialog.possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+            possibleStringValues.push(models.codeRepository);
+            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
               }
           });
-        return this.filterDialog.possibleStringValues;
+        return possibleStringValues;
       default:
-        return this.filterDialog.possibleStringValues;
+        return possibleStringValues;
       }
     }
 
@@ -265,22 +257,30 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     if (filterValue.trim().toLowerCase().length > 0) {
       this.dataSourceModelStatus.filter = filterValue.trim().toLowerCase();
     } else {
-      this.dataSourceModelStatus.filter = '.';
+      this.dataSourceModelStatus.filter = ' ';
     }
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
 
   applyFilterAfterReloading() {
     // Check if there are on filter
-    if (this.ontologyService.modelStatusFilter.length > 0 && this.ontologyService.modelStatusFilter !== '.') {
+    if (this.ontologyService.modelStatusFilter.length > 0 && this.ontologyService.modelStatusFilter.trim() !== '') {
       this.dataSourceModelStatus.filter = this.ontologyService.modelStatusFilter.trim().toLowerCase();
     } else if (this.ontologyService.modelStatusSelectedValues !== null
       && this.ontologyService.modelStatusSelectedValues !== undefined
       && this.ontologyService.modelStatusSelectedValues.size > 0) {
-        this.dataSourceModelStatus.filter = '.';
+        this.dataSourceModelStatus.filter = ' ';
       }
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
+
+  public hasFilter(column: ColumnName): boolean{
+    let bool = this.ontologyService.modelStatusSelectedValues.get(column) !== undefined
+                && this.ontologyService.modelStatusSelectedValues.get(column) !== null 
+                && this.ontologyService.modelStatusSelectedValues.get(column).length > 0
+    return bool;
+  }
+
 
   onFilterChange() {
     this.dataSourceModelStatus.filterPredicate = (
@@ -288,6 +288,7 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
       filter: string
     ): boolean => {
       let isMatch = true;
+      if (filter.trim().length > 0){
       switch (this.ontologyService.modelStatusColumnFiltered) {
         case ColumnName.NAME:
           isMatch = data.name.trim().toLowerCase().includes(filter);
@@ -316,16 +317,19 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
           data.validatedBy.trim().toLowerCase().includes(filter) ||
           data.codeRepository.trim().toLowerCase().includes(filter)
         );
+      }
     }
       // Filter with selected values received by FilterDialogComponent
       this.ontologyService.modelStatusSelectedValues.forEach((values , key) => {
-        switch (key) {
-          case ColumnName.NAME:
-            isMatch = isMatch && values.includes(data.name);
-            break;
-          case ColumnName.CODE_REPOSITORY:
-            isMatch = isMatch && values.includes(data.codeRepository);
-            break;
+        if (values.length > 0){
+          switch (key) {
+            case ColumnName.NAME:
+              isMatch = isMatch && values.includes(data.name);
+              break;
+            case ColumnName.CODE_REPOSITORY:
+              isMatch = isMatch && values.includes(data.codeRepository);
+              break;
+          }
         }
       });
       return isMatch;
