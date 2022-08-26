@@ -64,7 +64,9 @@
         >
           <!-- processName Column -->
           <ng-container matColumnDef="processName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Process</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Process
+              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS_NAME)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilter(columnName.PROCESS_NAME, $event)" ></i>
             <td
               mat-cell
               *matCellDef="let element"
@@ -76,7 +78,9 @@
   
           <!-- repositoryName Column -->
           <ng-container matColumnDef="repositoryName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository
+              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY_NAME)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilter(columnName.REPOSITORY_NAME, $event)" ></i></th>
             <td
               mat-cell
               *matCellDef="let element"
