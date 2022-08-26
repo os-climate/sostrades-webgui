@@ -32,6 +32,9 @@ export class OntologyService extends MainHttpService {
   public parametersData: OntologyParameter[];
   public parametersFilter: string;
   public parametersColumnFiltered: string;
+  public parametersSelectedValues = new Map <ColumnName, string[]>();
+
+  public processesSelectedValues = new Map <ColumnName, string[]>();
 
   public generalInformationData: OntologyGeneralInformation;
 
@@ -52,6 +55,7 @@ export class OntologyService extends MainHttpService {
     this.modelStatusFilter = '';
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
+    this.parametersSelectedValues.clear();
     this.parametersFilter = '';
     this.generalInformationData = null;
   }
@@ -65,6 +69,7 @@ export class OntologyService extends MainHttpService {
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';
+    this.parametersSelectedValues.clear();
     this.generalInformationData = null;
   }
 
