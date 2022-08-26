@@ -24,6 +24,9 @@ export class LoadingDialogService {
       data: message
     });
   }
+  isLoadingOpen() {
+  return this.dialogRef !== null;
+  }
 
   updateMessage(message: string) {
     if (this.dialogRef === null) {

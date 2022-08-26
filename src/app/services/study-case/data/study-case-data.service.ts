@@ -20,6 +20,8 @@ import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 })
 export class StudyCaseDataService extends DataHttpService {
 
+
+  onStudyCompleted: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview: EventEmitter<LoadedStudy> = new EventEmitter();
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
@@ -29,6 +31,7 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
+  private loadingStudies = [];
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -62,6 +65,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
+    this.loadingStudies = [];
   }
 
 
@@ -73,7 +77,24 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = loadedStudy;
   }
 
+  setStudyToLoad(study_id: number){
+    //remove previous opened study from the loading studies
+    this.closeStudyLoading();
+    //Add a study into the list of loading studies
+    if (this.loadingStudies.indexOf(study_id.toString()) == -1){
+        this.loadingStudies.push(study_id.toString());
+    }    
+  }
 
+  isStudyLoading(study_id: number){
+    //Check that a study is into the list of loading studies
+    return this.loadingStudies.indexOf(study_id.toString()) !== -1;
+  }
+
+  closeStudyLoading(){
+      this.loadingStudies = [];
+  }
+  
   clearCache() {
     this.studyLoaded = null;
     this.studyManagementData = [];
@@ -301,6 +322,7 @@ export class StudyCaseDataService extends DataHttpService {
   }
 
   private GetOntologyParameterLabel(ontology: OntologyParameter) {
+    // return ontology label + unit
     let result = '';
     if (ontology !== null && ontology.label !== null && ontology.label !== undefined && ontology.label.length > 0) {
 
