@@ -12,6 +12,7 @@ import { OntologyGeneralInformation } from 'src/app/models/ontology-general-info
 import { Router } from '@angular/router';
 import { HeaderService } from '../hearder/header.service';
 import { DataHttpService } from '../http/data-http/data-http.service';
+import { ColumnName } from 'src/app/models/column-name.model';
 
 
 @Injectable({
@@ -23,12 +24,17 @@ export class OntologyService extends DataHttpService {
 
   private ontology: Ontology;
   public modelStatusData: OntologyModelStatus[];
+
   public modelStatusFilter: string;
   public modelStatusColumnFiltered: string;
+  public modelStatusSelectedValues = new Map <ColumnName, string[]>();
 
   public parametersData: OntologyParameter[];
   public parametersFilter: string;
   public parametersColumnFiltered: string;
+  public parametersSelectedValues = new Map <ColumnName, string[]>();
+
+  public processesSelectedValues = new Map <ColumnName, string[]>();
 
   public generalInformationData: OntologyGeneralInformation;
 
@@ -44,10 +50,12 @@ export class OntologyService extends DataHttpService {
     super(location, 'ontology');
     this.ontology = new Ontology();
     this.modelStatusData = [];
+    this.modelStatusSelectedValues.clear();
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
+    this.parametersSelectedValues.clear();
     this.parametersFilter = '';
     this.generalInformationData = null;
   }
@@ -57,9 +65,11 @@ export class OntologyService extends DataHttpService {
     this.modelStatusData = [];
     this.modelStatusColumnFiltered = 'All columns';
     this.modelStatusFilter = '';
+    this.modelStatusSelectedValues.clear();
     this.parametersData = [];
     this.parametersColumnFiltered = 'All columns';
     this.parametersFilter = '';
+    this.parametersSelectedValues.clear();
     this.generalInformationData = null;
   }
 

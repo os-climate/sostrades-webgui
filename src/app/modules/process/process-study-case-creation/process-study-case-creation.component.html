@@ -16,7 +16,12 @@
   <div mat-dialog-content>
     <mat-form-field style="margin-top: 1px !important">
         <mat-label>Study name</mat-label>
-        <input matInput id='studyName' formControlName="studyName" placeholder="Study name" />
+        <input 
+          matInput 
+          id='studyName' 
+          formControlName="studyName" 
+          placeholder="Study name"
+          />
         <mat-error *ngIf="hasError('studyName', 'required')"
           >A study name is <strong>required</strong></mat-error
         >

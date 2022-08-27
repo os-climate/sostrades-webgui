@@ -59,6 +59,10 @@
   border-radius: 5px;
   margin-bottom: 1px;
 }
+.execution-running {
+  pointer-events: none !important;
+  opacity: 0.4;
+}
 
 @keyframes highlight-widget-header {
   from {

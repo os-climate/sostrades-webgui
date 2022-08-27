@@ -9,6 +9,9 @@ import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OntologyInformationsDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology-informations/ontology-informations.component';
+import { CalculationService } from 'src/app/services/calculation/calculation.service';
+import { Subscription } from 'rxjs';
+import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
 
 @Component({
   selector: 'app-widget',
@@ -23,21 +26,30 @@ export class WidgetComponent implements OnInit {
   @Input() discipline: string;
 
   public widgetType: WidgetType;
+  public isCalculationRunning: boolean;
+  calculationChangeSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
+    private calculationService: CalculationService,
     private studyCaseDataService: StudyCaseDataService,
     public ontologyService: OntologyService,
     private studyCaselocalStorageService: StudyCaseLocalStorageService,
     public filterService: FilterService,
     private snackbarService: SnackbarService) {
-
+      this.isCalculationRunning = false;
   }
-
+  
   ngOnInit(): void {
+    let status = this.studyCaseDataService.loadedStudy.treeview.rootNode.status;
+    this.isCalculationRunning = status === DisciplineStatus.STATUS_RUNNING || status === DisciplineStatus.STATUS_PENDING;
     this.widgetType = this.nodeData.widgetType;
+    this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
+      this.isCalculationRunning = calculationRunning;
+    });
   }
 
+  
   public onInputChange(value) {
     let updateItem: StudyUpdateParameter;
 
@@ -107,6 +119,16 @@ export class WidgetComponent implements OnInit {
         break;
     }
   }
+
+  setCalculationCss(isCalculationRunning: boolean) {
+    if (isCalculationRunning) {
+      return 'widget-cell execution-running';
+    }
+    else{
+      return 'widget-cell';
+    }
+  }
+
   showOntologyInformations() {
     const dialogData: OntologyInformationsDialogData = new OntologyInformationsDialogData();
     dialogData.variableName = this.nodeData.variableName;

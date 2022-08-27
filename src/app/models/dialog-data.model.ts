@@ -8,6 +8,7 @@ import { StudyCaseValidation } from './study-case-validation.model';
 import { Process } from './process.model';
 import { OntologyParameter } from './ontology-parameter.model';
 import { OntologyModelStatus } from './ontology-model-status.model';
+import { ColumnName } from './column-name.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -407,4 +408,17 @@ export class RepositoryTraceabilityDialogData extends AbstractDialogData {
       super();
       this.codeSourceTraceability = null;
     }
+}
+
+export class FilterDialogData extends AbstractDialogData {
+  public possibleStringValues: string[];
+  public selectedStringValues: string[];
+  public columnName: ColumnName;
+
+  public constructor() {
+    super();
+    this.possibleStringValues = [];
+    this.selectedStringValues = [];
+    this.columnName = null;
+  }
 }

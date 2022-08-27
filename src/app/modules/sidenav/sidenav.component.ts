@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { Subscription } from 'rxjs';
-import { LoadedStudy} from 'src/app/models/study.model';
+import { LoadedStudy, LoadStatus} from 'src/app/models/study.model';
 import { Router } from '@angular/router';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle } from 'src/app/models/navigation-title.model';
@@ -28,6 +28,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
   private unSavedChangesSubscription: Subscription;
   public studyName: string;
   public isLoadedStudy: boolean;
+  public isReadOnlyMode: boolean;
   public loadedStudy: LoadedStudy;
   public hasUnsavedChanges: boolean;
 
@@ -45,6 +46,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.hasUnsavedChanges = false;
     this.studyName = '';
     this.isLoadedStudy = false;
+    this.isReadOnlyMode = false;
   }
 
   ngOnInit() {
@@ -53,6 +55,11 @@ export class SidenavComponent implements OnInit, OnDestroy {
       this.loadedStudy = loadedStudyData as LoadedStudy;
       if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
         this.studyName = this.loadedStudy.studyCase.name;
+        if (this.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
+          this.isReadOnlyMode = true;
+        } else {
+          this.isReadOnlyMode = false;
+        }
         this.isLoadedStudy = true;
         this.onClickTreeview(this.loadedStudy);
       } else {

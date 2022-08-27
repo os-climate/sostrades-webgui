@@ -1,4 +1,4 @@
-import { Study, LoadedStudy, StudyCaseInitialSetupPayload } from 'src/app/models/study.model';
+import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
@@ -14,6 +14,7 @@ import { StudyCaseDataService } from '../data/study-case-data.service';
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { Routing } from 'src/app/models/routing.model';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
+import { I } from '@angular/cdk/keycodes';
 
 
 @Injectable({
@@ -52,19 +53,13 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
-        if (loadedStudy.loadInProgress === true) {
-
+        this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
+        //set current study in loading mode
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
           }, 2000);
         } else {
-
-          // Assign study to data service
-          this.updateStudyCaseDataService(loadedStudy);
-
-          // Reload parameter ontology
-          this.studyCaseDataService.updateParameterOntology(loadedStudy);
-
           // Add study case to study management list
           this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
           loaderObservable.next(loadedStudy);
@@ -94,7 +89,7 @@ export class StudyCaseMainService extends MainHttpService {
         return LoadedStudy.Create(response);
       }))
       .subscribe(loadedStudy => {
-        if (loadedStudy.loadInProgress === true) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(studyId, false, loaderObservable, true);
           }, 2000);
@@ -128,6 +123,8 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return Study.Create(response);
       })).subscribe(study => {
+        this.studyCaseDataService.setStudyToLoad(study.id);
+        //set current study in loading mode
         setTimeout(() => {
           this.loadStudyTimeout(study.id, false, loaderObservable, true);
         }, 2000);
@@ -139,63 +136,57 @@ export class StudyCaseMainService extends MainHttpService {
   //#endregion copy study
 
   //#region Load study
-  loadStudy(studyId: number, withEmit: boolean): Observable<LoadedStudy> {
-    const loaderObservable = new Observable<LoadedStudy>((observer) => {
-      // Start study case loading to other services
-      this.loadStudyTimeout(studyId, withEmit, observer, false);
-    });
-    return loaderObservable;
+  loadStudy(studyId: number, withEmit: boolean, withTimeout = true): Observable<LoadedStudy> {
+    if (withTimeout) {
+      const loaderObservable = new Observable<LoadedStudy>((observer) => {
+        // Start study case loading to other services
+        this.loadStudyTimeout(studyId, withEmit, observer, false);
+      });
+      return loaderObservable;
+
+    }
+    else {
+      return this.internalLoadStudy(studyId);
+    }
+
   }
 
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
+
     this.internalLoadStudy(studyId).subscribe(loadedStudy => {
-      if (loadedStudy.loadInProgress === true) {
+      if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
         setTimeout(() => {
           this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
         }, 2000);
-      } else {
-
-        // Assign study to data service
-        this.updateStudyCaseDataService(loadedStudy);
-
-        if (addToStudyManagement === true) {
-
-          this.studyCaseDataService.getStudies().subscribe(studies => {
-            this.studyCaseDataService.studyManagementData = studies;
-          });
-        }
-
-        // Reload ontology parameters
-        this.studyCaseDataService.updateParameterOntology(loadedStudy);
-
-        if (withEmit === true) {
+      } else if (loadedStudy.loadStatus === LoadStatus.LOADED) {
+        if(withEmit && this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+          this.updateStudyCaseDataService(loadedStudy);
           this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
         }
 
-        //load logs
-        this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
-
-        this.studyCaseDataService.tradeScenarioList = [];
-
-        this.studyCaseValidationService.loadStudyValidationData(studyId).subscribe(
-          res => {
-            this.validatedUpdated();
-            loaderObservable.next(loadedStudy);
-          }, error => {
-            loaderObservable.next(loadedStudy);
-          }
-        );
+        loaderObservable.next(loadedStudy);
       }
     },
       error => {
         loaderObservable.error(error);
-      });
+    });
   }
 
   private internalLoadStudy(studyId: number): Observable<LoadedStudy> {
     return this.http.get(`${this.apiRoute}/${studyId}`).pipe(map(
       response => {
         return LoadedStudy.Create(response);
+      }));
+  }
+
+  public loadtudyInReadOnlyMode(studyId: number): Observable<LoadedStudy> {
+    return this.http.get(`${this.apiRoute}/read-only-mode/${studyId}`).pipe(map(
+      response => {
+        if (response !== null && response !== undefined) {
+          return LoadedStudy.Create(response);
+        } else {
+          return undefined;
+        }
       }));
   }
   //#endregion Load study
@@ -213,18 +204,16 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
-        if (loadedStudy.loadInProgress === true) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);
           }, 2000);
         } else {
-
-          // Assign study to data service
-          this.updateStudyCaseDataService(loadedStudy);
-
-          // Reload parameter ontology
-          this.studyCaseDataService.updateParameterOntology(loadedStudy);
-          loaderObservable.next(loadedStudy);
+          if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+            this.updateStudyCaseDataService(loadedStudy);
+            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+            loaderObservable.next(loadedStudy);
+          }
         }
       },
         error => {
@@ -296,14 +285,12 @@ export class StudyCaseMainService extends MainHttpService {
     this.http.post(requestUrl, formData).pipe(map(response => {
       return LoadedStudy.Create(response);
     })).subscribe(loadedStudy => {
-      if (loadedStudy.loadInProgress === true) {
+      if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
         setTimeout(() => {
           this.loadStudyTimeout(studyId, false, loaderObservable, false);
         }, 2000);
       } else {
         this.updateStudyCaseDataService(null);
-        // Reload parameter ontology
-        this.studyCaseDataService.updateParameterOntology(loadedStudy);
         loaderObservable.next(loadedStudy);
       }
     },
@@ -393,16 +380,4 @@ export class StudyCaseMainService extends MainHttpService {
     this.studyCaseDataService.setCurrentStudy(loadedStudy);
   }
 
-  public validatedUpdated() {
-    const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-
-    Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach(
-      element => {
-        const studyCaseValidation = this.studyCaseValidationService.studyValidationDict[element.fullNamespace];
-
-        if ((studyCaseValidation !== undefined) &&  (studyCaseValidation !== null)) {
-            element.isValidated = studyCaseValidation[0].validationState === ValidationTreeNodeState.VALIDATED;
-          }
-     });
-  }
 }
