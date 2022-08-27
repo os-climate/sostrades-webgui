@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProcessCreateStudyDialogData } from 'src/app/models/dialog-data.model';
 import { Process } from 'src/app/models/process.model';
-import { PostStudy } from 'src/app/models/study.model';
+import { StudyCasePayload } from 'src/app/models/study.model';
 import { ProcessStudyCaseCreationComponent } from 'src/app/modules/process/process-study-case-creation/process-study-case-creation.component';
 import { AppDataService } from '../../app-data/app-data.service';
 import { SocketService } from '../../socket/socket.service';
@@ -107,14 +107,8 @@ export class StudyCaseCreationService {
   }
 
   createFromUsesaseData(process, name: string, group: number, reference: string, type: string) {
-    const study: PostStudy = {
-      name,
-      repository: process.repositoryId,
-      process: process.processId,
-      group,
-      reference,
-      type
-    };
+    const study = new StudyCasePayload(name, process.repositoryId, process.processId, group, reference, type);
+
     // Check user was in an another study before this one and leave room
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
@@ -129,14 +123,7 @@ export class StudyCaseCreationService {
   }
 
   createFromReference(process, name, group, reference, type) {
-    const study: PostStudy = {
-      name,
-      repository: process.repositoryId,
-      process: process.processId,
-      group,
-      reference,
-      type
-    };
+    const study = new StudyCasePayload(name, process.repositoryId, process.processId, group, reference, type);
 
     // Check user was in an another study before this one and leave room
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {

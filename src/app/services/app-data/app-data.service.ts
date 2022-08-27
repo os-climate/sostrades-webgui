@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LoadedStudy, PostStudy } from 'src/app/models/study.model';
+import { LoadedStudy, StudyCasePayload, StudyCaseInitialSetupPayload } from 'src/app/models/study.model';
 import { StudyCaseDataService } from '../study-case/data/study-case-data.service';
 import { SnackbarService } from '../snackbar/snackbar.service';
 import { LoadingDialogService } from '../loading-dialog/loading-dialog.service';
@@ -19,6 +19,7 @@ import { StudyCasePostProcessingService } from '../study-case/post-processing/st
 import { Subscription } from 'rxjs';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { combineLatest } from 'rxjs';
+import { StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -48,15 +49,18 @@ export class AppDataService extends DataHttpService {
     this.loadedStudy = null;
   }
 
-  createCompleteStudy(study: PostStudy, isStudyCreated: any) {
+  createCompleteStudy(study: StudyCasePayload, isStudyCreated: any) {
     // Display loading message
     this.loadingDialogService.showLoading(`Create study case ${study.name}`);
 
-    this.studyCaseDataService.createStudyCaseAllocation(study).subscribe(allocationResult => {
+    this.studyCaseDataService.createAllocationForNewStudyCase(study).subscribe(allocation => {
 
-      if (allocationResult === true) {
+      if (allocation.status === StudyCaseAllocationStatus.DONE) {
+
+        const studyInformation = new StudyCaseInitialSetupPayload(allocation.studyCaseId, study.reference, study.type);
+
         // Request serveur for study case data
-        this.studyCaseMainService.createStudy(study, false).subscribe(loadedStudy => {
+        this.studyCaseMainService.createStudy(studyInformation, false).subscribe(loadedStudy => {
           // after creation, load the study into post processing
           // must be done after the end of the creation, if not the loading cannot be done
           this.loadedStudy = loadedStudy as LoadedStudy;
@@ -89,25 +93,37 @@ export class AppDataService extends DataHttpService {
     // Display loading message
     this.loadingDialogService.showLoading(`Creating copy of study case : "${newName}"`);
 
+    this.studyCaseDataService.createAllocationForCopyingStudyCase(studyId, newName, groupId).subscribe(allocation => {
 
-    // Request serveur for study case data
-    this.studyCaseMainService.copyStudy(studyId, newName, groupId).subscribe(loadedStudy => {
-      // after creation, load the study into post processing
-      // must be done after the end of the creation, if not the loading cannot be done
-      this.loadedStudy = loadedStudy as LoadedStudy;
-      this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
-        this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
-        this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
-      }, errorReceived => {
-        this.snackbarService.showError('Error copying study\n' + errorReceived.description);
+      if (allocation.status === StudyCaseAllocationStatus.DONE) {
+        // Request serveur for study case data
+        this.studyCaseMainService.copyStudy(studyId, allocation.studyCaseId).subscribe(loadedStudy => {
+          // after creation, load the study into post processing
+          // must be done after the end of the creation, if not the loading cannot be done
+          this.loadedStudy = loadedStudy as LoadedStudy;
+          this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
+            this.load_study_ontology(this.loadedStudy, false, isStudyCreated);
+            this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudy);
+          }, errorReceived => {
+            this.snackbarService.showError('Error copying study\n' + errorReceived.description);
+            isStudyCreated(false);
+            this.loadingDialogService.closeLoading();
+          });
+        }, errorReceived => {
+          this.snackbarService.showError('Error copying study\n' + errorReceived.description);
+          isStudyCreated(false);
+          this.loadingDialogService.closeLoading();
+        });
+      } else {
+        this.snackbarService.showError('Study case allocation failed');
         isStudyCreated(false);
         this.loadingDialogService.closeLoading();
-      });
+      }
     }, errorReceived => {
-        this.snackbarService.showError('Error copying study\n' + errorReceived.description);
-        isStudyCreated(false);
-        this.loadingDialogService.closeLoading();
-      });
+      this.snackbarService.showError('Error copying study\n' + errorReceived.description);
+      isStudyCreated(false);
+      this.loadingDialogService.closeLoading();
+    });
   }
 
 
@@ -118,31 +134,45 @@ export class AppDataService extends DataHttpService {
     // subscribe to the loading of the study
     console.log('subscribe to the loading of the study after loading');
 
-    // call loading of the study from main and post processing service
-    // and wait for both to end
-    const calls = [];
-    calls.push(this.studyCaseMainService.loadStudy(studyId, false));
-    calls.push(this.studyCasePostProcessingService.loadStudy(studyId, false));
+    this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe(allocation => {
 
-    combineLatest(calls).subscribe(([result1, isLoaded]) => {
-      const loadedStudy = result1 as LoadedStudy;
-      // Load unsaved changes
-      if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
-        this.loadingDialogService.updateMessage(`Loading unsaved changes`);
-        let studyParameters: StudyUpdateParameter[] = [];
-        // tslint:disable-next-line: max-line-length
-        studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(studyId.toString());
+      if (allocation.status === StudyCaseAllocationStatus.DONE) {
 
-        studyParameters.forEach(element => {
-          // tslint:disable-next-line: max-line-length
-          this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[element.variableId].value = element.newValue;
+        // call loading of the study from main and post processing service
+        // and wait for both to end
+        const calls = [];
+        calls.push(this.studyCaseMainService.loadStudy(studyId, false));
+        calls.push(this.studyCasePostProcessingService.loadStudy(studyId, false));
+
+        combineLatest(calls).subscribe(([result1, isLoaded]) => {
+          const loadedStudy = result1 as LoadedStudy;
+          // Load unsaved changes
+          if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
+            this.loadingDialogService.updateMessage(`Loading unsaved changes`);
+            let studyParameters: StudyUpdateParameter[] = [];
+            // tslint:disable-next-line: max-line-length
+            studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(studyId.toString());
+
+            studyParameters.forEach(element => {
+              // tslint:disable-next-line: max-line-length
+              this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[element.variableId].value = element.newValue;
+            });
+          }
+
+          this.load_study_ontology(loadedStudy, true, isStudyLoaded);
+
+        }, errorReceived => {
+          this.loggerService.log(errorReceived);
+          this.snackbarService.showError('Error loading study\n' + errorReceived.description);
+          isStudyLoaded(false);
+          this.loadingDialogService.closeLoading();
         });
+      } else {
+        this.snackbarService.showError('Study case allocation failed');
+        isStudyLoaded(false);
+        this.loadingDialogService.closeLoading();
       }
-
-      this.load_study_ontology(loadedStudy, true, isStudyLoaded);
-
     }, errorReceived => {
-      this.loggerService.log(errorReceived);
       this.snackbarService.showError('Error loading study\n' + errorReceived.description);
       isStudyLoaded(false);
       this.loadingDialogService.closeLoading();

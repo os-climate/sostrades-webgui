@@ -96,13 +96,33 @@ export class LoadedStudy {
  * Interface for post request request
  * (study creation)
  */
-export interface PostStudy {
-  name: string;
-  repository: string;
-  process: string;
-  group: number;
-  reference: string;
-  type: string;
+export class StudyCasePayload {
+  constructor(public name: string,
+              public repository: string,
+              public process: string,
+              public group: number,
+              public reference: string,
+              public type: string){ }
+}
+
+/**
+ * Data interface to request a study case allocation
+ */
+export class StudyCaseAllocationPayload {
+  constructor(public name: string,
+              public repository: string,
+              public process: string,
+              public group: number) { }
+}
+
+/**
+ * Data interface to request a study case initial setup
+ * (generally after a succeeded allocation)
+ */
+export class StudyCaseInitialSetupPayload {
+  constructor(public studyCaseIdentifier: number,
+              public reference: string,
+              public type: string) { }
 }
 
 
