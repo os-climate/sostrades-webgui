@@ -177,8 +177,8 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setPossibleValueByColumn(column: ColumnName) : string[]{
-    let possibleStringValues = [];
+  private setPossibleValueByColumn(column: ColumnName): string[] {
+    const possibleStringValues = [];
     switch (column) {
       case ColumnName.NAME:
         this.ontologyService.modelStatusData.forEach(models => {
@@ -274,10 +274,10 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
 
-  public hasFilter(column: ColumnName): boolean{
-    let bool = this.ontologyService.modelStatusSelectedValues.get(column) !== undefined
-                && this.ontologyService.modelStatusSelectedValues.get(column) !== null 
-                && this.ontologyService.modelStatusSelectedValues.get(column).length > 0
+  public hasFilter(column: ColumnName): boolean {
+    const bool = this.ontologyService.modelStatusSelectedValues.get(column) !== undefined
+                && this.ontologyService.modelStatusSelectedValues.get(column) !== null
+                && this.ontologyService.modelStatusSelectedValues.get(column).length > 0;
     return bool;
   }
 
@@ -288,7 +288,7 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
       filter: string
     ): boolean => {
       let isMatch = true;
-      if (filter.trim().length > 0){
+      if (filter.trim().length > 0) {
       switch (this.ontologyService.modelStatusColumnFiltered) {
         case ColumnName.NAME:
           isMatch = data.name.trim().toLowerCase().includes(filter);
@@ -321,7 +321,7 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     }
       // Filter with selected values received by FilterDialogComponent
       this.ontologyService.modelStatusSelectedValues.forEach((values , key) => {
-        if (values.length > 0){
+        if (values.length > 0) {
           switch (key) {
             case ColumnName.NAME:
               isMatch = isMatch && values.includes(data.name);
