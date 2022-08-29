@@ -90,10 +90,6 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
         }
       });
   }
-  unSelectItems(data) {
-    const index =  this.researchMultiCtrl.value.indexOf(data);
-    this.researchMultiCtrl.value.splice(index, 1);
-  }
 
   protected _filter() {
     if (!this.datas) {

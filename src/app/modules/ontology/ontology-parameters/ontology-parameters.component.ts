@@ -188,7 +188,7 @@ export class OntologyParametersComponent implements OnInit {
 
     // Check if the column has filters selected to send them to the component
     if (this.hasFilter(columnName)) {
-        filterDialog.selectedStringValues = this.ontologyService.processesSelectedValues.get(columnName);
+        filterDialog.selectedStringValues = this.ontologyService.parametersSelectedValues.get(columnName);
     }
 
     const dialogRef = this.dialog.open(FilterDialogComponent, {
