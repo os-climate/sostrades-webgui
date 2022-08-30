@@ -5,12 +5,15 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { ModelsStatusInformationComponent } from 'src/app/modules/models/models-status-information/models-status-information.component';
-import { ModelStatusDialogData, OntologyModelsStatusInformationDialogData } from 'src/app/models/dialog-data.model';
+import { FilterDialogData, ModelStatusDialogData, OntologyModelsStatusInformationDialogData } from 'src/app/models/dialog-data.model';
 import { MatDialog } from '@angular/material/dialog';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
 import { ModelsStatusDocumentationComponent } from '../models-status-documentation/models-status-documentation.component';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
+import { ColumnName } from 'src/app/models/column-name.model';
+import { HeaderService } from 'src/app/services/hearder/header.service';
 
 @Component({
   selector: 'app-models-status-table',
@@ -20,27 +23,28 @@ import { ActivatedRoute } from '@angular/router';
 export class ModelsStatusTableComponent implements OnInit, OnDestroy {
 
   public visibleColumns = [
-    'name',
-    'codeRepository',
-    'processUsingModel',
-    'information',
+    ColumnName.NAME,
+    ColumnName.CODE_REPOSITORY,
+    ColumnName.PROCESS_USING_MODEL,
+    ColumnName.INFORMATION,
     ];
 
   public columnsFilter = [
-    'All columns',
-    'Model Name',
-    'Type',
-    'Source',
-    'Validated By',
-    'Code Repository'
+    ColumnName.ALL_COLUMNS,
+    ColumnName.NAME,
+    ColumnName.TYPE,
+    ColumnName.SOURCE,
+    ColumnName.VALIDATED_BY,
+    ColumnName.CODE_REPOSITORY
   ];
-
+  public columnName = ColumnName;
   public dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>();
   public isLoading: boolean;
   public modelCount: number;
   public fromProcessInformation: boolean;
   private routerSubscription: Subscription;
   private modelToShowAtStartup: string;
+  private filterDialog = new FilterDialogData();
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -90,6 +94,7 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
           }
         }
 
+
         // Load data first time component initialised
         if (this.ontologyService.modelStatusData === null
           || this.ontologyService.modelStatusData === undefined
@@ -111,10 +116,8 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
 
   loadModelStatusData() {
     this.isLoading = true;
-
     this.ontologyService.modelStatusData = [];
     this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(null);
-
     // Retrieving study case list
     this.ontologyService.getOntologyModelsStatus().subscribe(
       (models) => {
@@ -136,6 +139,65 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
       }
     );
   }
+  displayFilter(columnName: ColumnName, event) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.filterDialog.possibleStringValues =  this.setPossibleValueByColumn(columnName);
+    this.filterDialog.columnName = columnName;
+
+    // Check if the column has filters selected to send them to the component
+    if (this.ontologyService.modelStatusSelectedValues !== null
+    && this.ontologyService.modelStatusSelectedValues !== undefined
+    && this.ontologyService.modelStatusSelectedValues.size > 0) {
+        this.filterDialog.selectedStringValues = this.ontologyService.modelStatusSelectedValues.get(columnName);
+    }
+
+    const dialogRef = this.dialog.open(FilterDialogComponent, {
+      disableClose: false,
+      data: this.filterDialog,
+      width: '600px',
+      height: '450px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      const filter: FilterDialogData = result as FilterDialogData;
+      if ( filter !== undefined && filter !== null && filter.cancel !== true) {
+        // Set our dictionnary with the value selected
+        this.ontologyService.modelStatusSelectedValues.set(columnName, filter.selectedStringValues);
+        // Trigger the dataSourceModelStatus.filterPredicate
+        if (this.dataSourceModelStatus.filter.length > 0) {
+          // Apply the previous filter
+          this.dataSourceModelStatus.filter = this.dataSourceModelStatus.filter;
+        } else {
+          // Add a string only used to trigger filterPredicate
+          this.dataSourceModelStatus.filter = ' ';
+        }
+        this.modelCount = this.dataSourceModelStatus.filteredData.length;
+      }
+    });
+  }
+
+  private setPossibleValueByColumn(column: ColumnName): string[] {
+    const possibleStringValues = [];
+    switch (column) {
+      case ColumnName.NAME:
+        this.ontologyService.modelStatusData.forEach(models => {
+        possibleStringValues.push(models.name);
+          });
+        return possibleStringValues;
+      case ColumnName.CODE_REPOSITORY:
+        this.ontologyService.modelStatusData.forEach(models => {
+          if (!possibleStringValues.includes(models.codeRepository)) {
+
+            possibleStringValues.push(models.codeRepository);
+            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+              }
+          });
+        return possibleStringValues;
+      default:
+        return possibleStringValues;
+      }
+    }
 
   private initDataSource() {
     this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(
@@ -192,46 +254,86 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceModelStatus.filter = filterValue.trim().toLowerCase();
+    if (filterValue.trim().toLowerCase().length > 0) {
+      this.dataSourceModelStatus.filter = filterValue.trim().toLowerCase();
+    } else {
+      this.dataSourceModelStatus.filter = ' ';
+    }
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
 
   applyFilterAfterReloading() {
-    this.dataSourceModelStatus.filter = this.ontologyService.modelStatusFilter.trim().toLowerCase();
+    // Check if there are on filter
+    if (this.ontologyService.modelStatusFilter.length > 0 && this.ontologyService.modelStatusFilter.trim() !== '') {
+      this.dataSourceModelStatus.filter = this.ontologyService.modelStatusFilter.trim().toLowerCase();
+    } else if (this.ontologyService.modelStatusSelectedValues !== null
+      && this.ontologyService.modelStatusSelectedValues !== undefined
+      && this.ontologyService.modelStatusSelectedValues.size > 0) {
+        this.dataSourceModelStatus.filter = ' ';
+      }
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
+
+  public hasFilter(column: ColumnName): boolean {
+    const bool = this.ontologyService.modelStatusSelectedValues.get(column) !== undefined
+                && this.ontologyService.modelStatusSelectedValues.get(column) !== null
+                && this.ontologyService.modelStatusSelectedValues.get(column).length > 0;
+    return bool;
+  }
+
 
   onFilterChange() {
     this.dataSourceModelStatus.filterPredicate = (
       data: OntologyModelStatus,
       filter: string
     ): boolean => {
+      let isMatch = true;
+      if (filter.trim().length > 0) {
       switch (this.ontologyService.modelStatusColumnFiltered) {
-        case 'Model name':
-          return data.name.trim().toLowerCase().includes(filter);
-        case 'Id':
-            return data.id.trim().toLowerCase().includes(filter);
-        case 'Type':
-          return data.type.trim().toLowerCase().includes(filter);
-        case 'Source':
-          return data.source.trim().toLowerCase().includes(filter);
-        case 'Validated By':
-          return data.validatedBy.trim().toLowerCase().includes(filter);
-        case 'Code Repository':
-          return data.codeRepository.trim().toLowerCase().includes(filter);
+        case ColumnName.NAME:
+          isMatch = data.name.trim().toLowerCase().includes(filter);
+          break;
+        case ColumnName.ID:
+          isMatch = data.id.trim().toLowerCase().includes(filter);
+          break;
+        case ColumnName.TYPE:
+          isMatch = data.type.trim().toLowerCase().includes(filter);
+          break;
+        case ColumnName.SOURCE:
+          isMatch = data.source.trim().toLowerCase().includes(filter);
+          break;
+        case ColumnName.VALIDATED_BY:
+          isMatch = data.validatedBy.trim().toLowerCase().includes(filter);
+          break;
+        case ColumnName.CODE_REPOSITORY:
+          isMatch = data.codeRepository.trim().toLowerCase().includes(filter);
+          break;
         default:
-          return (
-            data.name.trim().toLowerCase().includes(filter) ||
-            data.id.trim().toLowerCase().includes(filter) ||
-            data.type.trim().toLowerCase().includes(filter) ||
-            data.source.trim().toLowerCase().includes(filter) ||
-            data.validatedBy.trim().toLowerCase().includes(filter) ||
-            data.codeRepository.trim().toLowerCase().includes(filter)
-          );
+        isMatch = (
+          data.name.trim().toLowerCase().includes(filter) ||
+          data.id.trim().toLowerCase().includes(filter) ||
+          data.type.trim().toLowerCase().includes(filter) ||
+          data.source.trim().toLowerCase().includes(filter) ||
+          data.validatedBy.trim().toLowerCase().includes(filter) ||
+          data.codeRepository.trim().toLowerCase().includes(filter)
+        );
       }
+    }
+      // Filter with selected values received by FilterDialogComponent
+      this.ontologyService.modelStatusSelectedValues.forEach((values , key) => {
+        if (values.length > 0) {
+          switch (key) {
+            case ColumnName.NAME:
+              isMatch = isMatch && values.includes(data.name);
+              break;
+            case ColumnName.CODE_REPOSITORY:
+              isMatch = isMatch && values.includes(data.codeRepository);
+              break;
+          }
+        }
+      });
+      return isMatch;
     };
     this.applyFilterAfterReloading();
   }
-
-
 }

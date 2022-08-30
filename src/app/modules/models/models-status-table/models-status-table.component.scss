@@ -98,6 +98,15 @@
     padding: 0;
   }
 }
+.icon-filter-any-values {
+  margin : 0 10px;
+  color: #bdbdbd;
+}
+$accent-color:#0b78b8;
+.icon-filter-values {
+  margin : 0 10px;
+  color: #{$accent-color};
+}
 
 .table {
   max-height: 100%;
