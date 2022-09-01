@@ -208,6 +208,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
           );
         study.isRegeneratingReference = false;
       }
+      this.referenceGenerationObserverService.removeReferenceGenerationObserver(study.id);
     });
   }
   hasFilter(column: ColumnName): boolean {
