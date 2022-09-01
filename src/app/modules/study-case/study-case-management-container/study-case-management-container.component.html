@@ -1,8 +1,8 @@
 <mat-tab-group class="container-workspace"  [(selectedIndex)]="index" (selectedTabChange)="selectedTabChanged($event)">
-  <mat-tab label="Study cases">
-    <app-study-case-management></app-study-case-management>
+  <mat-tab [label]="studyManagementTitle">
+    <app-study-case-management *ngIf="showStudyManagement"></app-study-case-management>
   </mat-tab>
-  <mat-tab label="Reference management">
-    <app-reference-management></app-reference-management>
+  <mat-tab [label]="referenceManagementTitle">
+    <app-reference-management *ngIf="showReferenceManagement"></app-reference-management>
   </mat-tab>
 </mat-tab-group>

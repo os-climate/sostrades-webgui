@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { Process } from 'src/app/models/process.model';
 import { DataHttpService } from '../http/data-http/data-http.service';
+import { ColumnName } from 'src/app/models/column-name.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,13 +22,13 @@ export class ProcessService extends DataHttpService {
 
     this.processManagementFilter = '';
     this.processManagemenentData = [];
-    this.processManagementColumnFiltered = 'All columns';
+    this.processManagementColumnFiltered = ColumnName.ALL_COLUMNS;
   }
 
   clearCache() {
     this.processManagemenentData = [];
     this.processManagementFilter = '';
-    this.processManagementColumnFiltered = 'All columns';
+    this.processManagementColumnFiltered = ColumnName.ALL_COLUMNS;
   }
 
   getUserProcesses(refreshList: boolean): Observable<Process[]> {
