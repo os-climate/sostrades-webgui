@@ -10,7 +10,7 @@ export enum NavigationTitle {
     GROUP_MANAGEMENT = 'Group Management',
     USER_MANAGEMENT = 'User Management',
     PROCESSES_MANAGEMENT = 'Processes Management',
-    REFERENCE_MANAGEMENT = 'Reference Mangement',
+    REFERENCE_MANAGEMENT = 'Reference Management',
     EXECUTION_MANAGEMENT = 'Execution Management',
     CONTACT = 'Contact'
 }

@@ -27,7 +27,7 @@
           [(ngModel)]="referenceDataService.referenceManagementColumnFiltered"
           [matTooltip]="referenceDataService.referenceManagementColumnFiltered"
         >
-          <mat-option *ngFor="let item of columnsFilter" [value]="item">
+          <mat-option *ngFor="let item of columnsFilter" [value]="item" style="text-transform: capitalize;">
             {{ item }}
           </mat-option>
         </mat-select>
@@ -61,10 +61,10 @@
         matSort
       >
         <!-- Status Column -->
-        <ng-container [matColumnDef]="columnName.STATUS">
+        <ng-container [matColumnDef]="columnName.REGENERATION_STATUS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Status
-            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS)? 'icon-filter-values':'icon-filter-any-values'" 
-            (click)="displayFilter(columnName.STATUS, $event)" ></i>
+            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REGENERATION_STATUS)? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilter(columnName.REGENERATION_STATUS, $event)" ></i>
           </th>
           <td
             mat-cell
