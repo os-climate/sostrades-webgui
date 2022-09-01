@@ -167,6 +167,11 @@ export class AppDataService extends DataHttpService {
               this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false);
             });
           }
+        }, errorReceived => {
+          this.loggerService.log(errorReceived);
+          this.snackbarService.showError('Error loading study\n' + errorReceived.description);
+          isStudyLoaded(false);
+          this.loadingDialogService.closeLoading();
         });
       } else {
         this.snackbarService.showError('Study case allocation failed');

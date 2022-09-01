@@ -102,9 +102,10 @@
   margin : 0 10px;
   color: #bdbdbd;
 }
+$accent-color:#0b78b8;
 .icon-filter-values {
   margin : 0 10px;
-  color: #4b4a4a;
+  color: #{$accent-color};
 }
 
 .table {

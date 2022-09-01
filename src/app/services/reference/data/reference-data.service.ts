@@ -4,8 +4,9 @@ import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
-import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model'
+import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { DataHttpService } from '../../http/data-http/data-http.service';
+import { ColumnName } from 'src/app/models/column-name.model';
 
 
 @Injectable({
@@ -16,20 +17,24 @@ export class ReferenceDataService extends DataHttpService {
   public referenceManagementData: Study[];
   public referenceManagementFilter: string;
   public referenceManagementColumnFiltered: string;
+  public referenceSelectedValues = new Map <ColumnName, string[]>();
+
 
   constructor(
     private http: HttpClient,
     private location: Location) {
     super(location, 'reference');
     this.referenceManagementData = [];
+    this.referenceSelectedValues.clear();
     this.referenceManagementFilter = '';
-    this.referenceManagementColumnFiltered = 'All columns';
+    this.referenceManagementColumnFiltered = ColumnName.ALL_COLUMNS;
   }
 
   clearCache() {
     this.referenceManagementData = [];
     this.referenceManagementFilter = '';
-    this.referenceManagementColumnFiltered = 'All columns';
+    this.referenceManagementColumnFiltered = ColumnName.ALL_COLUMNS;
+    this.referenceSelectedValues.clear();
   }
 
   getReferences(): Observable<Study[]> {
@@ -48,7 +53,7 @@ export class ReferenceDataService extends DataHttpService {
   getRefGenStatus(refGenId: number): Observable<ReferenceGenerationStatus> {
     const url = `${this.apiRoute}/${refGenId}/status`;
     return this.http.get<ReferenceGenerationStatus>(url)
-      .pipe(map(response => ReferenceGenerationStatus.Create(response)))
+      .pipe(map(response => ReferenceGenerationStatus.Create(response)));
   }
 
   getReferencesGenStatusByName(studies: Study[]): Observable<ReferenceGenerationStatus[]> {

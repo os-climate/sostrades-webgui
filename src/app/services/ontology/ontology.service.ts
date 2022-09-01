@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Ontology, OntologyType, PostOntology } from 'src/app/models/ontology.model';
 import { Observable } from 'rxjs';
@@ -51,10 +51,10 @@ export class OntologyService extends DataHttpService {
     this.ontology = new Ontology();
     this.modelStatusData = [];
     this.modelStatusSelectedValues.clear();
-    this.modelStatusColumnFiltered = 'All columns';
+    this.modelStatusColumnFiltered = ColumnName.ALL_COLUMNS;
     this.modelStatusFilter = '';
     this.parametersData = [];
-    this.parametersColumnFiltered = 'All columns';
+    this.parametersColumnFiltered = ColumnName.ALL_COLUMNS;
     this.parametersSelectedValues.clear();
     this.parametersFilter = '';
     this.generalInformationData = null;
@@ -63,11 +63,11 @@ export class OntologyService extends DataHttpService {
   clearCache() {
     this.ontology = new Ontology();
     this.modelStatusData = [];
-    this.modelStatusColumnFiltered = 'All columns';
+    this.modelStatusColumnFiltered = ColumnName.ALL_COLUMNS;
     this.modelStatusFilter = '';
     this.modelStatusSelectedValues.clear();
     this.parametersData = [];
-    this.parametersColumnFiltered = 'All columns';
+    this.parametersColumnFiltered = ColumnName.ALL_COLUMNS;
     this.parametersFilter = '';
     this.parametersSelectedValues.clear();
     this.generalInformationData = null;

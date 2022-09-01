@@ -28,7 +28,7 @@
             [matTooltip]="processService.processManagementColumnFiltered"
             #selectionModel="ngModel"
           >
-            <mat-option *ngFor="let item of colummnsFilter" [value]="item">
+            <mat-option *ngFor="let item of colummnsFilter" [value]="item" style="text-transform: capitalize;">
               {{ item }}
             </mat-option>
           </mat-select>
@@ -65,8 +65,8 @@
           <!-- processName Column -->
           <ng-container matColumnDef="processName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Process
-              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS_NAME)? 'icon-filter-values':'icon-filter-any-values'" 
-              (click)="displayFilter(columnName.PROCESS_NAME, $event)" ></i>
+              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilter(columnName.PROCESS, $event)" ></i>
             <td
               mat-cell
               *matCellDef="let element"
@@ -79,8 +79,8 @@
           <!-- repositoryName Column -->
           <ng-container matColumnDef="repositoryName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository
-              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY_NAME)? 'icon-filter-values':'icon-filter-any-values'" 
-              (click)="displayFilter(columnName.REPOSITORY_NAME, $event)" ></i></th>
+              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilter(columnName.REPOSITORY, $event)" ></i></th>
             <td
               mat-cell
               *matCellDef="let element"
