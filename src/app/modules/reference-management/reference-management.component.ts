@@ -30,7 +30,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line: max-line-length
   public displayedColumns = [
-    ColumnName.STATUS,
+    ColumnName.REGENERATION_STATUS,
     ColumnName.NAME,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
@@ -42,7 +42,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     ColumnName.NAME,
     ColumnName.PROCESS,
     ColumnName.REPOSITORY,
-    ColumnName.STATUS
+    ColumnName.REGENERATION_STATUS
   ];
   public referenceCount: number;
   private filterDialog = new FilterDialogData();
@@ -333,7 +333,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       let isMatch = true;
       if (filter.trim().length > 0) {
         switch (this.referenceDataService.referenceManagementColumnFiltered) {
-          case ColumnName.STATUS:
+          case ColumnName.REGENERATION_STATUS:
             isMatch = data.regenerationStatus.trim().toLowerCase().includes(filter);
             break;
           case ColumnName.NAME:
@@ -366,7 +366,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       this.referenceDataService.referenceSelectedValues.forEach((values , key) => {
         if (values.length > 0) {
           switch (key) {
-            case ColumnName.STATUS:
+            case ColumnName.REGENERATION_STATUS:
               isMatch = isMatch && values.includes(data.regenerationStatus);
               break;
             case ColumnName.NAME:
