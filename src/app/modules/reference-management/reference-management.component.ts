@@ -259,7 +259,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   private setPossibleValueByColumn(column: ColumnName): string[] {
     const possibleStringValues = [];
     switch (column) {
-      case ColumnName.STATUS:
+      case ColumnName.REGENERATION_STATUS:
         this.referenceDataService.referenceManagementData.forEach(reference => {
           // Verify to not push duplicate status
           if (!possibleStringValues.includes(reference.regenerationStatus)) {
