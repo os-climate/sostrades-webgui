@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, Validators, ValidatorFn, AbstractControl, FormGroup } from '@angular/forms';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Group, LoadedGroup } from 'src/app/models/group.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { EditGroupDialogData, UpdateEntityRightDialogData, ValidationDialogData } from 'src/app/models/dialog-data.model';
+import { EditGroupDialogData, FilterDialogData, UpdateEntityRightDialogData, ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
@@ -18,6 +18,8 @@ import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 import { UserService } from 'src/app/services/user/user.service';
 import { UserApplicationRight } from 'src/app/models/user.model';
 import { GroupEditComponent } from './group-edit/group-edit.component';
+import { ColumnName } from 'src/app/models/column-name.model';
+import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 
 
 @Component({
@@ -33,10 +35,27 @@ export class GroupManagementComponent implements OnInit {
   public user: UserApplicationRight;
   public isLoading: boolean;
   public setDefaultGroup: boolean;
-  public displayedColumnsMyGroups = ['name', 'description','default', 'confidential', 'users', 'edit', 'delete'];
-  public colummnsFilter = ['All columns', 'Group Name', 'Description'];
+  public columnName = ColumnName;
+  public displayedColumnsMyGroups = [
+    ColumnName.NAME,
+    ColumnName.DESCRIPTION,
+    ColumnName.DEFAULT,
+    ColumnName.CONFIDENTIAL,
+    ColumnName.USERS,
+    ColumnName.EDIT,
+    ColumnName.DELETE
+  ];
+  public colummnsFilter = [
+    ColumnName.ALL_COLUMNS,
+    ColumnName.NAME,
+    ColumnName.DESCRIPTION
+  ];
+
+  public groupCount: number;
   public loadedGroups: LoadedGroup[];
   public dataSourceMyGroups = new MatTableDataSource<LoadedGroup>();
+  private filterDialog = new FilterDialogData();
+
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -60,7 +79,7 @@ export class GroupManagementComponent implements OnInit {
     private dialog: MatDialog,
     public groupDataService: GroupDataService,
     private entityRightService: EntityRightService,
-    private userService : UserService,
+    private userService: UserService,
     private loadingDialogService: LoadingDialogService,
     private snackbarService: SnackbarService) {
     this.isLoading = true;
@@ -93,16 +112,9 @@ export class GroupManagementComponent implements OnInit {
       this.loadedGroups = groups;
       this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
       this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
-        switch (property) {
-          case 'name':
-            return typeof item.group.name === 'string' ? item.group.name.toLowerCase() : item.group.name;
-          case 'description':
-            return typeof item.group.description === 'string' ? item.group.description.toLowerCase() : item.group.name;
-          case 'confidential':
-            return typeof item.group.confidential;
-          default:
-            return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-        }
+        return typeof item[property] === 'string'
+            ? item[property].toLowerCase()
+            : item[property];
       };
       this.dataSourceMyGroups.sort = this.sort;
       this.onFilterChange();
@@ -259,28 +271,129 @@ export class GroupManagementComponent implements OnInit {
     );
   }
 
+  public hasFilter(column: ColumnName): boolean {
+    const bool = this.groupDataService.groupSelectedValues.get(column) !== undefined
+                && this.groupDataService.groupSelectedValues.get(column) !== null
+                && this.groupDataService.groupSelectedValues.get(column).length > 0;
+    return bool;
+  }
+
+
+  displayFilterDialog(columnName: ColumnName, event) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.filterDialog.possibleStringValues =  this.setPossibleValueByColumn(columnName);
+    this.filterDialog.columnName = columnName;
+
+    // Check if the column has filters selected to send them to the component
+    if (this.groupDataService.groupSelectedValues !== null
+    && this.groupDataService.groupSelectedValues !== undefined
+    && this.groupDataService.groupSelectedValues.size > 0) {
+        this.filterDialog.selectedStringValues = this.groupDataService.groupSelectedValues.get(columnName);
+    }
+
+    const dialogRef = this.dialog.open(FilterDialogComponent, {
+      disableClose: false,
+      data: this.filterDialog,
+      width: '600px',
+      height: '450px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      const filter: FilterDialogData = result as FilterDialogData;
+      if ( filter !== undefined && filter !== null && filter.cancel !== true) {
+        // Set our dictionnary with the value selected
+        this.groupDataService.groupSelectedValues.set(columnName, filter.selectedStringValues);
+        // Trigger the dataSourceModelStatus.filterPredicate
+        if (this.dataSourceMyGroups.filter.length > 0) {
+          // Apply the previous filter
+          this.dataSourceMyGroups.filter = this.dataSourceMyGroups.filter;
+        } else {
+          // Add a string only used to trigger filterPredicate
+          this.dataSourceMyGroups.filter = ' ';
+        }
+        this.groupCount = this.dataSourceMyGroups.filteredData.length;
+      }
+    });
+  }
+
+  private setPossibleValueByColumn(column: ColumnName): string[] {
+    const possibleStringValues = [];
+    switch (column) {
+      case ColumnName.NAME:
+        this.loadedGroups.forEach(group => {
+        possibleStringValues.push(group.group.name);
+          });
+        return possibleStringValues;
+        case ColumnName.DESCRIPTION:
+          this.loadedGroups.forEach(group => {
+            // Verify to  not push duplicate process
+            if (!possibleStringValues.includes(group.group.description)) {
+              possibleStringValues.push(group.group.description);
+              possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+                }
+            });
+          return possibleStringValues;
+      default:
+        return possibleStringValues;
+      }
+    }
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceMyGroups.filter = filterValue.trim().toLowerCase();
+    if (filterValue.trim().toLowerCase().length > 0) {
+      this.dataSourceMyGroups.filter = filterValue.trim().toLowerCase();
+    } else {
+    // Add a string only used to trigger filterPredicate
+      this.dataSourceMyGroups.filter = ' ';
+    }
+    this.groupCount = this.dataSourceMyGroups.filteredData.length;
   }
 
   applyFilterAfterReloading() {
+  // Check if there are a filter
+  if (this.groupDataService.groupManagementFilter.length > 0 && this.groupDataService.groupManagementFilter.trim() !== '') {
     this.dataSourceMyGroups.filter = this.groupDataService.groupManagementFilter.trim().toLowerCase();
+    } else if (this.groupDataService.groupSelectedValues !== null
+      && this.groupDataService.groupSelectedValues !== undefined
+      && this.groupDataService.groupSelectedValues.size > 0) {
+    // Add a string only used to trigger filterPredicate
+      this.dataSourceMyGroups.filter = ' ';
+    }
+  this.groupCount = this.dataSourceMyGroups.filteredData.length;
   }
 
   onFilterChange() {
     this.dataSourceMyGroups.filterPredicate = (data: LoadedGroup, filter: string): boolean => {
-
-      switch (this.groupDataService.groupManagementColumnFiltered) {
-        case 'Group Name':
-          return data.group.name.trim().toLowerCase().includes(filter);
-        case 'Description':
-          return data.group.description.trim().toLowerCase().includes(filter);
-        default:
-          return data.group.name.trim().toLowerCase().includes(filter) ||
-            data.group.description.trim().toLowerCase().includes(filter);
+      let isMatch = true;
+      if (filter.trim().length > 0) {
+        switch (this.groupDataService.groupManagementColumnFiltered) {
+          case ColumnName.NAME:
+            isMatch = data.group.name.trim().toLowerCase().includes(filter);
+            break;
+          case ColumnName.DESCRIPTION:
+            isMatch = data.group.description.trim().toLowerCase().includes(filter);
+            break;
+          default:
+            isMatch = data.group.name.trim().toLowerCase().includes(filter) ||
+              data.group.description.trim().toLowerCase().includes(filter);
+        }
       }
+       // Filter with selected values received by FilterDialogComponent
+      this.groupDataService.groupSelectedValues.forEach((values , key) => {
+        if (values.length > 0) {
+          switch (key) {
+            case ColumnName.NAME:
+              isMatch = isMatch && values.includes(data.group.name);
+              break;
+            case ColumnName.DESCRIPTION:
+              isMatch = isMatch && values.includes(data.group.description);
+              break;
+          }
+        }
+      });
+      return isMatch;
     };
     this.applyFilterAfterReloading();
   }

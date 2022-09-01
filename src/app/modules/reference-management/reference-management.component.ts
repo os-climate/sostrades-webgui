@@ -1,8 +1,11 @@
 import { ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
+import { ColumnName } from 'src/app/models/column-name.model';
+import { FilterDialogData } from 'src/app/models/dialog-data.model';
 import { ProcessGenerationStatus } from 'src/app/models/reference-generation-status-observer.model';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
@@ -12,6 +15,7 @@ import { ReferenceDataService } from 'src/app/services/reference/data/reference-
 import { ReferenceMainService } from 'src/app/services/reference/main/reference-main.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
+import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 
 @Component({
   selector: 'app-reference-management',
@@ -22,22 +26,26 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   public isAllReferencesRegenerating: boolean;
   public isLoading: boolean;
+  public columnName = ColumnName;
+
   // tslint:disable-next-line: max-line-length
   public displayedColumns = [
-    'status',
-    'name',
-    'repository',
-    'process',
-    'creationDate',
-    'actions',
+    ColumnName.STATUS,
+    ColumnName.NAME,
+    ColumnName.REPOSITORY,
+    ColumnName.PROCESS,
+    ColumnName.CREATION_DATE,
+    ColumnName.ACTION,
   ];
   public columnsFilter = [
-    'All columns',
-    'Reference name',
-    'Repository',
-    'Process',
+    ColumnName.ALL_COLUMNS,
+    ColumnName.NAME,
+    ColumnName.PROCESS,
+    ColumnName.REPOSITORY,
+    ColumnName.STATUS
   ];
   public referenceCount: number;
+  private filterDialog = new FilterDialogData();
   public dataSourceReferences = new MatTableDataSource<Study>();
   private referenceGenerationDoneSubscription: Subscription;
   private referenceGenerationUpdateSubscription: Subscription;
@@ -65,6 +73,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     public referenceDataService: ReferenceDataService,
     public referenceMainService: ReferenceMainService,
     private snackbarService: SnackbarService,
+    private dialog: MatDialog,
     private referenceGenerationObserverService: ReferenceGenerationObserverService
   ) {
     this.isLoading = true;
@@ -194,20 +203,124 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
         }
         study.isRegeneratingReference = false;
       } else {
-        this.snackbarService.showError('Error while generating reference ' + study.process + '.' + study.name + ' : ' + refDoneStatus.generationLogs);
+        this.snackbarService.showError(
+          'Error while generating reference ' + study.process + '.' + study.name + ' : ' + refDoneStatus.generationLogs
+          );
         study.isRegeneratingReference = false;
       }
     });
   }
+  hasFilter(column: ColumnName): boolean {
+    const bool = this.referenceDataService.referenceSelectedValues.get(column) !== undefined
+                && this.referenceDataService.referenceSelectedValues.get(column) !== null
+                && this.referenceDataService.referenceSelectedValues.get(column).length > 0;
+    return bool;
+  }
+
+  displayFilter(columnName: ColumnName, event) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.filterDialog.possibleStringValues =  this.setPossibleValueByColumn(columnName);
+    this.filterDialog.columnName = columnName;
+
+    // Check if the column has filters selected to send them to the component
+    if (this.referenceDataService.referenceSelectedValues !== null
+    && this.referenceDataService.referenceSelectedValues !== undefined
+    && this.referenceDataService.referenceSelectedValues.size > 0) {
+        this.filterDialog.selectedStringValues = this.referenceDataService.referenceSelectedValues.get(columnName);
+    }
+
+    const dialogRef = this.dialog.open(FilterDialogComponent, {
+      disableClose: false,
+      data: this.filterDialog,
+      width: '600px',
+      height: '450px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      const filter: FilterDialogData = result as FilterDialogData;
+      if ( filter !== undefined && filter !== null && filter.cancel !== true) {
+        // Set our dictionnary with the value selected
+        this.referenceDataService.referenceSelectedValues.set(columnName, filter.selectedStringValues);
+        // Trigger the dataSourceModelStatus.filterPredicate
+        if (this.dataSourceReferences.filter.length > 0) {
+          // Apply the previous filter
+          this.dataSourceReferences.filter = this.dataSourceReferences.filter;
+        } else {
+          // Add a string only used to trigger filterPredicate
+          this.dataSourceReferences.filter = ' ';
+        }
+        this.referenceCount = this.dataSourceReferences.filteredData.length;
+      }
+    });
+  }
+
+  private setPossibleValueByColumn(column: ColumnName): string[] {
+    const possibleStringValues = [];
+    switch (column) {
+      case ColumnName.STATUS:
+        this.referenceDataService.referenceManagementData.forEach(reference => {
+          // Verify to not push duplicate status
+          if (!possibleStringValues.includes(reference.regenerationStatus)) {
+            possibleStringValues.push(reference.regenerationStatus);
+            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+              }
+          });
+        return possibleStringValues;
+      case ColumnName.NAME:
+        this.referenceDataService.referenceManagementData.forEach(reference => {
+        // Verify to not push duplicate name
+        if (!possibleStringValues.includes(reference.name)) {
+          possibleStringValues.push(reference.name);
+          possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+            }
+        });
+        return possibleStringValues;
+      case ColumnName.REPOSITORY:
+        this.referenceDataService.referenceManagementData.forEach(reference => {
+          // Verify to not push duplicate repository
+          if (!possibleStringValues.includes(reference.repositoryDisplayName)) {
+            possibleStringValues.push(reference.repositoryDisplayName);
+            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+              }
+          });
+        return possibleStringValues;
+        case ColumnName.PROCESS:
+        this.referenceDataService.referenceManagementData.forEach(reference => {
+          // Verify to  not push duplicate process
+          if (!possibleStringValues.includes(reference.processDisplayName)) {
+            possibleStringValues.push(reference.processDisplayName);
+            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+              }
+          });
+        return possibleStringValues;
+      default:
+        return possibleStringValues;
+      }
+    }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceReferences.filter = filterValue.trim().toLowerCase();
+    if (filterValue.trim().toLowerCase().length > 0) {
+      this.dataSourceReferences.filter = filterValue.trim().toLowerCase();
+    } else {
+    // Add a string only used to trigger filterPredicate
+      this.dataSourceReferences.filter = ' ';
+    }
     this.referenceCount = this.dataSourceReferences.filteredData.length;
   }
 
   applyFilterAfterReloading() {
-    this.dataSourceReferences.filter = this.referenceDataService.referenceManagementFilter.trim().toLowerCase();
+    // Check if there are filter
+    if (this.referenceDataService.referenceManagementFilter.length > 0
+      && this.referenceDataService.referenceManagementFilter.trim() !== '') {
+      this.dataSourceReferences.filter = this.referenceDataService.referenceManagementFilter.trim().toLowerCase();
+    } else if (this.referenceDataService.referenceSelectedValues !== null
+      && this.referenceDataService.referenceSelectedValues !== undefined
+      && this.referenceDataService.referenceSelectedValues.size > 0) {
+    // Add a string only used to trigger filterPredicate
+        this.dataSourceReferences.filter = ' ';
+      }
     this.referenceCount = this.dataSourceReferences.filteredData.length;
   }
 
@@ -216,39 +329,74 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       data: Study,
       filter: string
     ): boolean => {
-      switch (this.referenceDataService.referenceManagementColumnFiltered) {
-        case 'Study name':
-          return data.name.trim().toLowerCase().includes(filter);
-        case 'Group name':
-          return data.groupName.trim().toLowerCase().includes(filter);
-        case 'Repository':
-          return data.repositoryDisplayName.trim().toLowerCase().includes(filter) || data.repository.trim().toLowerCase().includes(filter);
-        case 'Process':
-          return data.processDisplayName.trim().toLowerCase().includes(filter) || data.process.trim().toLowerCase().includes(filter);
-        case 'Type':
-          return data.studyType.trim().toLowerCase().includes(filter);
-        default:
-          return (
-            data.name.trim().toLowerCase().includes(filter) ||
-            data.groupName.trim().toLowerCase().includes(filter) ||
-            data.repositoryDisplayName.trim().toLowerCase().includes(filter) ||
-            data.repository.trim().toLowerCase().includes(filter) ||
-            data.process.trim().toLowerCase().includes(filter) ||
-            data.processDisplayName.trim().toLowerCase().includes(filter) ||
-            data.studyType.trim().toLowerCase().includes(filter)
-          );
+      let isMatch = true;
+      if (filter.trim().length > 0) {
+        switch (this.referenceDataService.referenceManagementColumnFiltered) {
+          case ColumnName.STATUS:
+            isMatch = data.regenerationStatus.trim().toLowerCase().includes(filter);
+            break;
+          case ColumnName.NAME:
+            isMatch = data.name.trim().toLowerCase().includes(filter);
+            break;
+          case ColumnName.GROUP:
+            isMatch = data.groupName.trim().toLowerCase().includes(filter);
+            break;
+          case ColumnName.REPOSITORY:
+            isMatch = data.repositoryDisplayName.trim().toLowerCase().includes(filter)
+            || data.repository.trim().toLowerCase().includes(filter);
+            break;
+          case ColumnName.PROCESS:
+            isMatch = data.processDisplayName.trim().toLowerCase().includes(filter) || data.process.trim().toLowerCase().includes(filter);
+            break;
+          default:
+            isMatch = (
+              data.regenerationStatus.trim().toLowerCase().includes(filter) ||
+              data.name.trim().toLowerCase().includes(filter) ||
+              data.groupName.trim().toLowerCase().includes(filter) ||
+              data.repositoryDisplayName.trim().toLowerCase().includes(filter) ||
+              data.repository.trim().toLowerCase().includes(filter) ||
+              data.process.trim().toLowerCase().includes(filter) ||
+              data.processDisplayName.trim().toLowerCase().includes(filter) ||
+              data.studyType.trim().toLowerCase().includes(filter)
+            );
+        }
       }
+      // Filter with selected values received by FilterDialogComponent
+      this.referenceDataService.referenceSelectedValues.forEach((values , key) => {
+        if (values.length > 0) {
+          switch (key) {
+            case ColumnName.STATUS:
+              isMatch = isMatch && values.includes(data.regenerationStatus);
+              break;
+            case ColumnName.NAME:
+              isMatch = isMatch && values.includes(data.name);
+              break;
+            case ColumnName.GROUP:
+              isMatch = isMatch && values.includes(data.groupName);
+              break;
+              case ColumnName.REPOSITORY:
+              isMatch = isMatch &&  (values.includes(data.repositoryDisplayName)
+              || values.includes(data.repository));
+              break;
+              case ColumnName.PROCESS:
+              isMatch = isMatch && (values.includes(data.processDisplayName)
+              || values.includes(data.process));
+              break;
+          }
+        }
+      });
+      return isMatch;
     };
     this.applyFilterAfterReloading();
   }
 
   downloadGenerationLogs(study: Study) {
-    let ref_path = study.repository + '.' + study.process + '.' + study.name
-    this.referenceDataService.getLogs(ref_path).subscribe(file => {
+    const refPath = study.repository + '.' + study.process + '.' + study.name;
+    this.referenceDataService.getLogs(refPath).subscribe(file => {
 
       const downloadLink = document.createElement('a');
       downloadLink.href = window.URL.createObjectURL(file);
-      downloadLink.setAttribute('download', ref_path + '.log');
+      downloadLink.setAttribute('download', refPath + '.log');
       document.body.appendChild(downloadLink);
       downloadLink.click();
     }, errorReceived => {
@@ -256,7 +404,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       if (error.redirect) {
         this.snackbarService.showError(error.description);
       } else {
-        this.snackbarService.showError('Error downloading log file : No logs found for ' + ref_path + '. You should generate it first.');
+        this.snackbarService.showError('Error downloading log file : No logs found for ' + refPath + '. You should generate it first.');
       }
     });
   }

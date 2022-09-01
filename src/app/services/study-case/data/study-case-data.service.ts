@@ -13,6 +13,7 @@ import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
+import { ColumnName } from 'src/app/models/column-name.model';
 
 
 @Injectable({
@@ -36,6 +37,8 @@ export class StudyCaseDataService extends DataHttpService {
   public studyManagementData: Study[];
   public studyManagementFilter: string;
   public studyManagementColumnFiltered: string;
+  public studySelectedValues = new Map <ColumnName, string[]>();
+
 
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
@@ -60,8 +63,8 @@ export class StudyCaseDataService extends DataHttpService {
     this.favoriteStudy = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
-    this.studyManagementColumnFiltered = 'All columns';
-
+    this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
+    this.studySelectedValues.clear();
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
@@ -77,30 +80,31 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = loadedStudy;
   }
 
-  setStudyToLoad(study_id: number){
-    //remove previous opened study from the loading studies
+  setStudyToLoad(studyId: number) {
+    // remove previous opened study from the loading studies
     this.closeStudyLoading();
-    //Add a study into the list of loading studies
-    if (this.loadingStudies.indexOf(study_id.toString()) == -1){
-        this.loadingStudies.push(study_id.toString());
-    }    
+    // Add a study into the list of loading studies
+    if (this.loadingStudies.indexOf(studyId.toString()) === -1) {
+        this.loadingStudies.push(studyId.toString());
+    }
   }
 
-  isStudyLoading(study_id: number){
-    //Check that a study is into the list of loading studies
-    return this.loadingStudies.indexOf(study_id.toString()) !== -1;
+  isStudyLoading(studyId: number) {
+    // Check that a study is into the list of loading studies
+    return this.loadingStudies.indexOf(studyId.toString()) !== -1;
   }
 
-  closeStudyLoading(){
+  closeStudyLoading() {
       this.loadingStudies = [];
   }
-  
+
   clearCache() {
     this.studyLoaded = null;
     this.studyManagementData = [];
     this.favoriteStudy = [];
+    this.studySelectedValues.clear();
     this.studyManagementFilter = '';
-    this.studyManagementColumnFiltered = 'All columns';
+    this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
@@ -301,8 +305,8 @@ export class StudyCaseDataService extends DataHttpService {
         const nodeDataKey = nodeData[0];
         const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
         if ( ontologyParameter !== null) {
-          let displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== ''){
+          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          if (displayName !== '') {
             loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = displayName;
           }
         }
@@ -312,8 +316,8 @@ export class StudyCaseDataService extends DataHttpService {
         const nodeDataKey = nodeData[0];
         const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
         if ( ontologyParameter !== null) {
-          let displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== ''){
+          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          if (displayName !== '') {
             loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = displayName;
           }
         }
