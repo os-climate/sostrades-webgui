@@ -257,24 +257,26 @@ export class ModelsStatusTableComponent implements OnInit, OnDestroy {
     if (filterValue.trim().toLowerCase().length > 0) {
       this.dataSourceModelStatus.filter = filterValue.trim().toLowerCase();
     } else {
+  // Add a string only used to trigger filterPredicate
       this.dataSourceModelStatus.filter = ' ';
     }
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
 
   applyFilterAfterReloading() {
-    // Check if there are on filter
+    // Check if there are filter
     if (this.ontologyService.modelStatusFilter.length > 0 && this.ontologyService.modelStatusFilter.trim() !== '') {
       this.dataSourceModelStatus.filter = this.ontologyService.modelStatusFilter.trim().toLowerCase();
     } else if (this.ontologyService.modelStatusSelectedValues !== null
       && this.ontologyService.modelStatusSelectedValues !== undefined
       && this.ontologyService.modelStatusSelectedValues.size > 0) {
+    // Add a string only used to trigger filterPredicate
         this.dataSourceModelStatus.filter = ' ';
       }
     this.modelCount = this.dataSourceModelStatus.filteredData.length;
   }
 
-  public hasFilter(column: ColumnName): boolean {
+  hasFilter(column: ColumnName): boolean {
     const bool = this.ontologyService.modelStatusSelectedValues.get(column) !== undefined
                 && this.ontologyService.modelStatusSelectedValues.get(column) !== null
                 && this.ontologyService.modelStatusSelectedValues.get(column).length > 0;

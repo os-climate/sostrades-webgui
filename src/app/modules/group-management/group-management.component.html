@@ -90,7 +90,7 @@
               [(ngModel)]="groupDataService.groupManagementColumnFiltered"
               [matTooltip]="groupDataService.groupManagementColumnFiltered"
             >
-              <mat-option *ngFor="let item of colummnsFilter" [value]="item">
+              <mat-option *ngFor="let item of colummnsFilter" [value]="item" style="text-transform: capitalize;">
                 {{ item }}
               </mat-option>
             </mat-select>
@@ -123,17 +123,22 @@
           matSort
         >
           <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <ng-container [matColumnDef]="columnName.NAME">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name
+              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
+            </th>
             <td mat-cell *matCellDef="let element">
               {{ element.group.name }}
             </td>
           </ng-container>
 
           <!-- Description Column -->
-          <ng-container matColumnDef="description">
+          <ng-container [matColumnDef]="columnName.DESCRIPTION">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Description
+              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.DESCRIPTION)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilterDialog(columnName.DESCRIPTION, $event)" ></i>
             </th>
             <td mat-cell *matCellDef="let element">
               {{ element.group.description }}
@@ -141,7 +146,7 @@
           </ng-container>
 
             <!-- Default Group Column -->
-            <ng-container matColumnDef="default">
+            <ng-container [matColumnDef]="columnName.DEFAULT">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 Default
               </th>
@@ -157,7 +162,7 @@
             </ng-container>
 
           <!-- Confidential Column -->
-          <ng-container matColumnDef="confidential">
+          <ng-container [matColumnDef]="columnName.CONFIDENTIAL">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Confidential
             </th>
@@ -173,7 +178,7 @@
           </ng-container>
 
           <!-- UserList Column -->
-          <ng-container matColumnDef="users">
+          <ng-container [matColumnDef]="columnName.USERS">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
               <button
@@ -188,7 +193,7 @@
           </ng-container>
 
             <!-- Edit Column -->
-            <ng-container matColumnDef="edit">
+            <ng-container [matColumnDef]="columnName.EDIT">
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let element">
                 <button
@@ -203,7 +208,7 @@
             </ng-container>
 
           <!-- Delete Column -->
-          <ng-container matColumnDef="delete">
+          <ng-container [matColumnDef]="columnName.DELETE">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
               <button

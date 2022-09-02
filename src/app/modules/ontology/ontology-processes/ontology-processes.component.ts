@@ -167,10 +167,10 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
       this.ontologyService.processesSelectedValues.forEach((values , key) => {
         if (values.length > 0){
           switch (key) {
-            case ColumnName.PROCESS_NAME:
+            case ColumnName.PROCESS:
               isMatch = isMatch && values.includes(data.processName);
               break;
-            case ColumnName.REPOSITORY_NAME:
+            case ColumnName.REPOSITORY:
               isMatch = isMatch && values.includes(data.repositoryName);
               break;
           }
@@ -222,12 +222,12 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
   private setPossibleValueByColumn(column: ColumnName): string[] {
     let possibleStringValues = [];
     switch (column) {
-      case ColumnName.PROCESS_NAME:
+      case ColumnName.PROCESS:
         this.processService.processManagemenentData.forEach(process => {
         possibleStringValues.push(process.processName);
           });
         return possibleStringValues;
-      case ColumnName.REPOSITORY_NAME:
+      case ColumnName.REPOSITORY:
         this.processService.processManagemenentData.forEach(process => {
           if (!possibleStringValues.includes(process.repositoryName)) {
 

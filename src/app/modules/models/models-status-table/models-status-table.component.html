@@ -27,7 +27,7 @@
           [(ngModel)]="ontologyService.modelStatusColumnFiltered"
           [matTooltip]="ontologyService.modelStatusColumnFiltered"
         >
-          <mat-option *ngFor="let item of columnsFilter" [value]="item">
+          <mat-option *ngFor="let item of columnsFilter" [value]="item" style="text-transform: capitalize;">
             {{ item }}
           </mat-option>
         </mat-select>
