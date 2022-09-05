@@ -18,8 +18,11 @@ const editStudyName = 'Test_witness_copie_edit';
 const editStudyGroup = 'All users';
 
 
-
-test('Test Create Study -> Test_creation empty, usecase, copie from study management and processes', async ({ page }) => {
+/**
+ * Test creation from study management page
+ * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
+ */
+test('Test Create Study from study management -> Test_creation empty, usecase, copie', async ({ page }) => {
 
   // Creation study Empty
   await baseStudyCaseCreation(page, studyNameEmpty, processWitness, referenceEmpty, studyGroup, true);
@@ -29,6 +32,14 @@ test('Test Create Study -> Test_creation empty, usecase, copie from study manage
 
   // Creation copie
   await baseStudyCaseCreation(page, studyNameCopie, processWitness, studyNameUsecase, studyGroup, true);
+
+});
+
+/**
+ * Test creation from process page
+ * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
+ */
+test('Test Create Study from process-> Test_creation empty, usecase, copie', async ({ page }) => {
 
   // Creation study Empty from process
   await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processWitness, referenceEmpty, studyGroup, false);
@@ -41,6 +52,7 @@ test('Test Create Study -> Test_creation empty, usecase, copie from study manage
 
 });
 
+
 test('Test Edition Study -> Test_edition + Test_calculation', async ({ page }) => {
 
   await baseStudyCaseEdition(page, studyNameCopie, editStudyName, studyGroup, editStudyGroup);
@@ -48,18 +60,6 @@ test('Test Edition Study -> Test_edition + Test_calculation', async ({ page }) =
 
 });
 
-// test('Test Deletion -> Test_multiple_deletion', async ({page}) => {
-
-//   const listStudiesToDelete = {
-//     copieStudyProcess: [studyNameCopieFromProcess, studyGroup],
-//     usecaseProcess: [studyNameUsecaseFromProcess, studyGroup],
-//     emptyStudyProcess: [studyNameEmptyFromProcess, studyGroup],
-//     copieStudy: [editStudyName, editStudyGroup],
-//     emptyStudy: [studyNameEmpty, studyGroup],
-//     usecase: [studyNameUsecase, studyGroup],
-//   };
-//   await baseStudyCaseDeletion(page, listStudiesToDelete);
-// });
 
 
 test('Test Deletion -> Test_deletion_one_by_one', async ({page}) => {
