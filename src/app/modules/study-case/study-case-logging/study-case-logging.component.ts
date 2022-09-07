@@ -15,7 +15,7 @@ import { LoadedStudy } from 'src/app/models/study.model';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 
-const POLLING_DELAY = 1000;
+const POLLING_DELAY = 5000;
 
 @Component({
   selector: 'app-study-case-logging',

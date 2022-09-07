@@ -1,4 +1,4 @@
-import { Study, PostStudy, LoadedStudy, LoadStatus } from 'src/app/models/study.model';
+import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
@@ -41,15 +41,15 @@ export class StudyCaseMainService extends MainHttpService {
   /// -----------------------------------------------------------------------------------------------------------------------------
 
   //#region Create study
-  createStudy(study: PostStudy, withEmit: boolean): Observable<LoadedStudy> {
+  createStudy(studyInformation: StudyCaseInitialSetupPayload, withEmit: boolean): Observable<LoadedStudy> {
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
-      this.createStudytimeout(study, withEmit, observer);
+      this.createStudytimeout(studyInformation, withEmit, observer);
     });
     return loaderObservable;
   }
 
-  private createStudytimeout(postStudy: PostStudy, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>) {
-    return this.http.post(this.apiRoute, JSON.stringify(postStudy), this.options).pipe(map(
+  private createStudytimeout(studyInformation: StudyCaseInitialSetupPayload, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>) {
+    return this.http.post(this.apiRoute, JSON.stringify(studyInformation), this.options).pipe(map(
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
@@ -105,19 +105,21 @@ export class StudyCaseMainService extends MainHttpService {
   //#endregion create study
 
   //#region copy study
-  copyStudy(studyId: number, newName: string, groupId: number): Observable<LoadedStudy> {
+  copyStudy(sourceStudyCaseIdentifier: number, targetStudyCaseIdentifier: number): Observable<LoadedStudy> {
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
-      this.copyStudytimeout(studyId, newName, groupId, observer);
+      this.copyStudytimeout(sourceStudyCaseIdentifier, targetStudyCaseIdentifier, observer);
     });
     return loaderObservable;
   }
 
-  private copyStudytimeout(studyId: number, newName: string, groupId: number, loaderObservable: Subscriber<LoadedStudy>) {
+  private copyStudytimeout(
+                          sourceStudyCaseIdentifier: number,
+                          targetStudyCaseIdentifier: number,
+                          loaderObservable: Subscriber<LoadedStudy>) {
     const request = {
-      new_name: newName,
-      group_id: groupId
+      source_study_case: sourceStudyCaseIdentifier
     };
-    return this.http.post(`${this.apiRoute}/${studyId}/copy`, request, this.options).pipe(map(
+    return this.http.post(`${this.apiRoute}/${targetStudyCaseIdentifier}/copy`, request, this.options).pipe(map(
       response => {
         return Study.Create(response);
       })).subscribe(study => {
@@ -141,29 +143,29 @@ export class StudyCaseMainService extends MainHttpService {
         this.loadStudyTimeout(studyId, withEmit, observer, false);
       });
       return loaderObservable;
-      
+
     }
     else {
       return this.internalLoadStudy(studyId);
     }
-    
+
   }
 
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
 
     this.internalLoadStudy(studyId).subscribe(loadedStudy => {
-        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-            setTimeout(() => {
-              this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
-            }, 2000);
-        } else if (loadedStudy.loadStatus === LoadStatus.LOADED) {
-            if(withEmit && this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
-              this.updateStudyCaseDataService(loadedStudy);
-              this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-            }
-          
-            loaderObservable.next(loadedStudy);
+      if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+        setTimeout(() => {
+          this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+        }, 2000);
+      } else if (loadedStudy.loadStatus === LoadStatus.LOADED) {
+        if(withEmit && this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+          this.updateStudyCaseDataService(loadedStudy);
+          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
         }
+
+        loaderObservable.next(loadedStudy);
+      }
     },
       error => {
         loaderObservable.error(error);

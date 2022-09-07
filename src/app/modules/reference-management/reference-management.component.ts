@@ -12,7 +12,6 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { Study } from 'src/app/models/study.model';
 import { ReferenceGenerationObserverService } from 'src/app/services/reference-generation-observer/reference-generation-observer.service';
 import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
-import { ReferenceMainService } from 'src/app/services/reference/main/reference-main.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
@@ -71,7 +70,6 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     private elementRef: ElementRef,
     public studyCaseDataService: StudyCaseDataService,
     public referenceDataService: ReferenceDataService,
-    public referenceMainService: ReferenceMainService,
     private snackbarService: SnackbarService,
     private dialog: MatDialog,
     private referenceGenerationObserverService: ReferenceGenerationObserverService
@@ -167,7 +165,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   regenerateReference(study: Study) {
     study.isRegeneratingReference = true;
 
-    this.referenceMainService
+    this.referenceDataService
       .reGenerateReference(study.repository, study.process, study.name)
       .subscribe(
         (refGenId) => {

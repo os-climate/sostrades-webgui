@@ -9,7 +9,7 @@ export async function baseStudyCaseStartCalculation(page: Page, studyName: strin
 
   // Verify study case successfully submitted after run clicked
   const snackBarLocator = page.locator('snack-bar-container');
-  await expect(snackBarLocator).toHaveText(/Study case successfully submitted/, { timeout: 15000 });
+  await expect(snackBarLocator).toHaveText(/Study case successfully submitted/);
 
   // Verify root node status change to running
   const rootNodeStatusLocator = page.locator(`id=text-treeview-status-${studyName}`);
