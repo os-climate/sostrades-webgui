@@ -33,6 +33,46 @@ export class NodeData {
   public displayName: string;
   private _widgetType: WidgetType;
   public isHighlighted: boolean;
+  private _subtypeDescriptorValue: string;
+  private _subTypeDrescriptorNestedLevelCount: number;
+
+  /**
+   * Explore subtype descriptor nested level to extract final stored type
+   * @param subTypeDescriptor: nested object we want to extract last final value
+   * @returns string or null
+   */
+   public static getSubTypeValue(subtypeDescriptor: any): string {
+
+    if (subtypeDescriptor instanceof Object) {
+      const keys  = Object.keys(subtypeDescriptor);
+
+      if (keys.length !== 1) {
+        return null;
+      } else {
+        const uniqueKey = keys[0];
+        return this.getSubTypeValue(subtypeDescriptor[uniqueKey]);
+      }
+    } else {
+      return subtypeDescriptor;
+    }
+  }
+
+  /**
+   * Explore subtype descriptor nested level to extract their count
+   * @param subTypeDescriptor: nested object we want to count nested level
+   * @returns number
+   */
+   public static countNestedLevel(subtypeDescriptor: any): number {
+
+    let result = 0;
+
+    if (subtypeDescriptor instanceof Object) {
+      const keys  = Object.keys(subtypeDescriptor);
+      const uniqueKey = keys[0];
+      result = 1 + this.countNestedLevel(subtypeDescriptor[uniqueKey]);
+    }
+    return result;
+  }
 
   public static Create(key: string, jsonData: any, parent: TreeNode, isDataDisc: boolean): NodeData {
     // Remove parameter without type key
@@ -78,7 +118,7 @@ export class NodeData {
     public unit: string,
     public possibleValues: any,
     public range: any,
-    public subtype_descriptor: any,
+    public subTypeDescriptor: any,
     public userLevel: number,
     public visibility: string,
     public ioType: IoType,
@@ -108,14 +148,21 @@ export class NodeData {
     }
     this.displayName = this.variableName;
 
+    /**
+     * Changes 07/09/2022
+     * sub type descriptor handling
+     * store the inner type contains in the the nested sub type, mainly to determine some constraint check to do
+     * count the number of nested level in order to switch between view regarding the data complexity
+     */
+    this._subtypeDescriptorValue = NodeData.getSubTypeValue(this.subTypeDescriptor);
+    this._subTypeDrescriptorNestedLevelCount = NodeData.countNestedLevel(this.subTypeDescriptor);
+
     this._widgetType = WidgetType.NO_WIDGET;
-    if ((this.subtype_descriptor !== null) && (this.subtype_descriptor !== undefined)) {
+    if ((this.subTypeDescriptor !== null) && (this.subTypeDescriptor !== undefined)) {
       this._widgetType = WidgetType.FILE_SPREADSHEET_WIDGET;
     } else {
       this.updateWidgetType();
     }
-
-
 
     this.isHighlighted = false;
   }
@@ -150,6 +197,14 @@ export class NodeData {
 
   get widgetType(): WidgetType {
     return this._widgetType;
+  }
+
+  get subTypeDescriptorValue(): string {
+    return this._subtypeDescriptorValue;
+  }
+
+  get subTypeDrescriptorNestedLevelCount(): number {
+    return this._subTypeDrescriptorNestedLevelCount;
   }
 
   get value(): any {
