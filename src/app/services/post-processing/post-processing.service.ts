@@ -25,18 +25,17 @@ export class PostProcessingService extends PostProcessingHttpService {
     private loggerService: LoggerService,
     private calculationService: CalculationService,
     private location: Location) {
-    super(location, 'post-processing');
+    super(location, 'study-case');
     this.keepPoolingProcessing = true;
     this.postProcessingQueue = [];
   }
 
   getDisciplineGraphFilters(study: LoadedStudy, disciplineKey: string): Observable<PostProcessingFilter[]> {
     const request = {
-      discipline_key: disciplineKey,
-      study_id: study.studyCase.id
+      discipline_key: disciplineKey
     };
 
-    return this.http.post<PostProcessingFilter[]>(`${this.apiRoute}`, request, this.options).pipe(map(
+    return this.http.post<PostProcessingFilter[]>(`${this.apiRoute}/${study.studyCase.id}/filter/by/discipline`, request, this.options).pipe(map(
       response => {
         const result: PostProcessingFilter[] = [];
         response.forEach(postProcessingFilter => {
@@ -68,7 +67,7 @@ export class PostProcessingService extends PostProcessingHttpService {
       };
 
       // tslint:disable-next-line: max-line-length
-      return this.http.post(`${this.apiRoute}/${study.studyCase.id}`, request, options).pipe(map(response => {
+      return this.http.post(`${this.apiRoute}/${study.studyCase.id}/post-processing`, request, options).pipe(map(response => {
 
         // Add check regarding numpy python type that are not manage by the JSON parser
         // At least NaN and Infinity values are converted to null in order to avoid parsing error

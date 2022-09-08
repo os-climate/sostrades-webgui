@@ -50,7 +50,7 @@ export class StudyCasePostProcessingService extends PostProcessingHttpService {
   }
 
   public resetStudyFromCache(studyId: number) {
-    return this.http.get<boolean>(`${this.apiRoute}/reset-cache/${studyId}`).pipe(map(
+    return this.http.get<boolean>(`${this.apiRoute}/${studyId}/reset-cache`).pipe(map(
       response => {
         return response;
       }));

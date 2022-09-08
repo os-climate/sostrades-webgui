@@ -30,4 +30,9 @@ export async function baseStudyCaseLoading(page: Page, studyGroup: string, study
   // Verifying root node is present
   const rootNodeButton = `id=btn-treeview-node-${studyName}`;
   await page.waitForSelector(rootNodeButton);
+
+  //check readonly mode
+  const treeviewTitle = page.locator(`id=text-sidenav-study-loaded-name`);
+  await expect(treeviewTitle).toHaveText(`: ${studyName}`);
+
 }
