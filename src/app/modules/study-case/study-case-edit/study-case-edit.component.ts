@@ -58,7 +58,6 @@ export class StudyCaseEditComponent implements OnInit {
       });
   }
   public onChange(event : any){
-    console.log(event)
     this.editForm.valueChanges.subscribe(() => {
       if (this.data.studyName === this.editForm.value.studyName && this.data.groupId === this.editForm.value.groupId ){
         this.disableForm = true

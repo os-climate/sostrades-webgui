@@ -1,0 +1,38 @@
+<div class="flex-container" [formGroup]="newsForm">
+    <div mat-dialog-title>
+      <h1 style="margin-bottom: 10px; text-align: center">
+       {{title}}
+      </h1>
+    </div>
+  
+    <div>
+      <mat-form-field style="width: 100%" [hintLabel]="newsForm.value.message.length + '/300 characters'">
+        <mat-label>News</mat-label>
+        <textarea
+          #txtarea
+          style="resize:none; height:100px"  
+          matInput
+          [maxLength]="300"
+          formControlName="message" 
+          placeholder="Write your message"
+          (change)="onChange()" 
+          class="emoji-font">
+        </textarea>
+        <mat-error *ngIf="hasError('message', 'required')"
+          >A message is <strong>required</strong></mat-error>
+        <mat-error *ngIf="hasError('message', 'error')">
+          Message already <strong>exist</strong>
+        </mat-error>
+      </mat-form-field>
+  
+    <div style="width: 100%; text-align: center;">
+      <button mat-button (click)="onCancelClick()">Cancel</button>
+      <button
+        mat-button
+        (click)="submitForm()"
+        [disabled]="!newsForm.valid || !newsForm.dirty || this.disableForm"
+      >
+        Ok
+      </button>
+    </div>
+  </div>
