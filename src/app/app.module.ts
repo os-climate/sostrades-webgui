@@ -123,6 +123,7 @@ import { RepositoryTraceabilityDialogComponent } from './modules/ontology/ontolo
 import { FilterDialogComponent } from './shared/filter-dialog/filter-dialog.component';
 import { NewsComponent } from './modules/news/news/news.component';
 import { NewsCreateOrEditComponent } from './modules/news/news-create-or-edit/news-create-or-edit.component';
+import { VisualisationInterfaceDiagramComponent } from './modules/visualisation/visualisation-interface-diagram/visualisation-interface-diagram.component';
 
 registerLocaleData(fr);
 
@@ -222,6 +223,7 @@ registerLocaleData(fr);
     FilterDialogComponent,
     NewsComponent,
     NewsCreateOrEditComponent,
+    VisualisationInterfaceDiagramComponent,
   ],
   imports: [
     BrowserModule,

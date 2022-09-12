@@ -9,12 +9,17 @@ export class VisualisationContainerComponent implements OnInit {
 
   public showCouplingGraphContent: boolean;
   public showExecutionSequenceContent: boolean;
+  public showInterfaceDiagramContent: boolean;
 
-  public visualisationsAvailable = [{ name: 'Study Coupling Graph', selected: true },
-  { name: 'Execution Sequence', selected: false }];
+  public visualisationsAvailable = 
+  [
+    { name: 'Execution Sequence', selected: true },
+    { name: 'Study Coupling Graph', selected: false },
+    { name: 'Interface Diagram', selected: false },
+];
 
   constructor() {
-    this.showCouplingGraphContent = true;
+    this.showExecutionSequenceContent = true;
   }
 
   ngOnInit(): void {
@@ -31,6 +36,7 @@ export class VisualisationContainerComponent implements OnInit {
 
     this.showCouplingGraphContent = (visualisationName === 'Study Coupling Graph' ? true : false);
     this.showExecutionSequenceContent = (visualisationName === 'Execution Sequence' ? true : false);
+    this.showInterfaceDiagramContent = (visualisationName === 'Interface Diagram' ? true : false);
   }
 
 }
