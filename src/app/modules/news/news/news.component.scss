@@ -1,3 +1,6 @@
+.news-component {
+    padding-left: 180px;
+}
 
 .news-component:hover .news-body {
     overflow-y: auto;
@@ -5,6 +8,11 @@
 
 .news-header {
     margin-left: 5px;
+}
+
+.text-title {
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .news-body {
