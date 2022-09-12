@@ -1,0 +1,60 @@
+<div class="news-component">
+    <div class="news-header d-flex justify-content-between" >
+        <div>
+            <h1 class="text-style" >
+                News
+            </h1>
+        </div>
+        <div style="display: flex;">
+            <button 
+                mat-icon-button 
+                color="accent"
+                style="margin-top: -7px; margin-right: 10px;"  
+                matTooltip="Add a news" 
+                *ngIf="hasAccessToStudyManager"
+                (click)="onCreate()" >
+                <i class="fa-solid fa-square-plus fa-fw"></i>
+            </button>
+          
+            <mat-checkbox *ngIf="!isLoading && news.length > 1" (click)="clickToDisplayAllOrOneNew()">Show all news</mat-checkbox>
+        </div>
+    </div>  
+    <div class="news-body" *ngIf="!isLoading">
+
+        <table class="table table-sm table-borderless">
+            <ng-container *ngFor="let news of newsFiltered" class="news">
+              <tr [ngClass]="hasAccessToStudyManager ? 'news-text-access-manager':'news-text-no-access-manager'">
+                <td>
+                    <div class='news'>
+                        <span>{{news.message}}</span>
+                        <br>
+                        <mat-hint style="font-size: 11px;">
+                            {{news.lastModificationDate}} 
+                        </mat-hint>
+                    </div>
+                </td>
+                <td *ngIf="hasAccessToStudyManager" class="icon-edit-delete">
+                    <button 
+                        mat-icon-button 
+                        color="accent" 
+                        matTooltip="edit message" 
+                        *ngIf="hasAccessToStudyManager"
+                        (click)="onEdit(news)"  >
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button 
+                        mat-icon-button 
+                        color="warn" 
+                        matTooltip="delete message" 
+                        *ngIf="hasAccessToStudyManager"
+                        (click)="onDelete(news)"  >
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                      
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+    </div>
+</div>
+  

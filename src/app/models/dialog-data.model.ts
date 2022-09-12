@@ -422,3 +422,12 @@ export class FilterDialogData extends AbstractDialogData {
     this.columnName = null;
   }
 }
+
+export class NewsDialogData extends AbstractDialogData {
+  public message: string;
+
+  public constructor() {
+    super();
+    this.message = '';
+  }
+}
