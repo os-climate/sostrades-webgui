@@ -220,10 +220,17 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
       });
     }
     // Get study referenced push on the refence list
+    const studyList: Study[] = [];
     this.studyCaseDataService.getAuthorizedStudiesForProcess(this.process.processId, this.process.repositoryId).subscribe(studies => {
       studies.forEach(study => {
-        this.referenceList.push(study);
+        studyList.push(study);
       });
+      // Sort list of study by creation date
+      studyList.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+
+      // Concat refenceList with studyList to display in first empty study and usecase and then the studyList sorted by creation date.
+      this.referenceList = this.referenceList.concat(studyList);
+
       this.disabledReference = false;
     });
   }

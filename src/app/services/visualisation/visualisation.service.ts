@@ -21,6 +21,10 @@ export class VisualisationService extends MainHttpService {
     return this.http.get(`${this.apiRoute}/${studyId}/execution-sequence`);
   }
 
+  getInterfaceDiagramData(studyId: number): Observable<any> {
+    return this.http.get(`${this.apiRoute}/${studyId}/interface-diagram`);
+  }
+
   getDiagramN2Data(studyId: number): Observable<any> {
     return this.http.get(`${this.apiRoute}/${studyId}/n2-diagram`);
   }

@@ -33,7 +33,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   private studyCaseId: number;
   private timeOut;
   private scrollContainer: any;
-  private loop: boolean;
   private logList: StudyCaseExecutionLogging[];
   public cpuLoad: string;
   public memoryLoad: string;
@@ -61,7 +60,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.studyCaseId = -1;
     this.dataSourceRef = null;
     this.timeOut = null;
-    this.loop = false;
     this.logList = [];
     this.bottomAnchorLog = false;
     this.cpuLoad = '----';
@@ -102,10 +100,19 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       }
     });
 
-   
-
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
+      const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
+      if (sco !== null && sco !== undefined) {
+        // Start calculation timeout to get logs
+        this.executionStartedSubscription = sco.executionStarted.subscribe(_ => {
+          this.startTimeOut();
+        });
+        // Stop calculation timeout to get logs
+        this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
+          this.stopTimeOut();
+        });
+      }
     });
 
     this.calculationSystemLoadChangeSubscription = this.calculationService.onCalculationSystemLoadChange.subscribe(systemLoad => {
@@ -143,29 +150,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.scrollContainer = this.table._elementRef.nativeElement;
   }
 
-  // private initializeLogger() {
-
-  //   this.cleanExecutionSubscription();
-
-  //   const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
-
-  //   if (sco !== null && sco !== undefined) {
-  //     this.executionStartedSubscription = sco.executionStarted.subscribe(_ => {
-  //       this.loop = true;
-  //       this.startTimeOut();
-
-  //     });
-
-  //     this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
-  //       this.loop = false;
-  //       this.stopTimeOut();
-
-  //     });
-  //   }
-
-  //   this.getLogs();
-  // }
-
   private cleanExecutionSubscription() {
     this.stopTimeOut();
 
@@ -202,14 +186,11 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   }
 
   private setLogToView(logs: StudyCaseExecutionLogging[]) {
-
-    this.logList = logs;
-    this.dataSourceRef = new MatTableDataSource<StudyCaseExecutionLogging>(this.logList);
-
-    this.scrollToBottom();
-
-    this.startTimeOut();
-
+    if (logs !== null && logs !== undefined) {
+      this.logList = logs;
+      this.dataSourceRef = new MatTableDataSource<StudyCaseExecutionLogging>(this.logList);
+      this.scrollToBottom();
+    }
   }
 
   public anchorToBottom() {

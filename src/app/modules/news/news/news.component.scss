@@ -1,0 +1,53 @@
+.news-component {
+    padding-left: 180px;
+}
+
+.news-component:hover .news-body {
+    overflow-y: auto;
+}
+
+.news-header {
+    margin-left: 5px;
+}
+
+.text-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.news-body {
+    max-height: 140px;
+    overflow-y: hidden;
+}
+
+i {
+    cursor: pointer;
+}
+
+.news-text-access-manager {
+    cursor: pointer;
+}
+
+.news-text-no-access-manager{
+    cursor: default;
+}
+
+.news-text-access-manager:hover .icon-edit-delete {
+    display: flex;
+    justify-content: end;
+}
+
+.icon-edit-delete {
+    text-align: end;
+    display: none;
+
+}
+
+tr:hover {
+    box-shadow: inset 0 0 0 99999px rgba(75, 75, 75, 0.05);
+}
+
+.news {
+    font-size: 15px;
+}
+  

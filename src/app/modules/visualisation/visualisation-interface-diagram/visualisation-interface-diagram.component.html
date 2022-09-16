@@ -1,0 +1,28 @@
+<div [hidden]="isLoading" class="container" #graphviz_placeholder></div>
+<div
+*ngIf="isLoading"
+style="
+      height: calc(100% - 37px);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    "
+  >
+    <mat-progress-spinner
+    diameter="40"
+    mode="indeterminate"
+    style="margin: 0 auto"
+    ></mat-progress-spinner>
+    <div style="margin-top: 10px">Loading interface diagram</div>
+  </div>
+  <div [hidden]="isLoading">
+    <button mat-button (click)="resetZoom()">
+      Reset Zoom
+    </button>
+    <button mat-button (click)="downloadSVG()">
+      <i class="fa-solid fa-download"></i> Download SVG
+    </button>
+  </div>
+  

@@ -60,8 +60,8 @@
     />
     </div>
   </div>
-    <div id="title">
-      <h1 style="margin-bottom:10px; margin-right: 20px;" value="Home"> {{title}}</h1>
+    <div id="title" style="margin-bottom:10px;" [ngClass]="title==='Home'? 'home-title':''">
+      <h1 value="Home"> {{title}}</h1>
     </div>   
     <div id="username-second-menu" style="display: flex;">
  

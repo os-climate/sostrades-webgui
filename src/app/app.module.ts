@@ -121,6 +121,9 @@ import { ModelsStatusDocumentationComponent } from './modules/models/models-stat
 import { StudyCaseLoggingComponent } from './modules/study-case/study-case-logging/study-case-logging.component';
 import { RepositoryTraceabilityDialogComponent } from './modules/ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
 import { FilterDialogComponent } from './shared/filter-dialog/filter-dialog.component';
+import { NewsComponent } from './modules/news/news/news.component';
+import { NewsCreateOrEditComponent } from './modules/news/news-create-or-edit/news-create-or-edit.component';
+import { VisualisationInterfaceDiagramComponent } from './modules/visualisation/visualisation-interface-diagram/visualisation-interface-diagram.component';
 
 registerLocaleData(fr);
 
@@ -218,6 +221,9 @@ registerLocaleData(fr);
     StudyCaseLoggingComponent,
     RepositoryTraceabilityDialogComponent,
     FilterDialogComponent,
+    NewsComponent,
+    NewsCreateOrEditComponent,
+    VisualisationInterfaceDiagramComponent,
   ],
   imports: [
     BrowserModule,
