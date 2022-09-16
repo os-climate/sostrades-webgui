@@ -5,7 +5,6 @@ import { AuthGuard } from './services/auth.guard';
 import { LoginComponent } from './modules/login/login.component';
 import { StudyWorkspaceComponent } from './modules/study-case/study-case-workspace/study-workspace.component';
 import { StudyCaseManagementContainerComponent } from './modules/study-case/study-case-management-container/study-case-management-container.component';
-import { ModelsContainerComponent } from './modules/models/models-container/models-container.component';
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { StudyGuard } from './services/study.guard';
 import { StudyManagerGuard } from './services/study-manager.guard';
@@ -19,11 +18,12 @@ import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component
 import { GroupManagementComponent } from './modules/group-management/group-management.component';
 import { ReferenceManagementComponent } from './modules/reference-management/reference-management.component';
 import { StudyCaseManagementComponent } from './modules/study-case/study-case-management/study-case-management.component';
-import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
 import { Routing } from './models/routing.model';
 import { OntologyParametersComponent } from './modules/ontology/ontology-parameters/ontology-parameters.component';
 import { OntologyProcessesComponent } from './modules/ontology/ontology-processes/ontology-processes.component';
 import { OntologyMainComponent } from './modules/ontology/ontology-main/ontology-main.component';
+import { OntologyContainerComponent } from './modules/ontology/ontology-container/ontology-container.component';
+import { OntologyModelsComponent } from './modules/ontology/ontology-models/ontology-models.component';
 
 
 const routes: Routes = [
@@ -78,12 +78,12 @@ const routes: Routes = [
       },
       {
         path: Routing.ONTOLOGY,
-        component: ModelsContainerComponent,
+        component: OntologyContainerComponent,
         canActivate: [StudyGuard],
         children: [
           {
             path: '',
-            component: ModelsContainerComponent,
+            component: OntologyContainerComponent,
             canActivate: [StudyGuard]
           },
           {
@@ -93,7 +93,7 @@ const routes: Routes = [
           },
           {
             path: Routing.MODELS,
-            component: ModelsStatusTableComponent,
+            component: OntologyModelsComponent,
             canActivate: [StudyGuard],
           },
           {

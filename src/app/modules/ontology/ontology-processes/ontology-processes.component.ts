@@ -22,13 +22,15 @@ import { ProcessService } from 'src/app/services/process/process.service';
 import { UpdateEntityRightComponent } from '../../entity-right/update-entity-right/update-entity-right.component';
 import { EntityResourceRights } from 'src/app/models/entity-right.model';
 import { EntityRightService } from 'src/app/services/entity-right/entity-right.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
-import { ProcessInformationComponent } from '../../process/process-information/process-information.component';
 import { ColumnName } from 'src/app/models/column-name.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
+import { OntologyProcessInformationComponent } from './ontology-process-information/ontology-process-information.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Routing } from 'src/app/models/routing.model';
 
 @Component({
   selector: 'app-ontology-processes',
@@ -46,6 +48,9 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
   public expandedElement: Process;
   public highlightedColor: boolean;
   public processCount: number;
+  public fromModelInformation: boolean;
+  private routerSubscription: Subscription;
+  private processToShowAtStartup: string;
 
   @Input() dashboard = true;
 
@@ -77,18 +82,41 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private studyCreationService: StudyCaseCreationService,
     public ontologyService: OntologyService,
+    private router: Router,
+    private route: ActivatedRoute,
     public processService: ProcessService) {
     this.isLoading = true;
     this.highlightedColor = false;
     this.markdownDocumentation = null;
     this.processCount = 0;
+    this.fromModelInformation = false;
+    this.routerSubscription = null;
+    this.processToShowAtStartup = null;
   }
 
   ngOnInit(): void {
-    this.loadProcessManagementData(false);
+
+    if (this.routerSubscription === null) {
+
+      this.routerSubscription = this.route.queryParams.subscribe(params => {
+
+        // If process is defined has query parameter then we filter and mount the process model information
+        if (params.hasOwnProperty('process')) {
+          if (params.process !== null && params.process !== undefined) {
+            this.fromModelInformation = true;
+            this.processToShowAtStartup = params.process;
+          }
+        }
+        this.loadProcessManagementData(false);
+      });
+    }
   }
 
   ngOnDestroy() {
+    if (this.routerSubscription !== null) {
+      this.routerSubscription.unsubscribe();
+      this.routerSubscription = null;
+    }
   }
 
 
@@ -112,6 +140,18 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
       this.dataSourceProcess.sort = this.sort;
       this.onFilterChange();
       this.isLoading = false;
+
+      if ((this.fromModelInformation === true) && (this.fromModelInformation !== null)) {
+        const searchProcess = this.processService.processManagemenentData.find(
+          process => process.processName === this.processToShowAtStartup);
+        if (searchProcess !== null && searchProcess !== undefined) {
+          this.processToShowAtStartup = null;
+          this.fromModelInformation = false;
+          this.processService.processManagementFilter = searchProcess.processName;
+          this.onFilterChange();
+          this.displayDocumentation(searchProcess);
+        }
+      }
 
     }, errorReceived => {
       const error = errorReceived as SoSTradesError;
@@ -148,7 +188,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
   onFilterChange() {
     this.dataSourceProcess.filterPredicate = (data: Process, filter: string): boolean => {
       let isMatch = true;
-      if (filter.trim().length > 0){
+      if (filter.trim().length > 0) {
         switch (this.processService.processManagementColumnFiltered) {
           case 'Process Name':
             isMatch = data.processName.trim().toLowerCase().includes(filter) || data.processId.trim().toLowerCase().includes(filter);
@@ -165,7 +205,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
       }
       // Filter with selected values received by FilterDialogComponent
       this.ontologyService.processesSelectedValues.forEach((values , key) => {
-        if (values.length > 0){
+        if (values.length > 0) {
           switch (key) {
             case ColumnName.PROCESS:
               isMatch = isMatch && values.includes(data.processName);
@@ -185,7 +225,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     event.preventDefault();
 
-    let filterDialog = new FilterDialogData();
+    const filterDialog = new FilterDialogData();
     filterDialog.possibleStringValues =  this.setPossibleValueByColumn(columnName);
     filterDialog.columnName = columnName;
 
@@ -220,7 +260,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
   }
 
   private setPossibleValueByColumn(column: ColumnName): string[] {
-    let possibleStringValues = [];
+    const possibleStringValues = [];
     switch (column) {
       case ColumnName.PROCESS:
         this.processService.processManagemenentData.forEach(process => {
@@ -241,10 +281,10 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
       }
     }
 
-  public hasFilter(column: ColumnName): boolean{
-    let bool = this.ontologyService.processesSelectedValues.get(column) !== undefined
-                && this.ontologyService.processesSelectedValues.get(column) !== null 
-                && this.ontologyService.processesSelectedValues.get(column).length > 0
+  public hasFilter(column: ColumnName): boolean {
+    const bool = this.ontologyService.processesSelectedValues.get(column) !== undefined
+                && this.ontologyService.processesSelectedValues.get(column) !== null
+                && this.ontologyService.processesSelectedValues.get(column).length > 0;
     return bool;
   }
 
@@ -275,11 +315,21 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
     const ontologyProcessInformationDialogData = new OntologyProcessInformationDialogData();
     ontologyProcessInformationDialogData.process = process;
 
-    this.dialog.open(ProcessInformationComponent, {
+    const dialogref =  this.dialog.open(OntologyProcessInformationComponent, {
       disableClose: false,
       data: ontologyProcessInformationDialogData,
       width: '950px',
       height: '650px',
+    });
+    dialogref.afterClosed().subscribe(() => {
+      /*
+        Update 14/09/2022
+        Verify url has a additional params
+        Change url after close the documentation's modal otherwise the brower reload the documentation's modal.
+      */
+      if (this.router.url.includes('?process=')) {
+        this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES]);
+      }
     });
   }
 

@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, Directive, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Directive, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ProcessCreateStudyDialogData } from 'src/app/models/dialog-data.model';
+import { StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
 import { LoadedGroup } from 'src/app/models/group.model';
 import { Process } from 'src/app/models/process.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
@@ -18,14 +18,12 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { UserService } from 'src/app/services/user/user.service';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 
-
 @Component({
-  selector: 'app-process-create-study',
-  templateUrl: './process-study-case-creation.component.html',
-  styleUrls: ['./process-study-case-creation.component.scss']
+  selector: 'app-study-case-creation',
+  templateUrl: './study-case-creation.component.html',
+  styleUrls: ['./study-case-creation.component.scss']
 })
-
-export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
+export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public createStudyForm: FormGroup;
   public groupList: LoadedGroup[];
   public referenceList: Study[];
@@ -51,8 +49,8 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private processService: ProcessService,
     private userService: UserService,
-    public dialogRef: MatDialogRef<ProcessStudyCaseCreationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ProcessCreateStudyDialogData) {
+    public dialogRef: MatDialogRef<StudyCaseCreationComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: StudyCaseCreateDialogData) {
     this.groupList = [];
     this.referenceList = [];
     this.disabledReference = false;
@@ -78,43 +76,10 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
         this.referenceList.push(ref);
       });
       this.disabledReference = true;
-      this.studyCaseDataService.getAuthorizedStudiesForProcess(
-        this.data.process.processId, this.data.process.repositoryId).subscribe(studies => {
-        studies.forEach(study => {
-          this.referenceList.push(study);
-        });
-        this.disabledReference = false;
-        this.referenceDataService.getReferencesGenStatusByName(this.data.process.referenceList).subscribe(refStatuses => {
-          refStatuses.forEach(refStatus => {
-            if (refStatus.referenceGenerationStatus === 'RUNNING'
-              || refStatus.referenceGenerationStatus === 'PENDING') { // Reference generation in progress
-              const refRunning = this.referenceList.filter(x => `${x.repository}.${x.process}.${x.name}` === refStatus.referenceName);
-              if (refRunning !== null && refRunning !== undefined && refRunning.length > 0) {
-                refRunning[0].isRegeneratingReference = true;
-              }
-            }
-          });
-          }, errorReceived => {
-            const error = errorReceived as SoSTradesError;
-            this.onCancelClick();
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.snackbarService.showError('Error loading references status list for form : ' + error.description);
-            }
-            this.isLoading = false;
-          });
 
-      }, errorReceived => {
-        const error = errorReceived as SoSTradesError;
-        this.onCancelClick();
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.snackbarService.showError('Error loading studies list for form : ' + error.description);
-        }
-        this.isLoading = false;
-      });
+
+      // Add function that get refences of process
+      this.getReferences( this.data.process.processId, this.data.process.repositoryId);
     }
 
     this.userService.getCurrentUser().subscribe(currentUser => {
@@ -219,20 +184,7 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
           this.referenceList.push(usecase);
       });
     }
-    // Get study referenced push on the refence list
-    const studyList: Study[] = [];
-    this.studyCaseDataService.getAuthorizedStudiesForProcess(this.process.processId, this.process.repositoryId).subscribe(studies => {
-      studies.forEach(study => {
-        studyList.push(study);
-      });
-      // Sort list of study by creation date
-      studyList.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
-
-      // Concat refenceList with studyList to display in first empty study and usecase and then the studyList sorted by creation date.
-      this.referenceList = this.referenceList.concat(studyList);
-
-      this.disabledReference = false;
-    });
+    this.getReferences(this.process.processId, this.process.repositoryId);
   }
 
   public hasError = (controlName: string, errorName: string) => {
@@ -280,4 +232,35 @@ export class ProcessStudyCaseCreationComponent implements OnInit, OnDestroy {
         ||  process.processName.toLowerCase().indexOf(search) > -1 || process.repositoryId.toLowerCase().indexOf(search) > -1)
     );
   }
+
+  /**
+   * Create 12/09/2022
+   *  Get study referenced by process ordered by most recent creation date.
+   *
+   */
+
+  private getReferences(processId, repositoryId) {
+    const studyList: Study[] = [];
+    this.studyCaseDataService.getAuthorizedStudiesForProcess(processId, repositoryId).subscribe(studies => {
+      studies.forEach(study => {
+        studyList.push(study);
+      });
+      // Sort list of study by creation date
+      studyList.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+
+      // Concat refenceList with studyList to display in first empty study and usecase and then the studyList sorted by creation date.
+      this.referenceList = this.referenceList.concat(studyList);
+
+      this.disabledReference = false;
+     }, errorReceived => {
+       const error = errorReceived as SoSTradesError;
+       this.onCancelClick();
+       if (error.redirect) {
+         this.snackbarService.showError(error.description);
+       } else {
+         this.snackbarService.showError('Error loading studies list for form : ' + error.description);
+       }
+       this.isLoading = false;
+     });
+ }
 }

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ProcessCreateStudyDialogData } from 'src/app/models/dialog-data.model';
+import { StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
 import { Process } from 'src/app/models/process.model';
 import { StudyCasePayload } from 'src/app/models/study.model';
-import { ProcessStudyCaseCreationComponent } from 'src/app/modules/process/process-study-case-creation/process-study-case-creation.component';
+import { StudyCaseCreationComponent } from 'src/app/modules/study-case/study-case-creation/study-case-creation.component';
 import { AppDataService } from '../../app-data/app-data.service';
 import { SocketService } from '../../socket/socket.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
@@ -29,16 +29,16 @@ export class StudyCaseCreationService {
   }
 
   creatStudyCaseFromProcess(process: Process) {
-    const dialogData: ProcessCreateStudyDialogData = new ProcessCreateStudyDialogData();
+    const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
     dialogData.process = process;
 
-    const dialogRef = this.dialog.open(ProcessStudyCaseCreationComponent, {
+    const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
       disableClose: true,
       data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      const resultCreateStudyRef = result as ProcessCreateStudyDialogData;
+      const resultCreateStudyRef = result as StudyCaseCreateDialogData;
 
       if ((resultCreateStudyRef !== null) && (resultCreateStudyRef !== undefined)) {
 
@@ -69,14 +69,14 @@ export class StudyCaseCreationService {
   }
 
   creatStudyCaseFromStudyManagement() {
-    const dialogData: ProcessCreateStudyDialogData = new ProcessCreateStudyDialogData();
-    const dialogRef = this.dialog.open(ProcessStudyCaseCreationComponent, {
+    const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
+    const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
       disableClose: true,
       data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      const resultCreateStudyRef = result as ProcessCreateStudyDialogData;
+      const resultCreateStudyRef = result as StudyCaseCreateDialogData;
 
       if ((resultCreateStudyRef !== null) && (resultCreateStudyRef !== undefined)) {
 

@@ -1,6 +1,5 @@
-mat-drawer-content {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.container-workspace {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
 }

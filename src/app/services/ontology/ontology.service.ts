@@ -99,7 +99,7 @@ export class OntologyService extends DataHttpService {
   getOntologyModelsStatus(): Observable<OntologyModelStatus[]> {
     const modelStatusList: OntologyModelStatus[] = [];
 
-    return this.http.get<OntologyModelStatus[]>(`${this.apiRoute}/models/status`).pipe(map(
+    return this.http.get<OntologyModelStatus[]>(`${this.apiRoute}/full_models_list`).pipe(map(
       modS => {
         modS.forEach(model => {
           const newModelStatus = OntologyModelStatus.Create(model);
