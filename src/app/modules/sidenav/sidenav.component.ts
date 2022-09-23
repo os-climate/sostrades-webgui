@@ -15,6 +15,7 @@ import { SocketService } from 'src/app/services/socket/socket.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+import { AppDataService } from 'src/app/services/app-data/app-data.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -35,6 +36,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
   constructor(
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
+    public appDataService: AppDataService,
     private headerService: HeaderService,
     private socketService: SocketService,
     private snackbarService: SnackbarService,
@@ -96,7 +98,12 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
     }
 
-
+  onClickSwitchEditStudy(event: any)
+  {
+    event.stopPropagation();
+    event.preventDefault();
+    this.appDataService.loadStudyInEditionMode()
+  }
 
   closeStudy(event: any) {
     event.stopPropagation();

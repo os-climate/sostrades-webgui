@@ -63,6 +63,7 @@ export class AppDataService extends DataHttpService {
 
         // Request serveur for study case data
         this.studyCaseMainService.createStudy(studyInformation, false).subscribe(loadedStudy => {
+
           // after creation, load the study into post processing
           // must be done after the end of the creation, if not the loading cannot be done
           this.loadedStudy = loadedStudy as LoadedStudy;
@@ -141,31 +142,17 @@ export class AppDataService extends DataHttpService {
     this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe(allocation => {
 
       if (allocation.status === StudyCaseAllocationStatus.DONE) {
-        this.studyCaseMainService.loadStudy(studyId, false, false).subscribe(resultloadNormal => {
-          const loadedStudy = resultloadNormal as LoadedStudy;
-          if (loadedStudy.loadStatus === LoadStatus.LOADED)
+        this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(resultloadReadOnly => {
+          const loadedStudy = resultloadReadOnly as LoadedStudy;
+          if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE)
           {
-            //load the post processings then load directly the study
-            this.launchLoadStudy(false, loadedStudy, true, isStudyLoaded, true, false);
+            //load read only mode
+            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, true, isStudyLoaded, true, false, true);
           }
-          else {
-            this.studyCaseMainService.loadtudyInReadOnlyMode(studyId).subscribe(resultloadReadOnly => {
-
-              if (resultloadReadOnly !== null && resultloadReadOnly !== undefined) {
-                const loadedReadOnlyStudy = resultloadReadOnly as LoadedStudy;
-                //load read only mode,
-                this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedReadOnlyStudy, true, isStudyLoaded, true, false, true);
-                // then launch load study with timeout in background
-                this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, false, false);
-              }
-              else {
-                // load the study normally with timeout and post processings
-              this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false);
-              }
-            }, error=>{
-              // load the study normally with timeout and post processings
-              this.launchLoadStudy(true, loadedStudy, true, isStudyLoaded, true, false);
-            });
+          else
+          {
+            const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
+            this.launchLoadStudy(studyNeedsLoading, loadedStudy, true, isStudyLoaded, true, false);
           }
         }, errorReceived => {
           this.loggerService.log(errorReceived);
@@ -185,6 +172,43 @@ export class AppDataService extends DataHttpService {
     });
 
   }
+
+  /**
+   * Load the current study without read only mode (open in normal mode)
+   */
+  loadStudyInEditionMode(){
+    const studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
+    const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
+    const isStudyLoaded = (isLoaded:boolean)=>{};
+    
+    // Display loading message
+    this.loadingDialogService.showLoading(`Switching study case ${studyName} to edition mode`);
+    // register loading study
+    this.studyCaseDataService.setStudyToLoad(studyId);
+
+    this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe(allocation => {
+
+      if (allocation.status === StudyCaseAllocationStatus.DONE) {
+        this.studyCaseMainService.loadStudy(studyId, true, false).subscribe(resultloadStudy => {
+          const loadedStudy = resultloadStudy as LoadedStudy;
+            const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
+            this.launchLoadStudy(studyNeedsLoading, loadedStudy, true, isStudyLoaded, true, false);
+          
+        }, errorReceived => {
+          this.loggerService.log(errorReceived);
+          this.snackbarService.showError('Error loading study\n' + errorReceived.description);
+          this.loadingDialogService.closeLoading();
+        });
+      } else {
+        this.snackbarService.showError('Study case allocation failed');
+        this.loadingDialogService.closeLoading();
+      }
+    }, errorReceived => {
+      this.snackbarService.showError('Error loading study\n' + errorReceived.description);
+      this.loadingDialogService.closeLoading();
+    });
+
+}
 
   /**
    * launch the Loading of the study if needed, and in parallel launch the loading of post processings then finalize the loading with logs, ontology, validation...

@@ -43,7 +43,7 @@ export class StudyCaseLoadingService {
      * @param getNotification retreive the notifications
      * @param isStudyCreated function to do after the study is created
      * @param showMsgInPopup show loading msg in a popup
-     * @param isFromCreateStudy if it is after creation, apdate stydumanagement data
+     * @param isFromCreateStudy if it is after creation, update study management data
      * @param loadOnlyOntology load only the ontology and not the logs, validation and notifications, 
      */
     public finalizeLoadedStudyCase(loadedStudy: LoadedStudy, getNotification: boolean, isStudyCreated: any,

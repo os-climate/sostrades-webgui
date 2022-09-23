@@ -3,6 +3,7 @@ import { baseStudyCaseStartCalculation } from './base/base-study-case-calculatio
 import { baseStudyCaseDeletion } from './base/base-study-case-delete';
 import { baseStudyCaseEdition } from './base/base-study-case-edit';
 import { baseStudyCaseCreation } from './base/base-study-case-create-study';
+import { baseStudyCaseSwitchToEditionMode } from './base/base-study-case-switch-to-edition-mode';
 
 const studyNameEmpty = 'Test_witness_empty_from_study_management';
 const studyNameUsecase = 'Test_witness_usecase_from_study_management';
@@ -56,6 +57,7 @@ test('Test Create Study from process-> Test_creation empty, usecase, copie', asy
 test('Test Edition Study -> Test_edition + Test_calculation', async ({ page }) => {
 
   await baseStudyCaseEdition(page, studyNameCopie, editStudyName, studyGroup, editStudyGroup);
+  await baseStudyCaseSwitchToEditionMode(page);
   await baseStudyCaseStartCalculation(page, editStudyName);
 
 });
