@@ -34,7 +34,7 @@ export async function baseStudyCaseCreation(
     }
 
     // Verify modal study creation
-    const title = page.locator('app-process-create-study');
+    const title = page.locator('app-study-case-creation');
     await expect(title).toHaveText(/Create new study/, { timeout: 15000 });
 
     // Fill Study Name
