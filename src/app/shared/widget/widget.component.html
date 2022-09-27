@@ -89,6 +89,17 @@
         >
         </app-file-spreadsheet>
       </ng-template>
+
+      <ng-template ngSwitchCase="processBuilder" class="fullsize">
+        <app-process-builder
+          class="fullsize"
+          [nodeData]="nodeData"
+          [discipline]="discipline"
+          [namespace]="namespace"
+          (valueChanged)="onInputChange($event)"
+        >
+        </app-process-builder>
+      </ng-template>
     </div>
   </div>
 </div>

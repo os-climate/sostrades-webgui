@@ -157,6 +157,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
   reference: string;
   studyId: number;
   process: Process;
+  selectProcessOnly: boolean;
 
   public constructor() {
     super();
@@ -165,6 +166,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
     this.reference = null;
     this.studyId = null;
     this.process = null;
+    this.selectProcessOnly = false;
   }
 }
 

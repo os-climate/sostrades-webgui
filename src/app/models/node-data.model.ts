@@ -11,7 +11,8 @@ export enum WidgetType {
   LABEL_WIDGET = 'label',
   NO_WIDGET = '',
   FILE_SPREADSHEET_WIDGET = 'fileSpreadsheet',
-  BOOLEAN_WIDGET = 'boolean'
+  BOOLEAN_WIDGET = 'boolean',
+  PROCESS_BUILDER = 'processBuilder'
 }
 
 export enum IoType {
@@ -27,6 +28,100 @@ export enum ValueType {
   OPTIONAL = 'Optional value'
 }
 
+export enum ProcessBuilderAttribute {
+  PROCESS_REPOSITORY = 'process_repository',
+  PROCESS_NAME = 'process_name',
+  USECASE_INFO = 'usecase_info',
+  USECASE_INFO_NAME = 'usecase_name',
+  USECASE_INFO_TYPE = 'usecase_type',
+  USECASE_INFO_IDENTIFIER = 'usecase_identifier',
+  USECASE_DATA = 'usecase_data'
+}
+
+export class ProcessBuilderData {
+  public processRepositoryIdentifier: string;
+  public processIdentifier: string;
+  public usecaseInfoName: string;
+  public usecaseInfoType: string;
+  public usecaseInfoIdentifier: number;
+
+  /**
+   * Constructor
+   * @param repositoryIdentifier name of the process repository to display at startup (can be null)
+   * @param processIdentifier name of the process to display at startup (can be null)
+   * @param usecaseInfoName name of the data source to display at startup
+   * @param usecaseInfoType type of the data source to display at startup
+   * @param usecaseInfoIdentifier identifier of the data source (if type is 'Study') to display at startup
+   */
+  constructor(
+    repositoryIdentifier: string,
+    processIdentifier: string,
+    usecaseInfoName: string,
+    usecaseInfoType: string,
+    usecaseInfoIdentifier: number) {
+      this.processRepositoryIdentifier = repositoryIdentifier;
+      this.processIdentifier = processIdentifier;
+      this.usecaseInfoName = usecaseInfoName;
+      this.usecaseInfoType = usecaseInfoType;
+      this.usecaseInfoIdentifier = usecaseInfoIdentifier;
+  }
+
+  /**
+   * Build a ProcessBuilderData instance regarding input value data
+   * @param data json dictionary with attended values
+   * @returns ProcessBuilderData
+   */
+  public static Create(data: {}): ProcessBuilderData {
+    let repositoryIdentifier = '';
+    let processIdentifier = '';
+    let usecaseDataName = '';
+    let usecaseDataType = '';
+    let usecaseDataIdentifier = -1;
+
+    if ((data !== null) && (data !== undefined)) {
+      if (ProcessBuilderAttribute.PROCESS_REPOSITORY in data) {
+        repositoryIdentifier = data[ProcessBuilderAttribute.PROCESS_REPOSITORY];
+      }
+
+      if (ProcessBuilderAttribute.PROCESS_NAME in data) {
+        processIdentifier = data[ProcessBuilderAttribute.PROCESS_NAME];
+      }
+
+      if (ProcessBuilderAttribute.USECASE_INFO in data) {
+        if (ProcessBuilderAttribute.USECASE_INFO_NAME in data[ProcessBuilderAttribute.USECASE_INFO]) {
+          usecaseDataName = data[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_NAME];
+        }
+
+        if (ProcessBuilderAttribute.USECASE_INFO_TYPE in data[ProcessBuilderAttribute.USECASE_INFO]) {
+          usecaseDataType = data[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_TYPE];
+        }
+
+        if (ProcessBuilderAttribute.USECASE_INFO_IDENTIFIER in data[ProcessBuilderAttribute.USECASE_INFO]) {
+          usecaseDataIdentifier = data[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_IDENTIFIER];
+        }
+      }
+    }
+    return new ProcessBuilderData(repositoryIdentifier, processIdentifier, usecaseDataName, usecaseDataType, usecaseDataIdentifier);
+  }
+
+  /**
+   * Convert object to attended node data value dictionnary
+   * @returns dictonary
+   */
+   public toNodeDataValue(): {} {
+    const result = {};
+
+    result[ProcessBuilderAttribute.PROCESS_REPOSITORY] = this.processRepositoryIdentifier;
+    result[ProcessBuilderAttribute.PROCESS_NAME] = this.processIdentifier;
+    result[ProcessBuilderAttribute.USECASE_INFO] = {};
+    result[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_NAME] = this.usecaseInfoName;
+    result[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_TYPE] = this.usecaseInfoType;
+    result[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_IDENTIFIER] = this.usecaseInfoIdentifier;
+    result[ProcessBuilderAttribute.USECASE_DATA] = {};
+
+    return result;
+  }
+}
 export class NodeData {
 
   public variableName: string;
@@ -98,7 +193,7 @@ export class NodeData {
         jsonData[NodeDataAttributes.NUMERICAL],
         jsonData[NodeDataAttributes.METAINPUT],
         jsonData[NodeDataAttributes.OPTIONAL],
-        jsonData[NodeDataAttributes.CONNECTOR_DATA],
+        jsonData[NodeDataAttributes.CONNECTOR_INFO],
         DataframeDescriptor.Create(jsonData[NodeDataAttributes.DATAFRAME_DESCRIPTOR]),
         jsonData[NodeDataAttributes.DATAFRAME_EDITION_LOCKED],
         jsonData[NodeDataAttributes.DISCIPLINE_FULL_PATH_LIST],
@@ -170,6 +265,8 @@ export class NodeData {
   public updateWidgetType() {
     if (this.type === null || this.type === undefined) {
       this._widgetType = WidgetType.NO_WIDGET;
+    } else if (this.type === 'proc_builder_modal') {
+      this._widgetType = WidgetType.PROCESS_BUILDER;
     } else {
       if (this.type === 'string' || this.type === 'int' || this.type === 'float') {
         if (this.editable === true && this.ioType !== IoType.OUT) {
@@ -278,7 +375,7 @@ export enum NodeDataAttributes {
   NUMERICAL = 'numerical',
   METAINPUT = 'meta_input',
   OPTIONAL = 'optional',
-  CONNECTOR_DATA = 'connector_data',
+  CONNECTOR_INFO = 'connector_data',
   DATAFRAME_DESCRIPTOR = 'dataframe_descriptor',
   DATAFRAME_EDITION_LOCKED = 'dataframe_edition_locked',
   DISCIPLINE_FULL_PATH_LIST = 'discipline_full_path_list',

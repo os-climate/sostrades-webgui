@@ -305,7 +305,11 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
   createStudy(process: Process) {
     this.handleUnsavedChanges(changeHandled => {
       if (changeHandled) {
-        this.studyCreationService.creatStudyCaseFromProcess(process);
+        /**
+         * Changes 23/09/2022
+         * Give a process instance to have a pre-selected process the modal
+         */
+        this.studyCreationService.showCreateStudyCaseDialog(process);
       }
     });
   }

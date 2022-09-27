@@ -299,7 +299,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   createStudy() {
     this.handleUnsavedChanges(changeHandled => {
       if (changeHandled) {
-        this.studyCreationService.creatStudyCaseFromStudyManagement();
+        /**
+         * Changes 23/09/2022
+         * Call createStudyCase with 'null' as process to launch a non process intialized modal
+         */
+        this.studyCreationService.showCreateStudyCaseDialog(null);
         }
     });
   }

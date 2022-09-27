@@ -121,6 +121,7 @@ import { VisualisationInterfaceDiagramComponent } from './modules/visualisation/
 import { OntologyModelsInformationComponent } from './modules/ontology/ontology-models/ontology-models-information/ontology-models-information.component';
 import { OntologyProcessInformationComponent } from './modules/ontology/ontology-processes/ontology-process-information/ontology-process-information.component';
 import { StudyCaseCreationComponent } from './modules/study-case/study-case-creation/study-case-creation.component';
+import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
 
 registerLocaleData(fr);
 
@@ -218,6 +219,7 @@ registerLocaleData(fr);
     OntologyModelsInformationComponent,
     OntologyProcessInformationComponent,
     StudyCaseCreationComponent,
+    ProcessBuilderComponent,
   ],
   imports: [
     BrowserModule,
