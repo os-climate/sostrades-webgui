@@ -231,8 +231,8 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
             if (columnDataFrameDescriptor.columnRange !== undefined
               && columnDataFrameDescriptor.columnRange !== null
               && columnDataFrameDescriptor.columnRange.length > 0) {
-              if (!(parseInt(rec.newValue, 10) >= columnDataFrameDescriptor.columnRange[0]
-                && parseInt(rec.newValue, 10) <= columnDataFrameDescriptor.columnRange[1])) {
+              if (!(parseFloat(rec.newValue) >= columnDataFrameDescriptor.columnRange[0]
+                && parseFloat(rec.newValue) <= columnDataFrameDescriptor.columnRange[1])) {
                 if (!(columnName in errorRecords)) {
                   errorRecords[columnName] = new JSpreadSheetValueError();
                 }
