@@ -477,10 +477,8 @@ export class StudyCaseDataService extends DataHttpService {
         setTimeout(() => {
           this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
         }, 2000);
-      } else if (allocation.status === StudyCaseAllocationStatus.ERROR){
-        throw("An error occured while submitting Study allocation. " + allocation.message);
-      }
-       else {
+      } 
+      else {
         allocationObservable.next(allocation);
       }
 
