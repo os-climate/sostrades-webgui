@@ -429,7 +429,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           }
 
           // Call API to delete study or studies
-          this.studyCaseMainService.deleteStudy(studies).subscribe(() => {
+          this.studyCaseDataService.deleteStudy(studies).subscribe(() => {
             /*
             Update 13/09/2022
             Reload favorite study in welcome page when a study is deleted.
