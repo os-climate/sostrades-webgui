@@ -49,7 +49,8 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private createStudytimeout(studyInformation: StudyCaseInitialSetupPayload, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>) {
-    return this.http.post(this.apiRoute, JSON.stringify(studyInformation), this.options).pipe(map(
+    const url = `${this.apiRoute}/${studyInformation.studyCaseIdentifier}`;
+    return this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
@@ -83,7 +84,7 @@ export class StudyCaseMainService extends MainHttpService {
       new_study_name: studyName,
       group_id: groupId
     };
-    const url = `${this.apiRoute}/${studyId}`;
+    const url = `${this.apiRoute}/${studyId}/edit`;
     return this.http.post<LoadedStudy>(url, payload, this.options).pipe(map(
       response => {
         return LoadedStudy.Create(response);
