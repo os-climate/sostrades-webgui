@@ -41,7 +41,7 @@ await buttonOk.click();
 
 // Verify deletion is done
 await Promise.all([
-    page.waitForResponse(resp => resp.url().includes('/api/main/study-case') && resp.status() === 200, { timeout: 30000 }),
+    page.waitForResponse(resp => resp.url().includes('/api/data/study-case') && resp.status() === 200, { timeout: 30000 }),
 ]);
 
 }
