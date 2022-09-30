@@ -141,6 +141,7 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
               <button
+                [id]="'btn-process-documentation-'+element.processName + '-'+element.repositoryName"
                 mat-icon-button
                 color="accent"
                 [matTooltip]="element.processName + ' information'"

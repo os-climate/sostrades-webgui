@@ -15,6 +15,8 @@ import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { ColumnName } from 'src/app/models/column-name.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
+import { Routing } from 'src/app/models/routing.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -56,7 +58,8 @@ export class StudyCaseDataService extends DataHttpService {
   constructor(
     private http: HttpClient,
     private ontologyService: OntologyService,
-    private location: Location) {
+    private location: Location,
+    private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
 
@@ -334,6 +337,27 @@ export class StudyCaseDataService extends DataHttpService {
     return result;
   }
 
+  deleteStudy(studies: Study[]): Observable<void> {
+    const studiesIdList = [];
+    studies.forEach(s => {
+      studiesIdList.push(s.id);
+    });
+    const deleteOptions = {
+      headers: this.httpHeaders,
+      body: JSON.stringify({ studies: studiesIdList })
+    };
+    const url = `${this.apiRoute}/delete`;
+    return this.http.delete(url, deleteOptions).pipe(map(
+      response => {
+        // Check user removed currentLoadedStudy
+        if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
+          if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {
+            this.onStudyCaseChange.emit(null);
+            this.router.navigate([Routing.STUDY_MANAGEMENT]);
+          }
+        }
+      }));
+  }
 
   //#regions logs
 
@@ -476,7 +500,8 @@ export class StudyCaseDataService extends DataHttpService {
         setTimeout(() => {
           this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
         }, 2000);
-      } else {
+      } 
+      else {
         allocationObservable.next(allocation);
       }
 

@@ -167,6 +167,9 @@ onCreate() {
 
   onDelete(news: News) {
     const validationDialogData = new ValidationDialogData();
+    if (news.message.length >= 100) {
+      news.message = news.message.slice(0, 100) + '...';
+    }
     validationDialogData.title = 'Confirm deletion';
     validationDialogData.message = `You are about to delete the message '${news.message}'.\nThis action cannot be reverted, are you sure you want to proceed ?`;
     validationDialogData.buttonOkText = 'Delete';

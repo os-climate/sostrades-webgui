@@ -122,6 +122,7 @@
           >
     
           <button
+          [id]="'btn-parameter-documentation-' + element.label"
           mat-icon-button
           class="button-in-cell"
           color="accent"
@@ -137,7 +138,7 @@
             mat-header-row
             *matHeaderRowDef="displayedColumns; sticky: true"
           ></tr>
-          <tr mat-row class="table-row" *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr mat-row class="table-row" [id]="'row-parameters-' + row.label" *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
       </div>
     </div>

@@ -8,18 +8,21 @@
 </div>
 <div class="flex-container" [formGroup]="createStudyForm" *ngIf="!isLoading">
   <div mat-dialog-title>
-    <h1 style="margin-bottom: 10px !important; text-align: center">
+    <h1 style="margin-bottom: 10px !important; text-align: center" *ngIf="!data.selectProcessOnly">
       Create new study
+    </h1>
+    <h1 style="margin-bottom: 10px !important; text-align: center" *ngIf="data.selectProcessOnly">
+      Select process & source data
     </h1>
   </div>
 
-  <div mat-dialog-content>
-    <mat-form-field style="margin-top: 1px !important">
+  <div mat-dialog-content style="margin-top: 1px !important; padding-top: 10px;">
+    <mat-form-field  *ngIf="!data.selectProcessOnly">
         <mat-label>Study name</mat-label>
-        <input 
-          matInput 
-          id='studyName' 
-          formControlName="studyName" 
+        <input
+          matInput
+          id='studyName'
+          formControlName="studyName"
           placeholder="Study name"
           />
         <mat-error *ngIf="hasError('studyName', 'required')"
@@ -36,13 +39,13 @@
     <mat-form-field>
       <mat-select
       id='process'
-      formControlName="processId"  
-      placeholder="Process name" 
+      formControlName="processId"
+      placeholder="Process name"
       (selectionChange)="onProcessChange($event.value)"
       #singleSelect>
         <mat-option>
           <ngx-mat-select-search
-          [formControl]="processFiltered" 
+          [formControl]="processFiltered"
           placeholderLabel="Find process..."
           noEntriesFoundLabel="No matching process found"
           >
@@ -53,7 +56,7 @@
             <div style="font-size: 11px;">{{process.repositoryName}}</div>
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="hasError('groupId', 'required')">
+      <mat-error *ngIf="hasError('processId', 'required')">
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -107,7 +110,7 @@
       </mat-select>
       <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;" *ngIf="disabledReference">Loading reference</mat-hint>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field *ngIf="!data.selectProcessOnly">
       <mat-select id="group" placeholder="Group name" formControlName="groupId">
         <mat-option
           *ngFor="let group of groupList"

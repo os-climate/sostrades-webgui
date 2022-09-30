@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProcessInformationComponent } from './process-information.component';
+import { ProcessBuilderComponent } from './process-builder.component';
 
-describe('ProcessInformationComponent', () => {
-  let component: ProcessInformationComponent;
-  let fixture: ComponentFixture<ProcessInformationComponent>;
+describe('ProcessBuilderComponent', () => {
+  let component: ProcessBuilderComponent;
+  let fixture: ComponentFixture<ProcessBuilderComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProcessInformationComponent ]
+      declarations: [ ProcessBuilderComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProcessInformationComponent);
+    fixture = TestBed.createComponent(ProcessBuilderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
