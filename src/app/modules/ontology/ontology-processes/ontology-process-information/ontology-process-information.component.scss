@@ -17,13 +17,19 @@
 }  
   // table CSS
 .mat-accordion{
-  border-bottom: #d3d3d3 solid 1px;
+    border-bottom: #d3d3d3 solid 1px;
+  }
+
+.panel-open {
+    max-height: 250px; 
+    overflow-y: auto;
 }
+
 .mat-expansion-panel {
   box-shadow: none;
   }
 ::ng-deep.mat-expansion-indicator {
-    margin-right: 15px;
+    margin-right: 5px;
 }
 .mat-expansion-panel-header {
     display: flex;

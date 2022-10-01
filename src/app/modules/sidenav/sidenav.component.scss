@@ -24,8 +24,18 @@
   background: transparent;
   border-color: transparent;
   font-size: 14px;
+  
 }
 
+.edit-button {
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  background-color: white;
+  color: #0b78b8;
+  align-self: center;
+  height: 26px;
+  line-height: unset;
+}
 
 .treeview-container {
   flex-grow: 1;

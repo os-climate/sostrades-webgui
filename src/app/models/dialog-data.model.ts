@@ -72,18 +72,6 @@ export class StudyCaseLoadDialogData extends AbstractDialogData {
   }
 }
 
-export class StudyCaseCreateDialogData extends AbstractDialogData {
-  studyName: string;
-  repositoryName: string;
-  processName: string;
-
-  public constructor() {
-    super();
-    this.studyName = '';
-    this.repositoryName = '';
-    this.processName = '';
-  }
-}
 
 export class StudyCaseCreateReferenceDialogData extends AbstractDialogData {
   studyName: string;
@@ -161,7 +149,7 @@ export class CoeditionDialogData extends AbstractDialogData {
   }
 }
 
-export class ProcessCreateStudyDialogData extends AbstractDialogData {
+export class StudyCaseCreateDialogData extends AbstractDialogData {
 
   studyName: string;
   studyType: string;
@@ -169,6 +157,7 @@ export class ProcessCreateStudyDialogData extends AbstractDialogData {
   reference: string;
   studyId: number;
   process: Process;
+  selectProcessOnly: boolean;
 
   public constructor() {
     super();
@@ -177,6 +166,7 @@ export class ProcessCreateStudyDialogData extends AbstractDialogData {
     this.reference = null;
     this.studyId = null;
     this.process = null;
+    this.selectProcessOnly = false;
   }
 }
 

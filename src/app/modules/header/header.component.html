@@ -46,9 +46,9 @@
       </mat-menu>
 
       <mat-menu #Ontology="matMenu">
-        <button mat-menu-item (click)="onClickModelsStatus()">Models</button>
+        <button mat-menu-item id="models-menu-button" (click)="onClickModelsStatus()">Models</button>
         <button mat-menu-item id="processes-menu-button" (click)="onClickOntologyProcesses()">Processes</button>
-        <button mat-menu-item (click)="onClickOntologyParameters()">Parameters</button>
+        <button mat-menu-item id="parameters-menu-button"(click)="onClickOntologyParameters()">Parameters</button>
        
      </mat-menu>
     </div>

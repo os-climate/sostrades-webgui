@@ -11,14 +11,12 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { Router } from '@angular/router';
 import { Routing } from 'src/app/models/routing.model';
-
-
 @Component({
-  selector: 'app-process-information',
-  templateUrl: './process-information.component.html',
-  styleUrls: ['./process-information.component.scss']
+  selector: 'app-ontology-process-information',
+  templateUrl: './ontology-process-information.component.html',
+  styleUrls: ['./ontology-process-information.component.scss']
 })
-export class ProcessInformationComponent implements OnInit {
+export class OntologyProcessInformationComponent implements OnInit {
 
   public markdownDocumentation: MardownDocumentation[];
   public hasDocumentation: boolean;
@@ -33,7 +31,7 @@ export class ProcessInformationComponent implements OnInit {
 
 
   constructor(
-    public dialogRef: MatDialogRef<ProcessInformationComponent>,
+    public dialogRef: MatDialogRef<OntologyProcessInformationComponent>,
     public processService: ProcessService,
     private snackbarService: SnackbarService,
     private headerService: HeaderService,
@@ -127,4 +125,5 @@ export class ProcessInformationComponent implements OnInit {
     this.headerService.changeIndexTab(1);
     this.router.navigate([Routing.ONTOLOGY, Routing.MODELS], {queryParams: {model: `${model}`}});
   }
+
 }

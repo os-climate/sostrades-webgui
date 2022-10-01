@@ -299,7 +299,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   createStudy() {
     this.handleUnsavedChanges(changeHandled => {
       if (changeHandled) {
-        this.studyCreationService.creatStudyCaseFromStudyManagement();
+        /**
+         * Changes 23/09/2022
+         * Call createStudyCase with 'null' as process to launch a non process intialized modal
+         */
+        this.studyCreationService.showCreateStudyCaseDialog(null);
         }
     });
   }
@@ -425,7 +429,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           }
 
           // Call API to delete study or studies
-          this.studyCaseMainService.deleteStudy(studies).subscribe(() => {
+          this.studyCaseDataService.deleteStudy(studies).subscribe(() => {
+            /*
+            Update 13/09/2022
+            Reload favorite study in welcome page when a study is deleted.
+            That's prevents the display of all studies after a deletion
+            */
+            if (this.getOnlyFavoriteStudy) {
+              this.loadStudyManagementData();
+            }
             // Update table data source
             this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData.filter(
               x => !studies.map(s => s.id).includes(x.id));

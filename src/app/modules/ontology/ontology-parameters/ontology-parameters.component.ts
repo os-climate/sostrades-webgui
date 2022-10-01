@@ -1,10 +1,13 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ColumnName } from 'src/app/models/column-name.model';
 import { FilterDialogData, OntologyParameterInformationsDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
+import { Routing } from 'src/app/models/routing.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -16,14 +19,17 @@ import { OntologyParameterInformationsComponent } from '../ontology-parameter-in
   templateUrl: './ontology-parameters.component.html',
   styleUrls: ['./ontology-parameters.component.scss']
 })
-export class OntologyParametersComponent implements OnInit {
+export class OntologyParametersComponent implements OnInit, OnDestroy {
 
   public isLoading: boolean;
   public columnName = ColumnName;
   public hasLoadedParameters: boolean;
   public parameterCount: number;
-  public displayedColumns = ['id','label','nb_disciplines_using_parameter','parameterInfo'];
-  public columnsFilter = ['All columns','Parameter ID','Parameter Name'];
+  public fromParameterInformation: boolean;
+  private routerSubscription: Subscription;
+  private parameterToShowAtStartup: string;
+  public displayedColumns = ['id', 'label', 'nb_disciplines_using_parameter', 'parameterInfo'];
+  public columnsFilter = ['All columns', 'Parameter ID', 'Parameter Name'];
   public dataSourceParameters = new MatTableDataSource<OntologyParameter>();
 
   @Input() dashboard = true;
@@ -49,34 +55,60 @@ export class OntologyParametersComponent implements OnInit {
     private dialog: MatDialog,
     private elementRef: ElementRef,
     private snackbarService: SnackbarService,
+    private router: Router,
+    private route: ActivatedRoute,
     public ontologyService: OntologyService) {
     this.isLoading = false;
+    this.fromParameterInformation = false;
+    this.routerSubscription = null;
+    this.parameterToShowAtStartup = null;
     this.hasLoadedParameters = false;
     this.parameterCount = 0;
   }
 
   ngOnInit(): void {
-    
-    // Load data first time component initialised
-    if (this.ontologyService.parametersData === null
-      || this.ontologyService.parametersData === undefined
-      || this.ontologyService.parametersData.length === 0) {
-        this.hasLoadedParameters = false;
-        this.loadOntologyParametersList();
-    } else {
-      this.hasLoadedParameters = true;
-      this.dataSourceParameters = new MatTableDataSource<OntologyParameter>(this.ontologyService.parametersData);
-      this.dataSourceParameters.sortingDataAccessor = (item, property) => {
-        return typeof item[property] === 'string'
-          ? item[property].toLowerCase()
-          : item[property];
-      };
-      this.dataSourceParameters.sort = this.sort;
-      // Initialising filter with 'All columns'
-      this.onFilterChange();
-      this.isLoading = false;
+
+    if (this.routerSubscription === null) {
+
+      this.routerSubscription = this.route.queryParams.subscribe(params => {
+
+        // If parameter is defined has query parameter then we filter and mount the parameter model information
+        if (params.hasOwnProperty('parameter')) {
+          if (params.parameter !== null && params.parameter !== undefined) {
+            this.fromParameterInformation = true;
+            this.parameterToShowAtStartup = params.parameter;
+          }
+        }
+       // Load data first time component initialised
+        if (this.ontologyService.parametersData === null
+          || this.ontologyService.parametersData === undefined
+          || this.ontologyService.parametersData.length === 0) {
+            this.hasLoadedParameters = false;
+            this.loadOntologyParametersList();
+        } else {
+          this.hasLoadedParameters = true;
+          this.dataSourceParameters = new MatTableDataSource<OntologyParameter>(this.ontologyService.parametersData);
+          this.dataSourceParameters.sortingDataAccessor = (item, property) => {
+            return typeof item[property] === 'string'
+              ? item[property].toLowerCase()
+              : item[property];
+          };
+          this.dataSourceParameters.sort = this.sort;
+          // Initialising filter with 'All columns'
+          this.onFilterChange();
+          this.isLoading = false;
+          this.checkUrlToShowInformation();
+        }
+      });
     }
   }
+
+  ngOnDestroy(): void {
+    if (this.routerSubscription !== null) {
+      this.routerSubscription.unsubscribe();
+      this.routerSubscription = null;
+    }
+}
 
   loadOntologyParametersList() {
     this.isLoading = true;
@@ -96,7 +128,7 @@ export class OntologyParametersComponent implements OnInit {
             : item[property];
         };
         this.dataSourceParameters.sort = this.sort;
-        //sort parameters by ID
+        // sort parameters by ID
         this.dataSourceParameters.data.sort((a: any, b: any) => {
           if (a.id < b.id) {
               return -1;
@@ -109,6 +141,7 @@ export class OntologyParametersComponent implements OnInit {
         this.onFilterChange();
         this.isLoading = false;
         this.hasLoadedParameters = true;
+        this.checkUrlToShowInformation();
       },
       (errorReceived) => {
         const error = errorReceived as SoSTradesError;
@@ -127,6 +160,21 @@ export class OntologyParametersComponent implements OnInit {
 
 
   }
+  private checkUrlToShowInformation() {
+    if ((this.fromParameterInformation === true) && (this.parameterToShowAtStartup !== null)) {
+      const searchParameter = this.ontologyService.parametersData.find( parameter =>
+        parameter.label === this.parameterToShowAtStartup
+        );
+      if (searchParameter !== null && searchParameter !== undefined) {
+        this.parameterToShowAtStartup = null;
+        this.fromParameterInformation = false;
+        this.ontologyService.parametersFilter = searchParameter.label;
+        this.onFilterChange();
+        this.OpenParameterInfo(searchParameter);
+      }
+    }
+
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -142,13 +190,13 @@ export class OntologyParametersComponent implements OnInit {
         && this.ontologyService.parametersSelectedValues.size > 0) {
           this.dataSourceParameters.filter = ' ';
         }
-    this.parameterCount = this.dataSourceParameters.filteredData.length;
+      this.parameterCount = this.dataSourceParameters.filteredData.length;
   }
 
   onFilterChange() {
     this.dataSourceParameters.filterPredicate = (data: OntologyParameter, filter: string): boolean => {
       let isMatch = true;
-      if (filter.trim().length > 0){
+      if (filter.trim().length > 0) {
         switch (this.ontologyService.parametersColumnFiltered) {
           case 'Parameter Name':
             isMatch = data.label.trim().toLowerCase().includes(filter);
@@ -162,7 +210,7 @@ export class OntologyParametersComponent implements OnInit {
       }
       // Filter with selected values received by FilterDialogComponent
       this.ontologyService.parametersSelectedValues.forEach((values , key) => {
-        if (values.length > 0){
+        if (values.length > 0) {
           switch (key) {
             case ColumnName.ID:
               isMatch = isMatch && values.includes(data.id);
@@ -182,7 +230,7 @@ export class OntologyParametersComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
 
-    let filterDialog = new FilterDialogData();
+    const filterDialog = new FilterDialogData();
     filterDialog.possibleStringValues =  this.setPossibleValueByColumn(columnName);
     filterDialog.columnName = columnName;
 
@@ -217,7 +265,7 @@ export class OntologyParametersComponent implements OnInit {
   }
 
   private setPossibleValueByColumn(column: ColumnName): string[] {
-    let possibleStringValues = [];
+    const possibleStringValues = [];
     switch (column) {
       case ColumnName.ID:
         this.ontologyService.parametersData.forEach(param => {
@@ -238,23 +286,32 @@ export class OntologyParametersComponent implements OnInit {
       }
     }
 
-  public hasFilter(column: ColumnName): boolean{
-    let bool = this.ontologyService.parametersSelectedValues.get(column) !== undefined
-                && this.ontologyService.parametersSelectedValues.get(column) !== null 
-                && this.ontologyService.parametersSelectedValues.get(column).length > 0
+  public hasFilter(column: ColumnName): boolean {
+    const bool = this.ontologyService.parametersSelectedValues.get(column) !== undefined
+                && this.ontologyService.parametersSelectedValues.get(column) !== null
+                && this.ontologyService.parametersSelectedValues.get(column).length > 0;
     return bool;
   }
 
-  OpenParameterInfo(param:OntologyParameter){
-    const parameterDialogData: OntologyParameterInformationsDialogData = new OntologyParameterInformationsDialogData()
+  OpenParameterInfo(param: OntologyParameter) {
+    const parameterDialogData: OntologyParameterInformationsDialogData = new OntologyParameterInformationsDialogData();
     parameterDialogData.parameter = param;
-    
-    this.dialog.open(OntologyParameterInformationsComponent, {
+
+    const dialogref = this.dialog.open(OntologyParameterInformationsComponent, {
       disableClose: false,
-      width: '950px',
-      height: '650px',
+      width: '1000px',
       autoFocus: false,
       data: parameterDialogData
+    });
+    dialogref.afterClosed().subscribe(() => {
+      /*
+        Update 14/09/2022
+        Verify url has a additional params
+        Change url after close the documentation's modal otherwise the brower reload the documentation's modal.
+      */
+      if (this.router.url.includes('?parameter=')) {
+        this.router.navigate([Routing.ONTOLOGY, Routing.ONTOLOGY_PARAMETERS]);
+      }
     });
   }
 

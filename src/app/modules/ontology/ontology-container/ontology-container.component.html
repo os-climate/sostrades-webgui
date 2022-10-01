@@ -1,7 +1,15 @@
-<mat-drawer-container class="example-container" [hasBackdrop]=true>
-    <mat-drawer #drawer mode="side">Ontology Navigation</mat-drawer>
-    <mat-drawer-content>
-        <h2>Systems of Systems Trades Ontology</h2>
-        <button mat-raised-button (click)="drawer.toggle()">Toggle drawer</button>
-    </mat-drawer-content>
-  </mat-drawer-container>
+<mat-tab-group class="container-workspace"  [(selectedIndex)]="index" (selectedTabChange)="onSelectedTabChange($event)">
+    <mat-tab label="{{ontologyMainTitle}}">
+      <app-ontology-main *ngIf="showOntolgyMain "></app-ontology-main>
+    </mat-tab>
+    <mat-tab label="{{modelsStatusTitle}}">
+      <app-ontology-models *ngIf="showModelStatus"></app-ontology-models>
+    </mat-tab>
+    <mat-tab label="{{processesTitle}}">
+      <app-ontology-processes [dashboard]="false"  *ngIf="showProcessManagement"></app-ontology-processes>
+    </mat-tab>
+    <mat-tab label="{{parametersTitle}}">
+      <app-ontology-parameters [dashboard]="false"  *ngIf="showOntologyparameters"></app-ontology-parameters>
+    </mat-tab>
+  </mat-tab-group>
+  
