@@ -23,7 +23,7 @@ test('Test loading -> Witness Full', async ({ page }) => {
 
   // Verifying that all nodes are presents in the page
   await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 60000 });
+    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
   }));
 });
 
@@ -49,7 +49,7 @@ test('Test loading -> Witness Full', async ({ page }) => {
 //   }));
 // });
 
-test('Test loading -> BC Product Development Strategy', async ({ page }) => {
+test.only('Test loading -> BC Product Development Strategy', async ({ page }) => {
   const studyName = 'test_load_bsl';
   await baseStudyCaseLoading(page, 'group_test_e2e', studyName);
 
@@ -67,7 +67,7 @@ test('Test loading -> BC Product Development Strategy', async ({ page }) => {
 
   // Verifying that all nodes are presents in the page
   await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 60000 });
+    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
   }));
 });
 
@@ -94,11 +94,11 @@ test('Test loading by click on title-> Witness Full', async ({ page }) => {
 
   // Verifying that all nodes are presents in the page
   await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 60000 });
+    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
   }));
 });
 
-test('Test loading  by click on title-> BC Product Development Strategy', async ({ page }) => {
+test.only('Test loading  by click on title-> BC Product Development Strategy', async ({ page }) => {
   const studyName = 'test_load_bsl';
   await baseStudyCaseLoading(page, 'group_test_e2e', studyName, false);
 
@@ -116,6 +116,6 @@ test('Test loading  by click on title-> BC Product Development Strategy', async 
 
   // Verifying that all nodes are presents in the page
   await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 60000 });
+    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
   }));
 });
