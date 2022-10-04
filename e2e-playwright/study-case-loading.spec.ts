@@ -49,7 +49,7 @@ test('Test loading -> Witness Full', async ({ page }) => {
 //   }));
 // });
 
-test.only('Test loading -> BC Product Development Strategy', async ({ page }) => {
+test('Test loading -> BC Product Development Strategy', async ({ page }) => {
   const studyName = 'test_load_bsl';
   await baseStudyCaseLoading(page, 'group_test_e2e', studyName);
 
@@ -98,7 +98,7 @@ test('Test loading by click on title-> Witness Full', async ({ page }) => {
   }));
 });
 
-test.only('Test loading  by click on title-> BC Product Development Strategy', async ({ page }) => {
+test('Test loading  by click on title-> BC Product Development Strategy', async ({ page }) => {
   const studyName = 'test_load_bsl';
   await baseStudyCaseLoading(page, 'group_test_e2e', studyName, false);
 
