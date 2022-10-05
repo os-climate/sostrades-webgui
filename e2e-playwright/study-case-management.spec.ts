@@ -23,16 +23,44 @@ const editStudyGroup = 'All users';
  * Test creation from study management page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from study management -> Test_creation empty, usecase, copie', async ({ page }) => {
+ test('Test Create Study from study management -> Test_creation empty', async ({ page }) => {
 
   // Creation study Empty
   await baseStudyCaseCreation(page, studyNameEmpty, processWitness, referenceEmpty, studyGroup, true);
 
+});
+
+/**
+ * Test creation from study management page
+ * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
+ */
+ test('Test Create Study from study management -> Test_creation  usecase', async ({ page }) => {
+
   // Creation usecase
   await baseStudyCaseCreation(page, studyNameUsecase, processWitness, referenceUsecase, studyGroup, true);
 
+});
+
+/**
+ * Test creation from study management page
+ * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
+ */
+ test('Test Create Study from study management -> Test_creation  copy', async ({ page }) => {
+
   // Creation copie
   await baseStudyCaseCreation(page, studyNameCopie, processWitness, studyNameUsecase, studyGroup, true);
+
+});
+
+
+/**
+ * Test creation from process page
+ * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
+ */
+test('Test Create Study from process-> Test_creation empty', async ({ page }) => {
+
+  // Creation study Empty from process
+  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processWitness, referenceEmpty, studyGroup, false);
 
 });
 
@@ -40,13 +68,20 @@ test('Test Create Study from study management -> Test_creation empty, usecase, c
  * Test creation from process page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from process-> Test_creation empty, usecase, copie', async ({ page }) => {
+ test('Test Create Study from process-> Test_creation usecase', async ({ page }) => {
 
-  // Creation study Empty from process
-  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processWitness, referenceEmpty, studyGroup, false);
 
   // Creation usecase from process
   await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processWitness, referenceUsecase, studyGroup, false);
+
+
+});
+
+/**
+ * Test creation from process page
+ * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
+ */
+ test('Test Create Study from process-> Test_creation copie', async ({ page }) => {
 
   // Creation copie from process
   await baseStudyCaseCreation(page, studyNameCopieFromProcess, processWitness, studyNameEmptyFromProcess, studyGroup, false);
