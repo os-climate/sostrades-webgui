@@ -5,7 +5,6 @@ import { baseStudyCaseEdition } from './base/base-study-case-edit';
 import { baseStudyCaseCreation } from './base/base-study-case-create-study';
 import { baseStudyCaseSwitchToEditionMode } from './base/base-study-case-switch-to-edition-mode';
 import { baseStudyCasePostProcessing } from './base/base-study-case-post-processing';
-import { baseCloseStudyCase } from './base/base-close-study-case';
 
 const studyNameEmpty = 'Test_witness_empty_from_study_management';
 const studyNameUsecase = 'Test_witness_usecase_from_study_management';
@@ -19,7 +18,6 @@ const referenceEmpty = 'Empty Study';
 const referenceUsecase = 'usecase_reference_ZEROe_CSR3_BRN_BSL';
 const editStudyName = 'Test_witness_copie_edit';
 const editStudyGroup = 'All users';
-const urlStudyManagement = '/study-management';
 
 
 /**
@@ -31,11 +29,7 @@ test('Test Create Study from study management -> Test_creation empty', async ({ 
   // Creation study Empty
   await baseStudyCaseCreation(page, studyNameEmpty, processAPDS, referenceEmpty, studyGroup, true);
 
-  // Close study
-  await baseCloseStudyCase(page);
 
-  // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
 });
 
 /**
@@ -47,11 +41,6 @@ test('Test Create Study from study management -> Test_creation  usecase', async 
   // Creation usecase
   await baseStudyCaseCreation(page, studyNameUsecase, processAPDS, referenceUsecase, studyGroup, true);
 
-  // Close study
-  await baseCloseStudyCase(page);
-
-  // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
   });
 
 /**
@@ -62,12 +51,6 @@ test('Test Create Study from study management -> Test_creation  copy', async ({ 
 
   // Creation copie
   await baseStudyCaseCreation(page, studyNameCopie, processAPDS, studyNameUsecase, studyGroup, true);
-
-  // Close study
-  await baseCloseStudyCase(page);
-
-  // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
 
 });
 
@@ -81,12 +64,6 @@ test('Test Create Study from process-> Test_creation empty', async ({ page }) =>
   // Creation study Empty from process
   await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processAPDS, referenceEmpty, studyGroup, false);
 
-  // Close study
-  await baseCloseStudyCase(page);
-
-  // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
-
 });
 
 /**
@@ -99,13 +76,6 @@ test('Test Create Study from process-> Test_creation usecase', async ({ page }) 
   // Creation usecase from process
   await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processAPDS, referenceUsecase, studyGroup, false);
 
-  // Close study
-  await baseCloseStudyCase(page);
-
-  // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
-
-
 });
 
 /**
@@ -116,12 +86,6 @@ test('Test Create Study from process-> Test_creation copie', async ({ page }) =>
 
   // Creation copie from process
   await baseStudyCaseCreation(page, studyNameCopieFromProcess, processAPDS, studyNameEmptyFromProcess, studyGroup, false);
-
-  // Close study
-  await baseCloseStudyCase(page);
-
-  // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
 
 });
 
