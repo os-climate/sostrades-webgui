@@ -106,32 +106,27 @@ th.mat-header-cell:last-of-type {
 
 .mat-column-label {
   width: 30% !important;
-  overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
 }
 .mat-column-repository {
   width: 35% !important;
-  overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
 }
 .mat-column-goToProcess {
   width: 2% !important;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
+  text-align: center;
 }
 
 .mat-column-parameterLabel {
-  width: 10% !important;
-  overflow-wrap: break-word;
+  width: 11% !important;
   word-wrap: break-word;
   word-break: break-word;
 }
 
 .mat-column-parameterUri {
-  width: 35% !important;
+  width: 40% !important;
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
@@ -139,7 +134,5 @@ th.mat-header-cell:last-of-type {
 
 .mat-column-goToParameter {
   width: 2% !important;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
+  text-align: center;
 }
