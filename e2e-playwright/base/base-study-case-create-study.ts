@@ -41,7 +41,6 @@ export async function baseStudyCaseCreation(
     const study = page.locator(`id=studyName`);
     await study.click();
     await study.fill(studyName);
-    
 
     // Selection process
     if (createFromStudyManagement) {
@@ -59,8 +58,6 @@ export async function baseStudyCaseCreation(
         ]);
     }
 
-    
-
     // Selection reference
     const empty = page.locator('mat-select-trigger');
     await expect(empty).toHaveText(/Empty Study/, { timeout: 15000 });
@@ -71,7 +68,6 @@ export async function baseStudyCaseCreation(
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
     await page.waitForTimeout(400);
     await selectedReference.click();
-    
 
     // Valid the creation
     const submit = page.locator('id=submit');
@@ -88,12 +84,5 @@ export async function baseStudyCaseCreation(
     // Verifying root node is present
     const rootNodeButton = `id=btn-treeview-node-${studyName}`;
     await page.waitForSelector(rootNodeButton);
-
-    // Close study
-    const closeButton = page.locator('id=close');
-    await closeButton.click();
-
-    // Verifying correct redirection to study management
-    await page.waitForURL('/study-management');
 
 }
