@@ -4,7 +4,7 @@ import { baseStudyCaseProcessBuilder } from './base/base-study-case-process-buil
 import { baseStudyCaseDeletion } from './base/base-study-case-delete';
 
 const studyProcBuilder = 'Test_procBuilder';
-const processProcBuidler = 'test_driver_build_doe_eval_empty';
+const processProcBuidler = 'Process DoE_Eval driver creation';
 const subprocess = 'Airbus Product Development Strategy Manual Simple v1 Process';
 const referenceStudy = 'test_load_bsl';
 const studyGroup = 'group_test_e2e';
