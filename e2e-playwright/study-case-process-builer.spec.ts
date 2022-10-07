@@ -15,7 +15,7 @@ const node = 'DoE_Eval';
 /**
  * Test sub process widget.
  */
-test.only('Test process Builder', async ({page}) => {
+test('Test process Builder', async ({page}) => {
     await baseStudyCaseCreation(page, studyProcBuilder, processProcBuidler, referenceEmpty, studyGroup, true);
     await baseStudyCaseProcessBuilder(page, studyProcBuilder, node, subprocess, referenceStudy);
     // List of nodes
