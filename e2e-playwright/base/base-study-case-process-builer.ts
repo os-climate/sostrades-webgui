@@ -10,7 +10,7 @@ export async function baseStudyCaseProcessBuilder(page: Page, study: string, nod
     const modalSubProcess = page.locator('app-process-builder');
     await expect(modalSubProcess).toHaveText(/Edit/, { timeout: 15000 });
 
-    const editButton = page.locator(`id=edit-button`);
+    const editButton = page.locator(`id=edit-data`);
     await editButton.click();
 
     // Selection process
