@@ -30,7 +30,7 @@ const urlStudyManagement = '/study-management';
 test('Test Create Study from study management -> Test_creation empty', async ({ page }) => {
 
   // Creation study Empty
-  await baseStudyCaseCreation(page, studyNameEmpty, processAPDS, referenceEmpty, studyGroup, true);
+  await baseStudyCaseCreation(page, studyNameEmpty, processAPDS, referenceEmpty, true, true);
 
   /**
    * Update 07/09/2022
@@ -51,7 +51,7 @@ test('Test Create Study from study management -> Test_creation empty', async ({ 
 test('Test Create Study from study management -> Test_creation  usecase', async ({ page }) => {
 
   // Creation usecase
-  await baseStudyCaseCreation(page, studyNameUsecase, processAPDS, referenceUsecase, studyGroup, true);
+  await baseStudyCaseCreation(page, studyNameUsecase, processAPDS, referenceUsecase, true, true);
 
   /**
    * Update 07/09/2022
@@ -71,7 +71,7 @@ test('Test Create Study from study management -> Test_creation  usecase', async 
 test('Test Create Study from study management -> Test_creation  copy', async ({ page }) => {
 
   // Creation copie
-  await baseStudyCaseCreation(page, studyNameCopie, processAPDS, studyNameUsecase, studyGroup, true);
+  await baseStudyCaseCreation(page, studyNameCopie, processAPDS, studyNameUsecase, true, true);
 
   /**
    * Update 07/09/2022
@@ -93,7 +93,7 @@ test('Test Create Study from study management -> Test_creation  copy', async ({ 
 test('Test Create Study from process-> Test_creation empty', async ({ page }) => {
 
   // Creation study Empty from process
-  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processAPDS, referenceEmpty, studyGroup, false);
+  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processAPDS, referenceEmpty, false, true);
 
   /**
    * Update 07/09/2022
@@ -115,7 +115,7 @@ test('Test Create Study from process-> Test_creation usecase', async ({ page }) 
 
 
   // Creation usecase from process
-  await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processAPDS, referenceUsecase, studyGroup, false);
+  await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processAPDS, referenceUsecase, false, true);
 
   /**
    * Update 07/09/2022
@@ -136,7 +136,7 @@ test('Test Create Study from process-> Test_creation usecase', async ({ page }) 
 test('Test Create Study from process-> Test_creation copie', async ({ page }) => {
 
   // Creation copie from process
-  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processAPDS, studyNameEmptyFromProcess, studyGroup, false);
+  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processAPDS, studyNameEmptyFromProcess, false, true);
 
   /**
    * Update 07/09/2022
