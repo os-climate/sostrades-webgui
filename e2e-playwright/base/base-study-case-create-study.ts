@@ -1,7 +1,8 @@
 import { Page, expect } from '@playwright/test';
 
 export async function baseStudyCaseCreation(
-    page: Page, studyName: string, process: string, reference: string, studyGroup: string, createFromStudyManagement: boolean) {
+    page: Page, studyName: string, process: string, reference: string,
+    createFromStudyManagement: boolean, needToLoadReferences: boolean) {
 
     if (!page.url().includes('/study-management')) {
 
@@ -41,7 +42,6 @@ export async function baseStudyCaseCreation(
     const study = page.locator(`id=studyName`);
     await study.click();
     await study.fill(studyName);
-    
 
     // Selection process
     if (createFromStudyManagement) {
@@ -54,12 +54,17 @@ export async function baseStudyCaseCreation(
         await page.waitForTimeout(400);
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
-        await Promise.all([
-            page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
-        ]);
-    }
 
-    
+        /**
+         * Update 10/10/2022
+         * Add condition to load references after a selection of a process because, in some cases, them can be already loaded.
+         */
+        if (needToLoadReferences) {
+            await Promise.all([
+                page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
+            ]);
+        }
+    }
 
     // Selection reference
     const empty = page.locator('mat-select-trigger');
@@ -71,7 +76,6 @@ export async function baseStudyCaseCreation(
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
     await page.waitForTimeout(400);
     await selectedReference.click();
-    
 
     // Valid the creation
     const submit = page.locator('id=submit');
@@ -88,12 +92,5 @@ export async function baseStudyCaseCreation(
     // Verifying root node is present
     const rootNodeButton = `id=btn-treeview-node-${studyName}`;
     await page.waitForSelector(rootNodeButton);
-
-    // Close study
-    const closeButton = page.locator('id=close');
-    await closeButton.click();
-
-    // Verifying correct redirection to study management
-    await page.waitForURL('/study-management');
 
 }

@@ -55,6 +55,9 @@ export class OntologyModelStatus {
   public static getKeyLabel(key: string): string {
     const keyLabelDict = {
       definition: 'Definition',
+      uri: 'URI',
+      pythonClass: 'Python Class',
+      pythonModulePath: ' Pyhton Module Path',
       version: 'Version',
       type: 'Type',
       category: 'Category',

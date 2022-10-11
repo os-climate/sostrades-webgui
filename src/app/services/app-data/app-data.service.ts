@@ -152,13 +152,13 @@ export class AppDataService extends DataHttpService {
           else
           {
             const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
-            this.launchLoadStudy(studyNeedsLoading, loadedStudy, true, isStudyLoaded, true, false);
+            this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, true, isStudyLoaded, true, false);
           }
         }, errorReceived => {
           this.loggerService.log(errorReceived);
           this.snackbarService.showError('Error loading study\n' + errorReceived.description);
-          isStudyLoaded(false);
-          this.loadingDialogService.closeLoading();
+          const studyNeedsLoading = true;
+          this.launchLoadStudy(studyNeedsLoading,studyId, null , true, isStudyLoaded, true, false);
         });
       } else {
         this.snackbarService.showError('Study case allocation failed');
@@ -192,7 +192,7 @@ export class AppDataService extends DataHttpService {
         this.studyCaseMainService.loadStudy(studyId, true, false).subscribe(resultloadStudy => {
           const loadedStudy = resultloadStudy as LoadedStudy;
             const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
-            this.launchLoadStudy(studyNeedsLoading, loadedStudy, true, isStudyLoaded, true, false);
+            this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, true, isStudyLoaded, true, false);
           
         }, errorReceived => {
           this.loggerService.log(errorReceived);
@@ -219,9 +219,8 @@ export class AppDataService extends DataHttpService {
    * @param showMsgInPopup : show the messages in a popup (if the loading is in background like in readonlymode, don't show the messages)
    * @param isFromCreateStudy : we are in creation mode
    */
-  public launchLoadStudy(isstudyNeedLoaded:boolean, loadedStudy: LoadedStudy, getNotification: boolean, isStudyLoaded: any,
+  public launchLoadStudy(isstudyNeedLoaded:boolean, studyId: number, loadedStudy: LoadedStudy, getNotification: boolean, isStudyLoaded: any,
     showMsgInPopup: boolean, isFromCreateStudy: boolean, loadOnlyOntology=false) {
-      const studyId = loadedStudy.studyCase.id;
       const loadingCalls = [];
 
       if (isstudyNeedLoaded){
