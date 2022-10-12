@@ -16,7 +16,8 @@
     </h1>
   </div>
 
-  <div mat-dialog-content style="margin-top: 1px !important; padding-top: 10px;">
+  <div mat-dialog-content
+  [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
     <mat-form-field  *ngIf="!data.selectProcessOnly">
         <mat-label>Study name</mat-label>
         <input
