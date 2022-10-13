@@ -8,6 +8,6 @@ test('Test Start Calculation -> Run Sellar Opt Multi Scenario', async ({ page })
   const studyName = 'test_sellar_opt_ms';
 
   await baseStudyCaseLoading(page, 'group_test_e2e', studyName);
-  //await baseStudyCaseSwitchToEditionMode(page);
+  // await baseStudyCaseSwitchToEditionMode(page);
   await baseStudyCaseStartCalculation(page, studyName);
 });

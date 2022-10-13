@@ -6,7 +6,18 @@
     height: 100%;
     width: 100%;
   }
-  
+  .content-for-process-builder {
+    padding-top: 15px;
+    width: 600px;
+    height: 140px;
+  }
+  ::ng-deep .cdk-overlay-pane { 
+    transform: translateX(-16px) translateY(-20px) !important;  
+  }
+  .content-for-create-study {
+    margin-top: 1px !important; 
+    padding-top: 10px;
+  }
   .container-dialog {
     height: 100%;
     width: 100%;
