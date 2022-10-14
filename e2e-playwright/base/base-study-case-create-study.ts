@@ -91,6 +91,6 @@ export async function baseStudyCaseCreation(
 
     // Verifying root node is present
     const rootNodeButton = `id=btn-treeview-node-${studyName}`;
-    await page.waitForSelector(rootNodeButton);
+    await page.waitForSelector(rootNodeButton, { timeout: 20000 });
 
 }
