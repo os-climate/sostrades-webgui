@@ -33,7 +33,7 @@ test('Test process Builder', async ({page}) => {
 
   // Verifying that all nodes are presents in the page
   await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
+    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
   }));
 
   // Close study
