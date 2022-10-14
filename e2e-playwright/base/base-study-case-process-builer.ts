@@ -21,7 +21,7 @@ export async function baseStudyCaseProcessBuilder(page: Page, study: string, nod
     await searchOption.click();
     await searchOption.fill(subProcess);
     await page.waitForTimeout(400);
-    const optionSelected = page.locator(`mat-option:has-text("${subProcess}")`).first();
+    const optionSelected = page.locator(`mat-option:has-text("${subProcess}")`);
     await optionSelected.click();
 
 
@@ -32,7 +32,7 @@ export async function baseStudyCaseProcessBuilder(page: Page, study: string, nod
     const references = page.locator('id=reference');
     await references.click();
     await page.waitForTimeout(1000);
-    const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
+    const selectedReference = page.locator(`mat-option:has-text("${reference}")`);
     await page.waitForTimeout(400);
     await selectedReference.click();
 
