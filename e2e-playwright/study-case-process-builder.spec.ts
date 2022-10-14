@@ -16,7 +16,7 @@ const nodeDOE = 'DoE_Eval';
 /**
  * Test sub process widget.
  */
-test('Test process Builder', async ({page}) => {
+test.only('Test process Builder', async ({page}) => {
 
   await baseStudyCaseCreation(page, studyProcessBuilder, processProcBuidler, referenceEmpty, true, false);
   await baseStudyCaseProcessBuilder(page, studyProcessBuilder, nodeDOE, subprocess, referenceStudy);
@@ -40,7 +40,7 @@ test('Test process Builder', async ({page}) => {
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL('/study-management');
+  await page.waitForURL('/study-management', { timeout: 40000 });
 
   // Delete the study
   const studyToDelete = { copieStudy: [studyProcessBuilder, studyGroup]};
