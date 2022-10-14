@@ -6,8 +6,8 @@ import { baseCloseStudyCase } from './base/base-close-study';
 
 const studyProcessBuilder = 'Test_process_builder';
 const processProcBuidler = 'Process DoE_Eval driver creation';
-const subprocess = 'Airbus Product Development Strategy Manual Simple v1 Process';
-const referenceStudy = 'test_load_bsl';
+const subprocess = 'Core Test Multiscenario Process';
+const referenceStudy = 'usecase';
 const studyGroup = 'group_test_e2e';
 const referenceEmpty = 'Empty Study';
 const nodeDOE = 'DoE_Eval';
@@ -21,18 +21,12 @@ test('Test process Builder', async ({page}) => {
   await baseStudyCaseCreation(page, studyProcessBuilder, processProcBuidler, referenceEmpty, true, false);
   await baseStudyCaseProcessBuilder(page, studyProcessBuilder, nodeDOE, subprocess, referenceStudy);
 
-  // List of nodes
+   // List of nodes to tests
   const namespacesList = [
-      `${studyProcessBuilder}.${nodeDOE}.Supply_constraint`,
-      `${studyProcessBuilder}.${nodeDOE}.Economics`,
-      `${studyProcessBuilder}.${nodeDOE}.Market Explore`,
-      `${studyProcessBuilder}.${nodeDOE}.Business`,
-      `${studyProcessBuilder}.${nodeDOE}.Aircraft`,
-      `${studyProcessBuilder}.${nodeDOE}.Services`,
-      `${studyProcessBuilder}.${nodeDOE}.Outputs`,
-      `${studyProcessBuilder}.${nodeDOE}.NTP_BRN_BSL`
+    `${studyProcessBuilder}.${nodeDOE}.multi_scenarios`,
+    `${studyProcessBuilder}.${nodeDOE}.Disc1`,
+    `${studyProcessBuilder}.${nodeDOE}.Disc3`,
   ];
-
   // Click on DoE_Eval node
   const clickOnNode =  page.locator(`id=btn-treeview-expand-${studyProcessBuilder}.${nodeDOE}`);
   await clickOnNode.click();
@@ -50,5 +44,5 @@ test('Test process Builder', async ({page}) => {
 
   // Delete the study
   const studyToDelete = { copieStudy: [studyProcessBuilder, studyGroup]};
-  await baseStudyCaseDeletion(page, studyToDelete);
+  await baseStudyCaseDeletion(page, studyToDelete, true);
 });

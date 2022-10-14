@@ -23,9 +23,6 @@ export async function baseStudyCaseProcessBuilder(page: Page, study: string, nod
     await page.waitForTimeout(400);
     const optionSelected = page.locator(`mat-option:has-text("${subProcess}")`).first();
     await optionSelected.click();
-    await Promise.all([
-        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
-    ]);
 
 
     // Selection reference
