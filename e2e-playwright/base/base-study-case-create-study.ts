@@ -83,7 +83,7 @@ export async function baseStudyCaseCreation(
     await submit.click();
 
     // Verifying correct redirection to study workspace
-    await page.waitForURL('**/study-workspace**');
+    await page.waitForURL('**/study-workspace**', { timeout: 40000 });
 
     // Verifying correct study name for My current study place
     const currentStudyNameTextLocator = page.locator('id=text-sidenav-study-loaded-name');
@@ -91,6 +91,6 @@ export async function baseStudyCaseCreation(
 
     // Verifying root node is present
     const rootNodeButton = `id=btn-treeview-node-${studyName}`;
-    await page.waitForSelector(rootNodeButton);
+    await page.waitForSelector(rootNodeButton, { timeout: 20000 });
 
 }

@@ -17,7 +17,7 @@ test('Test loading -> Generic Value Assessment Repository -> test_ratatouille_e2
 
   // Verifying that all nodes are presents in the page
   await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
+    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
   }));
 });
 
@@ -41,15 +41,29 @@ test('Test loading by click on title-> Core Test Sellar Opt with Func Manager Mu
     `${studyName}.${node}.scenario_10`
   ];
 
-  // Click on multi_scenarios node
-  const clickOnNode = page.locator(`id=btn-treeview-expand-${studyName}.${node}`);
-  await clickOnNode.click();
+  /**
+   * Update 14/09/2022
+   * Check if the chevron of node "multi_scenarios" in the treeview is already open or down.
+   */
+  const iconChevron = page.locator(`id="chevron-right-${studyName}.${node}"`);
+  if (iconChevron.isVisible()) {
 
-  // Verifying that all nodes are presents in the page
-  await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
-  }));
+    // Click on multi_scenarios node
+    const clickOnNode = page.locator(`id=btn-treeview-expand-${studyName}.${node}`);
+    await clickOnNode.click();
 
-  // close expandable node
-  await clickOnNode.click();
+    // Verifying that all nodes are presents in the page
+    await Promise.all(namespacesList.map(async (nsp) => {
+      await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
+    }));
+
+    // close expandable node
+    await clickOnNode.click();
+
+  } else {
+    // Verifying that all nodes are presents in the page
+    await Promise.all(namespacesList.map(async (nsp) => {
+      await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
+    }));
+  }
 });

@@ -40,7 +40,7 @@ test('Test Create Study from study management -> Test_creation empty', async ({ 
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
+  await page.waitForURL(urlStudyManagement, { timeout: 40000 });
 
 });
 
@@ -61,7 +61,7 @@ test('Test Create Study from study management -> Test_creation  usecase', async 
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
+  await page.waitForURL(urlStudyManagement, { timeout: 40000 });
   });
 
 /**
@@ -81,7 +81,7 @@ test('Test Create Study from study management -> Test_creation  copy', async ({ 
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
+  await page.waitForURL(urlStudyManagement, { timeout: 40000 });
 
 });
 
@@ -103,7 +103,7 @@ test('Test Create Study from process-> Test_creation empty', async ({ page }) =>
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
+  await page.waitForURL(urlStudyManagement, { timeout: 40000 });
 
 });
 
@@ -125,7 +125,7 @@ test('Test Create Study from process-> Test_creation usecase', async ({ page }) 
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
+  await page.waitForURL(urlStudyManagement, { timeout: 40000 });
 
 });
 
@@ -146,7 +146,7 @@ test('Test Create Study from process-> Test_creation copie', async ({ page }) =>
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL(urlStudyManagement);
+  await page.waitForURL(urlStudyManagement, { timeout: 40000 });
 
 });
 

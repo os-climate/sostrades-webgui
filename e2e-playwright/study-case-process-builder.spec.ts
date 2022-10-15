@@ -33,14 +33,14 @@ test('Test process Builder', async ({page}) => {
 
   // Verifying that all nodes are presents in the page
   await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`);
+    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
   }));
 
   // Close study
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL('/study-management');
+  await page.waitForURL('/study-management', { timeout: 40000 });
 
   // Delete the study
   const studyToDelete = { copieStudy: [studyProcessBuilder, studyGroup]};
