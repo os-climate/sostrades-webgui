@@ -94,13 +94,13 @@ export class OntologyInformationsComponent implements OnInit {
         if (range !== undefined && range !== ' ' && range !== ''){
           this.infoList = this.infoList.concat([["range",`[${range}]`]]);
         }
-        
-        
+
+
       }
-      
+
     }
     this.parameterName = this.data.nodeData.displayName;
-    
+
     // Retrieve variable changes
     this.changesList = this.socketService.getParameterChangesList(this.data.name);
     this.dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>(this.changesList);
@@ -140,7 +140,7 @@ export class OntologyInformationsComponent implements OnInit {
     let stringValue = entry;
     if (typeof entry !== "string" && typeof entry !== "boolean"){
       stringValue = `[${entry}]`;
-      
+
     }
     return stringValue;
   }
@@ -175,7 +175,7 @@ export class OntologyInformationsComponent implements OnInit {
 
     this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
       newUpdateParameter,
-      this.data.nodeData.identifier,
+      this.data.nodeData,
       this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     this.data.nodeData.value = newUpdateParameter.newValue;
@@ -202,7 +202,7 @@ export class OntologyInformationsComponent implements OnInit {
     console.log(newUpdateParameter)
     this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
       newUpdateParameter,
-      this.data.nodeData.identifier,
+      this.data.nodeData,
       this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     this.data.nodeData.connector_data = newUpdateParameter.newValue;
@@ -240,7 +240,7 @@ export class OntologyInformationsComponent implements OnInit {
 
         this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
           newUpdateParameter,
-          this.data.nodeData.identifier,
+          this.data.nodeData,
           this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
         this.data.nodeData.value = newUpdateParameter.newValue;

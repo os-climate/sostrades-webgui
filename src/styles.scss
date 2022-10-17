@@ -199,6 +199,10 @@ div.tooltip {
   border-color: #ffc107 !important;
 }
 
+.border-value-change-with-integrity-message {
+  border-color: darkorange !important;
+}
+
 .csvDialog {
   mat-dialog-container {
     padding: 0;
@@ -469,6 +473,14 @@ ul {
   white-space: pre-line !important;
   text-align: center !important;
   font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+.background-red {
+  background-color: #b71c1c !important;
+}
+
+.background-dark-orange {
+  background-color: darkorange !important;
 }
 
 // Jspreadsheet
