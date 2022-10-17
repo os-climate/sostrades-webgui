@@ -27,22 +27,38 @@ test('Test process Builder', async ({page}) => {
     `${studyProcessBuilder}.${nodeDOE}.Disc1`,
     `${studyProcessBuilder}.${nodeDOE}.Disc3`,
   ];
-  // Click on DoE_Eval node
-  const clickOnNode =  page.locator(`id=btn-treeview-expand-${studyProcessBuilder}.${nodeDOE}`);
-  await clickOnNode.click();
 
-  // Verifying that all nodes are presents in the page
-  await Promise.all(namespacesList.map(async (nsp) => {
-    await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
-  }));
+  const iconChevron = page.locator(`id="chevron-right-${studyProcessBuilder}.${nodeDOE}"`);
+  if (iconChevron.isVisible()) {
 
+    // Click on DoE_Eval node
+    const clickOnNode =  page.locator(`id=btn-treeview-expand-${studyProcessBuilder}.${nodeDOE}`);
+    await clickOnNode.click();
+
+    // Verifying that all nodes are presents in the page
+    await Promise.all(namespacesList.map(async (nsp) => {
+      await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
+    }));
+
+    // close expandable node
+    await clickOnNode.click();
+
+  } else {
+    // Verifying that all nodes are presents in the page
+    await Promise.all(namespacesList.map(async (nsp) => {
+      await page.waitForSelector(`id=btn-treeview-node-${nsp}`, { timeout: 10000 });
+    }));
+  }
   // Close study
   await baseCloseStudyCase(page);
 
   // Verifying correct redirection to study management
-  await page.waitForURL('/study-management', { timeout: 40000 });
-
-  // Delete the study
-  const studyToDelete = { copieStudy: [studyProcessBuilder, studyGroup]};
-  await baseStudyCaseDeletion(page, studyToDelete, true);
+  await page.waitForURL('/study-management', { timeout: 30000 });
 });
+
+test('Test Deletion -> Test_process_builder ', async ({page}) => {
+
+    // Delete the study
+    const studyToDelete = { copieStudy: [studyProcessBuilder, studyGroup]};
+    await baseStudyCaseDeletion(page, studyToDelete, true);
+    });
