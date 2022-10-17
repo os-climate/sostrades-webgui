@@ -56,7 +56,7 @@ test('Test process Builder', async ({page}) => {
   await page.waitForURL('/study-management', { timeout: 30000 });
 });
 
-test.only('Test Deletion -> Test_process_builder ', async ({page}) => {
+test('Test Deletion -> Test_process_builder ', async ({page}) => {
 
     // Delete the study
     const studyToDelete = { copieStudy: [studyProcessBuilder, studyGroup]};
