@@ -12,6 +12,7 @@ import { TreenodeTools } from 'src/app/tools/treenode.tool';
 import { SocketService } from '../socket/socket.service';
 import { DataStorage } from 'src/app/models/data-storage.model';
 import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
+import { NodeData } from 'src/app/models/node-data.model';
 
 // tslint:disable: max-line-length
 
@@ -69,8 +70,9 @@ export class StudyCaseLocalStorageService {
     return JSON.parse(this.dataStorage.getItem(StudyCaseLocalStorageAttributes.STUDYPARAMETERLIST)) as StudyUpdateContainer;
   }
 
-  setStudyParametersInLocalStorage(item: StudyUpdateParameter, itemName: string, studyId: string) {
+  setStudyParametersInLocalStorage(item: StudyUpdateParameter, nodeData: NodeData, studyId: string) {
     let studiesContainer: StudyUpdateContainer;
+    const itemName = nodeData.identifier;
 
     if (item.variableId[0] === '.') {
       item.variableId = item.variableId.substring(1);
@@ -108,6 +110,7 @@ export class StudyCaseLocalStorageService {
         this.dataStorage.setItem(StudyCaseLocalStorageAttributes.STUDYPARAMETERLIST, JSON.stringify(studiesContainer));
       }
     }
+
     // Check if study have unsaved changes
     this.unsavedChanges.emit(this.studyHaveUnsavedChanges(studyId));
   }
@@ -208,7 +211,7 @@ export class StudyCaseLocalStorageService {
 
             //update ontology parameters in study
             this.studyCaseDataService.updateParameterOntology(loadedStudy);
-            
+
             // Notify components observing study case status
             this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
             this.removeStudyParametersFromLocalStorage(studyId);

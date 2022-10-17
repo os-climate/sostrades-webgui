@@ -122,6 +122,7 @@ import { OntologyModelsInformationComponent } from './modules/ontology/ontology-
 import { OntologyProcessInformationComponent } from './modules/ontology/ontology-processes/ontology-process-information/ontology-process-information.component';
 import { StudyCaseCreationComponent } from './modules/study-case/study-case-creation/study-case-creation.component';
 import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 registerLocaleData(fr);
 
@@ -235,6 +236,7 @@ registerLocaleData(fr);
     ScrollingModule,
     TableVirtualScrollModule,
     ClipboardModule,
+    MatTooltipModule,
     AngularSplitModule.forRoot()
   ],
   providers: [

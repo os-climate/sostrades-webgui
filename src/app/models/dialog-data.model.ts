@@ -324,6 +324,7 @@ export class SpreadsheetDialogData extends AbstractDialogData {
   namespace: string;
   discipline: string;
   readOnly: boolean;
+  cancel: boolean;
 
   public constructor() {
     super();
@@ -333,6 +334,7 @@ export class SpreadsheetDialogData extends AbstractDialogData {
     this.namespace = '';
     this.discipline = '';
     this.readOnly = false;
+    this.cancel = false;
   }
 }
 
