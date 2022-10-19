@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-      "test": "npx playwright test e2e-playwright"
+      "test": "npx playwright test e2e-playwright --workers=1"
     },
   "author": "",
   "license": "ISC",
