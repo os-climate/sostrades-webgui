@@ -2,7 +2,7 @@ import { Page, expect } from '@playwright/test';
 
 export async function baseStudyCaseCreation(
     page: Page, studyName: string, process: string, reference: string,
-    createFromStudyManagement: boolean, needToLoadReferences: boolean) {
+    createFromStudyManagement: boolean) {
 
     if (!page.url().includes('/study-management')) {
 
@@ -36,7 +36,7 @@ export async function baseStudyCaseCreation(
 
     // Verify modal study creation
     const title = page.locator('app-study-case-creation');
-    await expect(title).toContainText('Create new study', { timeout: 15000 });
+    await expect(title).toContainText('Create new study', { timeout: 60000 });
 
     // Fill Study Name
     const study = page.locator(`id=studyName`);
@@ -55,14 +55,16 @@ export async function baseStudyCaseCreation(
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
 
-        /**
-         * Update 10/10/2022
-         * Add condition to load references after a selection of a process because, in some cases, them can be already loaded.
-         */
-        if (needToLoadReferences) {
-            await Promise.all([
-                page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
-            ]);
+        const [responseProcess] = await Promise.all([
+            page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process')), { timeout: 15000 }
+        ]);
+        /***
+        * Update 19/10/2022
+        * Add log if the status of the response is not 200
+        */
+        if (responseProcess.status() !== 200) {
+            const body = await responseProcess.body();
+            console.log(`Study-creation: ${studyName} Process selected: ${process}\nResponse: ${body} `);
         }
     }
 
@@ -82,8 +84,20 @@ export async function baseStudyCaseCreation(
     await submit.isEnabled({ timeout: 15000 });
     await submit.click();
 
+    // Check if the study is created
+    const [response] = await Promise.all([
+        page.waitForResponse(resp => resp.url().includes('/api/data/study-case'))
+    ]);
+    /***
+    * Update 19/10/2022
+    * Add log if the status of the response is not 200
+    */
+    if (response.status() !== 200) {
+        const body = await response.body();
+        console.log(`Study-creation: ${studyName}\nResponse: ${body} `);
+    }
     // Verifying correct redirection to study workspace
-    await page.waitForURL('**/study-workspace**', { timeout: 40000 });
+    await page.waitForURL('**/study-workspace**', { timeout: 90000 });
 
     // Verifying correct study name for My current study place
     const currentStudyNameTextLocator = page.locator('id=text-sidenav-study-loaded-name');

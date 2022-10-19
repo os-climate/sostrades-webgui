@@ -24,9 +24,18 @@ export async function baseStudyCaseProcessBuilder(page: Page, study: string, nod
     const optionSelected = page.locator(`mat-option:has-text("${subProcess}")`);
     await optionSelected.click();
 
-    await Promise.all([
-        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
+    const [response] = await Promise.all([
+        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process')), { timeout: 30000 }
     ]);
+    /***
+    * Update 19/10/2022
+    * Add log if the status of the response is not 200
+    */
+    if (response.status() !== 200) {
+        const body = await response.body();
+        console.log(`Subprocess selection: ${subProcess}\nResponse: ${body} `);
+    }
+
     // Selection reference
     const empty = page.locator('mat-select-trigger');
     await expect(empty).toHaveText(/Empty Study/, { timeout: 15000 });

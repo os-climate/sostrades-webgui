@@ -16,9 +16,9 @@ const nodeDOE = 'DoE_Eval';
 /**
  * Test sub process widget.
  */
-test('Test process Builder', async ({page}) => {
+test('Test process Builder -> Process DoE_Eval driver creation -> subprocess: Core Test Architecture Process', async ({page}) => {
 
-  await baseStudyCaseCreation(page, studyProcessBuilder, processProcBuidler, referenceEmpty, true, false);
+  await baseStudyCaseCreation(page, studyProcessBuilder, processProcBuidler, referenceEmpty, true);
   await baseStudyCaseProcessBuilder(page, studyProcessBuilder, nodeDOE, subprocess, referenceStudy);
 
    // List of nodes to tests
