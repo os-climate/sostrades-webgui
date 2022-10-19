@@ -1,3 +1,4 @@
+import { ThrowStmt } from '@angular/compiler';
 import { DataframeDescriptor } from './dataframe-descriptor.model';
 import { TreeNode } from './tree-node.model';
 
@@ -130,6 +131,7 @@ export class NodeData {
   public isHighlighted: boolean;
   private _subtypeDescriptorValue: string;
   private _subTypeDrescriptorNestedLevelCount: number;
+  public modified: boolean;
 
   /**
    * Explore subtype descriptor nested level to extract final stored type
@@ -198,6 +200,7 @@ export class NodeData {
         jsonData[NodeDataAttributes.DATAFRAME_EDITION_LOCKED],
         jsonData[NodeDataAttributes.DISCIPLINE_FULL_PATH_LIST],
         jsonData[NodeDataAttributes.VARIABLE_KEY],
+        jsonData[NodeDataAttributes.CHECK_INTEGRITY_MSG],
         parent,
         isDataDisc
       );
@@ -231,9 +234,11 @@ export class NodeData {
     public dataframeEditionLocked: boolean,
     public disciplineFullPathList: string[],
     public variableKey: string,
+    public checkIntegrityMessage: string,
     public parent: TreeNode,
     public isDataDisc: boolean) {
 
+    this.modified = false;
     const splitedIdentifier = identifier.split('.');
 
     if (splitedIdentifier.length > 1) {
@@ -314,6 +319,7 @@ export class NodeData {
 
   set value(data: any) {
     this._value = data;
+    this.modified = true;
 
     if (this.parent !== null) {
       this.parent.nodeDataValueChange(this);
@@ -323,6 +329,8 @@ export class NodeData {
   get valueType(): ValueType {
     if (this.editable === false || this.ioType === IoType.OUT) {
       return ValueType.READ_ONLY;
+    } else if ((this.checkIntegrityMessage.length > 0) && (this.modified === false)) {
+      return ValueType.EMPTY;
     } else if (this.value !== null) {
       return ValueType.USER;
     } else if (this.defaultValue !== null) {
@@ -379,5 +387,6 @@ export enum NodeDataAttributes {
   DATAFRAME_DESCRIPTOR = 'dataframe_descriptor',
   DATAFRAME_EDITION_LOCKED = 'dataframe_edition_locked',
   DISCIPLINE_FULL_PATH_LIST = 'discipline_full_path_list',
-  VARIABLE_KEY='variable_key'
+  VARIABLE_KEY = 'variable_key',
+  CHECK_INTEGRITY_MSG = 'check_integrity_msg'
 }

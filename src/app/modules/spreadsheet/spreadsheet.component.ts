@@ -365,7 +365,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
       this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
         updateItem,
-        this.data.nodeData.identifier,
+        this.data.nodeData,
         this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     } else {
@@ -394,7 +394,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         // Saving edited table in local storage
         this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
           updateItem,
-          this.data.nodeData.identifier,
+          this.data.nodeData,
           this.studyCaseDataService.loadedStudy.studyCase.id.toString());
     }
     this.loadingDialogService.closeLoading();
