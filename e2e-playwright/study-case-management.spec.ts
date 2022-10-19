@@ -27,10 +27,10 @@ const urlStudyManagement = '/study-management';
  * Test creation from study management page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from study management -> Test_creation empty', async ({ page }) => {
+test('Test Create Study from study management -> Test_creation empty -> Generic Value Assessment Process', async ({ page }) => {
 
   // Creation study Empty
-  await baseStudyCaseCreation(page, studyNameEmpty, processRatatouille, referenceEmpty, true, false);
+  await baseStudyCaseCreation(page, studyNameEmpty, processRatatouille, referenceEmpty, true);
 
   /**
    * Update 07/09/2022
@@ -48,10 +48,10 @@ test('Test Create Study from study management -> Test_creation empty', async ({ 
  * Test creation from study management page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from study management -> Test_creation  usecase', async ({ page }) => {
+test('Test Create Study from study management -> Test_creation  usecase -> Generic Value Assessment Process', async ({ page }) => {
 
   // Creation usecase
-  await baseStudyCaseCreation(page, studyNameUsecase, processRatatouille, referenceUsecase, true, false);
+  await baseStudyCaseCreation(page, studyNameUsecase, processRatatouille, referenceUsecase, true);
 
   /**
    * Update 07/09/2022
@@ -68,10 +68,10 @@ test('Test Create Study from study management -> Test_creation  usecase', async 
  * Test creation from study management page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from study management -> Test_creation  copy', async ({ page }) => {
+test('Test Create Study from study management -> Test_creation copy -> Generic Value Assessment Process', async ({ page }) => {
 
   // Creation copie
-  await baseStudyCaseCreation(page, studyNameCopie, processRatatouille, studyNameUsecase, true, false);
+  await baseStudyCaseCreation(page, studyNameCopie, processRatatouille, studyNameUsecase, true);
 
   /**
    * Update 07/09/2022
@@ -90,10 +90,10 @@ test('Test Create Study from study management -> Test_creation  copy', async ({ 
  * Test creation from process page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from process-> Test_creation empty', async ({ page }) => {
+test('Test Create Study from process-> Test_creation empty -> Generic Value Assessment Process', async ({ page }) => {
 
   // Creation study Empty from process
-  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processRatatouille, referenceEmpty, false, false);
+  await baseStudyCaseCreation(page, studyNameEmptyFromProcess, processRatatouille, referenceEmpty, false);
 
   /**
    * Update 07/09/2022
@@ -111,11 +111,11 @@ test('Test Create Study from process-> Test_creation empty', async ({ page }) =>
  * Test creation from process page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from process-> Test_creation usecase', async ({ page }) => {
+test('Test Create Study from process-> Test_creation usecase -> Generic Value Assessment Process', async ({ page }) => {
 
 
   // Creation usecase from process
-  await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processRatatouille, referenceUsecase, false, false);
+  await baseStudyCaseCreation(page, studyNameUsecaseFromProcess, processRatatouille, referenceUsecase, false);
 
   /**
    * Update 07/09/2022
@@ -133,10 +133,10 @@ test('Test Create Study from process-> Test_creation usecase', async ({ page }) 
  * Test creation from process page
  * The study creation is divided in 2 tests so that the timeout of 5m is not reached.
  */
-test('Test Create Study from process-> Test_creation copie', async ({ page }) => {
+test('Test Create Study from process -> Test_creation copie -> Generic Value Assessment Process', async ({ page }) => {
 
   // Creation copie from process
-  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processRatatouille, studyNameEmptyFromProcess, false, false);
+  await baseStudyCaseCreation(page, studyNameCopieFromProcess, processRatatouille, studyNameEmptyFromProcess, false);
 
   /**
    * Update 07/09/2022
@@ -150,7 +150,7 @@ test('Test Create Study from process-> Test_creation copie', async ({ page }) =>
 
 });
 
-test('Test Edition Study -> Test_edition + Test_calculation', async ({ page }) => {
+test('Test Edition Study -> Test_edition + Test_calculation -> Generic Value Assessment Process', async ({ page }) => {
 
   await baseStudyCaseEdition(page, studyNameCopie, editStudyName, studyGroup, editStudyGroup);
   await baseStudyCaseSwitchToEditionMode(page);

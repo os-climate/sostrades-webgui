@@ -19,13 +19,21 @@ export async function baseStudyCaseDeletion(page: Page, listStudies: any, needTo
     });
 
     if (needToLoadStudies) {
-        await Promise.all([
-            page.waitForResponse(resp => resp.url().includes('/api/data/study-case') && resp.status() === 200),
+        const [response] = await Promise.all([
+            page.waitForResponse(resp => resp.url().includes('/api/data/study-case'), { timeout: 90000 })
         ]);
+        /***
+         * Update 19/10/2022
+         * Add log if the status of the response is not 200
+         */
+        if (response.status() !== 200) {
+            const body = await response.body();
+            console.log(`\nResponse load studies: ${body} `);
+        }
     }
     // Click on checkbox of each study
-    selectCheckbox.forEach( async e => {
-        await page.click(e);
+    selectCheckbox.forEach( async study => {
+        await page.click(study);
     });
 
     // Click on delete
@@ -41,8 +49,16 @@ export async function baseStudyCaseDeletion(page: Page, listStudies: any, needTo
     await buttonOk.click();
 
     // Verify deletion is done
-    await Promise.all([
-        page.waitForResponse(resp => resp.url().includes('/api/data/study-case') && resp.status() === 200, { timeout: 30000 }),
+    const [responseDelete] = await Promise.all([
+        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/delete'), { timeout: 60000 }),
     ]);
+    /***
+     * Update 19/10/2022
+     * Add log if the status of the response is not 200
+     */
+    if (responseDelete.status() !== 200) {
+        const body = await responseDelete.body();
+        console.log(`\nResponse delete studies: ${body} `);
+    }
 
 }
