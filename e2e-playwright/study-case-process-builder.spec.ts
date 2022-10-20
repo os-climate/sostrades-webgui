@@ -6,8 +6,8 @@ import { baseCloseStudyCase } from './base/base-close-study';
 
 const studyProcessBuilder = 'Test_process_builder';
 const processProcBuidler = 'Process DoE_Eval driver creation';
-const subprocess = 'Core Test Multiscenario Process';
-const referenceStudy = 'usecase';
+const subprocess = 'Core Test Architecture Process';
+const referenceStudy = 'usecase_simple_architecture';
 const studyGroup = 'group_test_e2e';
 const referenceEmpty = 'Empty Study';
 const nodeDOE = 'DoE_Eval';
@@ -16,16 +16,14 @@ const nodeDOE = 'DoE_Eval';
 /**
  * Test sub process widget.
  */
-test('Test process Builder', async ({page}) => {
+test('Test process Builder -> Process DoE_Eval driver creation -> subprocess: Core Test Architecture Process', async ({page}) => {
 
-  await baseStudyCaseCreation(page, studyProcessBuilder, processProcBuidler, referenceEmpty, true, false);
+  await baseStudyCaseCreation(page, studyProcessBuilder, processProcBuidler, referenceEmpty, true);
   await baseStudyCaseProcessBuilder(page, studyProcessBuilder, nodeDOE, subprocess, referenceStudy);
 
    // List of nodes to tests
   const namespacesList = [
-    `${studyProcessBuilder}.${nodeDOE}.multi_scenarios`,
-    `${studyProcessBuilder}.${nodeDOE}.Disc1`,
-    `${studyProcessBuilder}.${nodeDOE}.Disc3`,
+    `${studyProcessBuilder}.${nodeDOE}.Business`,
   ];
 
   const iconChevron = page.locator(`id="chevron-right-${studyProcessBuilder}.${nodeDOE}"`);

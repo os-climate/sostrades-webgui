@@ -56,7 +56,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private onTreeNodeNavigationSubscription: Subscription;
 
   public currentSelectedNodeKey: string;
-  
+
   private studyExecutionStartedSubscription: Subscription;
   private studyExecutionStoppedSubscription: Subscription;
   private studyExecutionUpdatedSubscription: Subscription;
@@ -262,7 +262,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.onTreeNodeNavigation(nodeData);
     });
   }
-  
+
 
   checkTreeViewIsFiltered() {
 
@@ -755,7 +755,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
           let loadedstudyCase = resultLoadedStudy as LoadedStudy;
           this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, false, (isStudyLoaded)=>{
-              studySubscription.unsubscribe();  
+              studySubscription.unsubscribe();
               // Cleaning old subscriptions
               this.cleanExecutionSubscriptions();
               this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
@@ -831,8 +831,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   private setStatusOnTreeDict(treenodeFullName, status) {
-    
-    
+
+
     const foundTreeNode = Object.values(this.root.rootDict).find(x => x.fullNamespace === treenodeFullName);
     if (foundTreeNode !== null && foundTreeNode !== undefined) {
       foundTreeNode.status = status;
@@ -939,7 +939,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   applyFilter(event: Event) {
-    
+
     const filterValue = (event.target as HTMLInputElement).value;
     this.applyFilterValue(filterValue);
   }
@@ -1050,8 +1050,12 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(loadedStudy.studyCase.id.toString());
 
         studyParameters.forEach(nodeDataCache => {
+
+          const nodeData = this.root.rootNodeDataDict[nodeDataCache.variableId];
+
           // Check if new value pushed for user cache and applying modification to local storage
-          if (nodeDataCache.oldValue !== this.root.rootNodeDataDict[nodeDataCache.variableId].oldValue) {
+          if (nodeDataCache.oldValue !== nodeData.oldValue) {
+
             const newItemSave = new StudyUpdateParameter(
               nodeDataCache.variableId,
               nodeDataCache.variableType,
@@ -1059,13 +1063,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
               nodeDataCache.namespace,
               nodeDataCache.discipline,
               nodeDataCache.newValue,
-              this.root.rootNodeDataDict[nodeDataCache.variableId].oldValue,
+              nodeData.oldValue,
               null,
               nodeDataCache.lastModified);
 
             this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
               newItemSave,
-              nodeDataCache.variableId,
+              nodeData,
               loadedStudy.studyCase.id.toString());
           }
           // Updating treenode with user changes

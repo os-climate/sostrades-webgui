@@ -23,7 +23,7 @@
 
 .widget-cell {
   padding: 0px 10px 0px 10px;
-  min-height: 50px;
+  min-height: 55px;
 }
 
 .widget {
@@ -59,6 +59,7 @@
   border-radius: 5px;
   margin-bottom: 1px;
 }
+
 .execution-running {
   pointer-events: none !important;
   opacity: 0.4;
@@ -72,3 +73,33 @@
     background-color: yellow;
   }
 }
+
+.red-icon {
+  color: #b71c1c;
+}
+
+.error-message {
+  position: absolute;
+  bottom: -2px;
+  font-size: 10px;
+  text-align: left;
+  border-radius: 5px;
+  margin-bottom: 1px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 178px;
+  max-height: 24px;
+  overflow: hidden;
+  cursor: default;
+  user-select: none;
+}
+
+.error-message-color-red {
+  color:  #b71c1c;
+}
+
+.error-message-color-dark-orange {
+  color: darkorange;
+}
+
+

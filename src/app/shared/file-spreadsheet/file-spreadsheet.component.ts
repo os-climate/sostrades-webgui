@@ -24,7 +24,7 @@ export class FileSpreadsheetComponent implements OnInit {
   @Input() nodeData: NodeData;
   @Input() namespace: string;
   @Input() discipline: string;
-  @Output() valueChanged: EventEmitter<any> = new EventEmitter();
+  @Output() stateUpdate: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('fileUpload', { static: false }) fileUpload: ElementRef;
 
@@ -43,7 +43,7 @@ export class FileSpreadsheetComponent implements OnInit {
     private studyCaseDataService: StudyCaseDataService,
     private studyCaseMainService: StudyCaseMainService,
     private snackbarService: SnackbarService,
-    private papa: Papa,) {
+    private papa: Papa) {
     this.fileData = null;
     this.isReadOnly = true;
     this.isListType = false;
@@ -155,10 +155,11 @@ export class FileSpreadsheetComponent implements OnInit {
 
             this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
                 updateItem,
-                this.nodeData.identifier,
+                this.nodeData,
                 this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
             this.nodeData.value = newDataList;
+            this.stateUpdate.emit();
           }
         });
       } else {
@@ -187,9 +188,10 @@ export class FileSpreadsheetComponent implements OnInit {
 
           this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
             updateItem,
-            this.nodeData.identifier,
+            this.nodeData,
             this.studyCaseDataService.loadedStudy.studyCase.id.toString());
           this.nodeData.value = reader.result.toString();
+          this.stateUpdate.emit();
         };
       }
       this.loadingDialogService.closeLoading();
@@ -252,6 +254,11 @@ export class FileSpreadsheetComponent implements OnInit {
           disableClose: true,
           data: spreadsheetDialogData
         });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result.cancel === false) {
+            this.stateUpdate.emit();
+          }
+        });
         this.loadingDialogService.closeLoading();
       } else {
         if (updateParameter !== null) { // Temporay file in local storage
@@ -260,13 +267,23 @@ export class FileSpreadsheetComponent implements OnInit {
             disableClose: true,
             data: spreadsheetDialogData
           });
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result.cancel === false) {
+              this.stateUpdate.emit();
+            }
+          });
           this.loadingDialogService.closeLoading();
         } else { // File in distant server
           this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe(file => {
-            spreadsheetDialogData.file = new Blob([file]);;
+            spreadsheetDialogData.file = new Blob([file]);
             const dialogRef = this.dialog.open(SpreadsheetComponent, {
               disableClose: true,
               data: spreadsheetDialogData
+            });
+            dialogRef.afterClosed().subscribe((result) => {
+              if (result.cancel === false) {
+                this.stateUpdate.emit();
+              }
             });
             this.loadingDialogService.closeLoading();
           }, errorReceived => {

@@ -28,20 +28,20 @@
       {{ nodeData.displayName }}
     </div>
 
-    <div class="header-icon">
+    <div class="header-icon" style="cursor: default; user-select: none;">
       <div style="width: 18px">
         <div *ngIf="!nodeData.coupling" style="width: 18px"></div>
         <i *ngIf="nodeData.coupling" class="fa-solid fa-right-left"></i>
         <i *ngIf="nodeData.hasConnectorData" class="fa-solid fa-link" style="font-size: 15px; margin-right: 3px;"></i>
       </div>
-      <mat-icon style="font-size: 18px; margin-left: 3px; width: 24px">{{
-        headerIcon
+      <mat-icon style="font-size: 18px; margin-left: 3px; width: 24px" [class]="headerIconColor">{{
+        headerIconClass
       }}</mat-icon>
     </div>
   </div>
 
   <div class="widget-separator"></div>
-  <div [ngClass]="setCalculationCss(isCalculationRunning)">
+  <div [ngClass]="setCalculationCss(isCalculationRunning)" style="position: relative">
     <div [ngSwitch]="widgetType" class="fullsize">
       <ng-template ngSwitchCase="label" class="fullsize">
         <app-label class="fullsize" [nodeData]="nodeData"> </app-label>
@@ -85,7 +85,7 @@
           [nodeData]="nodeData"
           [discipline]="discipline"
           [namespace]="namespace"
-          (valueChanged)="onInputChange($event)"
+          (stateUpdate)="onStateUpdate()"
         >
         </app-file-spreadsheet>
       </ng-template>
@@ -100,6 +100,9 @@
         >
         </app-process-builder>
       </ng-template>
+    </div>
+    <div [class]="integrityMessageClass" [matTooltip]="widgetIntegrityMessage" [matTooltipClass]="integrityTooltipClass">
+      {{widgetIntegrityMessage}}
     </div>
   </div>
 </div>

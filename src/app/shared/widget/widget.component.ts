@@ -12,6 +12,7 @@ import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { Subscription } from 'rxjs';
 import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
+import { TypeofExpr } from '@angular/compiler';
 
 @Component({
   selector: 'app-widget',
@@ -21,6 +22,8 @@ import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.m
 
 export class WidgetComponent implements OnInit {
 
+  private static BASE_INTEGRITY_TOOLTIP_CLASS = 'custom-tooltip-class';
+
   @Input() nodeData: NodeData;
   @Input() namespace: string;
   @Input() discipline: string;
@@ -28,28 +31,63 @@ export class WidgetComponent implements OnInit {
   public widgetType: WidgetType;
   public isCalculationRunning: boolean;
   calculationChangeSubscription: Subscription;
+  private borderClassMapping: Record<ValueType, string>;
+  private iconClassMapping: Record<ValueType, string>;
+  public borderClass: string;
+  public headerIconClass: string;
+
+  private baseIntegrityTooltipClass: string;
+  public integrityTooltipClass: string;
+
+  public widgetIntegrityMessage: string;
+  public integrityMessageClass: string;
 
   constructor(
     private dialog: MatDialog,
     private calculationService: CalculationService,
     private studyCaseDataService: StudyCaseDataService,
     public ontologyService: OntologyService,
-    private studyCaselocalStorageService: StudyCaseLocalStorageService,
+    private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     public filterService: FilterService,
     private snackbarService: SnackbarService) {
-      this.isCalculationRunning = false;
+
+    this.isCalculationRunning = false;
+
+    this.borderClassMapping = {
+      [ValueType.EMPTY]: 'border-empty',
+      [ValueType.USER]: 'border-user',
+      [ValueType.DEFAULT]: 'border-default',
+      [ValueType.READ_ONLY]: 'border-readonly',
+      [ValueType.OPTIONAL]: 'border-optional'
+    };
+
+    this.iconClassMapping = {
+      [ValueType.EMPTY]: 'error',
+      [ValueType.USER]: 'create',
+      [ValueType.DEFAULT]: 'settings_applications',
+      [ValueType.READ_ONLY]: 'visibility',
+      [ValueType.OPTIONAL]: 'check_box_outline_blank'
+    };
+
+    this.baseIntegrityTooltipClass = 'custom-tooltip-class';
+    this.integrityTooltipClass = this.baseIntegrityTooltipClass;
+    this.widgetIntegrityMessage = '';
+    this.integrityMessageClass = 'error-message error-message-color-red';
   }
-  
+
   ngOnInit(): void {
-    let status = this.studyCaseDataService.loadedStudy.treeview.rootNode.status;
+    const status = this.studyCaseDataService.loadedStudy.treeview.rootNode.status;
     this.isCalculationRunning = status === DisciplineStatus.STATUS_RUNNING || status === DisciplineStatus.STATUS_PENDING;
     this.widgetType = this.nodeData.widgetType;
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
     });
+
+    this.SetBorderClass();
+    this.SetHeaderIconClass();
   }
 
-  
+
   public onInputChange(value) {
     let updateItem: StudyUpdateParameter;
 
@@ -66,56 +104,66 @@ export class WidgetComponent implements OnInit {
 
     this.nodeData.value = value;
 
-    this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
+    this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
       updateItem,
-      this.nodeData.identifier,
+      this.nodeData,
       this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     this.snackbarService.showInformation(`${this.nodeData.displayName} added to temporary changes`);
+    this.onStateUpdate();
   }
 
-  get borderClass(): string {
-    switch (this.nodeData.valueType) {
-      case ValueType.EMPTY:
-        return 'border-empty';
-        break;
-      case ValueType.USER:
-        return 'border-user';
-        break;
-      case ValueType.DEFAULT:
-        return 'border-default';
-        break;
-      case ValueType.READ_ONLY:
-        return 'border-readonly';
-        break;
-      case ValueType.OPTIONAL:
-        return 'border-optional';
-        break;
-      default:
-        return 'border-empty';
-        break;
+  public onStateUpdate() {
+    this.SetBorderClass();
+    this.SetHeaderIconClass();
+  }
+
+  /**
+   * Read-only property that determine border css class to use regarding data state
+   */
+  private SetBorderClass() {
+    /**
+     * Manage integrity check, if a message is present AND no changes have already been made on the according
+     * parameter, then considered the parameter as Empty (error)
+     */
+
+    let result = this.borderClassMapping[ValueType.EMPTY];
+
+    if (this.nodeData.checkIntegrityMessage.length > 0) {
+
+      if (this.nodeData.modified === false) {
+        result = this.borderClassMapping[ValueType.EMPTY];
+        this.integrityTooltipClass = `${WidgetComponent.BASE_INTEGRITY_TOOLTIP_CLASS} background-red`;
+        this.widgetIntegrityMessage = this.nodeData.checkIntegrityMessage;
+        this.integrityMessageClass = 'error-message error-message-color-red';
+      } else {
+        result = 'border-value-change-with-integrity-message';
+        this.integrityTooltipClass = `${WidgetComponent.BASE_INTEGRITY_TOOLTIP_CLASS} background-dark-orange`;
+        this.widgetIntegrityMessage = `${this.nodeData.checkIntegrityMessage} (save changes to update message)`;
+        this.integrityMessageClass = 'error-message error-message-color-dark-orange';
+
+      }
+    } else {
+      result = this.borderClassMapping[this.nodeData.valueType] || this.borderClassMapping[ValueType.EMPTY];
     }
+
+    this.borderClass = result;
   }
 
-  get headerIcon(): string {
+  /**
+   * Read-only property that determine icon css class to use regarding data state
+   */
+  private SetHeaderIconClass() {
+    this.headerIconClass = this.iconClassMapping[this.nodeData.valueType] || 'indeterminate_check_box';
+  }
+
+  get headerIconColor(): string {
     switch (this.nodeData.valueType) {
       case ValueType.EMPTY:
-        return 'error';
-        break;
-      case ValueType.USER:
-        return 'create';
-        break;
-      case ValueType.DEFAULT:
-        return 'settings_applications';
-        break;
-      case ValueType.READ_ONLY:
-        return 'visibility';
-        break;
-      case ValueType.OPTIONAL:
-        return 'check_box_outline_blank';
+        return 'red-icon';
         break;
       default:
-        return 'indeterminate_check_box';
+        return '';
         break;
     }
   }
@@ -123,8 +171,7 @@ export class WidgetComponent implements OnInit {
   setCalculationCss(isCalculationRunning: boolean) {
     if (isCalculationRunning) {
       return 'widget-cell execution-running';
-    }
-    else{
+    } else {
       return 'widget-cell';
     }
   }

@@ -5,7 +5,7 @@ import { baseStudyCaseUnitParameterName } from './base/base-study-case-parameter
 
 test('Test Unit In Parameter Name -> Launch test_ratatouille_e2e', async ({ page }) => {
 
-    const studyName = 'test_load_witness';
+    const studyName = 'test_ratatouille_e2e';
     const ParameterName = 'Ending year [year]';
 
     await baseStudyCaseLoading(page, 'group_test_e2e', studyName);
