@@ -35,6 +35,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public showVisualisation: boolean;
   public showPostProcessingContent: boolean;
   public showVisualisationContent: boolean;
+  public showDocumentationContent: boolean;
+
   public showDataManagement: boolean;
   public showDocumentation: boolean;
   public showDataValidation: boolean;
@@ -80,6 +82,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showVisualisation = false;
     this.showPostProcessingContent = false;
     this.showVisualisationContent = false;
+    this.showDocumentationContent = false;
     this.onStudyCaseChangeSubscription = null;
     this.studyIsLoaded = false;
     this.onTreeNodeChangeSubscription = null;
@@ -214,11 +217,15 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
       this.showPostProcessingContent = false;
       this.showVisualisationContent = false;
+      this.showDocumentationContent = false;
 
       if (event.tab.textLabel === 'Post processing') {
         this.showPostProcessingContent = true;
       } else if (event.tab.textLabel === 'Visualisation') {
         this.showVisualisationContent = true;
+      } else if (event.tab.textLabel === 'Documentation') {
+        //this is needed so that when we are not on the tab, the request to get the documentation is not sent
+        this.showDocumentationContent = true;
       }
     }
   }
