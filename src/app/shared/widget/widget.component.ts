@@ -129,7 +129,9 @@ export class WidgetComponent implements OnInit {
 
     let result = this.borderClassMapping[ValueType.EMPTY];
 
-    if (this.nodeData.checkIntegrityMessage.length > 0) {
+    if (this.nodeData.checkIntegrityMessage !== undefined && 
+      this.nodeData.checkIntegrityMessage !== null && 
+      this.nodeData.checkIntegrityMessage.length > 0) {
 
       if (this.nodeData.modified === false) {
         result = this.borderClassMapping[ValueType.EMPTY];

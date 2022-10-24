@@ -44,7 +44,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private onStudyCaseChangeSubscription: Subscription;
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
-  public markdownDocumentation: MardownDocumentation[];
+  public modelsFullPathList: string[];
   public hasAccessToStudy: boolean;
   private userLevel: UserLevel;
   public userLevelList: string[];
@@ -87,7 +87,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.isFullScreenOn = false;
     this.showDocumentation = false;
     this.hasDocumentation = false;
-    this.markdownDocumentation = [];
+    this.modelsFullPathList = [];
     this.showDashboard = false;
     this.hasDashboard = false;
     this.showDataManagement = true;
@@ -187,7 +187,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         }
 
         this.showDocumentation = !(treenode.nodeType === 'data');
-        this.markdownDocumentation = treenode.markdownDocumentation;
+        this.modelsFullPathList = treenode.modelsFullPathList;
       }
     });
   }

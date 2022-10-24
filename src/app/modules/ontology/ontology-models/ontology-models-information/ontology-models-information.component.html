@@ -1,10 +1,4 @@
-<div class="container-dialog" *ngIf="loading">
-    <app-progress-bar
-      progressMode="indeterminate"
-      [progressText]="'Loading information - ' + data.modelStatus.label"
-    ></app-progress-bar>
-  </div>
-<div *ngIf="!loading">
+<div >
     <h2 mat-dialog-title style="text-align: center;">
         <h2>
           <b>{{ data.modelStatus.label }}</b>
@@ -284,7 +278,7 @@
     vertical-align: top;
   " >Documentation : </span>
       <app-study-case-documentation
-      [documentation]="markdownDocumentation"
+      [identifiers]="[data.modelStatus.id]"
     ></app-study-case-documentation>   
     <div style="text-align: center; margin: 10px 0;" >
         <button

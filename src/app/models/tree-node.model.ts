@@ -68,7 +68,6 @@ export class TreeNode implements INodeDataValueChange {
 
   postProcessingBundle: PostProcessingBundle[];
   private _isRoot: boolean;
-  public markdownDocumentation: MardownDocumentation[];
   isValidated: boolean;
 
   constructor(
@@ -82,7 +81,6 @@ export class TreeNode implements INodeDataValueChange {
     status: string,
     maturity: string,
     public identifier: string,
-    jsonMarkdownData: any[],
     isRoot: boolean
   ) {
     this.isVisible = true;
@@ -105,12 +103,6 @@ export class TreeNode implements INodeDataValueChange {
       this.dataDisc = CreateNodeDataDictionary(jsonDiscData, this, true);
     } else {
       this.dataDisc = {};
-    }
-    this.markdownDocumentation = [];
-    if (jsonMarkdownData !== null && jsonMarkdownData !== undefined && jsonMarkdownData.length > 0) {
-      jsonMarkdownData.forEach(jsonMarkdownItem => {
-        this.markdownDocumentation.push(MardownDocumentation.Create(jsonMarkdownItem));
-      });
     }
 
     this.postProcessingBundle = [];
@@ -157,7 +149,6 @@ export class TreeNode implements INodeDataValueChange {
       jsonData[TreeNodeAttributes.STATUS],
       jsonData[TreeNodeAttributes.MATURITY],
       jsonData[TreeNodeAttributes.IDENTIFIER],
-      jsonData[TreeNodeAttributes.MARKDOWN_DOCUMENTATION],
       isRoot
     );
 
@@ -263,7 +254,6 @@ export enum TreeNodeAttributes {
   IDENTIFIER = 'identifier',
   MODEL_NAME_FULL_PATH = 'model_name_full_path',
   MODELS_NAME_FULL_PATH_LIST = 'models_full_path_list',
-  FULL_NAMESPACE = 'full_namespace',
-  MARKDOWN_DOCUMENTATION = 'markdown_documentation'
+  FULL_NAMESPACE = 'full_namespace'
 }
 
