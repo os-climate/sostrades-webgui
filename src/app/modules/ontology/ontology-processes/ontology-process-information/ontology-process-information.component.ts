@@ -18,9 +18,6 @@ import { Routing } from 'src/app/models/routing.model';
 })
 export class OntologyProcessInformationComponent implements OnInit {
 
-  public markdownDocumentation: MardownDocumentation[];
-  public hasDocumentation: boolean;
-  public loading: boolean;
   public processDatas: string[][];
   public dataSourceModelsUsingByProcess = new MatTableDataSource();
   public modelsUsingByProcessColumns = ['disciplineList', 'goToModel'];
@@ -39,9 +36,6 @@ export class OntologyProcessInformationComponent implements OnInit {
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: OntologyProcessInformationDialogData
     ) {
-    this.markdownDocumentation = [];
-    this.hasDocumentation = false;
-    this.loading = true;
     this.panelUsecaseOpenState = false;
     this.panelModelsOpenState = false;
 
@@ -51,28 +45,6 @@ export class OntologyProcessInformationComponent implements OnInit {
 
     // Get markdown documentation
     if (this.data.process !== null && this.data.process !== undefined) {
-      if (this.data.process.identifier !== '' && this.data.process.identifier !== null && this.data.process.identifier !== undefined ) {
-        this.ontologyService.getOntologyMarkdowndocumentation(this.data.process.identifier).subscribe( response => {
-          if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
-            this.markdownDocumentation = [response];
-            this.hasDocumentation = true;
-          } else {
-            this.hasDocumentation = false;
-          }
-          this.loading = false;
-          }, errorReceived => {
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.loading = false;
-              this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
-            }
-          });
-      } else {
-          this.loading = false;
-      }
-
       // Get table to model list
       if ( this.data.process.disciplineList !== null && this.data.process.disciplineList !== undefined
         && this.data.process.disciplineList.length > 0) {
