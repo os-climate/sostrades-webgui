@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Ontology, OntologyType, PostOntology } from 'src/app/models/ontology.model';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { HeaderService } from '../hearder/header.service';
 import { DataHttpService } from '../http/data-http/data-http.service';
 import { ColumnName } from 'src/app/models/column-name.model';
+import { off } from 'process';
 
 
 @Injectable({
@@ -38,6 +39,8 @@ export class OntologyService extends DataHttpService {
 
   public generalInformationData: OntologyGeneralInformation;
 
+  public markdownDocumentations = {};
+
 
 
   constructor(
@@ -58,6 +61,7 @@ export class OntologyService extends DataHttpService {
     this.parametersSelectedValues.clear();
     this.parametersFilter = '';
     this.generalInformationData = null;
+    this.markdownDocumentations = {};
   }
 
   clearCache() {
@@ -71,6 +75,7 @@ export class OntologyService extends DataHttpService {
     this.parametersFilter = '';
     this.parametersSelectedValues.clear();
     this.generalInformationData = null;
+    this.markdownDocumentations = {};
   }
 
   loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
@@ -112,17 +117,25 @@ export class OntologyService extends DataHttpService {
 
 
   getOntologyMarkdowndocumentation(identifier: string): Observable<MardownDocumentation> {
-    return this.http.get<string>(`${this.apiRoute}/${identifier}/markdown_documentation`).pipe(map(
-      response => {
-        return new MardownDocumentation('', response);
-      }));
+    if (identifier in this.markdownDocumentations){
+      return of(this.markdownDocumentations[identifier]);
+    }
+    else{
+      return this.http.get<string>(`${this.apiRoute}/${identifier}/markdown_documentation`).pipe(map(
+        response => {
+          const documentation = new MardownDocumentation('', response);
+          this.markdownDocumentations[identifier] = documentation;
+          return documentation;
+        }));
+    }
+    
   }
 
   public resetOntology() {
     this.ontology.studyCase.parameters = {};
     this.ontology.studyCase.disciplines = {};
     this.ontology.studyCase.n2 = {};
-  }
+  } 
 
   public getParameter(key: string): OntologyParameter {
     if (key in this.ontology.studyCase.parameters) {

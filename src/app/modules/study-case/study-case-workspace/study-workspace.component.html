@@ -36,7 +36,8 @@
       *ngIf="showDocumentation"
     >
       <app-study-case-documentation
-        [documentation]="markdownDocumentation"
+        *ngIf="showDocumentationContent"
+        [identifiers]="modelsFullPathList"
       ></app-study-case-documentation>
     </mat-tab>
     <mat-tab

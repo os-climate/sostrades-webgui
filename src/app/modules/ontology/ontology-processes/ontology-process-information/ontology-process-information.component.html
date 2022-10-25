@@ -1,10 +1,4 @@
-<div class="container-dialog" *ngIf="loading">
-    <app-progress-bar
-      progressMode="indeterminate"
-      [progressText]="'Loading information - ' + data.process.processName"
-    ></app-progress-bar>
-  </div>
-<div *ngIf="!loading">
+<div>
     <h2 mat-dialog-title style="text-align: center;">
         <h2>
           <b>{{ data.process.processName }}</b>
@@ -158,7 +152,7 @@
     <span style="font-weight: 500; font-family: Roboto, 'Helvetica Neue', sans-serif; vertical-align: top;">
       Documentation : 
     </span>
-    <app-study-case-documentation [documentation]="markdownDocumentation"></app-study-case-documentation>
+    <app-study-case-documentation [identifiers]="[data.process.identifier]"></app-study-case-documentation>
     <div style="text-align: center; margin: 10px 0;" >
         <button mat-button (click)="closeDialog()">Ok</button>
     </div>

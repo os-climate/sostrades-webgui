@@ -19,9 +19,6 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 })
 export class OntologyModelsInformationComponent implements OnInit {
 
-  public markdownDocumentation: MardownDocumentation[];
-  public hasDocumentation: boolean;
-  public loading: boolean;
   public modelsStatusDatas: string[][];
   public panelProcessesUsingModelListOpenState: boolean;
   public panelRepoListOpenState: boolean;
@@ -44,36 +41,12 @@ export class OntologyModelsInformationComponent implements OnInit {
     public ontologyService: OntologyService,
     @Inject(MAT_DIALOG_DATA) public data: OntologyModelsStatusInformationDialogData
     ) {
-    this.markdownDocumentation = [];
-    this.hasDocumentation = false;
-    this.loading = true;
     this.panelProcessesUsingModelListOpenState = false;
 
    }
 
   ngOnInit(): void {
     if (this.data.modelStatus !== null && this.data.modelStatus !== undefined) {
-      if (this.data.modelStatus.id !== '' || this.data.modelStatus !== null || this.data.modelStatus !== undefined) {
-        this.ontologyService.getOntologyMarkdowndocumentation(this.data.modelStatus.id).subscribe( response => {
-          if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
-            this.markdownDocumentation = [response];
-            this.hasDocumentation = true;
-          } else {
-            this.hasDocumentation = false;
-          }
-          this.loading = false;
-      }, errorReceived => {
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.loading = false;
-              this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
-            }
-          });
-        } else {
-          this.loading = false;
-      }
       // Fill table with input parameters
       if (this.data.modelStatus.inputParameter !== null && this.data.modelStatus.inputParameter !== undefined
         && this.data.modelStatus.inputParameter.length > 0) {
