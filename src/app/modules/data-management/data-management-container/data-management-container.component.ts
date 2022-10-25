@@ -16,6 +16,7 @@ import { StudyCaseValidationService } from 'src/app/services/study-case-validati
 import { LoadedStudy } from 'src/app/models/study.model';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
 
 @Component({
   selector: 'app-data-management-container',
@@ -50,6 +51,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
+    public studyCaseLoadingService: StudyCaseLoadingService,
     public studyCaseValidationService: StudyCaseValidationService,
     public filterService: FilterService) {
     this.treeNodeDataSubscription = null;
@@ -234,9 +236,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
 
     this.validationChangeSubcription = this.socketService.onNodeValidatationChange.subscribe(changeValidation => {
       if (changeValidation) {
-        this.studyCaseValidationService.loadStudyValidationData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(res => {
-          this.studyCaseMainService.validatedUpdated();
-        });
+        this.studyCaseLoadingService.loadValidations(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe();
        }
     });
   }

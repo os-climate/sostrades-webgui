@@ -93,8 +93,7 @@ export class CouplingGraphComponent implements OnInit {
     this.modelTypes.setValue(this.typeList);
 
     if ((this.data !== null) &&
-        (this.data !== undefined) &&
-        (Object.keys(this.data).length == 2)) {
+        (this.data !== undefined)) {
 
       // initialize node and links visibility
       this.nodes = this.data.treeNodes.map((node: any) => {

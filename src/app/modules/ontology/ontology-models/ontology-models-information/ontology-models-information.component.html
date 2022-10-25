@@ -1,0 +1,289 @@
+<div >
+    <h2 mat-dialog-title style="text-align: center;">
+        <h2>
+          <b>{{ data.modelStatus.label }}</b>
+        </h2>
+      </h2>
+    <div>
+        <table style="width: 100%; background-color: white">
+            <ng-container *ngFor="let attr of modelsStatusDatas">
+              <tr style="border-bottom: 1px solid lightgray">
+                <td
+                  style="
+                    width: 200px;
+                    font-weight: 500;
+                    font-family: Roboto, 'Helvetica Neue', sans-serif;
+                    vertical-align: top;
+                  "
+                >
+                  {{ attr[0] }} :
+                </td>
+                <td
+                  style="
+                    width: calc(100% - 150px);
+                    font-size: 12px;
+                    overflow-wrap: anywhere;
+                  "
+                >
+                  {{ attr[1] }}
+                    <span
+                    *ngIf="attr[1] === '' || attr[1] === null || attr[1] === undefined"
+                    style="font-size: 12px;"
+                    >
+                    Not Avalaible
+                    </span>
+                </td>
+              </tr>
+
+            </ng-container>
+          </table>
+    </div>
+    <!-- Expansion panel class inheritance -->
+    <div *ngIf=" data.modelStatus.classInheritance !== null && data.modelStatus.classInheritance !== undefined && data.modelStatus.classInheritance.length > 0">
+      <mat-accordion  [ngClass]="!panelClassInheritanceOpenState ? 'mat-accordion' : ''">
+        <mat-expansion-panel (opened)="panelClassInheritanceOpenState = true" (closed)="panelClassInheritanceOpenState = false">
+          <mat-expansion-panel-header 
+          style="font-weight: 500;  font-size: 14px; font-family: Roboto, 'Helvetica Neue', sans-serif;">
+            <span>
+              Class Inheritance :  
+              <span class="number">
+                {{data.modelStatus.classInheritance.length}}  
+              </span>
+            </span>
+          </mat-expansion-panel-header>
+          <div class="panel-open">
+            <table class="table table-sm table-borderless">     
+              <ng-container *ngFor="let classInheritance of data.modelStatus.classInheritance">
+                <tr style="border-bottom: 1px solid lightgray">
+                  <td
+                    style="
+                    font-size: 12px;
+                      overflow-wrap: anywhere;
+                    "
+                  >
+                    {{classInheritance}}
+                  </td>
+                </tr>
+              </ng-container>    
+            </table>
+          </div> 
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+        <!-- Expansion panel process using by model -->
+    <div *ngIf=" data.modelStatus.processUsingDiscipline !== null && data.modelStatus.processUsingDiscipline !== undefined && data.modelStatus.processUsingDiscipline.length > 0">
+      <mat-accordion  [ngClass]="!panelProcessesUsingModelListOpenState ? 'mat-accordion' : ''">
+        <mat-expansion-panel id='process' (opened)="panelProcessesUsingModelListOpenState = true" (closed)="panelProcessesUsingModelListOpenState = false">
+          <mat-expansion-panel-header>
+            <span>
+              Process<span *ngIf="data.modelStatus.processUsingDiscipline.length > 1">es</span> 
+              used by {{data.modelStatus.label}} : 
+              <span class="number">
+                {{data.modelStatus.processUsingDiscipline.length}}  
+              </span>
+            </span>
+          </mat-expansion-panel-header>
+          <div class="panel-open">
+              <table mat-table [dataSource]="dataSourceProcessUsed" matSort class="table table-sm table-borderless">
+              <ng-container  matColumnDef='label'>
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td
+                mat-cell
+                *matCellDef="let element"
+                [matTooltip]="element.process_id"
+                matTooltipClass="custom-tooltip-class"
+                >
+                  {{ element.process_label }}
+                </td>
+              </ng-container>
+              <ng-container  matColumnDef='repository'>
+                <th mat-header-cell *matHeaderCellDef>Repository</th>
+                <td
+                mat-cell
+                *matCellDef="let element"
+                [matTooltip]="element.repository_id"
+                matTooltipClass="custom-tooltip-class"
+                >
+                  {{ element.repository_label }}
+                </td>
+              </ng-container>
+              <ng-container  matColumnDef='goToProcess'>
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td
+                  id="column-go-to-model"
+                  mat-cell
+                  *matCellDef="let element"
+                  [matTooltip]="element.process_label + ' information\'s'"
+                >
+                  <i 
+                  [id]="'go-to-'+ element.process_label"
+                  (click)="goToProcess(element.process_label)" 
+                  class="fa-solid fa-circle-arrow-right" 
+                  style="color: #0b78b8; cursor: pointer;"
+                  >
+                  </i>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="processColumns; sticky: true"></tr>
+              <tr
+              mat-row
+              class="table-row"
+              *matRowDef="let row; columns: processColumns"
+              ></tr>
+            </table> 
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+        <!-- Expansion panel Input Parameter -->
+
+    <div *ngIf=" data.modelStatus.inputParameter !== null && data.modelStatus.inputParameter !== undefined && data.modelStatus.inputParameterQuantity > 0">
+      <mat-accordion  [ngClass]="!panelInputsParametersQuantityOpenState ? 'mat-accordion' : ''">
+        <mat-expansion-panel id='inputParameter' (opened)="panelInputsParametersQuantityOpenState = true" (closed)="panelInputsParametersQuantityOpenState = false">
+          <mat-expansion-panel-header style="font-weight: 500;  font-size: 14px; font-family: Roboto, 'Helvetica Neue', sans-serif;">
+            <span>
+              Input parameter<span *ngIf="data.modelStatus.inputParameterQuantity> 1" >s</span> : 
+              <span class="number">
+                {{data.modelStatus.inputParameterQuantity}}
+              </span> 
+            </span>
+          </mat-expansion-panel-header>
+          <div class="panel-open">
+              <table mat-table [dataSource]="dataSourceInputsParameters" matSort class="table table-sm table-borderless">
+              <ng-container  matColumnDef='parameterLabel'>
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td
+                mat-cell
+                *matCellDef="let element"
+                [matTooltip]="element.parameter_id"
+                matTooltipClass="custom-tooltip-class"
+                >
+                {{ element.parameter_label }}
+                </td>
+              </ng-container>
+              <ng-container  matColumnDef='parameterUri'>
+                <th mat-header-cell *matHeaderCellDef>Uri</th>
+                <td
+                mat-cell
+                *matCellDef="let element"
+                matTooltipClass="custom-tooltip-class"
+                >
+                {{ element.parameter_usage_id }}
+                </td>
+              </ng-container>
+              <ng-container  matColumnDef='goToParameter'>
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td
+                  class="column-go-to-parameter"
+                  mat-cell
+                  *matCellDef="let element"
+                  [matTooltip]="element.parameter_label + ' information\'s'"
+                >
+                  <i
+                  [id]="'go-to-'+ element.parameter_label"
+                  (click)="goToParameter(element.parameter_label)" 
+                  class="fa-solid fa-circle-arrow-right" 
+                  style="color: #0b78b8; cursor: pointer;"
+                  >
+                  </i>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="parameterColumns; sticky: true"></tr>
+              <tr
+              mat-row
+              class="table-row"
+              *matRowDef="let row; columns: parameterColumns"
+              ></tr>
+            </table> 
+          </div> 
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+        <!-- Expansion panel Output Parameter  -->
+
+    <div *ngIf=" data.modelStatus.outputParameter !== null && data.modelStatus.outputParameter !== undefined && data.modelStatus.outputParameterQuantity > 0">
+      <mat-accordion >
+        <mat-expansion-panel (opened)="panelOutputsParametersQuantityOpenState = true" (closed)="panelOutputsParametersQuantityOpenState = false">
+          <mat-expansion-panel-header  id='outputParameter' [ngClass]="!panelOutputsParametersQuantityOpenState ? 'expansion-header' : ''" 
+          style="font-weight: 500;  font-size: 14px; font-family: Roboto, 'Helvetica Neue', sans-serif;">
+            <span>
+              Output parameter<span *ngIf="data.modelStatus.outputParameterQuantity> 1" >s</span> : 
+              <span class="number">
+                {{data.modelStatus.outputParameterQuantity}}
+              </span> 
+            </span>
+          </mat-expansion-panel-header>
+          <div class="panel-open">
+            <table mat-table [dataSource]="dataSourceOutputsParameters" matSort class="table table-sm table-borderless">
+              <!-- parameter label -->
+              <ng-container  matColumnDef='parameterLabel'>
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td
+                mat-cell
+                *matCellDef="let element"
+                [matTooltip]="element.parameter_id"
+                matTooltipClass="custom-tooltip-class"
+                >
+                   {{ element.parameter_label }}
+                </td>
+              </ng-container>
+              <!-- parameter uri -->
+              <ng-container  matColumnDef='parameterUri'>
+                <th mat-header-cell *matHeaderCellDef>Uri</th>
+                <td
+                mat-cell
+                *matCellDef="let element"
+                matTooltipClass="custom-tooltip-class"
+                >
+                   {{ element.parameter_usage_id  }}
+                </td>
+              </ng-container>
+              <!-- Link to parameter information -->
+              <ng-container  matColumnDef='goToParameter'>
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td
+                  class="column-go-to-parameter"
+                  mat-cell
+                  *matCellDef="let element"
+                  [matTooltip]="element.parameter_label + ' information\'s'"
+                >
+                  <i 
+                  (click)="goToParameter(element.parameter_label)" 
+                  class="fa-solid fa-circle-arrow-right" 
+                  style="color: #0b78b8; cursor: pointer;"
+                  >
+                  </i>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="parameterColumns; sticky: true"></tr>
+              <tr
+              mat-row
+              class="table-row"
+              *matRowDef="let row; columns: parameterColumns"
+              ></tr>
+            </table> 
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+        <!-- Documentation  -->
+
+    <span style="
+    font-weight: 500;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+    vertical-align: top;
+  " >Documentation : </span>
+      <app-study-case-documentation
+      [identifiers]="[data.modelStatus.id]"
+    ></app-study-case-documentation>   
+    <div style="text-align: center; margin: 10px 0;" >
+        <button
+        mat-button
+        (click)="closeDialog()"
+        >Ok</button>
+    </div>
+</div>

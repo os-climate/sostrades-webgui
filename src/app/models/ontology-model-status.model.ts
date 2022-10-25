@@ -2,47 +2,62 @@ export class OntologyModelStatus {
 
   constructor(
     public id: string,
-    public name: string,
+    public uri: string,
+    public label: string,
     public definition: string,
-    public type: string,
-    public source: string,
-    public lastModificationDate: string,
-    public validatedBy: string,
-    public validated: string,
-    public codeRepository: string,
-    public icon: string,
-    public version: string,
     public category: string,
-    public processesUsingModel: number,
-    public processesUsingModelList: {},
-    public inputsParametersQuantity: number,
-    public outputsParametersQuantity: number) {
+    public version: string,
+    public lastModificationDate: string,
+    public source: string,
+    public validatedBy: string,
+    public pythonClass: string,
+    public validated: string,
+    public icon: string,
+    public outputParameterQuantity: number,
+    public inputParameterQuantity: number,
+    public classInheritance: string[],
+    public codeRepository: string,
+    public type: string,
+    public pythonModulePath: string,
+    public outputParameter: [],
+    public inputParameter: [],
+    public processUsingDiscipline: []
+
+    ) {
   }
 
   public static Create(jsonData: any): OntologyModelStatus {
     const result: OntologyModelStatus = new OntologyModelStatus(
       jsonData[ModelStatusAttributes.ID],
-      jsonData[ModelStatusAttributes.NAME],
+      jsonData[ModelStatusAttributes.URI],
+      jsonData[ModelStatusAttributes.LABEL],
       jsonData[ModelStatusAttributes.DEFINITION],
-      jsonData[ModelStatusAttributes.TYPE],
-      jsonData[ModelStatusAttributes.SOURCE],
-      jsonData[ModelStatusAttributes.LASTMODIFICATIONDATE],
-      jsonData[ModelStatusAttributes.VALIDATEDBY],
-      jsonData[ModelStatusAttributes.VALIDATED],
-      jsonData[ModelStatusAttributes.CODEREPOSITORY],
-      jsonData[ModelStatusAttributes.ICON],
-      jsonData[ModelStatusAttributes.VERSION],
       jsonData[ModelStatusAttributes.CATEGORY],
-      jsonData[ModelStatusAttributes.PROCESSUSINGMODEL],
-      jsonData[ModelStatusAttributes.PROCESSUSINGMODELLIST],
-      jsonData[ModelStatusAttributes.INPUTSPARAMETERSQUANTITY],
-      jsonData[ModelStatusAttributes.OUTPUTSPARAMETERSQUANTITY]);
+      jsonData[ModelStatusAttributes.VERSION],
+      jsonData[ModelStatusAttributes.LAST_MODIFICATION_DATE],
+      jsonData[ModelStatusAttributes.SOURCE],
+      jsonData[ModelStatusAttributes.VALIDATED_BY],
+      jsonData[ModelStatusAttributes.PYTHON_CLASS],
+      jsonData[ModelStatusAttributes.VALIDATED],
+      jsonData[ModelStatusAttributes.ICON],
+      jsonData[ModelStatusAttributes.OUTPUTS_PARAMETERS_QUANTITY],
+      jsonData[ModelStatusAttributes.INPUTS_PARAMETERS_QUANTITY],
+      jsonData[ModelStatusAttributes.CLASS_INHERITANCE],
+      jsonData[ModelStatusAttributes.CODE_REPOSITORY],
+      jsonData[ModelStatusAttributes.TYPE],
+      jsonData[ModelStatusAttributes.PYTHON_MODULE_PATH],
+      jsonData[ModelStatusAttributes.OUTPUTS_PARAMETERS],
+      jsonData[ModelStatusAttributes.INPUTS_PARAMETERS],
+      jsonData[ModelStatusAttributes.PROCESS_USING_DISCIPLINE]);
     return result;
   }
 
   public static getKeyLabel(key: string): string {
     const keyLabelDict = {
       definition: 'Definition',
+      uri: 'URI',
+      pythonClass: 'Python Class',
+      pythonModulePath: ' Pyhton Module Path',
       version: 'Version',
       type: 'Type',
       category: 'Category',
@@ -51,9 +66,6 @@ export class OntologyModelStatus {
       validatedBy: 'Validated By',
       validated: 'Validated',
       codeRepository: 'Code Repository',
-      inputsParametersQuantity: 'Inputs Parameters Quantity',
-      outputsParametersQuantity: 'Outputs Parameters Quantity',
-
     };
 
     if (key in keyLabelDict) {
@@ -67,20 +79,25 @@ export class OntologyModelStatus {
 
 export enum ModelStatusAttributes {
   ID = 'id',
-  NAME = 'name',
+  URI = 'uri',
+  LABEL = 'label',
   DEFINITION = 'definition',
   TYPE = 'type',
   SOURCE = 'source',
-  LASTMODIFICATIONDATE = 'last_modification_date',
-  VALIDATEDBY = 'validated_by',
+  LAST_MODIFICATION_DATE = 'last_modification_date',
+  VALIDATED_BY = 'validated_by',
   VALIDATED = 'validated',
-  CODEREPOSITORY = 'code_repository',
+  CODE_REPOSITORY = 'code_repository',
   ICON = 'icon',
   VERSION = 'version',
   CATEGORY = 'category',
-  PROCESSUSINGMODEL = 'processes_using_model',
-  PROCESSUSINGMODELLIST = 'processes_using_model_list',
-  INPUTSPARAMETERSQUANTITY = 'inputs_parameters_quantity',
-  OUTPUTSPARAMETERSQUANTITY = 'outputs_parameters_quantity'
+  PYTHON_CLASS = 'python_class',
+  CLASS_INHERITANCE = 'class_inheritance',
+  PYTHON_MODULE_PATH = 'python_module_path',
+  PROCESS_USING_DISCIPLINE = 'process_using_discipline',
+  INPUTS_PARAMETERS = 'input_parameters',
+  INPUTS_PARAMETERS_QUANTITY = 'input_parameters_quantity',
+  OUTPUTS_PARAMETERS = 'output_parameters',
+  OUTPUTS_PARAMETERS_QUANTITY = 'output_parameters_quantity'
 }
 

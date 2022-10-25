@@ -231,8 +231,8 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
             if (columnDataFrameDescriptor.columnRange !== undefined
               && columnDataFrameDescriptor.columnRange !== null
               && columnDataFrameDescriptor.columnRange.length > 0) {
-              if (!(parseInt(rec.newValue, 10) >= columnDataFrameDescriptor.columnRange[0]
-                && parseInt(rec.newValue, 10) <= columnDataFrameDescriptor.columnRange[1])) {
+              if (!(parseFloat(rec.newValue) >= columnDataFrameDescriptor.columnRange[0]
+                && parseFloat(rec.newValue) <= columnDataFrameDescriptor.columnRange[1])) {
                 if (!(columnName in errorRecords)) {
                   errorRecords[columnName] = new JSpreadSheetValueError();
                 }
@@ -264,7 +264,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
                 errorRecords[columnName].errorInt = `Integer intended `;
               }
             }
-              
+
             //check value array and float format in it
             if (columnDataFrameDescriptor.columnType.includes('array')) {
               let array_data = rec.newValue;
@@ -289,7 +289,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
               }
             }
           }
-          
+
         }
       });
     }
@@ -318,8 +318,18 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   }
 
   saveDataClick() {
-
-    if (this.data.nodeData.type.includes('list') && (this.data.nodeData.subtype_descriptor === undefined || this.data.nodeData.subtype_descriptor === null)) {
+    /**
+     * Changes 07/09/2022
+     * Change the check regarding type and subtype descriptor to handle correctly data that must be not be manage as csv stream
+     * - type is check regarding main type, here list
+     * - no csv management require a maximum nested level of 1 (so simple list and not list of list etc..
+     * - contain data type must string or float, or int, other are too complex to be handled as json)
+     */
+    if (
+        this.data.nodeData.type === 'list' &&
+        this.data.nodeData.subTypeDrescriptorNestedLevelCount === 1 &&
+        ['string', 'float', 'int'].includes(this.data.nodeData.subTypeDescriptorValue)
+      ) {
       // Saving list type
       this.loadingDialogService.showLoading(`Saving in temporary changes : ${this.data.nodeData.displayName}`);
 
@@ -328,9 +338,9 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
       columnData.forEach((element) => {
         if (element !== null && element !== '') {
-          if (this.data.nodeData.type.includes('float')) {
+          if (this.data.nodeData.subTypeDescriptorValue === 'float') {
             newDataList.push(parseFloat(element));
-          } else if (this.data.nodeData.type.includes('int')) {
+          } else if (this.data.nodeData.subTypeDescriptorValue === 'int') {
             newDataList.push(parseInt(element));
           } else {
             newDataList.push(element.toString());
@@ -355,7 +365,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
       this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
         updateItem,
-        this.data.nodeData.identifier,
+        this.data.nodeData,
         this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
     } else {
@@ -384,7 +394,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         // Saving edited table in local storage
         this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
           updateItem,
-          this.data.nodeData.identifier,
+          this.data.nodeData,
           this.studyCaseDataService.loadedStudy.studyCase.id.toString());
     }
     this.loadingDialogService.closeLoading();

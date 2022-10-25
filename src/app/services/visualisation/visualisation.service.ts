@@ -14,14 +14,18 @@ export class VisualisationService extends MainHttpService {
     private http: HttpClient,
     private router: Router,
     private location: Location) {
-    super(location, 'visualisation');
+    super(location, 'study-case');
   }
 
   getExecutionSequenceData(studyId: number): Observable<any> {
-    return this.http.get(`${this.apiRoute}/visualisation-execution-sequence/${studyId}`);
+    return this.http.get(`${this.apiRoute}/${studyId}/execution-sequence`);
+  }
+
+  getInterfaceDiagramData(studyId: number): Observable<any> {
+    return this.http.get(`${this.apiRoute}/${studyId}/interface-diagram`);
   }
 
   getDiagramN2Data(studyId: number): Observable<any> {
-    return this.http.get(`${this.apiRoute}/n2-diagram/${studyId}`);
+    return this.http.get(`${this.apiRoute}/${studyId}/n2-diagram`);
   }
 }

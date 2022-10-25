@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns='http://www.w3.org/2000/svg' xml:space='preserve' version='1.1' overflow='visible' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 80.5 15.5'>
+  <title>OWL Button on green background</title>
+  <desc>The button combines three entities displayed horizontally: the W3C logo with the text 'W3C'; the drawing of a cube whose top part is slightly peeled off; and the text 'OWL'. These three entities are set horizontally, with the 'OWL' text appearing on a green background</desc>
+  <metadata>
+	<rdf:RDF 
+		xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' 
+		xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+		xmlns:cc='http://creativecommons.org/ns#'
+		xmlns:dc='http://purl.org/dc/elements/1.1/'>
+		<cc:Work rdf:about="">
+	        <dc:title>OWL Button on green background</dc:title>
+	        <dc:format>image/svg+xml</dc:format>
+			<rdfs:seeAlso rdf:resource="http://www.w3.org/2007/10/sw-logos.html"/>
+	        <dc:date>2007-11-01</dc:date>
+			<cc:license rdf:resource='http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231'/>
+			<cc:morePermissions rdf:resource='http://www.w3.org/2007/10/sw-logos.html#LogoWithW3C'/>
+			<cc:attributionURL rdf:reource='http://www.w3.org/2001/sw/'/>
+			<dc:description>The button combines three entities displayed horizontally: the W3C logo with the text 'W3C'; the drawing of a cube whose top part is slightly peeled off; and the text 'OWL'. These three entities are set horizontally, with the 'OWL' text appearing on a green background
+			</dc:description>
+		</cc:Work>
+	</rdf:RDF>
+  </metadata>
+  <text x='2' y='12' font-size='12' fill-opacity='0' font-family='Trebuchet' letter-spacing='-12'>W3C</text>
+  <text x='41' y='12' font-size='11' fill-opacity='0' font-family='Trebuchet' letter-spacing='-12'>OWL</text>
+  <g shape-rendering='geometricPrecision' text-rendering='geometricPrecision' image-rendering='optimizeQuality'>
+    <g>
+      <rect y='0.25' x='0.25' fill='#FFFFFF' width='41.5' height='15.125'/>
+      <rect y='0.25' x='39.292' fill='#87BB40' width='40.958' height='15.125'/>
+      <g>
+        <path d='M50.098,3.851c3.248,0,4.688,2.088,4.688,4.2c0,2.088-1.402,4.2-4.688,4.2c-3.107,0-4.687-1.933-4.687-4.2    C45.411,5.879,46.889,3.851,50.098,3.851z M50.098,9.851c1.023,0,1.668-0.696,1.668-1.8c0-1.104-0.645-1.8-1.668-1.8    c-1.035,0-1.667,0.695-1.667,1.8C48.431,9.154,49.063,9.851,50.098,9.851z' fill='#FFFFFF'/>
+        <path d='M54.95,3.959h2.83l0.998,3.672h0.025l1.073-3.672h2.186L63.2,7.631h0.025l0.935-3.672h2.83l-2.918,8.184    h-1.807l-1.264-4.056h-0.025l-1.188,4.056h-1.807L54.95,3.959z' fill='#FFFFFF'/>
+        <path d='M68.077,3.959h3.02v6.132h3.386v2.052h-6.405V3.959z' fill='#FFFFFF'/>
+      </g>
+      <rect height='15' width='80' stroke='#005B9D' y='0.25' x='0.25' stroke-width='0.5' fill='none'/>
+      <g>
+        <g>
+          <path d='M24.244,1.84c0.405,0,0.729,0.33,0.729,0.735c0,0.412-0.324,0.739-0.732,0.739     c-0.405,0-0.735-0.327-0.735-0.739c0-0.406,0.33-0.735,0.735-0.735H24.244z M24.238,1.987c-0.307,0-0.555,0.264-0.555,0.591     c0,0.33,0.248,0.588,0.558,0.588c0.311,0.003,0.563-0.258,0.563-0.588c0-0.327-0.252-0.591-0.563-0.591H24.238z M24.114,3.003     H23.94V2.186c0.065-0.01,0.137-0.023,0.262-0.023c0.14,0,0.226,0.023,0.281,0.065c0.045,0.036,0.072,0.091,0.072,0.177     c0,0.098-0.069,0.166-0.157,0.189v0.007c0.071,0.013,0.117,0.078,0.13,0.199c0.017,0.127,0.033,0.176,0.046,0.203h-0.18     c-0.02-0.029-0.033-0.102-0.049-0.213c-0.013-0.088-0.065-0.123-0.154-0.123h-0.078V3.003z M24.114,2.532h0.081     c0.102,0,0.18-0.033,0.18-0.118c0-0.068-0.049-0.121-0.167-0.121c-0.042,0-0.072,0-0.094,0.003V2.532z' fill='#241E12'/>
+        </g>
+        <g>
+          <g>
+            <g>
+              <path d='M23.044,2.688l0.23,1.398L22.46,5.645c0,0-0.313-0.66-0.832-1.026       c-0.438-0.309-0.723-0.376-1.168-0.285c-0.573,0.119-1.222,0.803-1.505,1.647c-0.338,1.01-0.342,1.5-0.354,1.947       c-0.019,0.721,0.095,1.145,0.095,1.145s-0.495-0.914-0.49-2.252c0.003-0.956,0.154-1.824,0.596-2.68       c0.39-0.752,0.967-1.204,1.481-1.256c0.531-0.055,0.951,0.2,1.274,0.477c0.34,0.291,0.686,0.928,0.686,0.928L23.044,2.688z' fill='#241E12'/>
+              <path d='M23.144,10.602c0,0-0.359,0.643-0.583,0.892c-0.224,0.248-0.625,0.685-1.121,0.902       c-0.496,0.22-0.755,0.261-1.245,0.212c-0.49-0.045-0.945-0.329-1.104-0.448c-0.159-0.117-0.567-0.465-0.796-0.79       c-0.231-0.325-0.591-0.974-0.591-0.974s0.2,0.65,0.326,0.927c0.072,0.158,0.294,0.645,0.609,1.067       c0.294,0.395,0.865,1.074,1.732,1.228s1.464-0.237,1.61-0.33c0.147-0.094,0.458-0.354,0.656-0.565       c0.205-0.22,0.4-0.5,0.506-0.668c0.079-0.123,0.207-0.371,0.207-0.371L23.144,10.602z' fill='#241E12'/>
+            </g>
+            <g>
+              <path d='M8.166,2.75l1.96,6.667l1.962-6.667h1.419l-3.247,10.955h-0.135L8.098,6.917l-2.029,6.789H5.934       L2.688,2.75h1.42l1.961,6.667l1.326-4.49L6.745,2.75H8.166z' fill='#005B9D'/>
+              <path d='M17.54,10.188c0,0.991-0.264,1.826-0.791,2.502c-0.527,0.677-1.211,1.015-2.05,1.015       c-0.631,0-1.18-0.201-1.649-0.602c-0.469-0.401-0.816-0.944-1.041-1.63l1.109-0.459c0.162,0.414,0.376,0.741,0.642,0.979       c0.267,0.241,0.579,0.359,0.94,0.359c0.379,0,0.7-0.211,0.961-0.636c0.262-0.423,0.392-0.934,0.392-1.528       c0-0.658-0.14-1.167-0.419-1.527c-0.325-0.425-0.834-0.637-1.528-0.637h-0.541V7.376l1.894-3.273h-2.286l-0.636,1.082H12.13       V2.75h5.274v0.662l-2.001,3.45c0.704,0.225,1.235,0.635,1.596,1.23C17.359,8.688,17.54,9.386,17.54,10.188z' fill='#005B9D'/>
+            </g>
+          </g>
+          <g>
+            <path d='M31.769,2.898C35.292,4.487,36.06,1.56,36.06,1.56s-0.669,3.671-3.758,5.171      c-0.629,0.306-1.02,0.469-1.02,0.469l-5.06-2.466l5.06-2.075C31.282,2.659,31.16,2.624,31.769,2.898z' fill='#87BB40'/>
+            <polygon points='30.692,13.652 25.978,11.099 25.978,5.835 30.692,8.231     ' fill='#ED7D22'/>
+            <polygon points='31.753,13.652 36.467,11.099 36.467,5.835 31.753,8.231     ' fill='#BD1B89'/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

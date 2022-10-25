@@ -6,6 +6,12 @@
   overflow-x: auto;
 }
 
+.number-reference {
+  margin-right: 10px;
+  font-size: 12px;
+  border-radius: 7px;
+}
+
 .study-header {
   display: flex;
   align-items: center;
@@ -39,6 +45,15 @@
 
 .filter {
   width: calc(100% - 140px);
+}
+
+.icon-filter-any-values {
+  margin : 0 10px;
+  color: #bdbdbd;
+}
+.icon-filter-values {
+  margin : 0 10px;
+  color: #0b78b8;
 }
 
 .table-container {

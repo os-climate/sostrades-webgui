@@ -20,8 +20,21 @@ export async function baseStudyCaseLoading(page: Page, studyGroup: string, study
     // Start loading of studycase
     await page.click(loadTitle);
   }
+
+  // Check if the study is loaded
+  const [response] = await Promise.all([
+    page.waitForResponse(resp => resp.url().includes('/api/data/study-case/'))
+  ]);
+    /***
+    * Update 19/10/2022
+    * Add log if the status of the response is not 200
+    */
+  if (response.status() !== 200) {
+    const body = await response.body();
+    console.log(`Study-loading: ${studyName}\nResponse = ${body} `);
+}
   // Verifying correct redirection to study workspace
-  await page.waitForURL('/study-workspace');
+  await page.waitForURL('**/study-workspace**', { timeout: 90000 });
 
   // Verifying correct study name for My current study place
   const currentStudyNameTextLocator = page.locator('id=text-sidenav-study-loaded-name');
@@ -30,4 +43,9 @@ export async function baseStudyCaseLoading(page: Page, studyGroup: string, study
   // Verifying root node is present
   const rootNodeButton = `id=btn-treeview-node-${studyName}`;
   await page.waitForSelector(rootNodeButton);
+
+  // Check readonly mode
+  const treeviewTitle = page.locator(`id=text-sidenav-study-loaded-name`);
+  await expect(treeviewTitle).toHaveText(`: ${studyName}`);
+
 }

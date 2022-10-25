@@ -8,6 +8,7 @@ import { StudyCaseValidation } from './study-case-validation.model';
 import { Process } from './process.model';
 import { OntologyParameter } from './ontology-parameter.model';
 import { OntologyModelStatus } from './ontology-model-status.model';
+import { ColumnName } from './column-name.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -71,18 +72,6 @@ export class StudyCaseLoadDialogData extends AbstractDialogData {
   }
 }
 
-export class StudyCaseCreateDialogData extends AbstractDialogData {
-  studyName: string;
-  repositoryName: string;
-  processName: string;
-
-  public constructor() {
-    super();
-    this.studyName = '';
-    this.repositoryName = '';
-    this.processName = '';
-  }
-}
 
 export class StudyCaseCreateReferenceDialogData extends AbstractDialogData {
   studyName: string;
@@ -160,7 +149,7 @@ export class CoeditionDialogData extends AbstractDialogData {
   }
 }
 
-export class ProcessCreateStudyDialogData extends AbstractDialogData {
+export class StudyCaseCreateDialogData extends AbstractDialogData {
 
   studyName: string;
   studyType: string;
@@ -168,6 +157,7 @@ export class ProcessCreateStudyDialogData extends AbstractDialogData {
   reference: string;
   studyId: number;
   process: Process;
+  selectProcessOnly: boolean;
 
   public constructor() {
     super();
@@ -176,6 +166,7 @@ export class ProcessCreateStudyDialogData extends AbstractDialogData {
     this.reference = null;
     this.studyId = null;
     this.process = null;
+    this.selectProcessOnly = false;
   }
 }
 
@@ -333,6 +324,7 @@ export class SpreadsheetDialogData extends AbstractDialogData {
   namespace: string;
   discipline: string;
   readOnly: boolean;
+  cancel: boolean;
 
   public constructor() {
     super();
@@ -342,6 +334,7 @@ export class SpreadsheetDialogData extends AbstractDialogData {
     this.namespace = '';
     this.discipline = '';
     this.readOnly = false;
+    this.cancel = false;
   }
 }
 
@@ -398,5 +391,35 @@ export class EditStudyCaseDialogData extends AbstractDialogData {
     super();
     this.studyName = '';
     this.groupId = null;
+  }
+}
+
+export class RepositoryTraceabilityDialogData extends AbstractDialogData {
+    codeSourceTraceability: any;
+    public constructor() {
+      super();
+      this.codeSourceTraceability = null;
+    }
+}
+
+export class FilterDialogData extends AbstractDialogData {
+  public possibleStringValues: string[];
+  public selectedStringValues: string[];
+  public columnName: ColumnName;
+
+  public constructor() {
+    super();
+    this.possibleStringValues = [];
+    this.selectedStringValues = [];
+    this.columnName = null;
+  }
+}
+
+export class NewsDialogData extends AbstractDialogData {
+  public message: string;
+
+  public constructor() {
+    super();
+    this.message = '';
   }
 }

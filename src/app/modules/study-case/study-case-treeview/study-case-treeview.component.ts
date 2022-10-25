@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Inject, AfterViewInit } from '@angular/core';
 import { TreeNode, TreeView } from 'src/app/models/tree-node.model';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
@@ -36,6 +36,7 @@ import { PannelIds } from 'src/app/models/data-management-discipline.model';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-execution-system-load.model';
 import { FilterService } from 'src/app/services/filter/filter.service';
+import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
 
 
 @Component({
@@ -55,7 +56,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private onTreeNodeNavigationSubscription: Subscription;
 
   public currentSelectedNodeKey: string;
-  
+
   private studyExecutionStartedSubscription: Subscription;
   private studyExecutionStoppedSubscription: Subscription;
   private studyExecutionUpdatedSubscription: Subscription;
@@ -111,6 +112,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
     public studyCasePostProcessingService: StudyCasePostProcessingService,
+    public studyCaseLoadingService: StudyCaseLoadingService,
     public postProcessingService: PostProcessingService,
     private treeNodeDataService: TreeNodeDataService,
     public ontologyService: OntologyService,
@@ -211,7 +213,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             this.treeControl.expand(this.root.rootDict[treenodeKey]);
           }
         });
-
         this.nodeClick(this.currentSelectedNode);
         this.showChangesButtons = this.studyCaseLocalStorageService.studyHaveUnsavedChanges(currentLoadedStudy.studyCase.id.toString());
 
@@ -261,6 +262,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.onTreeNodeNavigation(nodeData);
     });
   }
+
 
   checkTreeViewIsFiltered() {
 
@@ -354,7 +356,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
   nodeClick(node) {
     const treenode = node as TreeNode;
-
     if (treenode !== null) {
       this.currentSelectedNodeKey = treenode.fullNamespace;
     }
@@ -599,6 +600,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             this.subscribeToExecution();
             this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(studyCase.id);
 
+
+
             this.snackbarService.showInformation('Study case successfully submitted');
 
             // Setting root node at status_stopped corresponding to discipline pending
@@ -681,6 +684,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
       this.snackbarService.showInformation('Study case successfully terminated');
       studyCaseObserver.stop();
+
       this.loadingDialogService.updateMessage(`Refreshing study case ${this.studyCaseDataService.loadedStudy.studyCase.name}.`)
     }, errorReceived => {
       const error = errorReceived as SoSTradesError;
@@ -747,17 +751,17 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
         const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
-
         // Reload the study in order to get all post postprocessing data
-        const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(loadedstudyCase => {
-          studySubscription.unsubscribe();
-          // Cleaning old subscriptions
-          this.cleanExecutionSubscriptions();
-          this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
-          this.calculationService.onCalculationChange.emit(false);
-          this.loadingDialogService.closeLoading();
-          this.snackbarService.showInformation('Refreshing study case data.');
-        }, errorReceived => {
+        const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
+          let loadedstudyCase = resultLoadedStudy as LoadedStudy;
+          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, false, (isStudyLoaded)=>{
+              studySubscription.unsubscribe();
+              // Cleaning old subscriptions
+              this.cleanExecutionSubscriptions();
+              this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
+              this.calculationService.onCalculationChange.emit(false);
+            }, false, false, true);
+          }, errorReceived => {
           const error = errorReceived as SoSTradesError;
           if (error.redirect) {
             this.snackbarService.showError(error.description);
@@ -775,7 +779,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.loadingDialogService.showLoading('Requesting study case reloading');
 
     this.studyCaseMainService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(response => {
-
+      let loadedStudy = response as LoadedStudy;
+      this.studyCaseLoadingService.updateStudyCaseDataService(loadedStudy);
+      this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
       //reload study for post processing
       this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(response => {
 
@@ -825,6 +831,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   private setStatusOnTreeDict(treenodeFullName, status) {
+
 
     const foundTreeNode = Object.values(this.root.rootDict).find(x => x.fullNamespace === treenodeFullName);
     if (foundTreeNode !== null && foundTreeNode !== undefined) {
@@ -932,7 +939,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   applyFilter(event: Event) {
-    
+
     const filterValue = (event.target as HTMLInputElement).value;
     this.applyFilterValue(filterValue);
   }
@@ -1043,8 +1050,12 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(loadedStudy.studyCase.id.toString());
 
         studyParameters.forEach(nodeDataCache => {
+
+          const nodeData = this.root.rootNodeDataDict[nodeDataCache.variableId];
+
           // Check if new value pushed for user cache and applying modification to local storage
-          if (nodeDataCache.oldValue !== this.root.rootNodeDataDict[nodeDataCache.variableId].oldValue) {
+          if (nodeDataCache.oldValue !== nodeData.oldValue) {
+
             const newItemSave = new StudyUpdateParameter(
               nodeDataCache.variableId,
               nodeDataCache.variableType,
@@ -1052,13 +1063,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
               nodeDataCache.namespace,
               nodeDataCache.discipline,
               nodeDataCache.newValue,
-              this.root.rootNodeDataDict[nodeDataCache.variableId].oldValue,
+              nodeData.oldValue,
               null,
               nodeDataCache.lastModified);
 
             this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
               newItemSave,
-              nodeDataCache.variableId,
+              nodeData,
               loadedStudy.studyCase.id.toString());
           }
           // Updating treenode with user changes

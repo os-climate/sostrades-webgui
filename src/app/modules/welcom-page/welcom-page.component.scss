@@ -2,7 +2,7 @@
   font-size: 32px;
 }
 #purpose{
-  max-width: 350px;
+  width: 450px;
   margin: auto 0;
   text-align: justify;
 }
@@ -12,6 +12,13 @@
   line-height: 30px;
 }
 
+#logo {
+  text-align: center
+}
+#news {
+  width: 50%;
+  margin: 0 auto;
+}
 #link{
   width: 100%;
 }

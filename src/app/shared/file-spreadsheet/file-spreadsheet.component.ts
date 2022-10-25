@@ -24,7 +24,7 @@ export class FileSpreadsheetComponent implements OnInit {
   @Input() nodeData: NodeData;
   @Input() namespace: string;
   @Input() discipline: string;
-  @Output() valueChanged: EventEmitter<any> = new EventEmitter();
+  @Output() stateUpdate: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('fileUpload', { static: false }) fileUpload: ElementRef;
 
@@ -33,7 +33,7 @@ export class FileSpreadsheetComponent implements OnInit {
   public isReadOnly: boolean;
   public isListType: boolean;
   public isArrayType: boolean;
-  public hasSubTypeDescriptor:boolean
+  public hasSubTypeDescriptor: boolean
 
   constructor(
     private loadingDialogService: LoadingDialogService,
@@ -43,12 +43,12 @@ export class FileSpreadsheetComponent implements OnInit {
     private studyCaseDataService: StudyCaseDataService,
     private studyCaseMainService: StudyCaseMainService,
     private snackbarService: SnackbarService,
-    private papa: Papa,) {
+    private papa: Papa) {
     this.fileData = null;
     this.isReadOnly = true;
     this.isListType = false;
     this.isArrayType = false;
-    this.hasSubTypeDescriptor = false
+    this.hasSubTypeDescriptor = false;
 
   }
 
@@ -61,9 +61,9 @@ export class FileSpreadsheetComponent implements OnInit {
       if (this.nodeData.type.includes('list')) {
         this.isListType = true;
       }
-      
-      if (this.nodeData.subtype_descriptor !== null && this.nodeData.subtype_descriptor !== undefined){
-          this.hasSubTypeDescriptor = true
+
+      if (this.nodeData.subTypeDescriptor !== null && this.nodeData.subTypeDescriptor !== undefined){
+          this.hasSubTypeDescriptor = true;
       }
 
       if (this.nodeData.type.includes('array')) {
@@ -72,24 +72,6 @@ export class FileSpreadsheetComponent implements OnInit {
 
     }
   }
-
-  // private getKeyOfSubType(subType:any){
-  //   // Get key of subtype_desriptor.
-  //   const values =  Object.values(subType)[0]
-  //   const key = Object.keys(values)[0]
-     
-  //   if (key === 'dict') {
-  //     return true
-  //   } 
-  //   else {
-  //     if(parseInt(key) === 0 || (key === undefined && key === null)){
-  //       return false  
-  //     }
-  //     else {
-  //       return this.getKeyOfSubType(values)
-  //     }
-  //   }
-  // }
 
   onClickUpload() {
     const fileUploadElement = this.fileUpload.nativeElement;
@@ -111,13 +93,13 @@ export class FileSpreadsheetComponent implements OnInit {
           complete: papaparseResults => {
 
             // Validate separator used to create the csv
-            if (papaparseResults.meta.delimiter != ',') {
+            if (papaparseResults.meta.delimiter !== ',') {
               this.snackbarService.showError(`Given csv file does not seems to use the atetnded csv separator.\nPLease check that ',' is the csv separator used in the file`);
               return;
             }
 
             // Check the content of the file (empty file is not somethign alowed)
-            if (papaparseResults.data.length == 0) {
+            if (papaparseResults.data.length === 0) {
               this.snackbarService.showWarning(`Given csv file is empty, no changes has been applied.`);
               return;
             }
@@ -173,10 +155,11 @@ export class FileSpreadsheetComponent implements OnInit {
 
             this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
                 updateItem,
-                this.nodeData.identifier,
+                this.nodeData,
                 this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
             this.nodeData.value = newDataList;
+            this.stateUpdate.emit();
           }
         });
       } else {
@@ -205,9 +188,10 @@ export class FileSpreadsheetComponent implements OnInit {
 
           this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
             updateItem,
-            this.nodeData.identifier,
+            this.nodeData,
             this.studyCaseDataService.loadedStudy.studyCase.id.toString());
           this.nodeData.value = reader.result.toString();
+          this.stateUpdate.emit();
         };
       }
       this.loadingDialogService.closeLoading();
@@ -225,10 +209,11 @@ export class FileSpreadsheetComponent implements OnInit {
 
   openSpreadsheetEditor(readOnly: boolean) {
     let name = '';
+
     // Handle data naming
-    let ontologyParameter = this.ontologyService.getParameter(this.nodeData.variableKey);
+    const ontologyParameter = this.ontologyService.getParameter(this.nodeData.variableKey);
     if (ontologyParameter !== null
-      && ontologyParameter!== undefined) {
+      && ontologyParameter !== undefined) {
       if (ontologyParameter.label !== null
         && ontologyParameter.label !== undefined) {
         name = ontologyParameter.label;
@@ -251,10 +236,28 @@ export class FileSpreadsheetComponent implements OnInit {
     spreadsheetDialogData.readOnly = readOnly;
 
     if (this.nodeData) {
-      if ((this.isListType && !this.hasSubTypeDescriptor) || (this.isArrayType && (this.nodeData.value === null && updateParameter === null))) {
+      /**
+       * Changes 07/09/2022
+       * Change the check regarding type and subtype descriptor to handle correctly data that must be not be manage as csv stream
+       * - type is check regarding main type, here list
+       * - no csv management require a maximum nested level of 1 (so simple list and not list of list etc..
+       * - contain data type must string or float, or int, other are too complex to be handled as json)
+       */
+      if (
+          (
+            this.isListType && this.nodeData.subTypeDrescriptorNestedLevelCount === 1  &&
+            ['string', 'float', 'int'].includes(this.nodeData.subTypeDescriptorValue)
+          ) ||
+          (this.isArrayType && (this.nodeData.value === null && updateParameter === null))
+          ) {
         const dialogRef = this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result.cancel === false) {
+            this.stateUpdate.emit();
+          }
         });
         this.loadingDialogService.closeLoading();
       } else {
@@ -264,13 +267,23 @@ export class FileSpreadsheetComponent implements OnInit {
             disableClose: true,
             data: spreadsheetDialogData
           });
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result.cancel === false) {
+              this.stateUpdate.emit();
+            }
+          });
           this.loadingDialogService.closeLoading();
         } else { // File in distant server
           this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe(file => {
-            spreadsheetDialogData.file = new Blob([file]);;
+            spreadsheetDialogData.file = new Blob([file]);
             const dialogRef = this.dialog.open(SpreadsheetComponent, {
               disableClose: true,
               data: spreadsheetDialogData
+            });
+            dialogRef.afterClosed().subscribe((result) => {
+              if (result.cancel === false) {
+                this.stateUpdate.emit();
+              }
             });
             this.loadingDialogService.closeLoading();
           }, errorReceived => {

@@ -54,16 +54,12 @@ import { SelectAllOptionComponent } from './shared/select-all-option/select-all-
 
 import { AngularSplitModule } from 'angular-split';
 import { StudyCaseExecutionExceptionDialogComponent } from './modules/study-case/study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
-import { ModelsContainerComponent } from './modules/models/models-container/models-container.component';
-import { ModelsStatusTableComponent } from './modules/models/models-status-table/models-status-table.component';
-import { ModelsLinksComponent } from './modules/models/models-links/models-links.component';
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { CreateUserComponent } from './modules/user/user-creation/user-creation.component';
 import { UserUpdateComponent } from './modules/user/user-update/user-update.component';
 import { UserAppLoadingComponent } from './modules/user/user-app-loading/user-app-loading.component';
 import { CurrentUserNoRightsComponent } from './modules/user/user-no-rights/user-no-rights.component';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
-import { ProcessStudyCaseCreationComponent } from './modules/process/process-study-case-creation/process-study-case-creation.component';
 
 import fr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
@@ -72,7 +68,6 @@ import { StudyCaseEventContainerComponent } from './modules/study-case/study-cas
 import { StudyCaseNotificationsComponent } from './modules/study-case/study-case-notifications/study-case-notifications.component';
 import { StudyCaseNotificationsChangesDialogComponent } from './modules/study-case/study-case-notifications-changes-dialog/study-case-notifications-changes-dialog.component';
 import { StudyCaseExecutionDialogComponent } from './modules/study-case/study-case-execution-dialog/study-case-execution-dialog.component';
-import { ModelsStatusInformationComponent } from './modules/models/models-status-information/models-status-information.component';
 import { StudyCaseModificationDialogComponent } from './modules/study-case/study-case-modification-dialog/study-case-modification-dialog.component';
 import { SamlComponent } from './modules/saml/saml.component';
 import { DataManagementInformationComponent } from './modules/data-management/data-management-information/data-management-information.component';
@@ -87,6 +82,7 @@ import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { DataManagementContainerComponent } from './modules/data-management/data-management-container/data-management-container.component';
 import { DataManagementDisciplineComponent } from './modules/data-management/data-management-discipline/data-management-discipline.component';
 import { DocumentationComponent } from './modules/study-case/study-case-documentation/study-case-documentation.component';
+import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { OntologyParameterConverterPipe } from './pipes/ontology-parameter-converter/ontology-parameter-converter.pipe';
 import { OntologyDisciplineConverterPipe } from './pipes/ontology-discipline-converter/ontology-discipline-converter.pipe';
 import { PostProcessingBundleComponent } from './modules/post-processings/post-processing-bundle/post-processing-bundle.component';
@@ -116,8 +112,17 @@ import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.
 import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
 import { GroupEditComponent } from './modules/group-management/group-edit/group-edit.component';
 import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
-import { ProcessInformationComponent } from './modules/process/process-information/process-information.component';
-import { ModelsStatusDocumentationComponent } from './modules/models/models-status-documentation/models-status-documentation.component';
+import { StudyCaseLoggingComponent } from './modules/study-case/study-case-logging/study-case-logging.component';
+import { RepositoryTraceabilityDialogComponent } from './modules/ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
+import { FilterDialogComponent } from './shared/filter-dialog/filter-dialog.component';
+import { NewsComponent } from './modules/news/news/news.component';
+import { NewsCreateOrEditComponent } from './modules/news/news-create-or-edit/news-create-or-edit.component';
+import { VisualisationInterfaceDiagramComponent } from './modules/visualisation/visualisation-interface-diagram/visualisation-interface-diagram.component';
+import { OntologyModelsInformationComponent } from './modules/ontology/ontology-models/ontology-models-information/ontology-models-information.component';
+import { OntologyProcessInformationComponent } from './modules/ontology/ontology-processes/ontology-process-information/ontology-process-information.component';
+import { StudyCaseCreationComponent } from './modules/study-case/study-case-creation/study-case-creation.component';
+import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 registerLocaleData(fr);
 
@@ -156,9 +161,6 @@ registerLocaleData(fr);
     StudyCaseStatusInformationComponent,
     SelectAllOptionComponent,
     StudyCaseExecutionExceptionDialogComponent,
-    ModelsContainerComponent,
-    ModelsStatusTableComponent,
-    ModelsLinksComponent,
     UserManagementComponent,
     CreateUserComponent,
     UserUpdateComponent,
@@ -170,20 +172,19 @@ registerLocaleData(fr);
     StudyCaseNotificationsComponent,
     StudyCaseNotificationsChangesDialogComponent,
     StudyCaseExecutionDialogComponent,
-    ModelsStatusInformationComponent,
     StudyCaseModificationDialogComponent,
     SamlComponent,
     DataManagementInformationComponent,
     PostProcessingPlotlyComponent,
     MarkdownRendererDirective,
     UpdateEntityRightComponent,
-    ProcessStudyCaseCreationComponent,
     UpdateEntityRightAddPeopleComponent,
     ReferenceManagementComponent,
     DataManagementContainerComponent,
     DataManagementDisciplineComponent,
     SearchPanelComponent,
     DocumentationComponent,
+    DashboardComponent,
     OntologyParameterConverterPipe,
     OntologyDisciplineConverterPipe,
     PostProcessingBundleComponent,
@@ -210,8 +211,16 @@ registerLocaleData(fr);
     DisciplineIconMappingConverterPipe,
     GroupEditComponent,
     StudyCaseEditComponent,
-    ProcessInformationComponent,
-    ModelsStatusDocumentationComponent,
+    StudyCaseLoggingComponent,
+    RepositoryTraceabilityDialogComponent,
+    FilterDialogComponent,
+    NewsComponent,
+    NewsCreateOrEditComponent,
+    VisualisationInterfaceDiagramComponent,
+    OntologyModelsInformationComponent,
+    OntologyProcessInformationComponent,
+    StudyCaseCreationComponent,
+    ProcessBuilderComponent,
   ],
   imports: [
     BrowserModule,
@@ -227,6 +236,7 @@ registerLocaleData(fr);
     ScrollingModule,
     TableVirtualScrollModule,
     ClipboardModule,
+    MatTooltipModule,
     AngularSplitModule.forRoot()
   ],
   providers: [

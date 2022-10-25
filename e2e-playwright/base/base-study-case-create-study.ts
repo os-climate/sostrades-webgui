@@ -1,7 +1,8 @@
 import { Page, expect } from '@playwright/test';
 
 export async function baseStudyCaseCreation(
-    page: Page, studyName: string, process: string, reference: string, createFromStudyManagement: boolean) {
+    page: Page, studyName: string, process: string, reference: string,
+    createFromStudyManagement: boolean) {
 
     if (!page.url().includes('/study-management')) {
 
@@ -34,8 +35,8 @@ export async function baseStudyCaseCreation(
     }
 
     // Verify modal study creation
-    const title = page.locator('app-process-create-study');
-    await expect(title).toHaveText(/Create new study/, { timeout: 15000 });
+    const title = page.locator('app-study-case-creation');
+    await expect(title).toContainText('Create new study', { timeout: 60000 });
 
     // Fill Study Name
     const study = page.locator(`id=studyName`);
@@ -50,14 +51,22 @@ export async function baseStudyCaseCreation(
         const searchOption = await page.locator('[aria-label="dropdown search"]');
         await searchOption.click();
         await searchOption.fill(process);
-
+        await page.waitForTimeout(400);
         const optionSelected = page.locator(`mat-option:has-text("${process}")`).first();
         await optionSelected.click();
 
+        const [responseProcess] = await Promise.all([
+            page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process')), { timeout: 15000 }
+        ]);
+        /***
+        * Update 19/10/2022
+        * Add log if the status of the response is not 200
+        */
+        if (responseProcess.status() !== 200) {
+            const body = await responseProcess.body();
+            console.log(`Study-creation: ${studyName} Process selected: ${process}\nResponse: ${body} `);
+        }
     }
-    await Promise.all([
-        page.waitForResponse(resp => resp.url().includes('/api/data/study-case/process') && resp.status() === 200),
-    ]);
 
     // Selection reference
     const empty = page.locator('mat-select-trigger');
@@ -65,17 +74,30 @@ export async function baseStudyCaseCreation(
 
     const references = page.locator('id=reference');
     await references.click();
+    await page.waitForTimeout(1000);
     const selectedReference = page.locator(`mat-option:has-text("${reference}")`).first();
+    await page.waitForTimeout(400);
     await selectedReference.click();
-    await expect(references).toHaveText(reference, { timeout: 15000 });
 
     // Valid the creation
     const submit = page.locator('id=submit');
-    await expect(submit).toBeEnabled({ timeout: 15000 });
+    await submit.isEnabled({ timeout: 15000 });
     await submit.click();
 
+    // Check if the study is created
+    const [response] = await Promise.all([
+        page.waitForResponse(resp => resp.url().includes('/api/data/study-case'))
+    ]);
+    /***
+    * Update 19/10/2022
+    * Add log if the status of the response is not 200
+    */
+    if (response.status() !== 200) {
+        const body = await response.body();
+        console.log(`Study-creation: ${studyName}\nResponse: ${body} `);
+    }
     // Verifying correct redirection to study workspace
-    await page.waitForURL('/study-workspace');
+    await page.waitForURL('**/study-workspace**', { timeout: 90000 });
 
     // Verifying correct study name for My current study place
     const currentStudyNameTextLocator = page.locator('id=text-sidenav-study-loaded-name');
@@ -83,14 +105,6 @@ export async function baseStudyCaseCreation(
 
     // Verifying root node is present
     const rootNodeButton = `id=btn-treeview-node-${studyName}`;
-    await page.waitForSelector(rootNodeButton);
-
-    // Close study
-    const closeButton = page.locator('id=close');
-    await closeButton.click();
-
-    // Verifying correct redirection to study management
-    await page.waitForURL('/study-management', { timeout: 15000 });
+    await page.waitForSelector(rootNodeButton, { timeout: 20000 });
 
 }
-

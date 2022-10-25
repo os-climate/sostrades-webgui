@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LoadedStudy } from 'src/app/models/study.model';
 import { StudyCaseExecutionStatus } from 'src/app/models/study-case-execution-status.model';
-import { StudyCaseLog } from 'src/app/models/study-case-log.model';
+import { StudyCaseExecutionLogging } from 'src/app/models/study-case-execution-logging.model';
 import { Location } from '@angular/common';
 import { CalculationDashboard } from 'src/app/models/calculation-dashboard.model';
 import { LoggerService } from '../logger/logger.service';
@@ -24,7 +24,7 @@ export class CalculationService extends DataHttpService {
   // Make innerLogs private so it's not accessible from the outside,
   // expose it as logs$ observable (read-only) instead.
   // Write to innerLogs only through specified store methods below.
-  private readonly innerLogs = new BehaviorSubject<StudyCaseLog[]>([]);
+  private readonly innerLogs = new BehaviorSubject<StudyCaseExecutionLogging[]>([]);
 
   // Exposed observable (read-only).
   readonly logs$ = this.innerLogs.asObservable();
@@ -88,7 +88,7 @@ export class CalculationService extends DataHttpService {
    * @param studyCaseExecutionId - Study case execution identifier
    *
    */
-  getExecutionLogs(studyCaseId: number, studyCaseExecutionId: number): Observable<StudyCaseLog[]> {
+  getExecutionLogs(studyCaseId: number, studyCaseExecutionId: number): Observable<StudyCaseExecutionLogging[]> {
 
     let route = `${this.apiRoute}/logs/${studyCaseId}`;
 
@@ -96,13 +96,13 @@ export class CalculationService extends DataHttpService {
       route = `${route}/${studyCaseExecutionId}`;
     }
 
-    return this.http.get<StudyCaseLog[]>(route)
+    return this.http.get<StudyCaseExecutionLogging[]>(route)
       .pipe(map(logs => {
 
-        const result: StudyCaseLog[] = [];
+        const result: StudyCaseExecutionLogging[] = [];
 
         logs.forEach(log => {
-          result.push(StudyCaseLog.Create(log));
+          result.push(StudyCaseExecutionLogging.Create(log));
         });
 
         return result;
@@ -143,7 +143,7 @@ export class CalculationService extends DataHttpService {
 
   //#region logs
 
-  private setLogs(logs: StudyCaseLog[]): void {
+  private setLogs(logs: StudyCaseExecutionLogging[]): void {
     this.innerLogs.next(logs);
   }
 
@@ -153,7 +153,7 @@ export class CalculationService extends DataHttpService {
    * @returns list of {@link src/app/models/study-case-log.model#StudyCaseLog | the StudyCaseLog class}
    *
    */
-  getLogs(): StudyCaseLog[] {
+  getLogs(): StudyCaseExecutionLogging[] {
 
     return this.innerLogs.getValue();
   }
@@ -168,13 +168,13 @@ export class CalculationService extends DataHttpService {
 
     let route = `${this.apiRoute}/logs/${studyCaseId}`;
 
-    this.http.get<StudyCaseLog[]>(route)
+    this.http.get<StudyCaseExecutionLogging[]>(route)
       .pipe(map(logs => {
 
-        const result: StudyCaseLog[] = [];
+        const result: StudyCaseExecutionLogging[] = [];
 
         logs.forEach(log => {
-          result.push(StudyCaseLog.Create(log));
+          result.push(StudyCaseExecutionLogging.Create(log));
         });
 
         this.setLogs(result);

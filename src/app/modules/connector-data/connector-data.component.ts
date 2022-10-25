@@ -20,7 +20,7 @@ export class ConnectorDataComponent implements OnInit {
     private studyCaselocalStorageService: StudyCaseLocalStorageService,
     public dialogRef: MatDialogRef<ConnectorDataComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ConnectorDialogData) {
-      
+
   }
 
   ngOnInit(): void {
@@ -48,7 +48,7 @@ export class ConnectorDataComponent implements OnInit {
 
       this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
         updateItem,
-        this.data.nodeData.identifier,
+        this.data.nodeData,
         this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
       this.data.nodeData.connector_data = this.innerConnectorData;

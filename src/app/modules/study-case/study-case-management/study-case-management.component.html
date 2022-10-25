@@ -14,9 +14,11 @@
       refresh
     </mat-icon>
       Refresh list
-    </button>
+    </button>   
     <h2 *ngIf="getTitle" id="favorite-studies-title">Favorite studies</h2>
-
+    <mat-label *ngIf="getFilter" class="number-studies">
+      Number of Studies <b>{{ studyCount }}</b>
+    </mat-label>
     <div class="filterSection" *ngIf="getFilter">
       <mat-form-field style="margin-right: 10px; width: 120px">
         <mat-select
@@ -26,7 +28,7 @@
           [(ngModel)]="studyCaseDataService.studyManagementColumnFiltered"
           [matTooltip]="studyCaseDataService.studyManagementColumnFiltered"
         >
-          <mat-option *ngFor="let item of colummnsFilter" [value]="item">
+          <mat-option *ngFor="let item of colummnsFilter" [value]="item" style='text-transform: capitalize;'>
             {{ item }}
           </mat-option>
         </mat-select>
@@ -90,7 +92,7 @@
         matSort
       >
         <!-- Selected Column -->
-        <ng-container matColumnDef="selected">
+        <ng-container [matColumnDef]="columnName.SELECTED">
           <th
             mat-header-cell
             *matHeaderCellDef
@@ -118,7 +120,7 @@
         </ng-container>
 
         <!-- Favorite Column -->
-        <ng-container matColumnDef="favorite">
+        <ng-container [matColumnDef]=" columnName.FAVORITE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Favorite</th>
           <td mat-cell *matCellDef="let element">
           <i
@@ -143,8 +145,11 @@
 
 
         <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name</th>
+        <ng-container [matColumnDef]="columnName.NAME">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name
+            <i *ngIf="getFilter" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
+          </th>
           <td mat-cell *matCellDef="let element" [matTooltip]="element.name">
             <a routerLink="/study/{{element.id}}"
               class="link-study-title"
@@ -155,8 +160,11 @@
         </ng-container>
 
         <!-- Group Column -->
-        <ng-container matColumnDef="groupName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Group name</th>
+        <ng-container [matColumnDef]="columnName.GROUP">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Group name
+            <i *ngIf="getFilter" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.GROUP)? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.GROUP, $event)" ></i>
+          </th>
           <td
             mat-cell
             *matCellDef="let element"
@@ -167,8 +175,11 @@
         </ng-container>
 
         <!-- Repository Column -->
-        <ng-container matColumnDef="repository">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository</th>
+        <ng-container [matColumnDef]="columnName.REPOSITORY">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository
+            <i *ngIf="getFilter" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.REPOSITORY, $event)" ></i>
+          </th>
           <td
             mat-cell
             *matCellDef="let element"
@@ -179,15 +190,18 @@
         </ng-container>
 
         <!-- Process Column -->
-        <ng-container matColumnDef="process">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Process</th>
+        <ng-container [matColumnDef]="columnName.PROCESS">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Process
+            <i *ngIf="getFilter" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.PROCESS, $event)" ></i>
+          </th>
           <td mat-cell *matCellDef="let element" [matTooltip]="element.process">
             {{ element.processDisplayName }}
           </td>
         </ng-container>
 
         <!-- CreationDate Column -->
-        <ng-container matColumnDef="creationDate">
+        <ng-container [matColumnDef]="columnName.CREATION_DATE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             Creation date
           </th>
@@ -197,7 +211,7 @@
         </ng-container>
 
         <!-- CreationDate Column -->
-        <ng-container matColumnDef="modificationDate">
+        <ng-container [matColumnDef]="columnName.MODIFICATION_DATE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             Modification date
           </th>
@@ -207,15 +221,18 @@
         </ng-container>
 
         <!-- Status Column -->
-        <ng-container matColumnDef="executionStatus">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <ng-container [matColumnDef]="columnName.STATUS">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status
+            <i *ngIf="getFilter" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.STATUS, $event)" ></i>
+          </th>
           <td mat-cell *matCellDef="let element" [matTooltip]="element.executionStatus">
             {{ element.executionStatus }}
           </td>
         </ng-container>
 
         <!-- Action Column -->
-        <ng-container matColumnDef="action">
+        <ng-container [matColumnDef]="columnName.ACTION">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
             <button

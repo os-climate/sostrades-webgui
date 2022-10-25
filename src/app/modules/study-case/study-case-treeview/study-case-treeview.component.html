@@ -337,10 +337,13 @@
               (click)="saveTreeViewPreferences(node)"
             >
               <i
+              [id]="treeControl.isExpanded(node)
+              ? 'chevron-down-' + node.fullNamespace
+              : 'chevron-right-'+ node.fullNamespace"
                 [ngClass]="
                   treeControl.isExpanded(node)
-                    ? 'fas fa-chevron-up fa-fw'
-                    : 'fas fa-chevron-down fa-fw'
+                    ? 'fas fa-chevron-down fa-fw'
+                    : 'fas fa-chevron-right fa-fw'
                 "
                 style="margin-left: 1px"
               >

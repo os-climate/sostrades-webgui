@@ -27,7 +27,7 @@
             [(ngModel)]="ontologyService.parametersColumnFiltered"
             [matTooltip]="ontologyService.parametersColumnFiltered"
           >
-            <mat-option *ngFor="let item of columnsFilter" [value]="item">
+            <mat-option *ngFor="let item of columnsFilter" [value]="item" style="text-transform: capitalize;">
               {{ item }}
             </mat-option>
           </mat-select>
@@ -74,7 +74,10 @@
         >
         <!-- parameter ID Column -->
         <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter ID</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter ID
+            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.ID)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilter(columnName.ID, $event)" ></i>
+          </th>
           <td
             mat-cell
             *matCellDef="let element"
@@ -85,7 +88,10 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="label">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter Label</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameter Label
+            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.LABEL)? 'icon-filter-values':'icon-filter-any-values'" 
+              (click)="displayFilter(columnName.LABEL, $event)" ></i>
+          </th>
           <td
             mat-cell
             *matCellDef="let element"
@@ -116,6 +122,7 @@
           >
     
           <button
+          [id]="'btn-parameter-documentation-' + element.label"
           mat-icon-button
           class="button-in-cell"
           color="accent"
@@ -131,7 +138,7 @@
             mat-header-row
             *matHeaderRowDef="displayedColumns; sticky: true"
           ></tr>
-          <tr mat-row class="table-row" *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr mat-row class="table-row" [id]="'row-parameters-' + row.label" *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
       </div>
     </div>

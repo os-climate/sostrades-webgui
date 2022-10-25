@@ -69,8 +69,9 @@ export class LoadedStudy {
     public noData: boolean,
     public readOnly: boolean,
     public userStudyPreferences: UserStudyPreferences,
-    public loadInProgress: boolean,
-    public canReload: boolean
+    public canReload: boolean,
+    public loadStatus: LoadStatus,
+    public dashboard: {}
   ) { }
 
   public static Create(jsonData: any): LoadedStudy {
@@ -86,8 +87,9 @@ export class LoadedStudy {
       jsonData[LoadedStudyAttributes.NODATA],
       jsonData[LoadedStudyAttributes.READONLY],
       UserStudyPreferences.Create(jsonData[LoadedStudyAttributes.PREFERENCE]),
-      jsonData[LoadedStudyAttributes.LOAD_IN_PROGRESS],
-      jsonData[LoadedStudyAttributes.CAN_RELOAD]);
+      jsonData[LoadedStudyAttributes.CAN_RELOAD],
+      jsonData[LoadedStudyAttributes.LOAD_STATUS],
+      jsonData[LoadedStudyAttributes.DASHBOARD]);
     return result;
   }
 }
@@ -96,13 +98,33 @@ export class LoadedStudy {
  * Interface for post request request
  * (study creation)
  */
-export interface PostStudy {
-  name: string;
-  repository: string;
-  process: string;
-  group: number;
-  reference: string;
-  type: string;
+export class StudyCasePayload {
+  constructor(public name: string,
+              public repository: string,
+              public process: string,
+              public group: number,
+              public reference: string,
+              public type: string){ }
+}
+
+/**
+ * Data interface to request a study case allocation
+ */
+export class StudyCaseAllocationPayload {
+  constructor(public name: string,
+              public repository: string,
+              public process: string,
+              public group: number) { }
+}
+
+/**
+ * Data interface to request a study case initial setup
+ * (generally after a succeeded allocation)
+ */
+export class StudyCaseInitialSetupPayload {
+  constructor(public studyCaseIdentifier: number,
+              public reference: string,
+              public type: string) { }
 }
 
 
@@ -141,6 +163,15 @@ export enum LoadedStudyAttributes {
   NODATA = 'no_data',
   READONLY = 'read_only',
   PREFERENCE = 'preference',
-  LOAD_IN_PROGRESS = 'load_in_progress',
-  CAN_RELOAD = 'can_reload'
+  CAN_RELOAD = 'can_reload',
+  LOAD_STATUS = 'load_status',
+  DASHBOARD = 'dashboard'
+}
+
+export enum LoadStatus {
+  NONE = 'none',
+  IN_PROGESS = 'in_progress',
+  READ_ONLY_MODE = 'read_only_mode',
+  LOADED = 'loaded',
+  IN_ERROR = 'in_error'
 }

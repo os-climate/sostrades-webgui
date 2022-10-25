@@ -1,7 +1,7 @@
 <div class="flex-container-sidenav">
   <div
     class="treeview-container mat-elevation-z2"
-    (click)="onClickTreeview()"
+    (click)="onClickTreeview(loadedStudy)"
   >
     <div
     class="header-treeview d-flex justify-content-between"
@@ -12,8 +12,24 @@
         id="text-sidenav-study-loaded-name"
         *ngIf="studyName !== ''"
         [ngClass]="{'long-title': studyName.length > 13}"
-        > : {{ studyName }}</span>
+        > : {{ studyName }}</span> 
+        <p *ngIf="isReadOnlyMode" > 
+          <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;margin-right:3px"></i> 
+          <span style="font-weight: bold;" matTooltip="Your study is in read only mode, it cannot be updated or computed unless you click on the 'Switch to edition mode' button">Read Only Mode</span> 
+          <button 
+            mat-button
+            class="edit-button" 
+            id="study-switch-to-edition-button" 
+            *ngIf="isReadOnlyMode"
+            matTooltip="Leave the read only mode."
+            (click)="onClickSwitchEditStudy($event)">
+            <i class="fa-solid fa-repeat" style="color: #0b78b8;"></i>
+            Switch to edition mode
+        </button>
+        </p>
+        
       </div>
+
       <div > 
         <mat-icon
         id='close'  

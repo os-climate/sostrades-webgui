@@ -4,7 +4,7 @@ import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-e
 import { Subscription } from 'rxjs';
 import { LoadedStudy } from 'src/app/models/study.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { StudyCaseLog } from 'src/app/models/study-case-log.model';
+import { StudyCaseExecutionLogging } from 'src/app/models/study-case-execution-logging.model';
 import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -33,15 +33,14 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   private studyCaseId: number;
   private timeOut;
   private scrollContainer: any;
-  private loop: boolean;
-  private logList: StudyCaseLog[];
+  private logList: StudyCaseExecutionLogging[];
   public cpuLoad: string;
   public memoryLoad: string;
   public isCalculationRunning: boolean;
 
   public bottomAnchorLog: boolean;
   public executionViewActive: boolean;
-  public dataSourceRef = new MatTableDataSource<StudyCaseLog>();
+  public dataSourceRef = new MatTableDataSource<StudyCaseExecutionLogging>();
   displayedColumns = [ 'message'];
 
   constructor(
@@ -61,7 +60,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.studyCaseId = -1;
     this.dataSourceRef = null;
     this.timeOut = null;
-    this.loop = false;
     this.logList = [];
     this.bottomAnchorLog = false;
     this.cpuLoad = '----';
@@ -76,7 +74,12 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
       // Applying rights, to start logging or not
       if (!this.studyCaseDataService.loadedStudy.noData) {
-        this.initializeLogger();
+        // Subscribe to log change in order to update view
+        if (this.logsSubscription === null || this.logsSubscription === undefined) {
+          this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
+            this.setLogToView(logs);
+          });
+        }
       } else {
         this.cleanExecutionSubscription();
       }
@@ -86,32 +89,30 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
       if (loadedStudy !== null) {
         this.studyCaseId = (loadedStudy as LoadedStudy).studyCase.id;
-        this.initializeLogger();
+        // Subscribe to log change in order to update view
+        if (this.logsSubscription === null || this.logsSubscription === undefined) {
+          this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
+            this.setLogToView(logs);
+          });
+        }
       } else {
         this.dataSourceRef = null;
       }
     });
 
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      this.studyCaseId = this.studyCaseDataService.loadedStudy.studyCase.id;
-
-      // Applying rights, to start logging or not
-      if (!this.studyCaseDataService.loadedStudy.noData) {
-        this.initializeLogger();
-      } else {
-        this.cleanExecutionSubscription();
-      }
-
-      // Subscribe to log change in order to update view
-      if (this.logsSubscription === null || this.logsSubscription === undefined) {
-        this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
-          this.setLogToView(logs);
-        });
-      }
-    }
-
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
+      const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
+      if (sco !== null && sco !== undefined) {
+        // Start calculation timeout to get logs
+        this.executionStartedSubscription = sco.executionStarted.subscribe(_ => {
+          this.startTimeOut();
+        });
+        // Stop calculation timeout to get logs
+        this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
+          this.stopTimeOut();
+        });
+      }
     });
 
     this.calculationSystemLoadChangeSubscription = this.calculationService.onCalculationSystemLoadChange.subscribe(systemLoad => {
@@ -149,29 +150,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.scrollContainer = this.table._elementRef.nativeElement;
   }
 
-  private initializeLogger() {
-
-    this.cleanExecutionSubscription();
-
-    const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
-
-    if (sco !== null && sco !== undefined) {
-      this.executionStartedSubscription = sco.executionStarted.subscribe(_ => {
-        this.loop = true;
-        this.startTimeOut();
-
-      });
-
-      this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
-        this.loop = false;
-        this.stopTimeOut();
-
-      });
-    }
-
-    this.getLogs();
-  }
-
   private cleanExecutionSubscription() {
     this.stopTimeOut();
 
@@ -207,15 +185,11 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.calculationService.getLog(this.studyCaseId);
   }
 
-  private setLogToView(logs: StudyCaseLog[]) {
-
-    this.logList = logs;
-    this.dataSourceRef = new MatTableDataSource<StudyCaseLog>(this.logList);
-
-    this.scrollToBottom();
-
-    if (this.loop === true) {
-      this.startTimeOut();
+  private setLogToView(logs: StudyCaseExecutionLogging[]) {
+    if (logs !== null && logs !== undefined) {
+      this.logList = logs;
+      this.dataSourceRef = new MatTableDataSource<StudyCaseExecutionLogging>(this.logList);
+      this.scrollToBottom();
     }
   }
 

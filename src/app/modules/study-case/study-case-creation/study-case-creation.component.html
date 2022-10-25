@@ -1,0 +1,141 @@
+<div class="flex-container" *ngIf="isLoading">
+  <app-progress-bar
+    class="container-dialog"
+    *ngIf="isLoading"
+    progressMode="indeterminate"
+    progressText="Loading form information"
+  ></app-progress-bar>
+</div>
+<div class="flex-container" [formGroup]="createStudyForm" *ngIf="!isLoading">
+  <div mat-dialog-title>
+    <h1 style="margin-bottom: 10px !important; text-align: center" *ngIf="!data.selectProcessOnly">
+      Create new study
+    </h1>
+    <h1 style="margin-bottom: 10px !important; text-align: center" *ngIf="data.selectProcessOnly">
+      Select process & source data
+    </h1>
+  </div>
+
+  <div mat-dialog-content
+  [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
+    <mat-form-field  *ngIf="!data.selectProcessOnly">
+        <mat-label>Study name</mat-label>
+        <input
+          matInput
+          id='studyName'
+          formControlName="studyName"
+          placeholder="Study name"
+          />
+        <mat-error *ngIf="hasError('studyName', 'required')"
+          >A study name is <strong>required</strong></mat-error
+        >
+        <mat-error *ngIf="hasError('studyName', 'error')">
+          Study case name already <strong>exist</strong>
+        </mat-error>
+        <mat-error *ngIf="hasError('studyName', 'pattern')"
+          >Only letters, numbers, dashes and underscores are authorized</mat-error
+        >
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select
+      id='process'
+      formControlName="processId"
+      placeholder="Process name"
+      (selectionChange)="onProcessChange($event.value)"
+      #singleSelect>
+        <mat-option>
+          <ngx-mat-select-search
+          [formControl]="processFiltered"
+          placeholderLabel="Find process..."
+          noEntriesFoundLabel="No matching process found"
+          >
+        </ngx-mat-select-search>
+        </mat-option>
+        <mat-option id="option" *ngFor="let process of filteredProcesses | async" [value]="process.id">
+          <span style="font-size: 14px;">{{process.processName}} </span>
+            <div style="font-size: 11px;">{{process.repositoryName}}</div>
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="hasError('processId', 'required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select
+        id="reference"
+        placeholder="Study"
+        formControlName="selectedRef"
+        [multiple]="false"
+        #select
+      >
+        <mat-select-trigger>
+          {{ createStudyForm.controls["selectedRef"].value.name }}
+        </mat-select-trigger>
+          <mat-option
+            *ngFor="let ref of referenceList"
+            [value]="ref"
+            [disabled]="ref.isRegeneratingReference || disabledReference"
+          >
+            <div class="reference-option-container">
+              <div>
+                {{ ref.name }}
+              </div>
+              <div style="font-size: 11px; color: grey">
+                <div *ngIf="ref.studyType === 'Study'">User Study</div>
+                <div
+                  *ngIf="
+                    ref.studyType === 'Reference' && ref.name !== EMPTY_STUDY_NAME
+                  "
+                >
+                  Shared Study
+                </div>
+                <div
+                  *ngIf="
+                    ref.studyType === 'Reference' && ref.name === EMPTY_STUDY_NAME
+                  "
+                >
+                  Empty Study
+                </div>
+                <div
+                  *ngIf="
+                    ref.studyType === 'UsecaseData' && ref.name !== EMPTY_STUDY_NAME
+                  "
+                >
+                  Data Shared Study
+                </div>
+              </div>
+            </div>
+          </mat-option>
+      </mat-select>
+      <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;" *ngIf="disabledReference">Loading reference</mat-hint>
+    </mat-form-field>
+    <mat-form-field *ngIf="!data.selectProcessOnly">
+      <mat-select id="group" placeholder="Group name" formControlName="groupId">
+        <mat-option
+          *ngFor="let group of groupList"
+          [value]="group.group.id"
+        >
+          {{ group.group.name }}
+        </mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="hasError('groupId', 'required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions>
+    <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>
+    <button
+      id='submit'
+      mat-button
+      (click)="submitForm()"
+      [disabled]="!createStudyForm.valid"
+    >
+      Ok
+    </button>
+  </div>
+</div>

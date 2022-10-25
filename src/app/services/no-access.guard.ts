@@ -17,7 +17,7 @@ export class NoAccessGuard implements CanActivate {
     if (!this.userService.hasAccessToStudy()) {
       return true;
     } else {
-      this.router.navigate([Routing.MODELS_STATUS]);
+      this.router.navigate([Routing.HOME]);
     }
   }
 }

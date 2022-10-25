@@ -1,0 +1,47 @@
+.container {
+  height: 100%;
+  width: 100%;
+  padding: 0 5px 0 5px;
+}
+
+.box {
+  display: flex;
+  justify-content: center;
+  margin-left: -6px;
+}
+
+.box > * {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+
+
+.custom-button {
+  height: 24px;
+  font-size: small;
+  line-height: unset;
+  padding: 0px;
+  width: 80px;
+}
+
+.custom-button-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 24px;
+}
+
+.icon-size {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.mat-flat-button {
+  min-width: 0 !important;
+}
+
+.mat-raised-button {
+  min-width: 0 !important;
+}
+
+

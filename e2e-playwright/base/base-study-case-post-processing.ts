@@ -1,10 +1,10 @@
-import { Page, expect } from "@playwright/test";
+import { Page, expect } from '@playwright/test';
 
 export async function baseStudyCasePostProcessing(page: Page, nodeNameSpace: string, postProcessingTitleList: string[]) {
   // This function consider study case is already loaded
 
   // Navigating to namespace where we want to check post-processing
-  const nodeNameSpaceId = `id=btn-treeview-node-${nodeNameSpace}`
+  const nodeNameSpaceId = `id=btn-treeview-node-${nodeNameSpace}`;
   await page.click(nodeNameSpaceId);
 
   // Navigating to post-processing tab
@@ -18,6 +18,6 @@ export async function baseStudyCasePostProcessing(page: Page, nodeNameSpace: str
 
   // Verifying that all post processing title are presents in the page
   await Promise.all(postProcessingTitleList.map(async (ppTitle) => {
-    await expect(page.locator('#zone-post-processing-bundle')).toHaveText(new RegExp(ppTitle), { timeout: 15000 });
+    await expect(page.locator('#zone-post-processing-bundle')).toContainText(ppTitle, {timeout: 15000 });
   }));
 }

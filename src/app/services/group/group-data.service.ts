@@ -5,6 +5,7 @@ import { Group, LoadedGroup } from 'src/app/models/group.model';
 import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import { DataHttpService } from '../http/data-http/data-http.service';
+import { ColumnName } from 'src/app/models/column-name.model';
 
 
 @Injectable({
@@ -17,20 +18,22 @@ export class GroupDataService extends DataHttpService {
 
   public groupManagementFilter: string;
   public groupManagementColumnFiltered: string;
+  public groupSelectedValues = new Map <ColumnName, string[]>();
 
   constructor(
     private http: HttpClient,
     private location: Location) {
     super(location, 'group');
     this.allGroups = [];
-
+    this.groupSelectedValues.clear();
     this.groupManagementFilter = '';
-    this.groupManagementColumnFiltered = 'All columns';
+    this.groupManagementColumnFiltered = ColumnName.ALL_COLUMNS;
   }
 
   clearCache() {
     this.groupManagementFilter = '';
-    this.groupManagementColumnFiltered = 'All columns';
+    this.groupManagementColumnFiltered = ColumnName.ALL_COLUMNS;
+    this.groupSelectedValues.clear();
   }
 
   loadAllGroups(): Observable<Group[]> {

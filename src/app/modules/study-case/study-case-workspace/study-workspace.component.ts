@@ -10,6 +10,11 @@ import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { UserLevel } from 'src/app/models/user-level.model';
+import { AppDataService } from 'src/app/services/app-data/app-data.service';
+import { ActivatedRoute } from '@angular/router';
+import { SocketService } from 'src/app/services/socket/socket.service';
+import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+
 
 
 @Component({
@@ -30,18 +35,23 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public showVisualisation: boolean;
   public showPostProcessingContent: boolean;
   public showVisualisationContent: boolean;
+  public showDocumentationContent: boolean;
+
   public showDataManagement: boolean;
   public showDocumentation: boolean;
   public showDataValidation: boolean;
+  public showDashboard: boolean;
   public hasDocumentation: boolean;
+  public hasDashboard: boolean;
   private onStudyCaseChangeSubscription: Subscription;
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
-  public markdownDocumentation: MardownDocumentation[];
+  public modelsFullPathList: string[];
   public hasAccessToStudy: boolean;
   private userLevel: UserLevel;
   public userLevelList: string[];
   public selectedUserlevel: string;
+  private routerSubscription: Subscription;
 
 
 
@@ -56,10 +66,14 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   constructor(
     public studyCaseDataService: StudyCaseDataService,
+    public studyCaseMainService: StudyCaseMainService,
     public calculationService: CalculationService,
     public filterService: FilterService,
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private userService: UserService,
+    private route: ActivatedRoute,
+    private appDataService: AppDataService,
+    private socketService: SocketService,
 
     private treeNodeDataService: TreeNodeDataService) {
     this.showView = false;
@@ -68,6 +82,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showVisualisation = false;
     this.showPostProcessingContent = false;
     this.showVisualisationContent = false;
+    this.showDocumentationContent = false;
     this.onStudyCaseChangeSubscription = null;
     this.studyIsLoaded = false;
     this.onTreeNodeChangeSubscription = null;
@@ -75,12 +90,15 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.isFullScreenOn = false;
     this.showDocumentation = false;
     this.hasDocumentation = false;
-    this.markdownDocumentation = [];
+    this.modelsFullPathList = [];
+    this.showDashboard = false;
+    this.hasDashboard = false;
     this.showDataManagement = true;
     this.showDataValidation = false;
     this.hasAccessToStudy = false;
     this.userLevel = new UserLevel();
     this.userLevelList = this.userLevel.userLevelList;
+    this.routerSubscription = null;
   }
 
   ngOnInit() {
@@ -94,6 +112,20 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
     if (this.userService.hasAccessToStudy()) {
       this.hasAccessToStudy = true;
+      if (this.studyCaseDataService.loadedStudy === null) {
+        this.routerSubscription = this.route.queryParams.subscribe(params => {
+          // If study is defined has query parameter then we reload the study
+          if (params.hasOwnProperty('studyId')) {
+            if (params.studyId !== null && params.studyId !== undefined) {
+                this.appDataService.loadCompleteStudy(params.studyId, '', isStudyLoaded => {
+                  if (isStudyLoaded) {
+                    this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+                  }
+                });
+            }
+          }
+        });
+      }
     } else {
       this.hasAccessToStudy = false;
     }
@@ -111,8 +143,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       // Check  study status to display or not post processing
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
         this.showPostProcessing = true;
+        this.showDashboard = true;
       } else {
         this.showPostProcessing = false;
+        this.showDashboard = false;
       }
 
       // Check if study is loaded without data
@@ -120,6 +154,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDataManagement = false;
         this.showVisualisation = false;
         this.showDataValidation = false;
+        this.showDashboard = false;
 
         // Study is loaded without data management, triggering post processing display
         this.showPostProcessingContent = true;
@@ -127,6 +162,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDataManagement = true;
         this.showVisualisation = true;
         this.showDataValidation = true;
+        this.showDashboard = true;
       }
 
       // Activate show not editable variable if study is read only
@@ -154,7 +190,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         }
 
         this.showDocumentation = !(treenode.nodeType === 'data');
-        this.markdownDocumentation = treenode.markdownDocumentation;
+        this.modelsFullPathList = treenode.modelsFullPathList;
       }
     });
   }
@@ -169,6 +205,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.onTreeNodeChangeSubscription.unsubscribe();
       this.onTreeNodeChangeSubscription = null;
     }
+    if (this.routerSubscription !== null) {
+      this.routerSubscription.unsubscribe();
+      this.routerSubscription = null;
+    }
   }
 
   onSelectedTabChange(event: MatTabChangeEvent) {
@@ -177,11 +217,15 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
       this.showPostProcessingContent = false;
       this.showVisualisationContent = false;
+      this.showDocumentationContent = false;
 
       if (event.tab.textLabel === 'Post processing') {
         this.showPostProcessingContent = true;
       } else if (event.tab.textLabel === 'Visualisation') {
         this.showVisualisationContent = true;
+      } else if (event.tab.textLabel === 'Documentation') {
+        //this is needed so that when we are not on the tab, the request to get the documentation is not sent
+        this.showDocumentationContent = true;
       }
     }
   }
@@ -207,7 +251,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.filterService.filters.userLevel = newUserLevelValue + 1; // Userlevel starting at 1
   }
 
-  closeSearchPanel(){
+  closeSearchPanel() {
     this.showSearch = false;
   }
 

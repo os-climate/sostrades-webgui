@@ -1,9 +1,9 @@
-import { Study, LoadedStudy } from 'src/app/models/study.model';
+import { Study, LoadedStudy, StudyCasePayload, StudyCaseAllocationPayload } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscriber, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
@@ -12,12 +12,19 @@ import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
+import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
+import { ColumnName } from 'src/app/models/column-name.model';
+import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
+import { Routing } from 'src/app/models/routing.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyCaseDataService extends DataHttpService {
 
+
+  onStudyCompleted: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview: EventEmitter<LoadedStudy> = new EventEmitter();
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
@@ -27,30 +34,44 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
+  private loadingStudies = [];
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
   public studyManagementColumnFiltered: string;
+  public studySelectedValues = new Map <ColumnName, string[]>();
+
 
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
   public favoriteStudy: Study[];
 
+  // Make innerLogs private so it's not accessible from the outside,
+  // expose it as logs$ observable (read-only) instead.
+  // Write to innerLogs only through specified store methods below.
+  private readonly innerLogs = new BehaviorSubject<StudyCaseLogging[]>([]);
+
+  // Exposed observable (read-only).
+  readonly logs$ = this.innerLogs.asObservable();
+
+
   constructor(
     private http: HttpClient,
     private ontologyService: OntologyService,
-    private location: Location) {
+    private location: Location,
+    private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
 
     this.favoriteStudy = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
-    this.studyManagementColumnFiltered = 'All columns';
-
+    this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
+    this.studySelectedValues.clear();
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
+    this.loadingStudies = [];
   }
 
 
@@ -62,13 +83,31 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = loadedStudy;
   }
 
+  setStudyToLoad(studyId: number) {
+    // remove previous opened study from the loading studies
+    this.closeStudyLoading();
+    // Add a study into the list of loading studies
+    if (this.loadingStudies.indexOf(studyId.toString()) === -1) {
+        this.loadingStudies.push(studyId.toString());
+    }
+  }
+
+  isStudyLoading(studyId: number) {
+    // Check that a study is into the list of loading studies
+    return this.loadingStudies.indexOf(studyId.toString()) !== -1;
+  }
+
+  closeStudyLoading() {
+      this.loadingStudies = [];
+  }
 
   clearCache() {
     this.studyLoaded = null;
     this.studyManagementData = [];
     this.favoriteStudy = [];
+    this.studySelectedValues.clear();
     this.studyManagementFilter = '';
-    this.studyManagementColumnFiltered = 'All columns';
+    this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
@@ -155,13 +194,6 @@ export class StudyCaseDataService extends DataHttpService {
     return this.http.post(url, data, options);
   }
 
-  getHasStudyCaseAccessRight(studyID: number): Observable<boolean> {
-    return this.http.get<boolean>(`${this.apiRoute}/${studyID}/access`).pipe(map(
-      response => {
-        return response;
-      }));
-  }
-
   getStudyLogs(studyId): Observable<Blob> {
 
     const options: {
@@ -237,7 +269,7 @@ export class StudyCaseDataService extends DataHttpService {
       if (this.ontologyService.getParameter(nodeData.variableKey)) {
         label = this.ontologyService.getParameter(nodeData.variableKey).label;
       }
-      
+
       if (nodeData.variableName.toLowerCase().includes(inputToSearch.toLowerCase()) ||
       (label !== undefined && label.toLowerCase().includes(inputToSearch.toLowerCase()))) {
         if ((nodeData.ioType === IoType.OUT || showEditable || (!showEditable && nodeData.editable)) &&
@@ -269,8 +301,8 @@ export class StudyCaseDataService extends DataHttpService {
         const nodeDataKey = nodeData[0];
         const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
         if ( ontologyParameter !== null) {
-          let displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== ''){
+          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          if (displayName !== '') {
             loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = displayName;
           }
         }
@@ -280,8 +312,8 @@ export class StudyCaseDataService extends DataHttpService {
         const nodeDataKey = nodeData[0];
         const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
         if ( ontologyParameter !== null) {
-          let displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== ''){
+          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+          if (displayName !== '') {
             loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = displayName;
           }
         }
@@ -290,6 +322,7 @@ export class StudyCaseDataService extends DataHttpService {
   }
 
   private GetOntologyParameterLabel(ontology: OntologyParameter) {
+    // return ontology label + unit
     let result = '';
     if (ontology !== null && ontology.label !== null && ontology.label !== undefined && ontology.label.length > 0) {
 
@@ -303,4 +336,192 @@ export class StudyCaseDataService extends DataHttpService {
     }
     return result;
   }
+
+  deleteStudy(studies: Study[]): Observable<void> {
+    const studiesIdList = [];
+    studies.forEach(s => {
+      studiesIdList.push(s.id);
+    });
+    const deleteOptions = {
+      headers: this.httpHeaders,
+      body: JSON.stringify({ studies: studiesIdList })
+    };
+    const url = `${this.apiRoute}/delete`;
+    return this.http.delete(url, deleteOptions).pipe(map(
+      response => {
+        // Check user removed currentLoadedStudy
+        if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
+          if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {
+            this.onStudyCaseChange.emit(null);
+            this.router.navigate([Routing.STUDY_MANAGEMENT]);
+          }
+        }
+      }));
+  }
+
+  //#regions logs
+
+  private setLogs(logs: StudyCaseLogging[]): void {
+    this.innerLogs.next(logs);
+  }
+
+  /**
+   * Return the current logs store in the service without any update from server
+   *
+   * @returns list of {@link src/app/models/study-case-logging.model#StudyCaseLogging | the StudyCaseLogging class}
+   *
+   */
+  getLogs(): StudyCaseLogging[] {
+
+    return this.innerLogs.getValue();
+  }
+
+  /**
+   * Request server to update log regarding the study identifier given as parameter
+   *
+   * @param studyCaseId - Study case identifier for whoch logs are requested
+   *
+   */
+  getLog(studyCaseId: number) {
+
+    const route = `${this.apiRoute}/logs/${studyCaseId}`;
+
+    this.http.get<StudyCaseLogging[]>(route)
+      .pipe(map(logs => {
+
+        const result: StudyCaseLogging[] = [];
+
+        logs.forEach(log => {
+          result.push(StudyCaseLogging.Create(log));
+        });
+
+        this.setLogs(result);
+
+      })).subscribe();
+  }
+
+  //#endregion logs
+
+  //#region allocations
+
+  /**
+   * Create an allocation for a new study case
+   * Once created, allocation status must be check with 'studyCaseAllocationStatus' method
+   *
+   * @param studyInformation Create an allocation for a new study case to create or for an existing study case
+   * @returns instance of {@link src/app/models/study-case-allocation.model#StudyCaseAllocation | the StudyCaseAllocation class}
+   */
+  createAllocationForNewStudyCase(studyInformation: StudyCasePayload): Observable<StudyCaseAllocation> {
+
+    let query: Observable<StudyCaseAllocation>;
+
+    const allocationObservable = new Observable<StudyCaseAllocation>((observer) => {
+
+      const studyCaseAllocationPayload = new  StudyCaseAllocationPayload(
+                                                          studyInformation.name,
+                                                          studyInformation.repository,
+                                                          studyInformation.process,
+                                                          studyInformation.group);
+      query = this.http.post<StudyCaseAllocation>(this.apiRoute, studyCaseAllocationPayload, this.options);
+      this.executeAllocationQuery(query, observer);
+    });
+
+    return allocationObservable;
+  }
+
+  /**
+   * Create an allocation for an existing study case
+   * Once created, allocation status must be check with 'studyCaseAllocationStatus' method
+   *
+   * @param studyCaseIdentifier Create an allocation for the given study case identifier
+   * @returns instance of {@link /src/app/models/study-case-allocation.model#StudyCaseAllocation | the StudyCaseAllocation class}
+   */
+   createAllocationForExistingStudyCase(studyCaseIdentifier: number): Observable<StudyCaseAllocation> {
+
+    let query: Observable<StudyCaseAllocation>;
+
+    const allocationObservable = new Observable<StudyCaseAllocation>((observer) => {
+
+      query = this.http.post<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseIdentifier}`, {}, this.options);
+      this.executeAllocationQuery(query, observer);
+    });
+
+    return allocationObservable;
+  }
+
+  /**
+   * Create an allocation for a new study using an existing one
+   * Once created, allocation status must be check with 'studyCaseAllocationStatus' method
+   *
+   * @param studyCaseIdentifier Source study case identifier used to create an allocation
+   * @param newStudyName Name for the new study
+   * @param groupId New group to which the study has to be assigned
+   * @returns instance of {@link src/app/models/study-case-allocation.model#StudyCaseAllocation | the StudyCaseAllocation class}
+   */
+   createAllocationForCopyingStudyCase(
+                          studyCaseIdentifier: number,
+                          newStudyName: string,
+                          groupId: number): Observable<StudyCaseAllocation> {
+
+    let query: Observable<StudyCaseAllocation>;
+
+    const allocationObservable = new Observable<StudyCaseAllocation>((observer) => {
+
+      const payload = {
+        new_name: newStudyName,
+        group_id: groupId
+      };
+
+      query = this.http.post<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseIdentifier}/by/copy`, payload, this.options);
+      this.executeAllocationQuery(query, observer);
+    });
+
+    return allocationObservable;
+  }
+
+
+  private executeAllocationQuery(query: Observable<StudyCaseAllocation>, observer: Subscriber<StudyCaseAllocation>) {
+    query.pipe(map(
+      response => {
+        return StudyCaseAllocation.Create(response);
+      })).subscribe(allocation => {
+      setTimeout(() => {
+        this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer);
+      }, 2000);
+    },
+    error => {
+      observer.error(error);
+    });
+  }
+
+  private getStudyCaseAllocationStatusTimeout(studyCaseId: number, allocationObservable: Subscriber<StudyCaseAllocation>) {
+    this.internalStudyCaseAllocationStatus(studyCaseId).subscribe(allocation => {
+      if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS) {
+        setTimeout(() => {
+          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
+        }, 2000);
+      } 
+      else {
+        allocationObservable.next(allocation);
+      }
+
+    }, error => {
+      throw(error);
+    });
+  }
+
+  /**
+   * Retrieve the current status of an allocation for the given study case identifier
+   *
+   * @param studyCaseId study case identifier for which allocation status has to be retrieve
+   * @returns StudyCaseAllocationStatus
+   */
+  private internalStudyCaseAllocationStatus(studyCaseId: number): Observable<StudyCaseAllocation> {
+    return this.http.get<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseId}/status`).pipe(map(response => {
+      return StudyCaseAllocation.Create(response);
+    }));
+  }
+
+
+  //#endregion allocations
 }
