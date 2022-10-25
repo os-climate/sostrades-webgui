@@ -9,7 +9,7 @@ export async function baseStudyCaseGenerateReference(page: Page, studyName: stri
   await page.goto('/');
   // Go to reference management
   await page.click('id=main-menu-button');
-  await page.hover('id=study_management-menu-button');
+  await page.hover('id=study-menu-button');
   await page.click('id=reference-menu-button');
 
   // Research the study to regenerate ref

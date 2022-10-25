@@ -11,8 +11,8 @@ export async function baseStudyCaseCreation(
     if (createFromStudyManagement) {
         // Go to study_management
         await page.click('id=main-menu-button');
-        await page.hover('id=study_management-menu-button');
-        await page.click('id=study_case-menu-button');
+        await page.hover('id=study-menu-button');
+        await page.click('id=study_management-menu-button');
 
         // Click on Create button
         const createStudy = `id=create-study`;
