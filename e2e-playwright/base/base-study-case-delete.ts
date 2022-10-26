@@ -7,8 +7,8 @@ export async function baseStudyCaseDeletion(page: Page, listStudies: any, needTo
     // Go to study management
     await page.goto('/');
     await page.click('id=main-menu-button');
-    await page.hover('id=study_management-menu-button');
-    await page.click('id=study_case-menu-button');
+    await page.hover('id=study-menu-button');
+    await page.click('id=study_management-menu-button');
 
     // Push each study from dictonnary on a array
     Object.values(listStudies).forEach(element => {
