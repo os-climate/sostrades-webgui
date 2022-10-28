@@ -51,29 +51,28 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.postProcessingBundle.filters.length > 0) {
       this.displayFilterButton = true;
-
-      if (this.postProcessingBundle.plotly.length === 0 && this.postProcessingBundle.plotlyParetoFront.length === 0) {
+      if (this.postProcessingBundle.plotly.length === 0 && this.postProcessingBundle.plotlyParetoFront.length === 0 ) {
         this.postProcessingService.pausePostProcessingRequestQueue();
         this.postProcessingService.removePostProcessingRequestFromQueue(this.fullNamespace, this.postProcessingBundle.name);
-        this.plot();
+        this.plot(false);
       }
 
     } else {
       this.displayFilterButton = false;
     }
     // check the loadStatus of the study to set the mode read only if needed
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined){
-      this.isReadOnlyMode = this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      this.isReadOnlyMode = this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE;
     }
     // Update the readonly mode when the status has changed
     this.studyStatusChangeSubscription = this.studyCaseDataService.onLoadedStudyForTreeview.subscribe(loadedStudy => {
-        this.isReadOnlyMode = loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE
+        this.isReadOnlyMode = loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE;
     });
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
-    });    
-    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation=>{
-      this.plot();
+    });
+    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation => {
+      this.plot(false);
     });
   }
 
@@ -89,12 +88,13 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     }
   }
 
-  plot() {
+  plot(needToUpdate) {
     this.loadingMessage = 'Requesting charts';
     this.displayProgressBar = true;
 
     // tslint:disable-next-line: max-line-length
     this.postProcessingService.getPostProcessing(
+      needToUpdate,
       this.studyCaseDataService.loadedStudy,
       this.fullNamespace,
       this.postProcessingBundle.name,
