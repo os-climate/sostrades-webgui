@@ -57,7 +57,7 @@ export class PostProcessingService extends PostProcessingHttpService {
 
     let postProcessingBundle: any = null;
     postProcessingBundle = this.getPostProcessingDict(disciplineKey);
-    if (postProcessingBundle.plotly !== null && postProcessingBundle.plotly !== undefined && !needToUpdate) {
+    if (postProcessingBundle !== null && postProcessingBundle !== undefined && !needToUpdate) {
         return of (postProcessingBundle.plotly);
       } else {
         if (disciplineKey !== null && disciplineKey !== undefined && disciplineKey !== '') {
@@ -122,8 +122,8 @@ export class PostProcessingService extends PostProcessingHttpService {
    * Set the post processing dictionnary with post processind from loaded study on read only mode.
    * That allows to not load post processing with the server when post processing are already available.
    */
-  public setPostProcessing(loadedStudy: LoadedStudy) {
 
+  public setPostProcessing(loadedStudy: LoadedStudy) {
     // Retrieve all post processing from loaded study
     Object.keys(loadedStudy.treeview.rootDict).forEach(key => {
       const rootDict = loadedStudy.treeview.rootDict;
