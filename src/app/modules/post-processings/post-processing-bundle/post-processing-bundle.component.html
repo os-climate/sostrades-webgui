@@ -67,7 +67,7 @@
       class="plot-button"
       color="accent"
       style="margin-left: 5px"
-      (click)="plot()"
+      (click)="plot(true)"
       [disabled]="isCalculationRunning||isReadOnlyMode"
     >
       Update chart(s)
@@ -76,6 +76,7 @@
       color="accent"
       [(ngModel)]="displayFilters"
       style="margin-left: 10px"
+      [disabled]="isReadOnlyMode"
     >
       Show filters
     </mat-slide-toggle>
