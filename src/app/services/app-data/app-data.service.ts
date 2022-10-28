@@ -3,24 +3,20 @@ import { LoadedStudy, LoadStatus, StudyCasePayload, StudyCaseInitialSetupPayload
 import { StudyCaseDataService } from '../study-case/data/study-case-data.service';
 import { SnackbarService } from '../snackbar/snackbar.service';
 import { LoadingDialogService } from '../loading-dialog/loading-dialog.service';
-import { PostOntology } from 'src/app/models/ontology.model';
-import { OntologyService } from '../ontology/ontology.service';
 import { StudyCaseLocalStorageService } from '../study-case-local-storage/study-case-local-storage.service';
 import { StudyUpdateParameter } from 'src/app/models/study-update.model';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
-import { TreenodeTools } from 'src/app/tools/treenode.tool';
-import { SocketService } from '../socket/socket.service';
 import { LoggerService } from '../logger/logger.service';
 import { UserService } from '../user/user.service';
 import { DataHttpService } from '../http/data-http/data-http.service';
 import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
 import { StudyCasePostProcessingService } from '../study-case/post-processing/study-case-post-processing.service';
-import { Observable, observable, Subscription } from 'rxjs';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { Observable} from 'rxjs';
 import { combineLatest } from 'rxjs';
 import { StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { StudyCaseLoadingService } from '../study-case-loading/study-case-loading.service';
+import { PostProcessingService } from '../post-processing/post-processing.service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,17 +25,15 @@ export class AppDataService extends DataHttpService {
 
   // Timer use to check connection status server side
   private connectionStatusTimer;
-  private onStudyCaseStartLoadingSubscription: Subscription;
   private loadedStudy: LoadedStudy;
   constructor(
     private http: HttpClient,
-    private socketService: SocketService,
     private studyCaseLoadingService: StudyCaseLoadingService,
     private studyCaseDataService: StudyCaseDataService,
     private studyCaseMainService: StudyCaseMainService,
     private studyCasePostProcessingService: StudyCasePostProcessingService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
-    private ontologyService: OntologyService,
+    private postProcessingService: PostProcessingService,
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
     private loggerService: LoggerService,
@@ -47,7 +41,6 @@ export class AppDataService extends DataHttpService {
     private location: Location) {
     super(location, 'application');
     this.connectionStatusTimer = null;
-    this.onStudyCaseStartLoadingSubscription = null;
     this.loadedStudy = null;
   }
 
@@ -68,7 +61,7 @@ export class AppDataService extends DataHttpService {
           // must be done after the end of the creation, if not the loading cannot be done
           this.loadedStudy = loadedStudy as LoadedStudy;
           this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
-              //load the last elements of the study and update current loaded study
+              // load the last elements of the study and update current loaded study
               this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false);
 
           }, errorReceived => {
@@ -106,7 +99,7 @@ export class AppDataService extends DataHttpService {
           // must be done after the end of the creation, if not the loading cannot be done
           this.loadedStudy = loadedStudy as LoadedStudy;
           this.studyCasePostProcessingService.loadStudy(this.loadedStudy.studyCase.id, false).subscribe(isLoaded => {
-            //load the last elements of the study and update current loaded study
+            // load the last elements of the study and update current loaded study
             this.studyCaseLoadingService.finalizeLoadedStudyCase(this.loadedStudy, false, isStudyCreated, true, true, false);
 
           }, errorReceived => {
@@ -138,19 +131,19 @@ export class AppDataService extends DataHttpService {
     this.loadingDialogService.showLoading(`Loading study case ${studyName}`);
     // register loading study
     this.studyCaseDataService.setStudyToLoad(studyId);
-
+    // clear post processing dictionnary
+    this.postProcessingService.clearPostProcessingDict();
     this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe(allocation => {
 
       if (allocation.status === StudyCaseAllocationStatus.DONE) {
         this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(resultloadReadOnly => {
           const loadedStudy = resultloadReadOnly as LoadedStudy;
-          if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE)
-          {
-            //load read only mode
+          if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
+            // Set post processing dictionnary from the loaded study
+            this.postProcessingService.setPostProcessing(loadedStudy);
+            // load read only mode
             this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, true, isStudyLoaded, true, false, true);
-          }
-          else
-          {
+          } else {
             const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
             this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, true, isStudyLoaded, true, false);
           }
@@ -158,7 +151,7 @@ export class AppDataService extends DataHttpService {
           this.loggerService.log(errorReceived);
           this.snackbarService.showError('Error loading study\n' + errorReceived.description);
           const studyNeedsLoading = true;
-          this.launchLoadStudy(studyNeedsLoading,studyId, null , true, isStudyLoaded, true, false);
+          this.launchLoadStudy(studyNeedsLoading, studyId, null , true, isStudyLoaded, true, false);
         });
       } else {
         this.snackbarService.showError('Study case allocation failed');
@@ -176,11 +169,11 @@ export class AppDataService extends DataHttpService {
   /**
    * Load the current study without read only mode (open in normal mode)
    */
-  loadStudyInEditionMode(){
+  loadStudyInEditionMode() {
     const studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-    const isStudyLoaded = (isLoaded:boolean)=>{};
-    
+    const isStudyLoaded = (isLoaded: boolean) => {};
+
     // Display loading message
     this.loadingDialogService.showLoading(`Switching study case ${studyName} to edition mode`);
     // register loading study
@@ -191,9 +184,9 @@ export class AppDataService extends DataHttpService {
       if (allocation.status === StudyCaseAllocationStatus.DONE) {
         this.studyCaseMainService.loadStudy(studyId, true, false).subscribe(resultloadStudy => {
           const loadedStudy = resultloadStudy as LoadedStudy;
-            const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
-            this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, true, isStudyLoaded, true, false);
-          
+          this.postProcessingService.addPostProcessingAfterSwitchEditionMode(loadedStudy);
+          const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
+          this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, true, isStudyLoaded, true, false);
         }, errorReceived => {
           this.loggerService.log(errorReceived);
           this.snackbarService.showError('Error loading study\n' + errorReceived.description);
@@ -211,7 +204,8 @@ export class AppDataService extends DataHttpService {
 }
 
   /**
-   * launch the Loading of the study if needed, and in parallel launch the loading of post processings then finalize the loading with logs, ontology, validation...
+   * launch the Loading of the study if needed, and in parallel launch the loading of post processings then
+   * finalize the loading with logs, ontology, validation...
    * @param isstudyNeedLoaded : if the study needs to be loaded
    * @param loadedStudy : the study to end loading
    * @param getNotification : if the notifications should be loading (no notifications at the creation)
@@ -219,25 +213,24 @@ export class AppDataService extends DataHttpService {
    * @param showMsgInPopup : show the messages in a popup (if the loading is in background like in readonlymode, don't show the messages)
    * @param isFromCreateStudy : we are in creation mode
    */
-  public launchLoadStudy(isstudyNeedLoaded:boolean, studyId: number, loadedStudy: LoadedStudy, getNotification: boolean, isStudyLoaded: any,
-    showMsgInPopup: boolean, isFromCreateStudy: boolean, loadOnlyOntology=false) {
+  public launchLoadStudy(isstudyNeedLoaded: boolean, studyId: number,
+                         loadedStudy: LoadedStudy, getNotification: boolean, isStudyLoaded: any,
+                         showMsgInPopup: boolean, isFromCreateStudy: boolean, loadOnlyOntology= false) {
       const loadingCalls = [];
 
-      if (isstudyNeedLoaded){
+      if (isstudyNeedLoaded) {
         loadingCalls.push(this.studyCaseMainService.loadStudy(studyId, false));
-      }
-      else
-      {
-        loadingCalls.push(new Observable<LoadedStudy>(observer=> observer.next(null)));
+      } else {
+        loadingCalls.push(new Observable<LoadedStudy>(observer => observer.next(null)));
       }
 
       loadingCalls.push(this.studyCasePostProcessingService.loadStudy(studyId, false));
       combineLatest(loadingCalls).subscribe(([resultLoadedStudy, isLoaded]) => {
-        if (isstudyNeedLoaded)
-        {
+        if (isstudyNeedLoaded) {
           loadedStudy = resultLoadedStudy as LoadedStudy;
         }
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, getNotification, isStudyLoaded, showMsgInPopup, isFromCreateStudy, loadOnlyOntology);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, getNotification, isStudyLoaded,
+          showMsgInPopup, isFromCreateStudy, loadOnlyOntology);
         if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
           this.loadingDialogService.updateMessage(`Loading unsaved changes`);
           let studyParameters: StudyUpdateParameter[] = [];
@@ -277,15 +270,6 @@ export class AppDataService extends DataHttpService {
       this.connectionStatusTimer = null;
     }
   }
-
-  private start_post_processing_loading(studyId: number) {
-    // unsubscribe event
-    this.onStudyCaseStartLoadingSubscription.unsubscribe();
-    // load study in cache in post processing API
-    this.studyCasePostProcessingService.loadStudy(studyId, false);
-  }
-
-
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
