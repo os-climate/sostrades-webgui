@@ -1168,8 +1168,10 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE) {
       Object.keys(this.root.rootDict).forEach(key => {
           const postProcessingBundle = this.root.rootDict[key].postProcessingBundle;
-          if (postProcessingBundle !== undefined && postProcessingBundle !== null && postProcessingBundle.length === 0) {
-            this.root.rootDict[key].postProcessingBundle.forEach(bdl => {
+          const postProcessingBundleDict = this.postProcessingService.getPostProcessingDict(this.root.rootDict[key].fullNamespace);
+          if (postProcessingBundle !== undefined && postProcessingBundle !== null && postProcessingBundle.length > 0
+            && (postProcessingBundleDict === null || postProcessingBundleDict === undefined)) {
+            postProcessingBundle.forEach(bdl => {
               this.postProcessingService.addPostProcessingRequestToQueue(
                 this.studyCaseDataService.loadedStudy,
                 this.root.rootDict[key].fullNamespace,
