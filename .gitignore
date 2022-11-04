@@ -47,3 +47,4 @@ testem.log
 Thumbs.db
 workspace.code-workspace
 /package-lock.json
+/storageState.json
