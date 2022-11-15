@@ -163,11 +163,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     this.socketService.onCurrentStudyEdited.subscribe(refreshList => {
       if (refreshList) {
-        this.studyCaseMainService.closeStudy(true);
         this.studyCaseLocalStorageService.removeStudiesFromLocalStorage();
         this.loadStudyManagementData();
       }
-      });
+    });
   }
 
   ngOnDestroy() {
@@ -327,20 +326,27 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       const editStudyCaseData: EditStudyCaseDialogData = result as EditStudyCaseDialogData;
       if (editStudyCaseData !== null && editStudyCaseData !== undefined) {
         if (editStudyCaseData.cancel === false) {
-          this.studyCaseMainService.closeStudy(true);
-          this.loadingDialogService.showLoading(`Updating study (${editStudyCaseData.studyName}). Please wait`);
-          this.studyCaseMainService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
-            loadStudy => {
-              this.studyCasePostProcessingService.resetStudyFromCache(loadStudy.studyCase.id).subscribe(() => {
-                this.socketService.updateStudy(loadStudy.studyCase.id);
+          // Close study if the loaded study is the same that the study edited
+          if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+            if (this.studyCaseDataService.loadedStudy.studyCase.id === study.id) {
+              this.studyCaseMainService.closeStudy(true);
+            }
+          }
+          this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.studyName}. Please wait`);
+          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
+            studyIsEdited => {
+                if (studyIsEdited) {
+                this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe(() => {
+                this.socketService.updateStudy(study.id);
                 this.loadingDialogService.closeLoading();
-                this.snackbarService.showInformation(`Study (${loadStudy.studyCase.name}) has been succesfully updated `);
+                this.snackbarService.showInformation(`Study ${editStudyCaseData.studyName} has been succesfully updated `);
                 this.loadStudyManagementData();
               }, errorReceived => {
                 this.snackbarService.showError('Error updating study\n' + errorReceived.description);
                 this.loadingDialogService.closeLoading();
               });
-            },
+            }
+          },
             errorReceived => {
               const error = errorReceived as SoSTradesError;
               if (error.redirect) {
@@ -356,6 +362,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 
   deleteStudiesValidation(studies: Study[]) {
     // Warn user is trying to delete current loaded study
