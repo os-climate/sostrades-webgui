@@ -127,7 +127,7 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
     this.ontologyService.modelStatusData = [];
     this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(null);
     // Retrieving study case list
-    this.ontologyHttpService.getOntologyModelsStatus().subscribe(
+    this.ontologyService.getOntologyModelsStatus().subscribe(
       (models) => {
         this.ontologyService.modelStatusData = models;
         this.initDataSource();
