@@ -144,6 +144,20 @@ export class StudyCaseDataService extends DataHttpService {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
   }
 
+  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    };
+    const url = `${this.apiRoute}/${studyId}/edit`;
+    return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
     return this.http.get<CoeditionNotification[]>(url).pipe(map(
