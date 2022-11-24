@@ -185,26 +185,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     });
   }
 
-  downloadStudyLogs() {
-
-    const studyId = this.studyCaseId;
-    this.studyCaseDataService.getStudyLogs(studyId).subscribe(file => {
-
-      const downloadLink = document.createElement('a');
-      downloadLink.href = window.URL.createObjectURL(file);
-      downloadLink.setAttribute('download', 'sc-' + this.studyCaseId + '-logs.log');
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error downloading log file :  No logs found for this study. You should run it first.');
-      }
-    });
-  }
-
   downloadRawStudyLogs() {
 
     const studyId = this.studyCaseId;
