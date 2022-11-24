@@ -109,7 +109,6 @@ export class PostProcessingService extends PostProcessingHttpService {
           const sub = requestData.subscription;
           sub.next(postProcessing);
           this.postProcessingQueue.shift();
-          this.calculationService.getLog(requestData.loadedStudy.studyCase.id);
           this.startNextPostProcessingRequest();
         }, errorReceived => {
           this.loggerService.log(errorReceived);
