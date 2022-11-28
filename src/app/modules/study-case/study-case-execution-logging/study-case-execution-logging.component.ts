@@ -25,6 +25,8 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   @ViewChild('table', { static: false }) table: any;
 
   private studyCaseSubscription: Subscription;
+  private executionStartedSubscription: Subscription;
+  private executionStoppedSubscription: Subscription;
   private logsSubscription: Subscription;
   private calculationChangeSubscription: Subscription;
   private calculationSystemLoadChangeSubscription: Subscription;
@@ -43,12 +45,15 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
+    private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
     public calculationService: CalculationService,
     private snackbarService: SnackbarService,
     private dialog: MatDialog,
     public filterService: FilterService) {
 
     this.studyCaseSubscription = null;
+    this.executionStartedSubscription = null;
+    this.executionStoppedSubscription = null;
     this.logsSubscription = null;
     this.calculationChangeSubscription = null;
     this.calculationSystemLoadChangeSubscription = null;
@@ -87,10 +92,16 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
-      if (calculationRunning) {
-        this.startTimeOut();
-      } else {
-        this.stopTimeOut();
+      const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
+      if (sco !== null && sco !== undefined) {
+        // Start calculation timeout to get logs
+        this.executionStartedSubscription = sco.executionUpdate.subscribe(_ => {
+          this.startTimeOut();
+        });
+        // Stop calculation timeout to get logs
+        this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
+          this.stopTimeOut();
+        });
       }
     });
 
@@ -115,10 +126,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       this.calculationSystemLoadChangeSubscription.unsubscribe();
       this.calculationSystemLoadChangeSubscription = null;
     }
-    if (this.logsSubscription !== null && this.logsSubscription !== undefined) {
-      this.logsSubscription.unsubscribe();
-      this.logsSubscription = null;
-    }
+    this.cleanlogsSubscription();
   }
 
   ngAfterViewInit() {
@@ -126,10 +134,16 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.scrollContainer = this.table._elementRef.nativeElement;
   }
 
+  private cleanlogsSubscription() {
+    if (this.logsSubscription !== null && this.logsSubscription !== undefined) {
+      this.logsSubscription.unsubscribe();
+      this.logsSubscription = null;
+    }
+  }
 
   private startTimeOut() {
     this.stopTimeOut();
-
+    this.cleanlogsSubscription();
     if (this.timeOut === null) {
       this.timeOut = setTimeout(() => {
         this.getLogs();
@@ -146,9 +160,11 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
   private getLogs() {
     this.calculationService.getLog(this.studyCaseId);
-    this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
-      this.setLogToView(logs);
-    });
+    if (this.logsSubscription === null || this.logsSubscription === undefined) {
+      this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
+        this.setLogToView(logs);
+      });
+    }
   }
 
   private setLogToView(logs: StudyCaseExecutionLogging[]) {
