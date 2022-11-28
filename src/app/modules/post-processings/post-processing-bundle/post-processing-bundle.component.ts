@@ -105,7 +105,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         }
         this.postProcessingService.resumePostProcessingRequestQueue();
         this.displayProgressBar = false;
-        this.calculationService.getLog(this.studyCaseDataService.loadedStudy.studyCase.id);
       }, errorReceived => {
         const error = errorReceived as SoSTradesError;
         if (error.redirect) {

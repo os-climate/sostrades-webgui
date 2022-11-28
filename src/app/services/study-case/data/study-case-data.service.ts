@@ -208,25 +208,6 @@ export class StudyCaseDataService extends DataHttpService {
     return this.http.post(url, data, options);
   }
 
-  getStudyLogs(studyId): Observable<Blob> {
-
-    const options: {
-      headers?: HttpHeaders;
-      observe?: 'body';
-      params?: HttpParams;
-      reportProgress?: boolean;
-      responseType: 'blob';
-    } = {
-      responseType: 'blob'
-    };
-    const url = `${this.apiRoute}/logs/download`;
-    const data = {
-      studyid: studyId
-    };
-
-    return this.http.post(url, data, options);
-  }
-
   getRawStudyLogs(studyId): Observable<Blob> {
 
     const options: {
@@ -514,8 +495,7 @@ export class StudyCaseDataService extends DataHttpService {
         setTimeout(() => {
           this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
         }, 2000);
-      } 
-      else {
+      } else {
         allocationObservable.next(allocation);
       }
 

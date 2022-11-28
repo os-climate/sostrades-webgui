@@ -31,7 +31,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   private calculationChangeSubscription: Subscription;
   private calculationSystemLoadChangeSubscription: Subscription;
   private studyCaseId: number;
-  private timeOut;
+  private timeOut: any;
   private scrollContainer: any;
   private logList: StudyCaseExecutionLogging[];
   public cpuLoad: string;
@@ -69,34 +69,30 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
   ngOnInit(): void {
 
+    if (this.logsSubscription === null || this.logsSubscription === undefined) {
+      this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
+        this.setLogToView(logs);
+      });
+    }
+
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.studyCaseId = this.studyCaseDataService.loadedStudy.studyCase.id;
-
       // Applying rights, to start logging or not
       if (!this.studyCaseDataService.loadedStudy.noData) {
-        // Subscribe to log change in order to update view
-        if (this.logsSubscription === null || this.logsSubscription === undefined) {
-          this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
-            this.setLogToView(logs);
-          });
-        }
+        this.getLogs();
       } else {
-        this.cleanExecutionSubscription();
+        this.dataSourceRef = null;
       }
     }
 
     this.studyCaseSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-
-      if (loadedStudy !== null) {
+      if (loadedStudy !== null && loadedStudy !== undefined) {
         this.studyCaseId = (loadedStudy as LoadedStudy).studyCase.id;
-        // Subscribe to log change in order to update view
-        if (this.logsSubscription === null || this.logsSubscription === undefined) {
-          this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
-            this.setLogToView(logs);
-          });
-        }
-      } else {
+        if (!loadedStudy.noData) {
+          this.getLogs();
+        } else {
         this.dataSourceRef = null;
+        }
       }
     });
 
@@ -105,7 +101,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
       if (sco !== null && sco !== undefined) {
         // Start calculation timeout to get logs
-        this.executionStartedSubscription = sco.executionStarted.subscribe(_ => {
+        this.executionStartedSubscription = sco.executionUpdate.subscribe(_ => {
           this.startTimeOut();
         });
         // Stop calculation timeout to get logs
@@ -127,11 +123,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       this.studyCaseSubscription = null;
     }
 
-    if (this.logsSubscription !== null && this.logsSubscription !== undefined) {
-      this.logsSubscription.unsubscribe();
-      this.logsSubscription = null;
-    }
-
     if (this.calculationChangeSubscription !== null && this.calculationChangeSubscription !== undefined) {
       this.calculationChangeSubscription.unsubscribe();
       this.calculationChangeSubscription = null;
@@ -142,16 +133,10 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       this.calculationSystemLoadChangeSubscription = null;
     }
 
-    this.cleanExecutionSubscription();
-  }
-
-  ngAfterViewInit() {
-    this.scrollContainer = this.scrollFrame.nativeElement;
-    this.scrollContainer = this.table._elementRef.nativeElement;
-  }
-
-  private cleanExecutionSubscription() {
-    this.stopTimeOut();
+    if (this.logsSubscription !== null && this.logsSubscription !== undefined) {
+      this.logsSubscription.unsubscribe();
+      this.logsSubscription = null;
+    }
 
     if (this.executionStartedSubscription !== null && this.executionStartedSubscription !== undefined) {
       this.executionStartedSubscription.unsubscribe();
@@ -164,9 +149,13 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     }
   }
 
+  ngAfterViewInit() {
+    this.scrollContainer = this.scrollFrame.nativeElement;
+    this.scrollContainer = this.table._elementRef.nativeElement;
+  }
+
   private startTimeOut() {
     this.stopTimeOut();
-
     if (this.timeOut === null) {
       this.timeOut = setTimeout(() => {
         this.getLogs();
@@ -216,26 +205,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       height: '80vh',
       panelClass: 'csvDialog',
       data: message
-    });
-  }
-
-  downloadStudyLogs() {
-
-    const studyId = this.studyCaseId;
-    this.studyCaseDataService.getStudyLogs(studyId).subscribe(file => {
-
-      const downloadLink = document.createElement('a');
-      downloadLink.href = window.URL.createObjectURL(file);
-      downloadLink.setAttribute('download', 'sc-' + this.studyCaseId + '-logs.log');
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error downloading log file :  No logs found for this study. You should run it first.');
-      }
     });
   }
 
