@@ -12,7 +12,7 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 
-const POLLING_DELAY = 3000;
+const POLLING_DELAY = 1000;
 
 @Component({
   selector: 'app-study-case-execution-logging',
@@ -68,6 +68,12 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   }
 
   ngOnInit(): void {
+
+    if (this.logsSubscription === null || this.logsSubscription === undefined) {
+      this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
+        this.setLogToView(logs);
+      });
+    }
 
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.studyCaseId = this.studyCaseDataService.loadedStudy.studyCase.id;
@@ -126,7 +132,21 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       this.calculationSystemLoadChangeSubscription.unsubscribe();
       this.calculationSystemLoadChangeSubscription = null;
     }
-    this.cleanlogsSubscription();
+
+    if (this.logsSubscription !== null && this.logsSubscription !== undefined) {
+      this.logsSubscription.unsubscribe();
+      this.logsSubscription = null;
+    }
+
+    if (this.executionStartedSubscription !== null && this.executionStartedSubscription !== undefined) {
+      this.executionStartedSubscription.unsubscribe();
+      this.executionStartedSubscription = null;
+    }
+
+    if (this.executionStoppedSubscription !== null && this.executionStoppedSubscription !== undefined) {
+      this.executionStoppedSubscription.unsubscribe();
+      this.executionStoppedSubscription = null;
+    }
   }
 
   ngAfterViewInit() {
@@ -134,16 +154,8 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.scrollContainer = this.table._elementRef.nativeElement;
   }
 
-  private cleanlogsSubscription() {
-    if (this.logsSubscription !== null && this.logsSubscription !== undefined) {
-      this.logsSubscription.unsubscribe();
-      this.logsSubscription = null;
-    }
-  }
-
   private startTimeOut() {
     this.stopTimeOut();
-    this.cleanlogsSubscription();
     if (this.timeOut === null) {
       this.timeOut = setTimeout(() => {
         this.getLogs();
@@ -160,11 +172,6 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
   private getLogs() {
     this.calculationService.getLog(this.studyCaseId);
-    if (this.logsSubscription === null || this.logsSubscription === undefined) {
-      this.logsSubscription = this.calculationService.logs$.subscribe(logs => {
-        this.setLogToView(logs);
-      });
-    }
   }
 
   private setLogToView(logs: StudyCaseExecutionLogging[]) {
