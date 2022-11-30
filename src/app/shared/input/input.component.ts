@@ -24,6 +24,7 @@ export class InputComponent implements OnInit {
   @Input() nodeData: NodeData;
   @Output() valueChanged: EventEmitter<any> = new EventEmitter();
 
+  public placeholder: string;
   public displayName: string;
   public inputFormControl: FormControl;
   matcher = new InputErrorStateMatcher();
@@ -35,9 +36,15 @@ export class InputComponent implements OnInit {
 
   constructor(private ontologyService: OntologyService) {
     this.timer = null;
+    this.placeholder = '';
   }
 
   ngOnInit(): void {
+
+    // Fill placeholder with the type of the nodeData
+    if (this.nodeData.type !== null && this.nodeData.type !== undefined) {
+      this.placeholder = `Enter a "${this.nodeData.type}" value`;
+    }
 
     // List of validators needed
     const validators = [];
@@ -78,7 +85,7 @@ export class InputComponent implements OnInit {
 
     if (this.inputFormControl && this.inputFormControl.valid) {
       if (this.nodeData.type === 'float') {
-        let cleanedValue = value.toString().replace(',', '.');
+        const cleanedValue = value.toString().replace(',', '.');
         this.nodeData.value = cleanedValue;
       } else {
         this.nodeData.value = value;
@@ -93,7 +100,7 @@ export class InputComponent implements OnInit {
 
       if (this.nodeData.value === null || this.innerValue === null) {
         emitChange = true;
-      } else if (this.nodeData.value.toString() != this.innerValue.toString()) {
+      } else if (this.nodeData.value.toString() !== this.innerValue.toString()) {
         emitChange = true;
       }
 
