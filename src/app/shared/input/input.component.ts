@@ -44,6 +44,8 @@ export class InputComponent implements OnInit {
     // Fill placeholder with the type of the nodeData
     if (this.nodeData.type !== null && this.nodeData.type !== undefined) {
       this.placeholder = `Enter a "${this.nodeData.type}" value`;
+    } else {
+      this.placeholder = 'Enter a value';
     }
 
     // List of validators needed
