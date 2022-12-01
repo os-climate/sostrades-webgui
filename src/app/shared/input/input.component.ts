@@ -24,6 +24,7 @@ export class InputComponent implements OnInit {
   @Input() nodeData: NodeData;
   @Output() valueChanged: EventEmitter<any> = new EventEmitter();
 
+  public placeholderDict = new Map<string, string>();
   public placeholder: string;
   public displayName: string;
   public inputFormControl: FormControl;
@@ -36,14 +37,22 @@ export class InputComponent implements OnInit {
 
   constructor(private ontologyService: OntologyService) {
     this.timer = null;
-    this.placeholder = '';
+    this.placeholder = 'Enter a value';
+    this.placeholderDict.clear();
   }
 
   ngOnInit(): void {
 
     // Fill placeholder with the type of the nodeData
     if (this.nodeData.type !== null && this.nodeData.type !== undefined) {
-      this.placeholder = `Enter a "${this.nodeData.type}" value`;
+      switch (this.nodeData.type) {
+        case 'int':
+          this.placeholderDict.set(this.nodeData.type, `Enter an "${this.nodeData.type}" value`);
+          break;
+        default:
+          this.placeholderDict.set(this.nodeData.type, `Enter a "${this.nodeData.type}" value`);
+      }
+      this.placeholder = this.placeholderDict.get(this.nodeData.type);
     }
 
     // List of validators needed
