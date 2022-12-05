@@ -1,4 +1,4 @@
-import { Component, Directive, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
@@ -34,6 +34,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public processList: Process[];
   public filteredProcesses: ReplaySubject<Process[]> = new ReplaySubject<Process[]>(1);
   public disabledReference: boolean;
+  public disabledProcess: boolean;
+  public disabledReferenceList: boolean;
   protected onDestroy = new Subject<void>();
   public processFiltered: FormControl;
   private processReferenceList: Study[];
@@ -60,6 +62,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<StudyCaseCreationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: StudyCaseCreateDialogData) {
     this.groupList = [];
+    this.process = null;
     this.referenceList = [];
     this.disabledReference = true;
     this.isLoading = true;
@@ -70,6 +73,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.processReferenceReady = false;
     this.studyCaseReferenceReady = false;
     this.groupReady = false;
+    this.disabledProcess = false;
+    this.disabledReferenceList = false;
     this.checkIfReferenceIsAlreadySelected = false;
 
     /**
@@ -310,12 +315,22 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         }
       }
 
-      if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
-        selectedReferecence = this.emptyProcessRef;
+      // if 'reference' attribute instance is set, then it has to be pre selected on reference
+      if (this.data.reference !== null && this.data.reference !== undefined && this.data.reference.trim().length > 0 ) {
+        const selectedStudy = this.referenceList.find(study =>
+          study.name === this.data.reference
+        );
+        this.createStudyForm.patchValue({selectedRef: selectedStudy});
+        this.disabledReferenceList = true;
+        this.disabledProcess = true;
+      } else {
+        if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
+          selectedReferecence = this.emptyProcessRef;
+        }
+        this.createStudyForm.patchValue({selectedRef: selectedReferecence});
+        this.disabledReference = false;
       }
-      this.createStudyForm.patchValue({selectedRef: selectedReferecence});
 
-      this.disabledReference = false;
       this.isLoading = false;
 
       if ((this.process === null) || (this.process === undefined)) {

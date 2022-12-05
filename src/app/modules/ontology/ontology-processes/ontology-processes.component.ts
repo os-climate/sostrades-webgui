@@ -308,8 +308,9 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
         /**
          * Changes 23/09/2022
          * Give a process instance to have a pre-selected process the modal
+         * Give a 'null' study_name to have not a pre-selected refrence the modal
          */
-        this.studyCreationService.showCreateStudyCaseDialog(process);
+        this.studyCreationService.showCreateStudyCaseDialog(process, null);
       }
     });
   }

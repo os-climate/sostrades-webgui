@@ -43,6 +43,7 @@
       formControlName="processId"
       placeholder="Process name"
       (selectionChange)="onProcessChange($event.value)"
+      [disabled]="disabledProcess"
       #singleSelect>
         <mat-option>
           <ngx-mat-select-search
@@ -68,6 +69,7 @@
         placeholder="Study"
         formControlName="selectedRef"
         [multiple]="false"
+        [disabled]="disabledReferenceList"
         #select
       >
         <mat-select-trigger>
@@ -109,7 +111,7 @@
             </div>
           </mat-option>
       </mat-select>
-      <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;" *ngIf="disabledReference">Loading reference</mat-hint>
+      <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;" *ngIf="disabledReference && !disabledReferenceList">Loading reference</mat-hint>
     </mat-form-field>
     <mat-form-field *ngIf="!data.selectProcessOnly">
       <mat-select id="group" placeholder="Group name" formControlName="groupId">

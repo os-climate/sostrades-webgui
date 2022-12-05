@@ -31,9 +31,10 @@ export class StudyCaseCreationService {
   ) { }
 
 
-  showCreateStudyCaseDialog(process: Process) {
+  showCreateStudyCaseDialog(process: Process, studyName: string) {
     const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
     dialogData.process = process;
+    dialogData.reference = studyName;
 
     const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
       disableClose: true,

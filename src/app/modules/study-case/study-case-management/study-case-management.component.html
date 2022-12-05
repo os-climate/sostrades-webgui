@@ -269,8 +269,19 @@
             *ngIf="element.isManager"
             (click)="updateStudy(element)"
             matTooltip="edit study case"
+            >
+            <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button
+            [id]="'btn-study-management-copy-' + element.groupName + '-' + element.name"
+            *ngIf="getCreateStudy"
+            style="margin-right: 5px"
+            mat-icon-button
+            color="accent"
+            (click)="copyStudy(element)"
+            matTooltip="copy study case"
           >
-          <i class="fa-solid fa-pen-to-square"></i>
+          <i class="fa-solid fa-copy"></i>
           </button>
 
             <button
