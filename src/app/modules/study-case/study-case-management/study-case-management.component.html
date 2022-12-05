@@ -268,7 +268,7 @@
             color="accent"
             *ngIf="element.isManager"
             (click)="updateStudy(element)"
-            matTooltip="edit study case"
+            matTooltip="Edit study case"
             >
             <i class="fa-solid fa-pen-to-square"></i>
             </button>
@@ -279,10 +279,10 @@
             mat-icon-button
             color="accent"
             (click)="copyStudy(element)"
-            matTooltip="copy study case"
-          >
-          <i class="fa-solid fa-copy"></i>
-          </button>
+            matTooltip="Copy study case"
+            >
+            <i class="fa-solid fa-copy"></i>
+            </button>
 
             <button
               [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"

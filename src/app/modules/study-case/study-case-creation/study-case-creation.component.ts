@@ -315,10 +315,10 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         }
       }
 
-      // if 'reference' attribute instance is set, then it has to be pre selected on reference
-      if (this.data.reference !== null && this.data.reference !== undefined && this.data.reference.trim().length > 0 ) {
+      // if 'studyId' attribute instance is set, then it has to be pre selected on reference
+      if (this.data.studyId !== null && this.data.studyId !== undefined) {
         const selectedStudy = this.referenceList.find(study =>
-          study.name === this.data.reference
+          study.id === this.data.studyId
         );
         this.createStudyForm.patchValue({selectedRef: selectedStudy});
         this.disabledReferenceList = true;
@@ -333,9 +333,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
 
       this.isLoading = false;
 
-      if ((this.process === null) || (this.process === undefined)) {
-        this.focusOnHtlmElement();
-      }
+      this.focusOnHtlmElement();
     }
   }
 

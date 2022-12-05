@@ -327,7 +327,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.loadingDialogService.closeLoading();
           // Check rights on the process before open createStudyCase modal
           if (selectedProcess.isManager || selectedProcess.isContributor) {
-            this.studyCreationService.showCreateStudyCaseDialog(selectedProcess, study.name);
+            this.studyCreationService.showCreateStudyCaseDialog(selectedProcess, study.id);
           } else {
             this.snackbarService.showWarning(
               `You cannot copy "${study.name}" beacause you do not have access to the process "${study.process}".`
