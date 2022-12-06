@@ -55,7 +55,6 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   constructor(
     private groupDataService: GroupDataService,
     private studyCaseDataService: StudyCaseDataService,
-    private referenceDataService: ReferenceDataService,
     private snackbarService: SnackbarService,
     private processService: ProcessService,
     private userService: UserService,

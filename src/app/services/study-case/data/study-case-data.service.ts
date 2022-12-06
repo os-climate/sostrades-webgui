@@ -158,6 +158,19 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  copyStudy(studyId: number, studyName: string, groupId: number): Observable<Study> {
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    };
+    const url = `${this.apiRoute}/${studyId}/copy`;
+    return this.http.post<Study>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
