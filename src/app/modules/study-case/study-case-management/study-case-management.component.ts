@@ -339,24 +339,29 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             });
             dialogRef.afterClosed().subscribe(result => {
               const studyCaseData = result as StudyCaseCreateDialogData;
-              this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
-              this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId)
-              .subscribe(copyStudy => {
-                if (copyStudy !== null && copyStudy !== undefined) {
-                this.loadingDialogService.closeLoading();
-                this.snackbarService.showInformation(`Study ${copyStudy.name} has been succesfully copied from ${study.name}`);
-                this.loadStudyManagementData();
+              if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
+
+                if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
+                  this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
+                  this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId)
+                  .subscribe(copyStudy => {
+                    if (copyStudy !== null && copyStudy !== undefined) {
+                    this.loadingDialogService.closeLoading();
+                    this.snackbarService.showInformation(`Study ${copyStudy.name} has been succesfully copied from ${study.name}`);
+                    this.loadStudyManagementData();
+                    }
+                  }, errorReceived => {
+                    const error = errorReceived as SoSTradesError;
+                    if (error.redirect) {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showError(error.description);
+                    } else {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showError(`Error copying ${study.name}: "${error.description}"`);
+                    }
+                  });
                 }
-              }, errorReceived => {
-                const error = errorReceived as SoSTradesError;
-                if (error.redirect) {
-                  this.loadingDialogService.closeLoading();
-                  this.snackbarService.showError(error.description);
-                } else {
-                  this.loadingDialogService.closeLoading();
-                  this.snackbarService.showError(`Error copying ${study.name}: "${error.description}"`);
-                }
-              });
+              }
             });
           } else {
             this.snackbarService.showWarning(

@@ -8,11 +8,8 @@
 </div>
 <div class="flex-container" [formGroup]="createStudyForm" *ngIf="!isLoading">
   <div mat-dialog-title>
-    <h1 style="margin-bottom: 10px !important; text-align: center" *ngIf="!data.selectProcessOnly">
-      Create new study
-    </h1>
-    <h1 style="margin-bottom: 10px !important; text-align: center" *ngIf="data.selectProcessOnly">
-      Select process & source data
+    <h1 style="margin-bottom: 10px !important; text-align: center">
+      {{title}}
     </h1>
   </div>
 

@@ -46,6 +46,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   private groupReady: boolean;
   private emptyProcessRef: Study;
   private checkIfReferenceIsAlreadySelected: boolean;
+  public title: string;
 
 
   @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
@@ -75,6 +76,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.disabledProcess = false;
     this.disabledReferenceList = false;
     this.checkIfReferenceIsAlreadySelected = false;
+    this.title = 'Create new study';
 
     /**
      * Create a placeholder reference to allow to choose nothing to initialize the study case
@@ -320,6 +322,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
           study.id === this.data.studyId
         );
         this.createStudyForm.patchValue({selectedRef: selectedStudy});
+        this.title = `Create a study copy from "${selectedStudy.name}"`;
         this.disabledReferenceList = true;
         this.disabledProcess = true;
       } else {
@@ -328,6 +331,9 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         }
         this.createStudyForm.patchValue({selectedRef: selectedReferecence});
         this.disabledReference = false;
+        if (this.data.selectProcessOnly) {
+          this.title = 'Select process & source data';
+        }
       }
 
       this.isLoading = false;
