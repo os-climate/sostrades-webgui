@@ -340,7 +340,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             dialogRef.afterClosed().subscribe(result => {
               const studyCaseData = result as StudyCaseCreateDialogData;
               if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
-
                 if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
                   this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
                   this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId)

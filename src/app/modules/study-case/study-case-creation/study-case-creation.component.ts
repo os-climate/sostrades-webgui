@@ -322,7 +322,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
           study.id === this.data.studyId
         );
         this.createStudyForm.patchValue({selectedRef: selectedStudy});
-        this.title = `Copy study: "${selectedStudy.name}"`;
+        this.title = `Copy study "${selectedStudy.name}"`;
         this.disabledReferenceList = true;
         this.disabledProcess = true;
       } else {
