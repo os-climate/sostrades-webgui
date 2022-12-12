@@ -34,7 +34,6 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
-  private loadingStudies = [];
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -71,7 +70,6 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
-    this.loadingStudies = [];
   }
 
 
@@ -81,24 +79,6 @@ export class StudyCaseDataService extends DataHttpService {
 
   setCurrentStudy(loadedStudy: LoadedStudy) {
     this.studyLoaded = loadedStudy;
-  }
-
-  setStudyToLoad(studyId: number) {
-    // remove previous opened study from the loading studies
-    this.closeStudyLoading();
-    // Add a study into the list of loading studies
-    if (this.loadingStudies.indexOf(studyId.toString()) === -1) {
-        this.loadingStudies.push(studyId.toString());
-    }
-  }
-
-  isStudyLoading(studyId: number) {
-    // Check that a study is into the list of loading studies
-    return this.loadingStudies.indexOf(studyId.toString()) !== -1;
-  }
-
-  closeStudyLoading() {
-      this.loadingStudies = [];
   }
 
   clearCache() {
@@ -152,6 +132,19 @@ export class StudyCaseDataService extends DataHttpService {
     };
     const url = `${this.apiRoute}/${studyId}/edit`;
     return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+  copyStudy(studyId: number, studyName: string, groupId: number): Observable<Study> {
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    };
+    const url = `${this.apiRoute}/${studyId}/copy`;
+    return this.http.post<Study>(url, payload, this.options).pipe(map(
       response => {
         return response;
       }));
@@ -348,7 +341,7 @@ export class StudyCaseDataService extends DataHttpService {
         if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
           if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {
             this.onStudyCaseChange.emit(null);
-            this.router.navigate([Routing.STUDY_MANAGEMENT]);
+            this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           }
         }
       }));
