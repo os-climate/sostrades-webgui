@@ -4,7 +4,8 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData, EditStudyCaseDialogData, FilterDialogData} from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData,
+  EditStudyCaseDialogData, FilterDialogData, StudyCaseCreateDialogData} from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -33,6 +34,7 @@ import { ColumnName } from 'src/app/models/column-name.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { Process } from 'src/app/models/process.model';
+import { StudyCaseCreationComponent } from '../study-case-creation/study-case-creation.component';
 
 
 @Component({
@@ -303,7 +305,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
          * Changes 23/09/2022
          * Call createStudyCase with 'null' as process and 'null' study_name to launch a non process and non reference intialized modal
          */
-        this.studyCreationService.showCreateStudyCaseDialog(null, null);
+        this.studyCreationService.showCreateStudyCaseDialog(null);
         }
     });
   }
@@ -327,11 +329,51 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.loadingDialogService.closeLoading();
           // Check rights on the process before open createStudyCase modal
           if (selectedProcess.isManager || selectedProcess.isContributor) {
-            this.studyCreationService.showCreateStudyCaseDialog(selectedProcess, study.id);
+            const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
+            dialogData.process = selectedProcess;
+            dialogData.studyId = study.id;
+
+            const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
+              disableClose: true,
+              data: dialogData
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              const studyCaseData = result as StudyCaseCreateDialogData;
+              if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
+                if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
+                  this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
+                  this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId)
+                  .subscribe(copyStudy => {
+                    if (copyStudy !== null && copyStudy !== undefined) {
+                    this.loadingDialogService.closeLoading();
+                    this.snackbarService.showInformation(`Study ${copyStudy.name} has been succesfully copied from ${study.name}`);
+                    this.loadStudyManagementData();
+                    }
+                  }, errorReceived => {
+                    const error = errorReceived as SoSTradesError;
+                    if (error.redirect) {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showError(error.description);
+                    } else {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showError(`Error copying ${study.name}: "${error.description}"`);
+                    }
+                  });
+                }
+              }
+            });
           } else {
             this.snackbarService.showWarning(
               `You cannot copy "${study.name}" beacause you do not have access to the process "${study.process}".`
               );
+          }
+        } , errorReceived => {
+          const error = errorReceived as SoSTradesError;
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            const errorMessage = `Error loading process list for form : ${error.description}`;
+            this.snackbarService.showError(errorMessage);
           }
         });
       }
