@@ -153,7 +153,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.isLoadedStudy = false;
         const getUrl = this.router.url;
         if (getUrl.includes(Routing.STUDY_WORKSPACE)) {
-          this.router.navigate([Routing.STUDY_MANAGEMENT]);
+          this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT);
           } else {
           this.router.navigate([getUrl]);

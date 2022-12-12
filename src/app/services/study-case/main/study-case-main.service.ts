@@ -228,7 +228,7 @@ export class StudyCaseMainService extends MainHttpService {
           if (studies.filter(x => x.id === this.studyCaseDataService.loadedStudy.studyCase.id).length > 0) {
             this.updateStudyCaseDataService(null);
             this.studyCaseDataService.onStudyCaseChange.emit(null);
-            this.router.navigate([Routing.STUDY_MANAGEMENT]);
+            this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           }
         }
       }));

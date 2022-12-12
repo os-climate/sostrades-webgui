@@ -223,7 +223,7 @@ export class SocketService {
           this.studyCaseDataService.setCurrentStudy(null);
           this.studyCaseDataService.onStudyCaseChange.emit(null);
           this.onCurrentStudyDeleted.emit(true);
-          this.router.navigate([Routing.STUDY_MANAGEMENT]);
+          this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           this.snackbarService.showWarning(`The current study case you were working in has been deleted by "${data.author}"`);
         }
       }

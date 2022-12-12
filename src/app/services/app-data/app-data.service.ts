@@ -209,7 +209,7 @@ export class AppDataService extends DataHttpService {
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
         );
         loadingCanceled = true;
-        this.router.navigate([Routing.STUDY_MANAGEMENT]);
+        this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
 
     const messageObserver = {
