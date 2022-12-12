@@ -6,8 +6,13 @@
     progressText="{{message}}"
   ></app-progress-bar>
   <div mat-dialog-actions *ngIf="showCancelButton">
-    <button mat-button (click)="onCancelClick()" style="margin-right: 5px" color="warn"
-    *ngIf="!disableCancelLoading">
+    <button 
+      id="loading-cancel-button"
+      mat-button
+      (click)="onCancelClick()" 
+      style="margin-right: 5px" 
+      color="warn"
+      *ngIf="!disableCancelLoading">
       Cancel loading
     </button>
     <div *ngIf="disableCancelLoading" class="disable-cancel-button-message">
