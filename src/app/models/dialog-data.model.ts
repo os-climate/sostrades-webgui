@@ -18,6 +18,17 @@ export abstract class AbstractDialogData {
   }
 }
 
+export class LoadingDialogData extends AbstractDialogData {
+  message: string;
+  showCancelButton: boolean;
+
+  public constructor() {
+    super();
+    this.message = '';
+    this.showCancelButton = false;
+  }
+}
+
 export class AddOrganizationDialogData extends AbstractDialogData {
   organizationName: string;
 

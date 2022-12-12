@@ -220,7 +220,6 @@ export class SocketService {
         if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
           this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData
             .filter(x => x.id !== this.studyCaseDataService.loadedStudy.studyCase.id);
-          this.studyCaseDataService.closeStudyLoading();
           this.studyCaseDataService.setCurrentStudy(null);
           this.studyCaseDataService.onStudyCaseChange.emit(null);
           this.onCurrentStudyDeleted.emit(true);

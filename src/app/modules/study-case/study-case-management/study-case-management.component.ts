@@ -31,7 +31,8 @@ import { StudyCaseCreationService } from 'src/app/services/study-case/study-case
 import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
 import { ColumnName } from 'src/app/models/column-name.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
-import { filter } from 'rxjs/operators';
+import { ProcessService } from 'src/app/services/process/process.service';
+import { Process } from 'src/app/models/process.model';
 
 
 @Component({
@@ -114,7 +115,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
     private studyDialogService: StudyDialogService,
-    private headerService: HeaderService,
+    private processService: ProcessService,
     private userService: UserService,
     private studyCreationService: StudyCaseCreationService,
   ) {
@@ -300,10 +301,40 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       if (changeHandled) {
         /**
          * Changes 23/09/2022
-         * Call createStudyCase with 'null' as process to launch a non process intialized modal
+         * Call createStudyCase with 'null' as process and 'null' study_name to launch a non process and non reference intialized modal
          */
-        this.studyCreationService.showCreateStudyCaseDialog(null);
+        this.studyCreationService.showCreateStudyCaseDialog(null, null);
         }
+    });
+  }
+
+  copyStudy(study: Study) {
+    this.handleUnsavedChanges(changeHandled => {
+      if (changeHandled) {
+        /**
+         * Create 02/12/2022
+         * Retrieve the process from the study case process_id copied
+         * Call createStudyCase with the process and the study_name from the study case copied to launch intialized modal
+         */
+        let selectedProcess: Process;
+
+        if (this.processService.processManagemenentData === null || this.processService.processManagemenentData === undefined
+            || this.processService.processManagemenentData.length === 0) {
+          this.loadingDialogService.showLoading(`Retrieving of "${study.process}" in ontology processes list`);
+        }
+        this.processService.getUserProcesses(false).subscribe( processes => {
+          selectedProcess = processes.find(p => p.processId === study.process);
+          this.loadingDialogService.closeLoading();
+          // Check rights on the process before open createStudyCase modal
+          if (selectedProcess.isManager || selectedProcess.isContributor) {
+            this.studyCreationService.showCreateStudyCaseDialog(selectedProcess, study.id);
+          } else {
+            this.snackbarService.showWarning(
+              `You cannot copy "${study.name}" beacause you do not have access to the process "${study.process}".`
+              );
+          }
+        });
+      }
     });
   }
 

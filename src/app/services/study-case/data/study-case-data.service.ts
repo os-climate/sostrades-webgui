@@ -34,7 +34,6 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
-  private loadingStudies = [];
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -71,7 +70,6 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
-    this.loadingStudies = [];
   }
 
 
@@ -81,24 +79,6 @@ export class StudyCaseDataService extends DataHttpService {
 
   setCurrentStudy(loadedStudy: LoadedStudy) {
     this.studyLoaded = loadedStudy;
-  }
-
-  setStudyToLoad(studyId: number) {
-    // remove previous opened study from the loading studies
-    this.closeStudyLoading();
-    // Add a study into the list of loading studies
-    if (this.loadingStudies.indexOf(studyId.toString()) === -1) {
-        this.loadingStudies.push(studyId.toString());
-    }
-  }
-
-  isStudyLoading(studyId: number) {
-    // Check that a study is into the list of loading studies
-    return this.loadingStudies.indexOf(studyId.toString()) !== -1;
-  }
-
-  closeStudyLoading() {
-      this.loadingStudies = [];
   }
 
   clearCache() {

@@ -754,13 +754,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         // Reload the study in order to get all post postprocessing data
         const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
           let loadedstudyCase = resultLoadedStudy as LoadedStudy;
-          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, false, (isStudyLoaded)=>{
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, (isStudyLoaded)=>{
               studySubscription.unsubscribe();
               // Cleaning old subscriptions
               this.cleanExecutionSubscriptions();
               this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
               this.calculationService.onCalculationChange.emit(false);
-            }, false, false, true);
+            }, false, true).subscribe();
           }, errorReceived => {
           const error = errorReceived as SoSTradesError;
           if (error.redirect) {
