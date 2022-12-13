@@ -54,8 +54,7 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return LoadedStudy.Create(response);
       })).subscribe(loadedStudy => {
-        this.studyCaseDataService.setStudyToLoad(loadedStudy.studyCase.id);
-        //set current study in loading mode
+
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
@@ -92,8 +91,7 @@ export class StudyCaseMainService extends MainHttpService {
       response => {
         return Study.Create(response);
       })).subscribe(study => {
-        this.studyCaseDataService.setStudyToLoad(study.id);
-        //set current study in loading mode
+
         setTimeout(() => {
           this.loadStudyInReadOnlyModeIfNeededTimeout(study.id, false, loaderObservable, true);
         }, 2000);
@@ -128,7 +126,7 @@ export class StudyCaseMainService extends MainHttpService {
           this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
         }, 2000);
       } else {
-        if(withEmit && this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+        if(withEmit){
           this.updateStudyCaseDataService(loadedStudy);
           this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
         }
@@ -156,7 +154,7 @@ export class StudyCaseMainService extends MainHttpService {
           this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
         }, 2000);
       } else {
-        if(withEmit && this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
+        if(withEmit){
           this.updateStudyCaseDataService(loadedStudy);
           this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
         }
@@ -179,7 +177,7 @@ export class StudyCaseMainService extends MainHttpService {
         }
       }));
   }
-  
+
   //#endregion Load study
 
   //#region Reload study
@@ -200,16 +198,14 @@ export class StudyCaseMainService extends MainHttpService {
             this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);
           }, 2000);
         } else {
-          if(this.studyCaseDataService.isStudyLoading(loadedStudy.studyCase.id)){
-            this.updateStudyCaseDataService(loadedStudy);
-            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-            loaderObservable.next(loadedStudy);
-          }
+          this.updateStudyCaseDataService(loadedStudy);
+          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+          loaderObservable.next(loadedStudy);
         }
       },
-        error => {
-          loaderObservable.error(error);
-        });
+      error => {
+        loaderObservable.error(error);
+      });
   }
 
   closeStudy(close: boolean) {
@@ -232,7 +228,7 @@ export class StudyCaseMainService extends MainHttpService {
           if (studies.filter(x => x.id === this.studyCaseDataService.loadedStudy.studyCase.id).length > 0) {
             this.updateStudyCaseDataService(null);
             this.studyCaseDataService.onStudyCaseChange.emit(null);
-            this.router.navigate(['']);
+            this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           }
         }
       }));

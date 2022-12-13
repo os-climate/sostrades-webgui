@@ -1,4 +1,4 @@
-import { Component, Directive, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
@@ -34,6 +34,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public processList: Process[];
   public filteredProcesses: ReplaySubject<Process[]> = new ReplaySubject<Process[]>(1);
   public disabledReference: boolean;
+  public disabledProcess: boolean;
+  public disabledReferenceList: boolean;
   protected onDestroy = new Subject<void>();
   public processFiltered: FormControl;
   private processReferenceList: Study[];
@@ -44,6 +46,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   private groupReady: boolean;
   private emptyProcessRef: Study;
   private checkIfReferenceIsAlreadySelected: boolean;
+  public title: string;
 
 
   @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
@@ -53,13 +56,13 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   constructor(
     private groupDataService: GroupDataService,
     private studyCaseDataService: StudyCaseDataService,
-    private referenceDataService: ReferenceDataService,
     private snackbarService: SnackbarService,
     private processService: ProcessService,
     private userService: UserService,
     public dialogRef: MatDialogRef<StudyCaseCreationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: StudyCaseCreateDialogData) {
     this.groupList = [];
+    this.process = null;
     this.referenceList = [];
     this.disabledReference = true;
     this.isLoading = true;
@@ -70,7 +73,10 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.processReferenceReady = false;
     this.studyCaseReferenceReady = false;
     this.groupReady = false;
+    this.disabledProcess = false;
+    this.disabledReferenceList = false;
     this.checkIfReferenceIsAlreadySelected = false;
+    this.title = 'Create new study';
 
     /**
      * Create a placeholder reference to allow to choose nothing to initialize the study case
@@ -310,17 +316,29 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         }
       }
 
-      if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
-        selectedReferecence = this.emptyProcessRef;
+      // if 'studyId' attribute instance is set, then it has to be pre selected on reference
+      if ((this.data.studyId !== null && this.data.studyId !== undefined) && this.data.studyId > 0) {
+        const selectedStudy = this.referenceList.find(study =>
+          study.id === this.data.studyId
+        );
+        this.createStudyForm.patchValue({selectedRef: selectedStudy});
+        this.title = `Copy study "${selectedStudy.name}"`;
+        this.disabledReferenceList = true;
+        this.disabledProcess = true;
+      } else {
+        if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
+          selectedReferecence = this.emptyProcessRef;
+        }
+        this.createStudyForm.patchValue({selectedRef: selectedReferecence});
+        this.disabledReference = false;
+        if (this.data.selectProcessOnly) {
+          this.title = 'Select process & source data';
+        }
       }
-      this.createStudyForm.patchValue({selectedRef: selectedReferecence});
 
-      this.disabledReference = false;
       this.isLoading = false;
 
-      if ((this.process === null) || (this.process === undefined)) {
-        this.focusOnHtlmElement();
-      }
+      this.focusOnHtlmElement();
     }
   }
 

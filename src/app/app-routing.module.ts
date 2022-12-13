@@ -45,7 +45,7 @@ const routes: Routes = [
         canActivate: [StudyGuard]
       },
       {
-        path: Routing.STUDY_MANAGEMENT,
+        path: Routing.STUDY_CASE,
         component: StudyCaseManagementContainerComponent,
         canActivate: [StudyGuard],
         children: [
@@ -55,7 +55,7 @@ const routes: Routes = [
             canActivate: [StudyGuard]
           },
           {
-            path: Routing.STUDY_CASE,
+            path: Routing.STUDY_MANAGEMENT,
             component: StudyCaseManagementComponent,
             canActivate: [StudyGuard],
           },

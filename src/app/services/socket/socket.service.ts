@@ -220,11 +220,10 @@ export class SocketService {
         if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
           this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData
             .filter(x => x.id !== this.studyCaseDataService.loadedStudy.studyCase.id);
-          this.studyCaseDataService.closeStudyLoading();
           this.studyCaseDataService.setCurrentStudy(null);
           this.studyCaseDataService.onStudyCaseChange.emit(null);
           this.onCurrentStudyDeleted.emit(true);
-          this.router.navigate([Routing.STUDY_MANAGEMENT]);
+          this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           this.snackbarService.showWarning(`The current study case you were working in has been deleted by "${data.author}"`);
         }
       }
