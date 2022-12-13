@@ -46,6 +46,7 @@ export class StudyCaseDataService extends DataHttpService {
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
   public favoriteStudy: Study[];
+  public lastStudyOpened: Study[];
 
   // Make innerLogs private so it's not accessible from the outside,
   // expose it as logs$ observable (read-only) instead.
@@ -65,6 +66,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = null;
 
     this.favoriteStudy = [];
+    this.lastStudyOpened = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
@@ -106,6 +108,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = null;
     this.studyManagementData = [];
     this.favoriteStudy = [];
+    this.lastStudyOpened = [];
     this.studySelectedValues.clear();
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
