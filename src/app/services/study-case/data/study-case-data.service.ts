@@ -345,7 +345,12 @@ export class StudyCaseDataService extends DataHttpService {
         if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
           if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {
             this.onStudyCaseChange.emit(null);
-            this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+            const url = this.router.url;
+            if (url.includes(Routing.STUDY_MANAGEMENT)) {
+              this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+              } else {
+              this.router.navigate([url]);
+            }
           }
         }
       }));
