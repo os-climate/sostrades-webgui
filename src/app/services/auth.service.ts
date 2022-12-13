@@ -19,6 +19,7 @@ import { SoSTradesError } from '../models/sos-trades-error.model';
 import { DataHttpService } from './http/data-http/data-http.service';
 import { Location } from '@angular/common';
 import { Routing } from '../models/routing.model';
+import { PostProcessingService } from './post-processing/post-processing.service';
 
 class LoginResponse {
   accessToken: string;
@@ -45,6 +46,7 @@ export class AuthService extends DataHttpService {
     private ontologyService: OntologyService,
     private groupDataService: GroupDataService,
     private referenceDataService: ReferenceDataService,
+    private postProcessing: PostProcessingService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private studyCaseValidationService: StudyCaseValidationService,
     private router: Router,
@@ -206,6 +208,7 @@ export class AuthService extends DataHttpService {
     this.studyCaseDataService.clearCache();
     this.groupDataService.clearCache();
     this.ontologyService.clearCache();
+    this.postProcessing.clearCache();
     this.referenceDataService.clearCache();
     this.studyCaseValidationService.clearCache();
     this.studyCaseLocalStorageService.removeStudiesFromLocalStorage();

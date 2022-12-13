@@ -7,7 +7,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
-import { LoadedStudy } from 'src/app/models/study.model';
+import { LoadedStudy, LoadStatus } from 'src/app/models/study.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
 import { StudyCaseExecutionStatus } from 'src/app/models/study-case-execution-status.model';
@@ -754,13 +754,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         // Reload the study in order to get all post postprocessing data
         const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
           let loadedstudyCase = resultLoadedStudy as LoadedStudy;
-          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, false, (isStudyLoaded)=>{
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, (isStudyLoaded)=>{
               studySubscription.unsubscribe();
               // Cleaning old subscriptions
               this.cleanExecutionSubscriptions();
               this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
               this.calculationService.onCalculationChange.emit(false);
-            }, false, false, true);
+            }, false, true).subscribe();
           }, errorReceived => {
           const error = errorReceived as SoSTradesError;
           if (error.redirect) {
@@ -924,6 +924,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             true,
             isSaveDone => {
               if (isSaveDone) {
+                // clear post processing dictionnary
+                this.postProcessingService.clearPostProcessingDict();
+
                 // Send socket notifications
                 this.socketService.saveStudy(this.studyCaseDataService.loadedStudy.studyCase.id, resultData.changes);
                 saveDone(true);
@@ -1035,7 +1038,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     const oldCurrentSelectedNode = this.currentSelectedNode;
 
     this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false).subscribe(loadedStudy => {
-
       this.root = (loadedStudy as LoadedStudy).treeview;
 
       // Check if current selected node still exist
@@ -1081,7 +1083,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.originTreeNode = this.root.rootNode;
       this.dataSource.data = [this.originTreeNode];
       this.setStatusOnRootNode((loadedStudy as LoadedStudy).studyCase.executionStatus);
-
       this.onShowStatus();
       this.studyIsDone = false;
 
@@ -1163,19 +1164,22 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   private startBackgroundLoadingPostProcessing() {
-    Object.keys(this.root.rootDict).forEach(key => {
-      if (this.root.rootDict[key].postProcessingBundle !== undefined
-        && this.root.rootDict[key].postProcessingBundle !== null
-        && this.root.rootDict[key].postProcessingBundle.length > 0) {
-        this.root.rootDict[key].postProcessingBundle.forEach(bdl => {
 
-          this.postProcessingService.addPostProcessingRequestToQueue(
-            this.studyCaseDataService.loadedStudy,
-            this.root.rootDict[key].fullNamespace,
-            bdl);
-        });
-      }
-    });
+    if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE) {
+      Object.keys(this.root.rootDict).forEach(key => {
+          const postProcessingBundle = this.root.rootDict[key].postProcessingBundle;
+          const postProcessingBundleDict = this.postProcessingService.getPostProcessingDict(this.root.rootDict[key].fullNamespace);
+          if (postProcessingBundle !== undefined && postProcessingBundle !== null && postProcessingBundle.length > 0
+            && (postProcessingBundleDict === null || postProcessingBundleDict === undefined)) {
+            postProcessingBundle.forEach(bdl => {
+              this.postProcessingService.addPostProcessingRequestToQueue(
+                this.studyCaseDataService.loadedStudy,
+                this.root.rootDict[key].fullNamespace,
+                bdl);
+            });
+          }
+      });
+    }
   }
 
 }

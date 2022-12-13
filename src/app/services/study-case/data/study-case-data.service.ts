@@ -34,7 +34,6 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
-  private loadingStudies = [];
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -71,7 +70,6 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
-    this.loadingStudies = [];
   }
 
 
@@ -81,24 +79,6 @@ export class StudyCaseDataService extends DataHttpService {
 
   setCurrentStudy(loadedStudy: LoadedStudy) {
     this.studyLoaded = loadedStudy;
-  }
-
-  setStudyToLoad(studyId: number) {
-    // remove previous opened study from the loading studies
-    this.closeStudyLoading();
-    // Add a study into the list of loading studies
-    if (this.loadingStudies.indexOf(studyId.toString()) === -1) {
-        this.loadingStudies.push(studyId.toString());
-    }
-  }
-
-  isStudyLoading(studyId: number) {
-    // Check that a study is into the list of loading studies
-    return this.loadingStudies.indexOf(studyId.toString()) !== -1;
-  }
-
-  closeStudyLoading() {
-      this.loadingStudies = [];
   }
 
   clearCache() {
@@ -143,6 +123,33 @@ export class StudyCaseDataService extends DataHttpService {
   removeFavoriteStudy(studyId: number, userId: number) {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
   }
+
+  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    };
+    const url = `${this.apiRoute}/${studyId}/edit`;
+    return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+  copyStudy(studyId: number, studyName: string, groupId: number): Observable<Study> {
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    };
+    const url = `${this.apiRoute}/${studyId}/copy`;
+    return this.http.post<Study>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -189,25 +196,6 @@ export class StudyCaseDataService extends DataHttpService {
     const data = {
       parameter_key: parameterKey,
       notification_id: notificationId
-    };
-
-    return this.http.post(url, data, options);
-  }
-
-  getStudyLogs(studyId): Observable<Blob> {
-
-    const options: {
-      headers?: HttpHeaders;
-      observe?: 'body';
-      params?: HttpParams;
-      reportProgress?: boolean;
-      responseType: 'blob';
-    } = {
-      responseType: 'blob'
-    };
-    const url = `${this.apiRoute}/logs/download`;
-    const data = {
-      studyid: studyId
     };
 
     return this.http.post(url, data, options);
@@ -353,7 +341,7 @@ export class StudyCaseDataService extends DataHttpService {
         if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
           if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {
             this.onStudyCaseChange.emit(null);
-            this.router.navigate([Routing.STUDY_MANAGEMENT]);
+            this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           }
         }
       }));
@@ -500,8 +488,7 @@ export class StudyCaseDataService extends DataHttpService {
         setTimeout(() => {
           this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
         }, 2000);
-      } 
-      else {
+      } else {
         allocationObservable.next(allocation);
       }
 

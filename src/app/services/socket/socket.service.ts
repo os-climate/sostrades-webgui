@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import io from 'socket.io-client';
 
@@ -15,8 +15,8 @@ import { Routing } from 'src/app/models/routing.model';
 import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { StudyCaseValidationService } from '../study-case-validation/study-case-validation.service';
-import { StudyCaseLoadingService } from '../study-case-loading/study-case-loading.service';
+import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +43,7 @@ export class SocketService {
     private snackbarService: SnackbarService,
     private dialog: MatDialog,
     private studyCaseDataService: StudyCaseDataService,
+    public studyCaseMainService: StudyCaseMainService,
     private loggerService: LoggerService) {
     this.socket = null;
     this.onLogReceived = new EventEmitter<string>();
@@ -190,9 +191,9 @@ export class SocketService {
     this.socket.on('study-edited', (data) => {
       if (this.userService.getFullUsername() !== data.author) {
         if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+          this.studyCaseMainService.closeStudy(true);
           const validationDialogData = new ValidationDialogData();
-          validationDialogData.message = `The study you are working on has been modified by "${data.author}".
-          For security purpose study will be close without saving changes.`;
+          validationDialogData.message = `The study you are working on has been modified by "${data.author}". \nFor security purpose study has been closed without saving changes.`;
           validationDialogData.title = 'Warning';
           validationDialogData.buttonOkText = 'Ok';
           validationDialogData.showCancelButton = false;
@@ -200,7 +201,7 @@ export class SocketService {
 
           const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
             disableClose: true,
-            width: '500px',
+            width: '550px',
             height: '200px',
             data: validationDialogData,
           });
@@ -208,7 +209,6 @@ export class SocketService {
             const validationData: ValidationDialogData = result as ValidationDialogData;
             if ((validationData !== null) && (validationData !== undefined)) {
               this.onCurrentStudyEdited.emit(true);
-              this.router.navigate([Routing.STUDY_MANAGEMENT]);
             }
           });
         }
@@ -220,11 +220,10 @@ export class SocketService {
         if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
           this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData
             .filter(x => x.id !== this.studyCaseDataService.loadedStudy.studyCase.id);
-          this.studyCaseDataService.closeStudyLoading();
           this.studyCaseDataService.setCurrentStudy(null);
           this.studyCaseDataService.onStudyCaseChange.emit(null);
           this.onCurrentStudyDeleted.emit(true);
-          this.router.navigate([Routing.STUDY_MANAGEMENT]);
+          this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           this.snackbarService.showWarning(`The current study case you were working in has been deleted by "${data.author}"`);
         }
       }
