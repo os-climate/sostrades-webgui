@@ -230,13 +230,19 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     this.studyCaseDataService.getStudies().subscribe(
       (studies) => {
-              // Retrieving study case list
+      // Retrieving study case list
         if (this.getOnlyFavoriteStudy) {
-          this.studyCaseDataService.favoriteStudy = studies.filter(study =>
-              study.isFavorite === true);
-          this.dataSourceStudies = new MatTableDataSource<Study>(
-            this.studyCaseDataService.favoriteStudy
-          );
+          // Filter studies list by favorite studies
+          this.studyCaseDataService.favoriteStudy = studies.filter(study => study.isFavorite === true);
+          // Filter studies list by last opened studies sorted by most recent opening date
+          this.studyCaseDataService.lastStudyOpened = studies
+            .filter(study => study.isLastStudyOpened === true && study.isFavorite === false)
+            .sort((studyA, studyB) => new Date(studyB.openingDate).getTime() - new Date(studyA.openingDate).getTime());
+
+          // Concat favorite studies list with last studies opened list
+          const favoriteAndRecentStudies = this.studyCaseDataService.favoriteStudy.concat(this.studyCaseDataService.lastStudyOpened);
+
+          this.dataSourceStudies = new MatTableDataSource<Study>(favoriteAndRecentStudies);
         } else {
           this.studyCaseDataService.studyManagementData = studies;
           this.dataSourceStudies = new MatTableDataSource<Study>(
