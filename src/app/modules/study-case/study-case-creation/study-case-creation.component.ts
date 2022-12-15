@@ -82,7 +82,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
      * Create a placeholder reference to allow to choose nothing to initialize the study case
      */
     this.emptyProcessRef = new Study(null, this.EMPTY_STUDY_NAME, '', '', '', null, null, '',
-     '', '', 0, false, '', '', false, null, null, false, false, false, false, false);
+     '', '', 0, false, '', '', false, null, null, false, false, false, false, false, false, null);
 
   }
 
