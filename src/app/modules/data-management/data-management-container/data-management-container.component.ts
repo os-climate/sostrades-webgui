@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy,Input, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, HostListener } from '@angular/core';
 import { TreeNodeDataService } from '../../../services/tree-node-data.service';
 import { TreeNode } from '../../../models/tree-node.model';
 import { IoType, WidgetType } from '../../../models/node-data.model';
@@ -83,153 +83,18 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
           this.allDisciplinesDataDict = {} //this dict contains a DataManagementDiscipline for each discipline
           this.allDataDict = {};//this dict contains only one DataManagementDiscipline that contains all disciplines
 
+          this.allDataDict[`Data`] = new DataManagementDiscipline();
+          this.allDataDict[`Data`].modelNameFullPath.push('Data');
+          this.allDataDict[`Data`].label = 'Data';
+          this.allDataDict[`Data`].namespace = this.treeNodeData.fullNamespace;
+          this.allDataDict[`Data`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.Data`);
 
-          // Create entry for data stored at this treenode without discipline
-          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
-          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push('Data');
-          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].namespace = this.treeNodeData.fullNamespace;
-          this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.Data`);
-
-          //create entry for all data stored in this treenode (for standard mode view)
-          //Reset all datda in current node
-          this.allDataDict[`Data-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
-          this.allDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push('Data');
-          this.allDataDict[`Data-${this.treeNodeData.identifier}`].namespace = this.treeNodeData.fullNamespace;
-          this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.Data`);
-
-          // Create entries for data with discipline
-          this.treeNodeData.modelsFullPathList.forEach(discName => {
-            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`] = new DataManagementDiscipline();
-            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].modelNameFullPath.push(discName);
-            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].namespace = this.treeNodeData.fullNamespace;
-            this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.${discName}`);
-            this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.${discName}`);
-            this.allDataDict[`Data-${this.treeNodeData.identifier}`].modelNameFullPath.push(discName);
+          Object.keys(this.treeNodeData.dataManagementDisciplineDict).forEach(key => {
+            this.allDisciplinesDataDict[key] = this.treeNodeData.dataManagementDisciplineDict[key]
+            this.allDataDict["Data"].numericalParameters = Object.assign({}, this.allDataDict["Data"].numericalParameters, this.treeNodeData.dataManagementDisciplineDict[key].numericalParameters);
+            this.allDataDict["Data"].disciplinaryInputs = Object.assign({}, this.allDataDict["Data"].disciplinaryInputs, this.treeNodeData.dataManagementDisciplineDict[key].disciplinaryInputs);
+            this.allDataDict["Data"].disciplinaryOutputs = Object.assign({}, this.allDataDict["Data"].disciplinaryOutputs, this.treeNodeData.dataManagementDisciplineDict[key].disciplinaryOutputs);
           });
-
-
-
-
-          // Reading all data to create object config, couplingInputs, couplingOutputs
-          Object.keys(this.treeNodeData.data).forEach(key => {
-            const variable = this.treeNodeData.data[key];
-
-            if (variable.widgetType !== WidgetType.NO_WIDGET) {
-              if (variable.numerical === true) { // Numerical parameters
-                // Add to Data
-                if (variable.disciplineFullPathList.length === 0) {
-                  this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[variable.identifier] = variable;
-                  // Add to Disciplines data
-                } else {
-                  variable.disciplineFullPathList.forEach(discName => {
-                    this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].numericalParameters[variable.identifier] = variable;
-                  });
-                }
-                this.allDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[variable.identifier] = variable;
-
-              } else if (variable.ioType === IoType.IN) { // Disciplinary inputs
-                // Add to Data
-                if (variable.disciplineFullPathList.length === 0) {
-                  this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[variable.identifier] = variable;
-                  // Add to Disciplines data
-                } else {
-                  variable.disciplineFullPathList.forEach(discName => {
-                    this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryInputs[variable.identifier] = variable;
-                  });
-                }
-                this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[variable.identifier] = variable;
-
-              } else if (variable.ioType === IoType.OUT) { // Disciplinary outputs
-                // Add to Data
-                if (variable.disciplineFullPathList.length === 0) {
-                  this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[variable.identifier] = variable;
-                  // Add to Disciplines data
-                } else {
-                  variable.disciplineFullPathList.forEach(discName => {
-                    this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryOutputs[variable.identifier] = variable;
-                  });
-                }
-                this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[variable.identifier] = variable;
-              }
-            }
-          });
-
-          // Adding supplementary discipline inputs and outputs
-          Object.keys(this.treeNodeData.dataDisc).forEach(key => {
-            const discVariable = this.treeNodeData.dataDisc[key];
-
-            if (discVariable.widgetType !== WidgetType.NO_WIDGET) {
-
-              // Check if variable already exists
-              if (discVariable.numerical === true) { // Numerical parameters
-                // Add to Data
-                if (discVariable.disciplineFullPathList.length === 0) {
-                  if (!(discVariable.identifier in this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters)) {
-                    discVariable.editable = false; // Read only data
-                    this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
-                    this.allDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
-                  }
-                  // Add to Disciplines data
-                } else {
-                  discVariable.disciplineFullPathList.forEach(discName => {
-                    if (!(discVariable.identifier in this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].numericalParameters)) {
-                      discVariable.editable = false; // Read only data
-                      this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
-                      this.allDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters[discVariable.identifier] = discVariable;
-                    }
-                  });
-                }
-
-
-              } else if (discVariable.ioType === IoType.IN) { // Disciplinary inputs
-                // Add to Data
-                if (discVariable.disciplineFullPathList.length === 0) {
-                  if (!(discVariable.identifier in this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs)) {
-                    discVariable.editable = false; // Read only data
-                    this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
-                    this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
-                  }
-                  // Add to Disciplines data
-                } else {
-                  discVariable.disciplineFullPathList.forEach(discName => {
-                    if (!(discVariable.identifier in this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryInputs)) {
-                      discVariable.editable = false; // Read only data
-                      this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
-                      this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs[discVariable.identifier] = discVariable;
-                    }
-                  });
-                }
-
-              } else if (discVariable.ioType === IoType.OUT) { // Disciplinary outputs
-                // Add to Data
-                if (discVariable.disciplineFullPathList.length === 0) {
-                  if (!(discVariable.identifier in this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs)) {
-                    discVariable.editable = false; // Read only data
-                    this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
-                    this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
-                  }
-                  // Add to Disciplines data
-                } else {
-                  discVariable.disciplineFullPathList.forEach(discName => {
-                    if (!(discVariable.identifier in this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryOutputs)) {
-                      discVariable.editable = false; // Read only data
-                      this.allDisciplinesDataDict[`${discName}-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
-                      this.allDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs[discVariable.identifier] = discVariable;
-                    }
-                  });
-                }
-
-              }
-            }
-          });
-
-          // Remove Data "discipline" if no data at this treenode
-          if (Object.keys(this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].numericalParameters).length === 0
-            && Object.keys(this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryInputs).length === 0
-            && Object.keys(this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`].disciplinaryOutputs).length === 0) {
-            delete this.allDisciplinesDataDict[`Data-${this.treeNodeData.identifier}`];
-          }
-
         }
       }
     });
@@ -237,7 +102,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     this.validationChangeSubcription = this.socketService.onNodeValidatationChange.subscribe(changeValidation => {
       if (changeValidation) {
         this.studyCaseLoadingService.loadValidations(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe();
-       }
+      }
     });
   }
 
@@ -275,11 +140,11 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     });
 
     dialogRefValidate.afterClosed().subscribe(() => {
-         if (this.treeNodeData.isValidated) {
-             this.treeNodeData.isValidated = false;
-           } else {
-          this.treeNodeData.isValidated = true;
-         }
+      if (this.treeNodeData.isValidated) {
+        this.treeNodeData.isValidated = false;
+      } else {
+        this.treeNodeData.isValidated = true;
+      }
     });
   }
 

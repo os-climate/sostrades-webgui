@@ -240,6 +240,7 @@ export class NodeData {
 
     this.modified = false;
     const splitedIdentifier = identifier.split('.');
+    this.checkIntegrityMessage = '';
 
     if (splitedIdentifier.length > 1) {
       this.variableName = splitedIdentifier[splitedIdentifier.length - 1];
@@ -331,9 +332,9 @@ export class NodeData {
       return ValueType.READ_ONLY;
     } else if ((this.checkIntegrityMessage.length > 0) && (this.modified === false)) {
       return ValueType.EMPTY;
-    } else if (this.value !== null) {
+    } else if (this.value !== null && this.value !== undefined) {
       return ValueType.USER;
-    } else if (this.defaultValue !== null) {
+    } else if (this.defaultValue !== null && this.defaultValue !== undefined) {
       return ValueType.DEFAULT;
     } else if (this.optional === true) {
       return ValueType.OPTIONAL;

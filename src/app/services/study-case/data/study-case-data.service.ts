@@ -284,27 +284,42 @@ export class StudyCaseDataService extends DataHttpService {
     Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
       const treeNodeValue = treeNode[1];
       const treeNodeKey = treeNode[0];
-      Object.entries(treeNodeValue.data).forEach(nodeData => {
-        const nodeDataValue = nodeData[1];
-        const nodeDataKey = nodeData[0];
-        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
-        if ( ontologyParameter !== null) {
-          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== '') {
-            loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = displayName;
+      Object.entries(treeNodeValue.dataManagementDisciplineDict).forEach(discipline => {
+        const disciplineValue = discipline[1];
+        const disciplineKey = discipline[0];
+        Object.entries(disciplineValue.numericalParameters).forEach(nodeData => {
+          const nodeDataValue = nodeData[1];
+          const nodeDataKey = nodeData[0];
+          const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
+          if ( ontologyParameter !== null) {
+            const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+            if (displayName !== '') {
+              loadedStudy.treeview.rootDict[treeNodeKey].dataManagementDisciplineDict[disciplineKey].numericalParameters[nodeDataKey].displayName = displayName;
+            }
           }
-        }
-      });
-      Object.entries(treeNodeValue.dataDisc).forEach(nodeData => {
-        const nodeDataValue = nodeData[1];
-        const nodeDataKey = nodeData[0];
-        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
-        if ( ontologyParameter !== null) {
-          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== '') {
-            loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = displayName;
+        });
+        Object.entries(disciplineValue.disciplinaryInputs).forEach(nodeData => {
+          const nodeDataValue = nodeData[1];
+          const nodeDataKey = nodeData[0];
+          const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
+          if ( ontologyParameter !== null) {
+            const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+            if (displayName !== '') {
+              loadedStudy.treeview.rootDict[treeNodeKey].dataManagementDisciplineDict[disciplineKey].disciplinaryInputs[nodeDataKey].displayName = displayName;
+            }
           }
-        }
+        });
+        Object.entries(disciplineValue.disciplinaryOutputs).forEach(nodeData => {
+          const nodeDataValue = nodeData[1];
+          const nodeDataKey = nodeData[0];
+          const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
+          if ( ontologyParameter !== null) {
+            const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+            if (displayName !== '') {
+              loadedStudy.treeview.rootDict[treeNodeKey].dataManagementDisciplineDict[disciplineKey].disciplinaryOutputs[nodeDataKey].displayName = displayName;
+            }
+          }
+        });
       });
     });
   }

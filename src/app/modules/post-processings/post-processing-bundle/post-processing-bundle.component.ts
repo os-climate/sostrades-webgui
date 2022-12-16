@@ -8,6 +8,7 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { LoadStatus } from 'src/app/models/study.model';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-post-processing-bundle',
@@ -26,6 +27,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayFilters: boolean;
   public isCalculationRunning: boolean;
   public isReadOnlyMode: boolean;
+  public additionalDisciplineName: string;
   calculationChangeSubscription: Subscription;
   validationChangeSubscription: Subscription;
   studyStatusChangeSubscription: Subscription;
@@ -46,6 +48,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.studyStatusChangeSubscription = null;
     this.isCalculationRunning = false;
     this.isReadOnlyMode = false;
+    this.additionalDisciplineName = '';
   }
 
   ngOnInit() {
@@ -74,6 +77,10 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation => {
       this.plot(false);
     });
+
+    if(this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== '') {
+      this.additionalDisciplineName = ` : ${this.postProcessingBundle.disciplineName}`
+    }
   }
 
   ngOnDestroy() {
