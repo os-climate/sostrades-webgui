@@ -228,6 +228,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.dataSourceStudies = new MatTableDataSource<Study>(null);
 
+    // Check if there are seleted checkbox then clear them
+    if ((this.selection !== null && this.selection !== undefined) && this.selection.selected.length > 0) {
+      this.selection.clear();
+    }
     this.studyCaseDataService.getStudies().subscribe(
       (studies) => {
       // Retrieving study case list
