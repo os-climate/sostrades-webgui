@@ -8,6 +8,7 @@
       <div class="create-group" [formGroup]="createGroupForm">
         <mat-form-field style="margin-right: 20px; margin-bottom: 10px">
           <input
+            id="group-name"
             matInput
             formControlName="groupName"
             placeholder="Group name"
@@ -28,6 +29,7 @@
 
         <mat-form-field style="margin-right: 20px; margin-bottom: 10px">
           <input
+            id="group-description"
             matInput
             formControlName="groupDescription"
             placeholder="Group description"
@@ -40,6 +42,7 @@
         </mat-form-field>
 
         <mat-checkbox
+          id="confidential"
           [(ngModel)]="checkboxConfidential"
           class="checkbox"
           labelPosition="before"
@@ -48,6 +51,7 @@
         >
 
         <button
+          id="create-group"
           mat-flat-button
           color="accent"
           aria-label="Create Group"
@@ -226,6 +230,7 @@
           <tr
             mat-row
             class="table-row"
+            [id]="'row-group-management-' + row.group.name"
             *matRowDef="let row; columns: displayedColumnsMyGroups"
           ></tr>
         </table>
