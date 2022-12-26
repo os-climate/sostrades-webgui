@@ -156,6 +156,7 @@
               </th>
               <td mat-cell *matCellDef="let element">
                 <mat-radio-button
+                [id]="'default-group-' + element.group.name"
                 style="margin-left: 5px;"
                 *ngIf="setDefaultGroup"
                 (click)="changeDefaultGroup($event, element)"
@@ -174,6 +175,7 @@
               <button mat-icon-button color="accent" disabled>
                 <i
                   class="fa-solid fa-check fa-fw"
+                  [id]="'is-confidential-' + element.group.name"
                   *ngIf="element.group.confidential"
                 >
                 </i>
@@ -186,6 +188,7 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
               <button
+                [id]="'group-acces-' + element.group.name"
                 mat-icon-button
                 color="accent"
                 (click)="groupAccess(element)"
@@ -201,6 +204,7 @@
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let element">
                 <button
+                  [id]="'edit-group-' + element.group.name"
                   mat-icon-button
                   color="accent"
                   *ngIf="element.isOwner === true || element.isManager === true"
@@ -216,6 +220,7 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
               <button
+                [id]="'delete-group-' + element.group.name"
                 mat-icon-button
                 color="accent"
                 (click)="deleteGroup(element.group)"
