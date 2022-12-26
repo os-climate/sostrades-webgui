@@ -12,6 +12,7 @@ import { JSpreadSheetProperties, JSpreadSheetRowData, JSpreadSheetValueError, JS
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import * as jExcel from "node_modules/jspreadsheet-ce";
+import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<SpreadsheetComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SpreadsheetDialogData,
     private papa: Papa,
+    private studyCaseMainService: StudyCaseMainService,
     public studyCaseDataService: StudyCaseDataService,
     private studyCaselocalStorageService: StudyCaseLocalStorageService,
     private ontologyService: OntologyService,
@@ -63,6 +65,19 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     if (this.data.readOnly) {
       this.isCsvEditable = false;
     }
+    /**
+     * Add 22/12/2022
+     * Allow to close spreadsheet after the working study has been closed.
+     * - Check if spreadsheet contains data (if it's open)
+     * - Then close modal
+     * - Remove datas
+     */
+    this.studyCaseMainService.onCloseStudy.subscribe(result => {
+      if (result && (this.data !== null && this.data !== undefined)) {
+        this.cancelClick();
+        this.data = null;
+      }
+    });
   }
 
   ngAfterViewInit() {
