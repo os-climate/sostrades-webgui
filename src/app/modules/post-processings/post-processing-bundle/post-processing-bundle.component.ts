@@ -51,6 +51,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.postProcessingBundle.filters.length > 0) {
       this.displayFilterButton = true;
+      this.displayFilters = true;
       if (this.postProcessingBundle.plotly.length === 0 && this.postProcessingBundle.plotlyParetoFront.length === 0 ) {
         this.postProcessingService.pausePostProcessingRequestQueue();
         this.postProcessingService.removePostProcessingRequestFromQueue(this.fullNamespace, this.postProcessingBundle.name);
