@@ -8,6 +8,7 @@
       <div class="create-group" [formGroup]="createGroupForm">
         <mat-form-field style="margin-right: 20px; margin-bottom: 10px">
           <input
+            id="group-name"
             matInput
             formControlName="groupName"
             placeholder="Group name"
@@ -28,6 +29,7 @@
 
         <mat-form-field style="margin-right: 20px; margin-bottom: 10px">
           <input
+            id="group-description"
             matInput
             formControlName="groupDescription"
             placeholder="Group description"
@@ -40,6 +42,7 @@
         </mat-form-field>
 
         <mat-checkbox
+          id="confidential"
           [(ngModel)]="checkboxConfidential"
           class="checkbox"
           labelPosition="before"
@@ -48,6 +51,7 @@
         >
 
         <button
+          id="create-group"
           mat-flat-button
           color="accent"
           aria-label="Create Group"
@@ -152,6 +156,7 @@
               </th>
               <td mat-cell *matCellDef="let element">
                 <mat-radio-button
+                [id]="'default-group-' + element.group.name"
                 style="margin-left: 5px;"
                 *ngIf="setDefaultGroup"
                 (click)="changeDefaultGroup($event, element)"
@@ -170,6 +175,7 @@
               <button mat-icon-button color="accent" disabled>
                 <i
                   class="fa-solid fa-check fa-fw"
+                  [id]="'is-confidential-' + element.group.name"
                   *ngIf="element.group.confidential"
                 >
                 </i>
@@ -182,6 +188,7 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
               <button
+                [id]="'group-acces-' + element.group.name"
                 mat-icon-button
                 color="accent"
                 (click)="groupAccess(element)"
@@ -197,6 +204,7 @@
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let element">
                 <button
+                  [id]="'edit-group-' + element.group.name"
                   mat-icon-button
                   color="accent"
                   *ngIf="element.isOwner === true || element.isManager === true"
@@ -212,6 +220,7 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
               <button
+                [id]="'delete-group-' + element.group.name"
                 mat-icon-button
                 color="accent"
                 (click)="deleteGroup(element.group)"
@@ -226,6 +235,7 @@
           <tr
             mat-row
             class="table-row"
+            [id]="'row-group-management-' + row.group.name"
             *matRowDef="let row; columns: displayedColumnsMyGroups"
           ></tr>
         </table>
