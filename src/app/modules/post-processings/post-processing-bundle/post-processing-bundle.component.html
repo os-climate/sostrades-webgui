@@ -21,7 +21,7 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
 
-  <div class="filter-list" *ngIf="displayFilters">
+  <div class="filter-list" *ngIf="postProcessingBundle.displayFilter">
     <div *ngFor="let filter of postProcessingBundle.filters">
       <div class="widget-container">
         <div class="widget" [ngStyle]="{ 'border-color': 'cornflowerblue' }">
@@ -74,7 +74,7 @@
     </button>
     <mat-slide-toggle
       color="accent"
-      [(ngModel)]="displayFilters"
+      [(ngModel)]="postProcessingBundle.displayFilter"
       style="margin-left: 10px"
       [disabled]="isReadOnlyMode"
     >

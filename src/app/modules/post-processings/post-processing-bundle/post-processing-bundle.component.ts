@@ -23,7 +23,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayProgressBar: boolean;
   public displayHeader: boolean;
   public displayFilterButton: boolean;
-  public displayFilters: boolean;
   public isCalculationRunning: boolean;
   public isReadOnlyMode: boolean;
   calculationChangeSubscription: Subscription;
@@ -40,7 +39,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayProgressBar = false;
     this.displayHeader = false;
     this.displayFilterButton = false;
-    this.displayFilters = false;
     this.calculationChangeSubscription = null;
     this.validationChangeSubscription = null;
     this.studyStatusChangeSubscription = null;
@@ -51,7 +49,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.postProcessingBundle.filters.length > 0) {
       this.displayFilterButton = true;
-      this.displayFilters = true;
       if (this.postProcessingBundle.plotly.length === 0 && this.postProcessingBundle.plotlyParetoFront.length === 0 ) {
         this.postProcessingService.pausePostProcessingRequestQueue();
         this.postProcessingService.removePostProcessingRequestFromQueue(this.fullNamespace, this.postProcessingBundle.name);
