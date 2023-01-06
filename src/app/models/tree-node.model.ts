@@ -24,6 +24,8 @@ export class TreeView {
           if (disciplineKey in jsonPostProcessings) {
             let postProc = (jsonPostProcessings[disciplineKey].map(cf => PostProcessingBundle.Create(cf)));
             postProc.forEach(element => {
+              // indicate if the discipline name must be shown on bundle (in case if there are 2 or more discipline with the same model and thus the same name at the same node)
+              element.showDisciplineName = result.rootDict[treenodeKey].dataManagementDisciplineDict[disciplineKey].showLabel;
               result.rootDict[treenodeKey].postProcessingBundle.push(element);
             });
           }

@@ -3,6 +3,8 @@ import { TreeNode } from "./tree-node.model";
 
 export class DataManagementDiscipline {
   modelNameFullPath: string[];
+  
+  showLabel: boolean; //showLabel parameter indicates if the discipline label must be shown in addition of the discipline model name
   namespace: string;
   maturity: string;
   label: string;
@@ -17,6 +19,7 @@ export class DataManagementDiscipline {
     this.maturity = null;
     this.label = ''
     this.namespace = ''
+    this.showLabel = false;
     this.disciplinaryInputs = {};
     this.disciplinaryOutputs = {};
     this.numericalParameters = {};
@@ -68,14 +71,24 @@ export class DataManagementDiscipline {
 
 export function CreateDataManagementDisciplineDictionary(jsonData: any, parent: TreeNode): { [id: string]: DataManagementDiscipline } {
   const result: { [id: string]: DataManagementDiscipline } = {};
-
+  const modelList = [];
   Object.keys(jsonData).forEach(key => {
-    const disscipline = jsonData[key];
-    const dataManagementDiscipline = DataManagementDiscipline.Create(disscipline, parent);
+    const discipline = jsonData[key];
+    const dataManagementDiscipline = DataManagementDiscipline.Create(discipline, parent);
 
     if (dataManagementDiscipline !== null) {
       result[key] = dataManagementDiscipline;
+      modelList.push(result[key].modelNameFullPath[0]);
     }
+  });
+
+  // check that there are discipline with the same model, in this case, the discipline label must be shown in addition of the model name
+  Object.keys(result).forEach(key => {
+    const discipline = result[key];
+    if(modelList.filter(x => x==discipline.modelNameFullPath[0]).length > 1){
+      discipline.showLabel = true;
+    }
+    
   });
   return result;
 }

@@ -76,7 +76,9 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
       this.plot(false);
     });
 
-    if(this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== '') {
+    // show the discipline label if there are 2 or more discipline with the same model at the same node
+    if(this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== '' 
+    && this.postProcessingBundle.showDisciplineName) {
       this.additionalDisciplineName = ` : ${this.postProcessingBundle.disciplineName}`
     }
   }

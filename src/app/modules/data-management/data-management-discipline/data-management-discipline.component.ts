@@ -59,7 +59,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
 
     //because modelNameFullPath can not be unique, add the discipline label to define the name of the discipline
     this.additionalLabel = '';
-    if (this.disciplineData.label !== 'Data')
+    if (this.disciplineData.label !== 'Data' && this.disciplineData.showLabel)
     {
       this.additionalLabel = ` : ${this.disciplineData.label}`;
     }

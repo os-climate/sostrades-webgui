@@ -3,14 +3,17 @@ import { PostProcessingFilter } from './post-processing-filter.model';
 
 export class PostProcessingBundle {
   public displayFilter: boolean;
+
+  //showDisciplineName parameter indicates if the discipline label must be shown in addition of the discipline model name
+  public showDisciplineName: boolean;
   constructor(
     public name: string,
     public disciplineName: string,
     public filters: PostProcessingFilter[],
     public plotly: any[],
-    public plotlyParetoFront: any[],
-    ) {
+    public plotlyParetoFront: any[]) {
       this.displayFilter = false;
+      this.showDisciplineName = false;
   }
 
   public static Create(jsonData: any): PostProcessingBundle {
