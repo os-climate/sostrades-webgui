@@ -44,6 +44,7 @@ export class StudyCaseDataService extends DataHttpService {
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
   public favoriteStudy: Study[];
+  public lastStudyOpened: Study[];
 
   // Make innerLogs private so it's not accessible from the outside,
   // expose it as logs$ observable (read-only) instead.
@@ -63,6 +64,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = null;
 
     this.favoriteStudy = [];
+    this.lastStudyOpened = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
@@ -85,6 +87,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = null;
     this.studyManagementData = [];
     this.favoriteStudy = [];
+    this.lastStudyOpened = [];
     this.studySelectedValues.clear();
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
@@ -356,7 +359,12 @@ export class StudyCaseDataService extends DataHttpService {
         if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
           if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {
             this.onStudyCaseChange.emit(null);
-            this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+            const url = this.router.url;
+            if (url.includes(Routing.STUDY_MANAGEMENT)) {
+              this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+              } else {
+              this.router.navigate([url]);
+            }
           }
         }
       }));
