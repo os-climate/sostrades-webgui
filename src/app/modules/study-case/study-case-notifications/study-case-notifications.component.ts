@@ -7,7 +7,7 @@ import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { CoeditionDialogData, ExecutionDialogData } from 'src/app/models/dialog-data.model';
 import { StudyCaseNotificationsChangesDialogComponent } from '../study-case-notifications-changes-dialog/study-case-notifications-changes-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/services/user/user.service';
 import { StudyCaseExecutionDialogComponent } from '../study-case-execution-dialog/study-case-execution-dialog.component';
 import { formatDate } from '@angular/common';
@@ -24,6 +24,9 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
 
   public dataSourceNotifications = new MatTableDataSource<CoeditionNotification>();
   displayedColumns = ['created', 'author', 'type', 'message', 'changes'];
+  private dialogRef: MatDialogRef<StudyCaseExecutionDialogComponent>;
+  private dialogRefNotificationChanges: MatDialogRef<StudyCaseNotificationsChangesDialogComponent>;
+
 
   constructor(
     private dialog: MatDialog,
@@ -48,6 +51,16 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
       this.onNewNotificationSubscription.unsubscribe();
       this.onNewNotificationSubscription = null;
     }
+
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
+    }
+
+    if (this.dialogRefNotificationChanges !== null && this.dialogRefNotificationChanges !== undefined) {
+      this.dialogRefNotificationChanges.close();
+      this.dialogRefNotificationChanges = null;
+    }
   }
 
   onNotificationAction(notification: CoeditionNotification) {
@@ -65,7 +78,7 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
           const executionDialogData = new ExecutionDialogData();
           executionDialogData.message = notification.author + ' just submitted study case to execution, please wait.';
 
-          const dialogRef = this.dialog.open(StudyCaseExecutionDialogComponent, {
+          this.dialogRef = this.dialog.open(StudyCaseExecutionDialogComponent, {
             disableClose: true,
             width: '500px',
             height: '220px',
@@ -91,7 +104,7 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
     codeditData.buttonText = 'OK';
     codeditData.changes = notification.changes;
 
-    const dialogRef = this.dialog.open(StudyCaseNotificationsChangesDialogComponent, {
+    this.dialogRefNotificationChanges = this.dialog.open(StudyCaseNotificationsChangesDialogComponent, {
       disableClose: true,
       width: '800px',
       height: '800px',

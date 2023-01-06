@@ -7,7 +7,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoadedStudy } from 'src/app/models/study.model';
 
 @Component({
@@ -28,6 +28,8 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
   public displayHeader: boolean;
   public isMoreContentAvailable: boolean;
   public loadedStudy: LoadedStudy;
+  private dialogRefValidate: MatDialogRef<StudyCaseValidationDialogComponent>;
+
 
   constructor(
     private dialog: MatDialog,
@@ -58,6 +60,10 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
     if ((this.treeNodeDataSubscription !== null) && (this.treeNodeDataSubscription !== undefined)) {
       this.treeNodeDataSubscription.unsubscribe();
     }
+    if (this.dialogRefValidate !== null && this.dialogRefValidate !== undefined) {
+      this.dialogRefValidate.close();
+      this.dialogRefValidate = null;
+    }
   }
 
   onResizePlotZone(event: ResizedEvent) {
@@ -83,7 +89,7 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
       dialogData.validationState = ValidationTreeNodeState.VALIDATED;
     }
 
-    const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
+    this.dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
       disableClose: true,
       width: '1100px',
       height: '800px',
@@ -91,12 +97,11 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
       data: this.treeNode
     });
 
-    dialogRefValidate.afterClosed().subscribe(() => {
-         if(this.treeNode.isValidated){
-             this.treeNode.isValidated =false
-           }
-         else {
-          this.treeNode.isValidated =true
+    this.dialogRefValidate.afterClosed().subscribe(() => {
+         if (this.treeNode.isValidated) {
+             this.treeNode.isValidated = false;
+           } else {
+          this.treeNode.isValidated = true;
          }
     });
   }

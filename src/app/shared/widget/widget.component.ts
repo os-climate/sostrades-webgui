@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { NodeData, WidgetType, ValueType, IoType } from 'src/app/models/node-data.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -6,13 +6,12 @@ import { FilterService } from 'src/app/services/filter/filter.service';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { OntologyInformationsDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology-informations/ontology-informations.component';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { Subscription } from 'rxjs';
 import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
-import { TypeofExpr } from '@angular/compiler';
 
 @Component({
   selector: 'app-widget',
@@ -20,7 +19,7 @@ import { TypeofExpr } from '@angular/compiler';
   styleUrls: ['./widget.component.scss'],
 })
 
-export class WidgetComponent implements OnInit {
+export class WidgetComponent implements OnInit, OnDestroy {
 
   private static BASE_INTEGRITY_TOOLTIP_CLASS = 'custom-tooltip-class';
 
@@ -41,6 +40,7 @@ export class WidgetComponent implements OnInit {
 
   public widgetIntegrityMessage: string;
   public integrityMessageClass: string;
+  private dialogRef: MatDialogRef<OntologyInformationsComponent>;
 
   constructor(
     private dialog: MatDialog,
@@ -87,6 +87,13 @@ export class WidgetComponent implements OnInit {
     this.SetHeaderIconClass();
   }
 
+  ngOnDestroy(): void {
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
+    }
+  }
+
 
   public onInputChange(value) {
     let updateItem: StudyUpdateParameter;
@@ -129,8 +136,8 @@ export class WidgetComponent implements OnInit {
 
     let result = this.borderClassMapping[ValueType.EMPTY];
 
-    if (this.nodeData.checkIntegrityMessage !== undefined && 
-      this.nodeData.checkIntegrityMessage !== null && 
+    if (this.nodeData.checkIntegrityMessage !== undefined &&
+      this.nodeData.checkIntegrityMessage !== null &&
       this.nodeData.checkIntegrityMessage.length > 0) {
 
       if (this.nodeData.modified === false) {
@@ -188,7 +195,7 @@ export class WidgetComponent implements OnInit {
     dialogData.discipline = this.discipline;
     dialogData.namespace = this.namespace;
 
-    const dialogRef = this.dialog.open(OntologyInformationsComponent, {
+    this.dialogRef = this.dialog.open(OntologyInformationsComponent, {
       disableClose: false,
       width: '950px',
       height: '650px',

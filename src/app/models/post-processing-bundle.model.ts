@@ -2,13 +2,15 @@ import { PostProcessingFilter } from './post-processing-filter.model';
 
 
 export class PostProcessingBundle {
-
+  public displayFilter: boolean;
   constructor(
     public name: string,
     public disciplineName: string,
     public filters: PostProcessingFilter[],
     public plotly: any[],
-    public plotlyParetoFront: any[]) {
+    public plotlyParetoFront: any[],
+    ) {
+      this.displayFilter = false;
   }
 
   public static Create(jsonData: any): PostProcessingBundle {

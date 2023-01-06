@@ -396,6 +396,7 @@ export class AppDataService extends DataHttpService {
         if (isstudyNeedLoaded) {
           loadedStudy = resultLoadedStudy as LoadedStudy;
         }
+        this.loadingDialogService.disableCancelLoading(true);
         this.studyCaseLoadingService
           .finalizeLoadedStudyCase(
             loadedStudy,

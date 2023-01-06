@@ -24,7 +24,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayProgressBar: boolean;
   public displayHeader: boolean;
   public displayFilterButton: boolean;
-  public displayFilters: boolean;
   public isCalculationRunning: boolean;
   public isReadOnlyMode: boolean;
   public additionalDisciplineName: string;
@@ -42,7 +41,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayProgressBar = false;
     this.displayHeader = false;
     this.displayFilterButton = false;
-    this.displayFilters = false;
     this.calculationChangeSubscription = null;
     this.validationChangeSubscription = null;
     this.studyStatusChangeSubscription = null;

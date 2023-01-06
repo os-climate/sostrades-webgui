@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, Input, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { TreeNodeDataService } from '../../../services/tree-node-data.service';
 import { TreeNode } from '../../../models/tree-node.model';
 import { IoType, WidgetType } from '../../../models/node-data.model';
 import { Subscription } from 'rxjs';
 import { FilterService } from 'src/app/services/filter/filter.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DataManagementInformationComponent } from 'src/app/modules/data-management/data-management-information/data-management-information.component';
 import { NodeDataTools } from 'src/app/tools/node-data.tools';
 import { DataManagementDiscipline } from 'src/app/models/data-management-discipline.model';
@@ -33,15 +33,17 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   public showMaturity: boolean;
   public countItemsInDict = NodeDataTools.countDisplayableItemsInNodeDataDict;
   public treeNodeData: TreeNode;
-  //dict of display of each discipline
+  // dict of display of each discipline
   public allDisciplinesDataDict: { [id: string]: DataManagementDiscipline };
-  //dict of one simple display of all data
+  // dict of one simple display of all data
   public allDataDict: { [id: string]: DataManagementDiscipline };
   public objectKey = Object.keys;
   public objectValue = Object.values;
 
   public loadedStudy: LoadedStudy;
 
+  private dialogRef: MatDialogRef<DataManagementInformationComponent>;
+  private dialogRefValidate: MatDialogRef<StudyCaseValidationDialogComponent>;
   treeNodeDataSubscription: Subscription;
   validationChangeSubcription: Subscription;
 
@@ -80,8 +82,10 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
           }
 
           // Reset all disciplines data in current node
-          this.allDisciplinesDataDict = {} //this dict contains a DataManagementDiscipline for each discipline
-          this.allDataDict = {};//this dict contains only one DataManagementDiscipline that contains all disciplines
+          // this dict contains a DataManagementDiscipline for each discipline
+          this.allDisciplinesDataDict = {};
+          // this dict contains only one DataManagementDiscipline that contains all disciplines
+          this.allDataDict = {};
 
           this.allDataDict[`Data`] = new DataManagementDiscipline();
           this.allDataDict[`Data`].modelNameFullPath.push('Data');
@@ -107,7 +111,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   }
 
   onShowConfigureInformation() {
-    const dialogRef = this.dialog.open(DataManagementInformationComponent, {
+    this.dialogRef = this.dialog.open(DataManagementInformationComponent, {
       disableClose: false
     });
   }
@@ -116,7 +120,16 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     if ((this.treeNodeDataSubscription !== null) && (this.treeNodeDataSubscription !== undefined)) {
       this.treeNodeDataSubscription.unsubscribe();
     }
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
+    }
+    if (this.dialogRefValidate !== null && this.dialogRefValidate !== undefined) {
+      this.dialogRefValidate.close();
+      this.dialogRefValidate = null;
+    }
   }
+
   onClickDataValidation(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -131,7 +144,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
       dialogData.validationState = ValidationTreeNodeState.VALIDATED;
     }
 
-    const dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
+    this.dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
       disableClose: true,
       width: '1100px',
       height: '600px',
@@ -139,15 +152,13 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
       data: this.treeNodeData
     });
 
-    dialogRefValidate.afterClosed().subscribe(() => {
-      if (this.treeNodeData.isValidated) {
-        this.treeNodeData.isValidated = false;
-      } else {
-        this.treeNodeData.isValidated = true;
-      }
+    this.dialogRefValidate.afterClosed().subscribe(() => {
+         if (this.treeNodeData.isValidated) {
+             this.treeNodeData.isValidated = false;
+           } else {
+          this.treeNodeData.isValidated = true;
+         }
     });
   }
 
 }
-
-
