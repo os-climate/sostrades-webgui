@@ -6,7 +6,7 @@ import { LoadedStudy } from 'src/app/models/study.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { StudyCaseExecutionLogging } from 'src/app/models/study-case-execution-logging.model';
 import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
@@ -42,6 +42,8 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   public executionViewActive: boolean;
   public dataSourceRef = new MatTableDataSource<StudyCaseExecutionLogging>();
   displayedColumns = [ 'message'];
+  private dialogRef: MatDialogRef<StudyCaseExecutionExceptionDialogComponent>;
+
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
@@ -147,6 +149,10 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       this.executionStoppedSubscription.unsubscribe();
       this.executionStoppedSubscription = null;
     }
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
+    }
   }
 
   ngAfterViewInit() {
@@ -199,7 +205,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
 
   displayException(message: string) {
 
-    const dialogRef = this.dialog.open(StudyCaseExecutionExceptionDialogComponent, {
+    this.dialogRef = this.dialog.open(StudyCaseExecutionExceptionDialogComponent, {
       disableClose: false,
       width: '80vw',
       height: '80vh',
