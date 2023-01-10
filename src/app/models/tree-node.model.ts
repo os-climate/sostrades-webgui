@@ -26,6 +26,10 @@ export class TreeView {
             postProc.forEach(element => {
               // indicate if the discipline name must be shown on bundle (in case if there are 2 or more discipline with the same model and thus the same name at the same node)
               element.showDisciplineName = result.rootDict[treenodeKey].dataManagementDisciplineDict[disciplineKey].showLabel;
+              if (element.name === "Data")
+              {
+                element.disciplineName = result.rootDict[treenodeKey].dataManagementDisciplineDict[disciplineKey].label;
+              }
               result.rootDict[treenodeKey].postProcessingBundle.push(element);
             });
           }
