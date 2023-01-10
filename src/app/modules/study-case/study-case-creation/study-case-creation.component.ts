@@ -317,7 +317,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
       }
 
       // if 'studyId' attribute instance is set, then it has to be pre selected on reference
-      if ((this.data.studyId !== null && this.data.studyId !== undefined) && this.data.studyId > 0) {
+      if ((this.data.studyId !== null && this.data.studyId !== undefined) && this.data.studyId > 0 && !this.data.selectProcessOnly) {
         const selectedStudy = this.referenceList.find(study =>
           study.id === this.data.studyId
         );
