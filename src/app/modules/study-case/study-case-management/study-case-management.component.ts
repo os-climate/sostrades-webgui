@@ -166,7 +166,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     this.socketService.onCurrentStudyEdited.subscribe(refreshList => {
       if (refreshList) {
-        this.studyCaseLocalStorageService.removeStudyParametersFromLocalStorage(this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges().toString());
         this.loadStudyManagementData();
       }
     });
