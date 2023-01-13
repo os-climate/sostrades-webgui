@@ -190,7 +190,14 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         }
 
         this.showDocumentation = !(treenode.nodeType === 'data');
-        this.modelsFullPathList = treenode.modelsFullPathList;
+        // Remove duplicate modelsFullPath
+        const modelsFullPathListWithoutDuplicate: string[] = [];
+        treenode.modelsFullPathList.forEach((element, index) => {
+          if (treenode.modelsFullPathList.indexOf(element) === index) {
+            modelsFullPathListWithoutDuplicate.push(element);
+          }
+        });
+        this.modelsFullPathList = modelsFullPathListWithoutDuplicate;
       }
     });
   }
@@ -224,7 +231,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       } else if (event.tab.textLabel === 'Visualisation') {
         this.showVisualisationContent = true;
       } else if (event.tab.textLabel === 'Documentation') {
-        //this is needed so that when we are not on the tab, the request to get the documentation is not sent
+        // this is needed so that when we are not on the tab, the request to get the documentation is not sent
         this.showDocumentationContent = true;
       }
     }
