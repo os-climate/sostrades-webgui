@@ -30,6 +30,9 @@ export class TreeView {
             });
           }
         });
+        if (treenodeKey in jsonPostProcessings && result.rootDict[treenodeKey].postProcessingBundle.length == 0) {
+          result.rootDict[treenodeKey].postProcessingBundle = jsonPostProcessings[treenodeKey].map(cf => PostProcessingBundle.Create(cf));
+        }
       }
     });
 
