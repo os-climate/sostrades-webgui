@@ -616,13 +616,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
           const studyCase = this.studyCaseDataService.loadedStudy.studyCase;
           this.calculationService.execute(this.studyCaseDataService.loadedStudy).subscribe(response => {
-
+            
             // Send socket notification
             this.socketService.executeStudy(studyCase.id, true);
 
             this.subscribeToExecution();
             this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(studyCase.id);
-
+            this.postProcessingService.clearPostProcessingDict();
 
 
             this.snackbarService.showInformation('Study case successfully submitted');
@@ -1197,7 +1197,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             postProcessingBundle.forEach(bdl => {
               this.postProcessingService.addPostProcessingRequestToQueue(
                 this.studyCaseDataService.loadedStudy,
-                this.root.rootDict[key].fullNamespace,
+                bdl.disciplineName,
                 bdl);
             });
           }
