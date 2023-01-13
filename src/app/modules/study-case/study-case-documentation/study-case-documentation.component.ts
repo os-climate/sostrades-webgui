@@ -1,5 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { stringify } from 'querystring';
+import { Component, Input, OnChanges} from '@angular/core';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
@@ -18,8 +17,10 @@ export class DocumentationComponent implements OnChanges {
   public hasDocumentation: boolean;
   public showBookmarks: boolean;
 
-  constructor(public ontologyService: OntologyService,
-    public snackbarService: SnackbarService) {
+  constructor(
+    public ontologyService: OntologyService,
+    public snackbarService: SnackbarService
+    ) {
     this.hasDocumentation = false;
     this.showBookmarks = false;
     this.documentation = [];
@@ -32,17 +33,17 @@ export class DocumentationComponent implements OnChanges {
     this.documentation = [];
     this.loading = true;
     let documentationRetrieved = 0;
-    this.identifiers.forEach(identifier=>{
+    this.identifiers.forEach(identifier => {
       this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe( response => {
         if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
           response.name = identifier;
           this.documentation.push(response);
           this.hasDocumentation = true;
-        } else if(this.documentation.length == 0){
+        } else if (this.documentation.length == 0) {
           this.hasDocumentation = false;
         }
-        documentationRetrieved = documentationRetrieved+1;
-        if (documentationRetrieved === this.identifiers.length){
+        documentationRetrieved = documentationRetrieved + 1;
+        if (documentationRetrieved === this.identifiers.length) {
           this.loading = false;
           this.showBookmarks = this.documentation.length > 1;
         }
