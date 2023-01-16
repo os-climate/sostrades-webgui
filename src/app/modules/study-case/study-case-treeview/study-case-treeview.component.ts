@@ -394,18 +394,20 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.treeControl.expand(treenode);
 
     // Retrieve related disciplines
-    let discNames = []
-    if (nodeData.disciplineFullPathList.length === 0 || this.filterService.filters.showSimpleDisplay) {
+    const discNames = [];
+    if (this.filterService.filters.showSimpleDisplay) {
       discNames.push('Data');
     } else {
-      nodeData.disciplineFullPathList.forEach(discName => {
-        discNames.push(discName);
+      Object.keys(treenode.dataManagementDisciplineDict).forEach(displineKey => {
+        if (nodeData.identifier.indexOf(displineKey) > -1) {
+        discNames.push(displineKey);
+        }
       });
     }
 
 
     setTimeout(() => {
-      //Expand disciplines
+      // Expand disciplines
       discNames.forEach(discName => {
         this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${discName}`);
 
