@@ -819,8 +819,10 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           this.onShowStatus();
           this.studyIsDone = false;
         }
+        this.postProcessingService.clearPostProcessingDict();
         this.postProcessingService.resetPostProcessingQueue();
         this.startBackgroundLoadingPostProcessing();
+        
 
         this.snackbarService.showInformation('Study case successfully reloaded');
         this.loadingDialogService.closeLoading();
