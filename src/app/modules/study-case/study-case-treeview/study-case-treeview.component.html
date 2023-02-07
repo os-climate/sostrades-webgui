@@ -32,6 +32,7 @@
     <div class="toolbar-spacer"></div>
 
     <button
+      id="btn-treeview-save-synchronise"
       mat-button
       (click)="saveAndSynchronise()"
       [disabled]="!showChangesButtons || executionStarted"
@@ -169,7 +170,7 @@
     mat-button
     (click)="onShowState()"
     *ngIf="!showState"
-    [id]="'show-validation-state'"
+    id="show-validation-state"
     class="toolbar-item-shadow"
   >
   <i
@@ -180,7 +181,7 @@
   matTooltip="Show validation state">
   </i>
   </button>
-    <button mat-button (click)="onShowRoomUser()" class="toolbar-item-shadow">
+    <button id="btn-treeview-show-room-user" mat-button (click)="onShowRoomUser()" class="toolbar-item-shadow">
       <mat-icon
         [matBadge]="'+' + (numberOfUserRoom - 1)"
         [matBadgeHidden]="numberOfUserRoom <= 1"
@@ -194,6 +195,7 @@
       >
     </button>
     <button
+      id="btn-treeview-access-link"
       mat-button
       (click)="onAccessLink()"
       aria-hidden="false"
@@ -210,6 +212,7 @@
       </div>
     </button>
     <button
+      id="btn-treeview-show-status-information"
       mat-button
       aria-hidden="false"
       aria-label="Information about calculation status and validation state"
@@ -226,6 +229,7 @@
       </div>
     </button>
     <button
+      id="btn-treeview-reload-study"
       mat-button
       aria-hidden="false"
       class="toolbar-item-shadow"
