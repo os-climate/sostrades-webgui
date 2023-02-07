@@ -354,7 +354,7 @@
               </i>
             </button>
             <div
-              [id]="'text-treeview-status-' + node.status"
+              [id]="'text-treeview-status-' + node.fullNamespace + '-' + node.status"
               *ngIf="node.status.length > 0 && showStatus"
               [ngClass]="'execution-bullet ' + node.status"
               style="margin-left: 4px; cursor: default;"
