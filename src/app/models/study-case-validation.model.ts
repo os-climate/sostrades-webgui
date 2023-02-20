@@ -36,8 +36,8 @@ export enum StudyCaseValidationAttributes {
 
 
 export enum ValidationTreeNodeState {
-  VALIDATED = "Validated",
-  INVALIDATED = "Invalidated",
+  VALIDATED = 'Validated',
+  INVALIDATED = 'Invalidated',
 }
 
 export class StudyCaseTreeNodeValidation {
@@ -46,7 +46,6 @@ export class StudyCaseTreeNodeValidation {
   public disciplineList: string[];
   public validationState: string;
   public hasValidation: boolean;
-  
 
   constructor() {
     this.disciplineList = [];

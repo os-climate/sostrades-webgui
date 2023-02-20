@@ -9,7 +9,7 @@ import { DataManagementInformationComponent } from 'src/app/modules/data-managem
 import { NodeDataTools } from 'src/app/tools/node-data.tools';
 import { DataManagementDiscipline } from 'src/app/models/data-management-discipline.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
+import { TreenodeDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
@@ -29,7 +29,6 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   @Input() disciplineData: DataManagementDiscipline;
 
 
-  public resultData: StudyCaseValidationDialogData;
   public showMaturity: boolean;
   public countItemsInDict = NodeDataTools.countDisplayableItemsInNodeDataDict;
   public treeNodeData: TreeNode;
@@ -41,6 +40,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   public objectValue = Object.values;
 
   public loadedStudy: LoadedStudy;
+  public valideButton: string;
 
   private dialogRef: MatDialogRef<DataManagementInformationComponent>;
   private dialogRefValidate: MatDialogRef<StudyCaseValidationDialogComponent>;
@@ -60,6 +60,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     this.allDisciplinesDataDict = {};
     this.allDataDict = {};
     this.showMaturity = false;
+    this.treeNodeData = null;
     this.loadedStudy = null;
   }
 
@@ -133,31 +134,27 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   onClickDataValidation(event) {
     event.stopPropagation();
     event.preventDefault();
-
-
-    const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
-    dialogData.namespace = this.treeNodeData.fullNamespace;
-
-    if (this.treeNodeData.isValidated) {
-      dialogData.validationState = ValidationTreeNodeState.INVALIDATED;
-    } else {
-      dialogData.validationState = ValidationTreeNodeState.VALIDATED;
-    }
+    const treenodeDialogData = new TreenodeDialogData();
+    treenodeDialogData.treeNodedata = this.treeNodeData;
 
     this.dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
       disableClose: true,
       width: '1100px',
       height: '600px',
       panelClass: 'csvDialog',
-      data: this.treeNodeData
+      data: treenodeDialogData
     });
 
-    this.dialogRefValidate.afterClosed().subscribe(() => {
-         if (this.treeNodeData.isValidated) {
-             this.treeNodeData.isValidated = false;
-           } else {
-          this.treeNodeData.isValidated = true;
-         }
+    this.dialogRefValidate.afterClosed().subscribe((result) => {
+      const validationData: TreenodeDialogData = result as TreenodeDialogData;
+      if (validationData.cancel !== true) {
+         this.treeNodeData.isValidated = !validationData.treeNodedata.isValidated;
+      //   if (this.treeNodeData.isValidated) {
+      //     this.treeNodeData.isValidated = false;
+      //   } else {
+      //  this.treeNodeData.isValidated = true;
+      // }
+      }
     });
   }
 

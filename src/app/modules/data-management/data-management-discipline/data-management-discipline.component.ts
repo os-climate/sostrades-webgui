@@ -43,7 +43,6 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
     private ontologyService: OntologyService,
     private calculationService: CalculationService,
     private studyCaseDataService: StudyCaseDataService,
-    public studyCaseValidationService: StudyCaseValidationService,
     public filterService: FilterService) {
   }
 

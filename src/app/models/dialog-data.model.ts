@@ -9,6 +9,7 @@ import { Process } from './process.model';
 import { OntologyParameter } from './ontology-parameter.model';
 import { OntologyModelStatus } from './ontology-model-status.model';
 import { ColumnName } from './column-name.model';
+import { TreeNode } from './tree-node.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -192,20 +193,6 @@ export class StudyCaseModificationDialogData extends AbstractDialogData {
   }
 }
 
-export class StudyCaseValidationDialogData extends AbstractDialogData {
-  namespace: string;
-  disciplineName: string;
-  validationState: string;
-  validationList: StudyCaseValidation[];
-
-  public constructor() {
-    super();
-    this.namespace = '';
-    this.disciplineName = '';
-    this.validationState = '';
-    this.validationList = [];
-  }
-}
 
 
 export class TableListListEditDialogData extends AbstractDialogData {
@@ -298,6 +285,14 @@ export class ModelStatusDialogData extends AbstractDialogData {
     super();
     this.processesDict = {};
     this.modelName = '';
+  }
+}
+export class TreenodeDialogData extends AbstractDialogData {
+  public treeNodedata: TreeNode;
+
+  public constructor() {
+    super();
+    this.treeNodedata = null;
   }
 }
 

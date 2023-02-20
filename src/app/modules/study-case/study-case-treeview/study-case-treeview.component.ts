@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Inject, AfterViewInit } from '@angular/core';
 import { TreeNode, TreeView } from 'src/app/models/tree-node.model';
-import { combineLatest, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
@@ -37,6 +37,8 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-execution-system-load.model';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
+import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
+import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 
 
 @Component({
@@ -117,6 +119,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
     public studyCasePostProcessingService: StudyCasePostProcessingService,
+    private studyCaseValidationService: StudyCaseValidationService,
     public studyCaseLoadingService: StudyCaseLoadingService,
     public postProcessingService: PostProcessingService,
     private treeNodeDataService: TreeNodeDataService,
@@ -951,6 +954,19 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             true,
             isSaveDone => {
               if (isSaveDone) {
+                // Verify if need to load validations
+                const validatedNodes = [];
+                Object.values(this.studyCaseValidationService.studyValidationDict).forEach(validations => {
+                  // Check if the last validation on each node is "validated".
+                    if (validations[0].validationState === ValidationTreeNodeState.VALIDATED) {
+                      validatedNodes.push(validations[0]);
+                    }
+                });
+                if (validatedNodes.length >= 1) {
+                  // Load news invalidations because of change(s) parameter(s).
+                  this.studyCaseLoadingService.loadValidations(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe();
+                }
+
                 // clear post processing dictionnary
                 this.postProcessingService.clearPostProcessingDict();
 

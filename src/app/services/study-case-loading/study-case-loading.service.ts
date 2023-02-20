@@ -1,25 +1,22 @@
-import { LoadedStudy, LoadStatus } from "src/app/models/study.model";
-import { Injectable, EventEmitter } from "@angular/core";
-import { delay, map } from "rxjs/operators";
-import { combineLatest, Observable, Observer, Subscriber } from "rxjs";
-import { StudyCaseValidationService } from "../study-case-validation/study-case-validation.service";
-import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
+import { LoadedStudy } from 'src/app/models/study.model';
+import { Injectable, EventEmitter } from '@angular/core';
+import { combineLatest, Observable, Observer } from 'rxjs';
+import { StudyCaseValidationService } from '../study-case-validation/study-case-validation.service';
+import { StudyCaseDataService } from '../study-case/data/study-case-data.service';
 import {
   StudyCaseValidation,
   ValidationTreeNodeState,
-} from "src/app/models/study-case-validation.model";
-import { StudyCaseExecutionObserverService } from "src/app/services/study-case-execution-observer/study-case-execution-observer.service";
-import { OntologyService } from "../ontology/ontology.service";
-import { SnackbarService } from "../snackbar/snackbar.service";
-import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
-import { PostOntology } from "src/app/models/ontology.model";
-import { TreenodeTools } from "src/app/tools/treenode.tool";
-import { SocketService } from "../socket/socket.service";
-import { CoeditionNotification } from "src/app/models/coedition-notification.model";
-import { SelectComponent } from "src/app/shared/select/select.component";
+} from 'src/app/models/study-case-validation.model';
+import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
+import { OntologyService } from '../ontology/ontology.service';
+import { SnackbarService } from '../snackbar/snackbar.service';
+import { PostOntology } from 'src/app/models/ontology.model';
+import { TreenodeTools } from 'src/app/tools/treenode.tool';
+import { SocketService } from '../socket/socket.service';
+import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class StudyCaseLoadingService {
   public onLoadStudy: EventEmitter<LoadedStudy> = new EventEmitter();
@@ -91,10 +88,10 @@ export class StudyCaseLoadingService {
 
     if (loadOnlyOntology) {
       this.loadOntology(loadedStudy).subscribe(() => {
-        messageObserver.next("Loading ontology");
+        messageObserver.next('Loading ontology');
 
         this.studyCaseDataService.updateParameterOntology(loadedStudy);
-        //end loading
+        // end loading
         this.terminateStudyCaseLoading(
           loadedStudy,
           isStudyCreated,
@@ -104,7 +101,7 @@ export class StudyCaseLoadingService {
     } else {
       // Load logs
 
-      messageObserver.next("Load study logs");
+      messageObserver.next('Load study logs');
       this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
       this.studyCaseDataService.tradeScenarioList = [];
 
@@ -117,19 +114,19 @@ export class StudyCaseLoadingService {
       calls.push(this.loadValidations(loadedStudy.studyCase.id));
 
       combineLatest(calls).subscribe(
-        ([resultVoid, resultnotifications, resultValidation]) => {
-          messageObserver.next("Loading ontology");
+        ([resultnotifications]) => {
+          messageObserver.next('Loading ontology');
 
           this.studyCaseDataService.updateParameterOntology(loadedStudy);
 
 
-          messageObserver.next("Loading notifications");
+          messageObserver.next('Loading notifications');
 
           const notifications =
             resultnotifications as CoeditionNotification[];
           this.socketService.notificationList = notifications;
 
-          messageObserver.next("Loading validation");
+          messageObserver.next('Loading validation');
 
           Object.values(
             this.studyCaseDataService.loadedStudy.treeview.rootDict
@@ -149,7 +146,7 @@ export class StudyCaseLoadingService {
             }
           });
 
-          //end loading
+          // end loading
           this.terminateStudyCaseLoading(
             loadedStudy,
             isStudyCreated,
@@ -217,7 +214,7 @@ export class StudyCaseLoadingService {
     isStudyLoaded: any,
     loadingObserver: Observer<string>
   ) {
-    const message = "Refreshing study case data";
+    const message = 'Refreshing study case data';
     loadingObserver.next(message);
     this.snackbarService.showInformation(message);
 
