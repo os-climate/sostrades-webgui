@@ -40,7 +40,6 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   public objectValue = Object.values;
 
   public loadedStudy: LoadedStudy;
-  public valideButton: string;
 
   private dialogRef: MatDialogRef<DataManagementInformationComponent>;
   private dialogRefValidate: MatDialogRef<StudyCaseValidationDialogComponent>;
@@ -95,10 +94,10 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
           this.allDataDict[`Data`].disciplineKey.push(`${this.treeNodeData.fullNamespace}.Data`);
 
           Object.keys(this.treeNodeData.dataManagementDisciplineDict).forEach(key => {
-            this.allDisciplinesDataDict[key] = this.treeNodeData.dataManagementDisciplineDict[key]
-            this.allDataDict["Data"].numericalParameters = Object.assign({}, this.allDataDict["Data"].numericalParameters, this.treeNodeData.dataManagementDisciplineDict[key].numericalParameters);
-            this.allDataDict["Data"].disciplinaryInputs = Object.assign({}, this.allDataDict["Data"].disciplinaryInputs, this.treeNodeData.dataManagementDisciplineDict[key].disciplinaryInputs);
-            this.allDataDict["Data"].disciplinaryOutputs = Object.assign({}, this.allDataDict["Data"].disciplinaryOutputs, this.treeNodeData.dataManagementDisciplineDict[key].disciplinaryOutputs);
+            this.allDisciplinesDataDict[key] = this.treeNodeData.dataManagementDisciplineDict[key];
+            this.allDataDict[`Data`].numericalParameters = Object.assign({}, this.allDataDict[`Data`].numericalParameters, this.treeNodeData.dataManagementDisciplineDict[key].numericalParameters);
+            this.allDataDict[`Data`].disciplinaryInputs = Object.assign({}, this.allDataDict[`Data`].disciplinaryInputs, this.treeNodeData.dataManagementDisciplineDict[key].disciplinaryInputs);
+            this.allDataDict[`Data`].disciplinaryOutputs = Object.assign({}, this.allDataDict[`Data`].disciplinaryOutputs, this.treeNodeData.dataManagementDisciplineDict[key].disciplinaryOutputs);
           });
         }
       }
@@ -149,11 +148,6 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
       const validationData: TreenodeDialogData = result as TreenodeDialogData;
       if (validationData.cancel !== true) {
          this.treeNodeData.isValidated = !validationData.treeNodedata.isValidated;
-      //   if (this.treeNodeData.isValidated) {
-      //     this.treeNodeData.isValidated = false;
-      //   } else {
-      //  this.treeNodeData.isValidated = true;
-      // }
       }
     });
   }
