@@ -80,6 +80,7 @@ label.mat-checkbox-layout {
 
 /* SnackBar custom styles*/
 .snackBarError {
+  max-width: 80% !important;
   background: #e4002b;
   color: white;
 }
@@ -88,6 +89,7 @@ label.mat-checkbox-layout {
 }
 
 .snackBarInformation {
+  max-width: 80% !important;
   background: #08875b;
   color: white;
 }
@@ -96,6 +98,7 @@ label.mat-checkbox-layout {
 }
 
 .snackBarWarning {
+  max-width: 80% !important;
   background: #fbca32;
   color: black;
 }
