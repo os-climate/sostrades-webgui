@@ -19,46 +19,30 @@
     </i>
     <span class="treenode-title" style="margin-left: 5px">
       {{treeNodeData.name}}</span>
-  <span style="margin-left: 30px;">
+  <span style="margin-left: 30px;"  *ngIf="objectKey(allDisciplinesDataDict).length > 0">
     State :
   </span>
     <button
+    *ngIf="objectKey(allDisciplinesDataDict).length > 0"
       mat-button
-      *ngIf="treeNodeData.isValidated"
-     style="cursor: default;margin-left: 4px;"
-     color="success"
-     > Validated
+      style="cursor: default;margin-left: 4px;"
+      [color]="treeNodeData.isValidated ? 'success' :'undetermined'"
+     > 
+     {{treeNodeData.isValidated ? 'Validated':'Not validated'}}
       </button>
 
-      <button
-      mat-button
-      *ngIf="!treeNodeData.isValidated"
-      style=" cursor: default; margin-left: 4px;"
-      color="undetermined"
-      > Not validated
-      </button>
     <span class="spacer"></span>
     <button
-    mat-raised-button
-    *ngIf="!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
-    (click)="onClickDataValidation($event)"
-    [id]="'validation-page'"
-    color="accent"
-    style="height: 25px;line-height: 5px;"
+      mat-raised-button
+      *ngIf="objectKey(allDisciplinesDataDict).length > 0"
+      (click)="onClickDataValidation($event)"
+      id="'validation-page'"
+      color="accent"
+      style="height: 25px;line-height: 5px;"
      >
-       Validate data
+       {{!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly) ? 'Validate data' : 'Invalidate data'}}
     </button>
 
-    <button
-    mat-raised-button
-    *ngIf="treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
-    (click)="onClickDataValidation($event)"
-    [id]="'validation-page'"
-    color="accent"
-    style="height: 25px;line-height: 5px;"
-      >
-      Invalidate data
-  </button>
     <button
       mat-button
       aria-hidden="false"

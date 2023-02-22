@@ -40,16 +40,3 @@ export enum ValidationTreeNodeState {
   INVALIDATED = 'Invalidated',
 }
 
-export class StudyCaseTreeNodeValidation {
-
-  public fullNamespace: string;
-  public disciplineList: string[];
-  public validationState: string;
-  public hasValidation: boolean;
-
-  constructor() {
-    this.disciplineList = [];
-    this.validationState = '';
-    this.hasValidation = false;
-  }
-}
