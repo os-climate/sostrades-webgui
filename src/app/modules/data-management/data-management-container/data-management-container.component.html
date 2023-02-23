@@ -34,13 +34,13 @@
     <span class="spacer"></span>
     <button
       mat-raised-button
-      *ngIf="objectKey(allDisciplinesDataDict).length > 0"
+      *ngIf="objectKey(allDisciplinesDataDict).length > 0 && !(loadedStudy.noData || loadedStudy.readOnly)"
       (click)="onClickDataValidation($event)"
       id="'validation-page'"
       color="accent"
       style="height: 25px;line-height: 5px;"
      >
-       {{!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly) ? 'Validate data' : 'Invalidate data'}}
+       {{!treeNodeData.isValidated ? 'Validate data' : 'Invalidate data'}}
     </button>
 
     <button
