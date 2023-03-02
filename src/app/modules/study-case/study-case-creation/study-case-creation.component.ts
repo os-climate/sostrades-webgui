@@ -404,7 +404,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
       return;
     }
     // get the search keyword
-    let search = this.processFiltered.value;
+    let search = this.processFiltered.value.trim();
     if (!search) {
       this.filteredProcesses.next(this.processList.slice());
       return;
