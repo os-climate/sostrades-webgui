@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';

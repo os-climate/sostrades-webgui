@@ -1,8 +1,6 @@
-import {
-  ComponentFactoryResolver, Directive, Input, OnChanges, OnInit, Renderer2, SimpleChanges, ViewContainerRef
-} from '@angular/core';
+import { Directive, Input, OnChanges, OnInit, Renderer2, SimpleChanges, ViewContainerRef} from '@angular/core';
 import { ElementRef } from '@angular/core';
-import { MatSpinner } from '@angular/material/progress-spinner';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Directive({
   selector: 'button[appButtonSpinner]'
@@ -11,13 +9,12 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
   // tslint:disable-next-line:no-input-rename
   @Input('appButtonSpinner') showSpinner: boolean;
   originalInnerText: string;
-  spinner: MatSpinner;
+  spinner: MatProgressSpinner;
 
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef,
-    private componentFactoryResolver: ComponentFactoryResolver
   ) { }
 
   ngOnInit() {
@@ -29,8 +26,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     this.el.nativeElement.style.height = `${(this.el.nativeElement as HTMLElement).offsetHeight}px`;
 
     // Create the spinner
-    const factory = this.componentFactoryResolver.resolveComponentFactory(MatSpinner);
-    const componentRef = this.viewContainerRef.createComponent(factory);
+    const componentRef = this.viewContainerRef.createComponent(MatProgressSpinner);
     this.spinner = componentRef.instance;
 
     // Configure the spinner

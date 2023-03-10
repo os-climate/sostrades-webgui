@@ -1,4 +1,3 @@
-import { ThrowStmt } from '@angular/compiler';
 import { DataframeDescriptor } from './dataframe-descriptor.model';
 import { TreeNode } from './tree-node.model';
 
