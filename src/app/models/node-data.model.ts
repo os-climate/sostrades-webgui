@@ -71,33 +71,33 @@ export class ProcessBuilderData {
    * @param data json dictionary with attended values
    * @returns ProcessBuilderData
    */
-  public static Create(data: {}): ProcessBuilderData {
+  public static Create(jsonData: any): ProcessBuilderData {
     let repositoryIdentifier = '';
     let processIdentifier = '';
     let usecaseDataName = '';
     let usecaseDataType = '';
     let usecaseDataIdentifier = -1;
 
-    if ((data !== null) && (data !== undefined)) {
-      if (ProcessBuilderAttribute.PROCESS_REPOSITORY in data) {
-        repositoryIdentifier = data[ProcessBuilderAttribute.PROCESS_REPOSITORY];
+    if ((jsonData !== null) && (jsonData !== undefined)) {
+      if (ProcessBuilderAttribute.PROCESS_REPOSITORY in jsonData) {
+        repositoryIdentifier = jsonData[ProcessBuilderAttribute.PROCESS_REPOSITORY];
       }
 
-      if (ProcessBuilderAttribute.PROCESS_NAME in data) {
-        processIdentifier = data[ProcessBuilderAttribute.PROCESS_NAME];
+      if (ProcessBuilderAttribute.PROCESS_NAME in jsonData) {
+        processIdentifier = jsonData[ProcessBuilderAttribute.PROCESS_NAME];
       }
 
-      if (ProcessBuilderAttribute.USECASE_INFO in data) {
-        if (ProcessBuilderAttribute.USECASE_INFO_NAME in data[ProcessBuilderAttribute.USECASE_INFO]) {
-          usecaseDataName = data[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_NAME];
+      if (ProcessBuilderAttribute.USECASE_INFO in jsonData) {
+        if (ProcessBuilderAttribute.USECASE_INFO_NAME in jsonData[ProcessBuilderAttribute.USECASE_INFO]) {
+          usecaseDataName = jsonData[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_NAME];
         }
 
-        if (ProcessBuilderAttribute.USECASE_INFO_TYPE in data[ProcessBuilderAttribute.USECASE_INFO]) {
-          usecaseDataType = data[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_TYPE];
+        if (ProcessBuilderAttribute.USECASE_INFO_TYPE in jsonData[ProcessBuilderAttribute.USECASE_INFO]) {
+          usecaseDataType = jsonData[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_TYPE];
         }
 
-        if (ProcessBuilderAttribute.USECASE_INFO_IDENTIFIER in data[ProcessBuilderAttribute.USECASE_INFO]) {
-          usecaseDataIdentifier = data[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_IDENTIFIER];
+        if (ProcessBuilderAttribute.USECASE_INFO_IDENTIFIER in jsonData[ProcessBuilderAttribute.USECASE_INFO]) {
+          usecaseDataIdentifier = jsonData[ProcessBuilderAttribute.USECASE_INFO][ProcessBuilderAttribute.USECASE_INFO_IDENTIFIER];
         }
       }
     }

@@ -21,7 +21,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.data.changes !== []) {
+    if (this.data.changes.length > 0) {
       this.data.changes.forEach(change => {
         if (change.changeType === UpdateParameterType.CSV) {
           change.newValue = 'Csv';

@@ -113,14 +113,14 @@ li ul {
   width: auto;
 }
 
-.mat-icon-button {
+.mat-mdc-icon-button {
   line-height: unset;
   height: 24px;
   width: 14px;
   outline: 0;
 }
 
-.mat-button {
+.mat-mdc-button {
   line-height: unset;
   height: 24px;
   padding-left: 2px;
@@ -235,8 +235,8 @@ li ul {
   padding-top: 10px;
 }
 
-.mat-progress-spinner,
-.mat-spinner {
+.mat-mdc-progress-spinner,
+.mat-mdc-progress-spinner {
   stroke: #3fb53f !important;
 }
 
