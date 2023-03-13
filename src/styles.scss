@@ -40,6 +40,15 @@ body {
   outline: 0 !important;
 }
 
+.mat-mdc-form-field {
+  --mat-mdc-form-field-floating-label-scale: 0.75;
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+  height: 65px;
+}
+
 .mat-mdc-menu-item {
   outline: 0 !important;
 }

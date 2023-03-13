@@ -397,8 +397,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(StudyCaseEditComponent, {
       disableClose: false,
-      width: '400px',
-      height: '400px',
       data: dialogData
     });
 

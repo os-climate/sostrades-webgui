@@ -1,4 +1,4 @@
-<div class="flex-container container-dialog" *ngIf="isLoading">
+<div class="container-dialog" *ngIf="isLoading">
   <app-progress-bar
     progressMode="indeterminate"
     progressText="Loading form information"
@@ -6,8 +6,8 @@
 </div>
 
 <div class="flex-container"  *ngIf="!isLoading">
-    <div class="row" style="margin-bottom: 10px !important;">
-      <h1 class="col-11" style="text-align: center">
+    <div>
+      <h1 style="text-align: center">
         Edit study
       </h1>
     </div> 
