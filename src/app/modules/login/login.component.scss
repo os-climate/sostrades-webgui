@@ -17,10 +17,6 @@
   border-radius: 5px;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card-content {
-  padding: 10px;
-}
 
 .mat-mdc-card-title {
   background-color: #00205b;
@@ -33,13 +29,6 @@ mat-card-content {
 .mat-mdc-form-field {
   width: 100%;
   min-width: 300px;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card-title,
-mat-card-content {
-  display: flex;
-  justify-content: center;
 }
 
 .error {
