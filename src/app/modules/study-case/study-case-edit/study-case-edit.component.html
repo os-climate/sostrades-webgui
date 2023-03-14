@@ -15,7 +15,7 @@
     <br>
     <div class="edit-group" [formGroup]="editForm">
         <div id="name">   
-          <mat-form-field style="width: 100%;">
+          <mat-form-field>
             <mat-label>Study name</mat-label>
             <input
             id='studyName' 
@@ -35,7 +35,7 @@
         </div>
         <br>
         <br>
-        <mat-form-field style="width: 100%;">
+        <mat-form-field>
             <mat-select id='group' placeholder="Group name" formControlName="groupId" (selectionChange)="onChange($event.value)">
               <mat-option
                 *ngFor="let group of this.groupList"
@@ -62,6 +62,7 @@
             mat-button
             (click)="submitForm()"
             [disabled]="!editForm.valid || !editForm.dirty || this.disableForm"
+            color="success"
             
             >
             Save

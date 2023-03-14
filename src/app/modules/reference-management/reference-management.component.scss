@@ -60,13 +60,6 @@
   height: calc(100% - 58px);
 }
 
-.mat-mdc-icon-button {
-  min-height: 0 !important;
-  height: 24px;
-  width: 24px;
-  line-height: unset !important;
-}
-
 .table {
   max-height: 100%;
   width: 100%;
@@ -101,7 +94,6 @@ th.mat-sort-header-sorted {
 
 td.mat-mdc-cell {
   text-align: left;
-  padding: 3px;
 }
 
 .table td,
