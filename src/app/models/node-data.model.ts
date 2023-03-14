@@ -240,7 +240,9 @@ export class NodeData {
 
     this.modified = false;
     const splitedIdentifier = identifier.split('.');
-    this.checkIntegrityMessage = '';
+    if (this.checkIntegrityMessage === undefined && this.checkIntegrityMessage == null) {
+      this.checkIntegrityMessage = '';
+    }
 
     if (splitedIdentifier.length > 1) {
       this.variableName = splitedIdentifier[splitedIdentifier.length - 1];
