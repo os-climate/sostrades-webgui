@@ -79,13 +79,7 @@
     </button>
   </div>
 
-  <div
-    [ngStyle]="
-      selection.hasValue()
-        ? { height: 'calc(100% - 98px)' }
-        : { height: 'calc(100% - 63px)' }
-    "
-  >
+  <div>
     <div class="loading-zone" *ngIf="isLoading">
       <app-progress-bar
         progressMode="indeterminate"
