@@ -32,7 +32,7 @@ export class SocketService {
   public onNodeValidatationChange: EventEmitter<boolean>;
 
 
-  public notificationList: any[];
+  public notificationList: CoeditionNotification[];
   private notificationQueue: CoeditionNotification[];
 
   private socket: any;
@@ -141,7 +141,6 @@ export class SocketService {
     });
 
     this.socket.on('room-user-update', (data) => {
-      this.notificationList = [];
       const users = data.users as User[];
       this.onRoomUserUpdate.emit(users);
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
