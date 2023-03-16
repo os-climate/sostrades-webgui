@@ -78,31 +78,34 @@ body {
 }
 
 /* SnackBar custom styles*/
-.snackBarError {
-  max-width: 80% !important;
-  background: #e4002b;
-  color: white;
-}
-.snackBarError .mat-mdc-snack-bar-action {
-  color: white;
+
+.mat-mdc-snack-bar-container {
+  &.snackBarError {
+    --mdc-snackbar-container-color: #e4002b;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
 }
 
-.snackBarInformation {
-  max-width: 80% !important;
-  background: #08875b;
-  color: white;
-}
-.snackBarInformation .mat-mdc-snack-bar-action {
-  color: white;
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled){
+  background-color:transparent
 }
 
-.snackBarWarning {
-  max-width: 80% !important;
-  background: #fbca32;
-  color: black;
+.mat-mdc-snack-bar-container {
+  &.snackBarInformation {
+    --mdc-snackbar-container-color: #08875b;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
 }
-.snackBarWarning .mat-mdc-snack-bar-action {
-  color: black;
+
+.mat-mdc-snack-bar-container {
+  &.snackBarWarning {
+    --mdc-snackbar-container-color: #fbca32;
+    --mat-mdc-snack-bar-button-color: black;
+    --mdc-snackbar-supporting-text-color: black;
+  }
 }
 
 /* D3 class style for d3-force-graph-directive */

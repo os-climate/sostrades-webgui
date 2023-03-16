@@ -53,17 +53,15 @@
         <div id="saveOrCancel" class="d-flex justify-content-around">
             <button
             id='cancel' 
-            mat-button 
+            mat-raised-button 
             (click)="onCancelClick()"
             >Cancel
             </button>
             <button
             id='submit'
-            mat-button
+            mat-raised-button
             (click)="submitForm()"
             [disabled]="!editForm.valid || !editForm.dirty || this.disableForm"
-            color="success"
-            
             >
             Save
             </button>

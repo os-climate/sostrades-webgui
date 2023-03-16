@@ -12,9 +12,6 @@
   margin-bottom: 0 !important;
 }
 
-.mat-mdc-row{
-  min-height:20px;
-}
 
 .mat-mdc-row:hover {
   background-color: whitesmoke;
@@ -34,17 +31,12 @@
   flex:0 0 20%;
 }
 
-.mat-column-Namespace {
-  min-width: 100%;
-  flex:0 0 40%
-}
-
 .mat-column-ioType {
   max-width: 100px;
 }
 
 .mat-column-find {
-  max-width: 150px;
+  max-width: 190px;
 }
 
 .custom-header {
@@ -60,10 +52,7 @@
   max-height: unset !important;
 }
 
-.custom-font {
-  font-size: 12px;
-  padding-left: 5px;
-}
+
 
 
 .mat-mdc-button {

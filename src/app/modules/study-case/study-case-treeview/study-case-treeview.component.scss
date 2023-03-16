@@ -108,16 +108,11 @@ li ul {
   margin-left: -11px !important; // necessary to overload 'li ul' margin-left
   padding-left: 18px !important;
 }
-
+.cursor{
+  cursor: pointer;
+}
 .fa-fw {
   width: auto;
-}
-
-.mat-mdc-icon-button {
-  line-height: unset;
-  height: 24px;
-  width: 14px;
-  outline: 0;
 }
 
 .mat-mdc-button {
@@ -187,17 +182,25 @@ li ul {
 
 .status-on {
   color: black;
+  margin-right: 2px;
 }
 
 .toolbar-icon {
   font-size: 20px;
-  margin-top: -4px;
+  height: 24px;
+  width: 24px;
+  padding-top: 2px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-bottom: 6px;
+  margin-top: 3px
 }
 
 .toolbar-icon-font-aw {
   font-size: 18px;
   height: 26px;
   width: 24px;
+  margin-top: 10px;
 }
 
 .toolbar {
