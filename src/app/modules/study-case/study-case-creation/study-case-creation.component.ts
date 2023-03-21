@@ -320,11 +320,11 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         const selectedStudy = this.referenceList.find(study =>
           study.id === this.data.studyId
         );
-        this.createStudyForm.patchValue({selectedRef: selectedStudy});
-        this.title = `Copy study "${selectedStudy.name}"`;
-        this.disabledReferenceList = true;
         this.createStudyForm.get('selectedRef').disable();
         this.createStudyForm.get('processId').disable();
+        this.title = `Copy study "${selectedStudy.name}"`;
+        this.disabledReferenceList = true;
+        
       } else {
         if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
           selectedReferecence = this.emptyProcessRef;
@@ -380,12 +380,18 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.data.cancel = false;
 
     let refName = null;
-    if (this.createStudyForm.value.selectedRef.name !== this.EMPTY_STUDY_NAME) {
-      refName = this.createStudyForm.value.selectedRef.name;
+    let selectedRef = this.createStudyForm.value.selectedRef;
+    if (selectedRef === null || selectedRef === undefined){
+      selectedRef = this.referenceList.find(study =>
+        study.id === this.data.studyId
+      );
+    }
+    if (selectedRef.name !== this.EMPTY_STUDY_NAME) {
+      refName = selectedRef.name;
     }
 
-    this.data.studyType = this.createStudyForm.value.selectedRef.studyType;
-    this.data.studyId = this.createStudyForm.value.selectedRef.id;
+    this.data.studyType = selectedRef.studyType;
+    this.data.studyId = selectedRef.id;
     this.data.studyName = this.createStudyForm.value.studyName;
     this.data.reference = refName;
     this.data.groupId = this.createStudyForm.value.groupId;
