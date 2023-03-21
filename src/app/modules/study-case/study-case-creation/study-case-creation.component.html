@@ -40,7 +40,6 @@
       formControlName="processId"
       placeholder="Process name"
       (selectionChange)="onProcessChange($event.value)"
-      [disabled]="disabledProcess"
       #singleSelect>
         <mat-option>
           <ngx-mat-select-search
@@ -66,7 +65,6 @@
         placeholder="Study"
         formControlName="selectedRef"
         [multiple]="false"
-        [disabled]="disabledReferenceList"
         #select
       >
         <mat-select-trigger>

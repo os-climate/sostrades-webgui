@@ -34,7 +34,6 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public processList: Process[];
   public filteredProcesses: ReplaySubject<Process[]> = new ReplaySubject<Process[]>(1);
   public disabledReference: boolean;
-  public disabledProcess: boolean;
   public disabledReferenceList: boolean;
   protected onDestroy = new Subject<void>();
   public processFiltered: FormControl;
@@ -49,7 +48,6 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public title: string;
 
 
-  @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
 
   readonly EMPTY_STUDY_NAME = 'Empty Study';
 
@@ -73,7 +71,6 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.processReferenceReady = false;
     this.studyCaseReferenceReady = false;
     this.groupReady = false;
-    this.disabledProcess = false;
     this.disabledReferenceList = false;
     this.checkIfReferenceIsAlreadySelected = false;
     this.title = 'Create new study';
@@ -113,6 +110,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         processId: new FormControl('', [Validators.required]),
         selectedRef: new FormControl(this.emptyProcessRef)
       });
+      
+      
     }
 
     /**
@@ -315,7 +314,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
 
         }
       }
-
+      
       // if 'studyId' attribute instance is set, then it has to be pre selected on reference
       if ((this.data.studyId !== null && this.data.studyId !== undefined) && this.data.studyId > 0 && !this.data.selectProcessOnly) {
         const selectedStudy = this.referenceList.find(study =>
@@ -324,7 +323,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         this.createStudyForm.patchValue({selectedRef: selectedStudy});
         this.title = `Copy study "${selectedStudy.name}"`;
         this.disabledReferenceList = true;
-        this.disabledProcess = true;
+        this.createStudyForm.get('selectedRef').disable();
+        this.createStudyForm.get('processId').disable();
       } else {
         if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
           selectedReferecence = this.emptyProcessRef;
