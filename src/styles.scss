@@ -61,8 +61,13 @@ body {
 
 .mdc-data-table__row{
   height: auto !important;
+  
 }
-
+.mdc-data-table__row:last-child .mdc-data-table__cell{
+  border-bottom: rgba(0,0,0,.12) !important;
+  border-bottom-width: 1px !important;
+  border-bottom-style: solid !important;
+}
 .mat-mdc-cell{
   padding: 3px !important;
 }
@@ -556,3 +561,4 @@ ul {
   border-bottom: 1px solid #dee2e6 !important;
   
 }
+
