@@ -2,12 +2,7 @@
   flex: 1 1 auto;
 }
 
-.mat-mdc-menu-item {
-  font-size: 13px;
-  padding: 0 10px 0 10px;
-  line-height: 35px;
-  height: 35px;
-}
+
 
 .mat-icon{
   background-repeat: no-repeat;
@@ -24,6 +19,7 @@
 
 .mdc-button{
   padding: 0 16px;
+  font-size: 12px !important;
 }
 
 .version-container {
@@ -57,9 +53,14 @@
 }
 ::ng-deep .mainMenu {
   width: 200px;
-  margin-top: 20px;
+  margin-top: 20px !important;
 }
+
+
 
 #toolbar{
   padding: 0;
+}
+.sos-menu{
+  font-size: 13px !important;
 }

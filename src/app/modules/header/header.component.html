@@ -16,7 +16,7 @@
         mat-menu-item
         (click)="onClickWelcomePage()">
         <mat-icon class="blue_color">home</mat-icon>
-        Home
+        <span class="sos-menu">Home</span>
         </button>
         <button
         id="study-menu-button"
@@ -24,7 +24,8 @@
         [matMenuTriggerFor]="StudyManagement"
         (click)="onClickStudyCase()">
         <mat-icon class="blue_color">subject</mat-icon>
-        Study
+        <span class="sos-menu">Study</span>
+        
         </button>
         <button
         id="ontology-menu-button"
@@ -32,25 +33,28 @@
         [matMenuTriggerFor]="Ontology"
         (click)="onClickOntology()">
         <mat-icon class="blue_color">library_books</mat-icon>
-        Ontology
+        
+        <span class="sos-menu">Ontology</span>
+
         </button>
         <button 
         id="group-management-menu-button"
         mat-menu-item  
         (click)="onClickGroupManagement()">
         <mat-icon class="blue_color">group</mat-icon>
-        Group Management</button>
+        <span class="sos-menu">Group Management</span>
+        </button>
       </mat-menu>
 
       <mat-menu  #StudyManagement="matMenu">
-          <button mat-menu-item id="study_management-menu-button" (click)="onClickStudyManagement()">Study Management</button>
-          <button mat-menu-item id="reference-menu-button" (click)="onClickReferenceManagement()">Reference Management</button>
+          <button mat-menu-item id="study_management-menu-button" (click)="onClickStudyManagement()"><span class="sos-menu">Study Management</span></button>
+          <button mat-menu-item id="reference-menu-button" (click)="onClickReferenceManagement()"><span class="sos-menu">Reference Management</span></button>
       </mat-menu>
 
       <mat-menu #Ontology="matMenu">
-        <button mat-menu-item id="models-menu-button" (click)="onClickModelsStatus()">Models</button>
-        <button mat-menu-item id="processes-menu-button" (click)="onClickOntologyProcesses()">Processes</button>
-        <button mat-menu-item id="parameters-menu-button"(click)="onClickOntologyParameters()">Parameters</button>
+        <button mat-menu-item id="models-menu-button" (click)="onClickModelsStatus()"><span class="sos-menu">Models</span></button>
+        <button mat-menu-item id="processes-menu-button" (click)="onClickOntologyProcesses()"><span class="sos-menu">Processes</span></button>
+        <button mat-menu-item id="parameters-menu-button"(click)="onClickOntologyParameters()"><span class="sos-menu">Parameters</span></button>
        
      </mat-menu>
     </div>
@@ -88,26 +92,26 @@
           <button mat-menu-item (click)="onClickUserManagement()" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-user" style="padding-right: 10px;" aria-hidden="true">
             </i>
-            <span>User Management</span>
+            <span class="sos-menu">User Management</span>
           </button>
           <button mat-menu-item (click)="onClickProcessesManagement()" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-gears" style="padding-right: 10px;" aria-hidden="true">
             </i>
-            <span>Processes Management</span>
+            <span class="sos-menu">Processes Management</span>
           </button>
           <button mat-menu-item (click)="onClickExecutionManagement()" *ngIf="hasAccessToStudyManager">
             <i class="fa-solid fa-server" style="padding-right: 10px;" aria-hidden="true">
             </i>
-            <span>Execution Dashboard</span>
+            <span class="sos-menu">Execution Dashboard</span>
           </button>
           <button mat-menu-item  (click)="onClickOnContact()">
             <i class="fa-solid fa-envelope" style="padding-right: 10px;"></i>
-            <span>Contact us</span>
+            <span class="sos-menu">Contact us</span>
           </button>
           <button mat-menu-item (click)="logout()">
             <i class="fa-solid fa-right-from-bracket" style="padding-right: 10px;"aria-hidden="true">
             </i>
-            <span>Logout</span>
+            <span class="sos-menu">Logout</span>
           </button>        
         </mat-menu>
       </div>

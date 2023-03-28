@@ -72,6 +72,7 @@
   overflow-y: auto;
   border-collapse: separate;
   margin-bottom: 0 !important;
+  table-layout: fixed;
 }
 
 .mat-expansion-panel-header-title {
@@ -142,6 +143,7 @@ td.mat-mdc-cell {
 .mat-mdc-cell {
   font-size: 13px;
   color: unset;
+  min-height: 0px !important;
 }
 
 tr.mat-mdc-row {
@@ -179,4 +181,28 @@ tr.table-row:hover {
 .table th,
 table td {
   border-top: 0;
+
+}
+
+.mat-column-name{
+  width:30%;
+}
+
+.mat-column-description{
+  width:50%;
+}
+.mat-column-default{
+  width:15%;
+}
+.mat-column-confidential{
+  width:20%;
+}
+.mat-column-users{
+  width:5%;
+}
+.mat-column-edit{
+  width:5%;
+}
+.mat-column-delete{
+  width:5%;
 }
