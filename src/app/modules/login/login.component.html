@@ -41,13 +41,13 @@
           <button
             id="btn-login-log-in"
             mat-raised-button
-            [appButtonSpinner]="loadingLogin"
             type="submit"
             [disabled]="!loginForm.valid"
             mat-button
             aria-label="btn-login-log-in"
           >
-            Login
+          <mat-spinner  diameter="20" *ngIf="loadingLogin" ></mat-spinner>
+            <span *ngIf="!loadingLogin">Login</span>
           </button>
         </div>
         <mat-divider></mat-divider>

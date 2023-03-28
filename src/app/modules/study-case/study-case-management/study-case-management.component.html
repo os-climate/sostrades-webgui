@@ -99,7 +99,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            style="padding: 0 6px; text-align: unset"
+            style="text-align: left"
           >
             <mat-checkbox
               (change)="$event ? masterToggle() : null"
@@ -110,7 +110,7 @@
             </mat-checkbox>
           </th>
 
-          <td mat-cell *matCellDef="let element" style="padding: 0 6px">
+          <td mat-cell *matCellDef="let element" >
             <mat-checkbox
               [id]="'checkbox-study-management-' + element.name +'-' + element.groupName"
               (click)="$event.stopPropagation()"

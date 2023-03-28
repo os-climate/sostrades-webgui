@@ -9,8 +9,21 @@
   height: 35px;
 }
 
+.mat-icon{
+  background-repeat: no-repeat;
+  display: inline-block;
+  fill:currentColor;
+  height: 24px !important;
+  width: 24px !important;
+  font-size: 24px !important;
+}
+
 .home-title {
   margin-left:70px
+}
+
+.mdc-button{
+  padding: 0 16px;
 }
 
 .version-container {

@@ -18,6 +18,8 @@
   padding: 100px 20px 100px 20px;
 }
 
+
+
 .refresh-button {
   height: 28px;
   line-height: 28px;
@@ -69,13 +71,20 @@
 }
 
 .table-study {
-  width: 100%;
+  width: 100% !important;
   margin-bottom: 0 !important;
   height: 100%;
-  overflow-y: auto;
   font-size: 12px;
-
 }
+
+
+.mat-footer-row,
+.mat-header-row,
+.mat-row {
+    display: inline-flex !important;
+    min-width: 100% !important;
+}
+
 
 th.mat-mdc-header-cell:last-of-type {
   text-align: left !important;
@@ -86,16 +95,16 @@ th.mat-mdc-header-cell:last-of-type {
   padding-right: 5px;
 }
 
-td:first-of-type {
-  padding-left: 24px;
-}
+
 
 .mat-column {
   flex: 1;
 }
 
 th.mat-mdc-header-cell {
-  text-align: center;
+  text-align: left;
+  font-size: 12px;
+  padding: 0;
 }
 
 th.mat-sort-header-sorted {
@@ -112,7 +121,7 @@ td.mat-mdc-cell {
 }
 
 .mat-mdc-cell {
-  font-size: 13px;
+  font-size: 12px;
   color: unset;
 }
 
@@ -123,8 +132,46 @@ table td {
 
 .mat-mdc-table {
   border-collapse: separate;
-  width: 100%;
+  width: 100% !important;
   margin-bottom: 0 !important;
+  height: 100%;
+  font-size: 12px;
+  table-layout: fixed;
+}
+
+.mat-column-selected{
+  width: 3% !important;
+}
+.mat-column-isFavorite{
+ width: 5% !important;
+}
+.mat-column-name{
+  width: 15% !important;
+}
+
+.mat-column-group{
+  width: 15% !important;
+}
+
+.mat-column-repository{
+  width: 20% !important;
+}
+
+.mat-column-process{
+  width: 40% !important;
+}
+
+.mat-column-creation-date{
+  width: 15% !important;
+}
+
+.mat-column-modification-date{
+  width: 15% !important;
+}
+
+
+.mat-column-execution-status{
+  width: 10% !important;
 }
 
 td.mat-mdc-cell:last-of-type,
@@ -142,7 +189,7 @@ tr.table-row:hover {
 }
 
 tr:hover .actions-hover-row {
-  display: flex;
+  display: inline-flex;
   height: 100%;
   justify-content: center;
   align-items: center;
@@ -153,6 +200,15 @@ tr:hover .actions-hover-row {
   background-color: white;
   right: 0px;
   display: none;
+}
+
+.fa-solid{
+  line-height: 24px !important;
+}
+
+.mdc-icon-button{
+  font-size: 14px !important;
+  padding: 0px;
 }
 
 .action-button-bar {
@@ -199,7 +255,7 @@ tr:hover .actions-hover-row {
 $accent-color:#0b78b8;
 
 .link-study-title{
-  font-size: 13px;
+  font-size: 12px;
   color:#{$accent-color};
 }
 

@@ -38,6 +38,37 @@ body {
 .mat-mdc-button {
   min-width: 0px !important;
   outline: 0 !important;
+  $letter-spacing: 'normal'!important;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  margin: 0px;
+  min-width: 64px;
+  line-height: 36px;
+  padding: 0 16px;
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.mdc-button{
+  letter-spacing:normal !important;
+}
+
+.mdc-data-table__row{
+  height: auto !important;
+}
+
+.mat-mdc-cell{
+  padding: 3px !important;
+}
+
+.mat-mdc-header-cell{
+  color:rgba(0,0,0,0.54) !important;
+  font-weight: 500;
 }
 
 .mat-mdc-form-field {
@@ -47,6 +78,31 @@ body {
   min-width: 0;
   text-align: left;
   height: 65px;
+}
+
+.mat-mdc-raised-button{
+  letter-spacing: normal;
+}
+.mat-mdc-tab{
+  flex-grow: 0 !important;
+}
+.mdc-tab{
+  letter-spacing: normal;
+  opacity: .8;
+  font-size: 12px !important;
+  height: auto!important;
+  display:inline-flex;
+  min-width:0px;
+
+  padding: 3px !important;
+  margin: 3px !important;
+  min-height: 30px !important;
+  color:#000000;
+  
+
+}
+.mdc-tab :active{
+  color:#000000;
 }
 
 .mat-mdc-menu-item {
@@ -63,6 +119,7 @@ body {
 
 .mat-mdc-icon-button {
   outline: 0 !important;
+  
 }
 
 .mat-sort-header-button {
@@ -490,4 +547,5 @@ ul {
 // Html table
 .table thead th {
   border-bottom: 1px solid #dee2e6 !important;
+  
 }
