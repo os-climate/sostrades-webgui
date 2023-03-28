@@ -140,7 +140,8 @@ table td {
 }
 
 .mat-column-selected{
-  width: 3% !important;
+  width: 5% !important;
+  overflow: visible !important;
 }
 .mat-column-isFavorite{
  width: 5% !important;
