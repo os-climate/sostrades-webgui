@@ -1,4 +1,4 @@
-<div>
+<div class="container">
     <h2 mat-dialog-title style="text-align: center;">
         <h2>
           <b>{{ data.process.processName }}</b>
@@ -84,6 +84,7 @@
               mat-row
               class="table-row"
               *matRowDef="let row; columns: modelsUsingByProcessColumns"
+              style="border-bottom: 1px solid black"
               ></tr>
             </table> 
           </div>
@@ -143,6 +144,7 @@
               mat-row
               class="table-row"
               *matRowDef="let row; columns: associatedUsecaseColumn"
+              style="border-bottom: 1px solid black"
               ></tr>
             </table> 
           </div>

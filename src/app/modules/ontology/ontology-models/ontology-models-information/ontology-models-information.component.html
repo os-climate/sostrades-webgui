@@ -1,4 +1,4 @@
-<div > 
+<div class="container"> 
   <div>
     <h2 style="text-align: center;">
           {{ data.modelStatus.label.length > 0 ?  data.modelStatus.label : 'No Name found' }}
@@ -10,7 +10,6 @@
             <tr style="border-bottom: 1px solid lightgray">
               <td
                 style="
-                  width: 200px;
                   font-weight: 500;
                   font-family: Roboto, 'Helvetica Neue', sans-serif;
                   vertical-align: top;
@@ -20,7 +19,6 @@
               </td>
               <td
                 style="
-                  width: calc(100% - 150px);
                   font-size: 12px;
                   overflow-wrap: anywhere;
                 "
@@ -130,6 +128,7 @@
             mat-row
             class="table-row"
             *matRowDef="let row; columns: processColumns"
+            style="border-bottom: 1px solid black"
             ></tr>
           </table> 
         </div>
@@ -195,6 +194,7 @@
             mat-row
             class="table-row"
             *matRowDef="let row; columns: parameterColumns"
+            style="border-bottom: 1px solid black"
             ></tr>
           </table> 
         </div> 
@@ -263,6 +263,7 @@
             mat-row
             class="table-row"
             *matRowDef="let row; columns: parameterColumns"
+            style="border-bottom: 1px solid black"
             ></tr>
           </table> 
         </div>
