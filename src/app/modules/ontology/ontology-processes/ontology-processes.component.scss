@@ -12,6 +12,8 @@
   padding: 0 5px 0 5px;
   height: 58px;
 }
+
+
   .study-header {
     display: flex;
     align-items: center;
@@ -50,7 +52,7 @@
   .filter {
     width: calc(100% - 140px);
   }
-  
+
   .table-container {
     height: calc(100% - 58px);
   }
@@ -69,6 +71,7 @@
     border-collapse: separate;
     margin-bottom: 0 !important;
   }
+  
   
   th.mat-mdc-header-cell:last-of-type {
     text-align: left !important;

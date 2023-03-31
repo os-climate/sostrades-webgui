@@ -55,6 +55,16 @@ body {
   overflow: visible;
 }
 
+.mdc-text-field{
+  font-size:14px !important;
+  padding: 0px !important;
+}
+
+.mat-badge-content{
+  top:0px !important;
+  right:0px !important;
+}
+
 .mdc-button{
   letter-spacing:normal !important;
 }
@@ -107,6 +117,16 @@ body {
   
 
 }
+
+.mat-mdc-form-field-infix{
+  padding-top: 16px !important;
+}
+
+
+.mdc-floating-label{
+  margin-top:-10px !important;
+}
+
 .mdc-tab :active{
   color:#000000;
 }

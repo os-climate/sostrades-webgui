@@ -61,11 +61,10 @@
   width: calc(100% - 140px);
 }
 
-.mat-mdc-form-field {
-  display: inline-block;
-  position: relative;
-  text-align: left;
+.mat-mdc-select-arrow{
+  align-self:end !important;
 }
+
 
 .table-container {
   height: calc(100% - 58px);

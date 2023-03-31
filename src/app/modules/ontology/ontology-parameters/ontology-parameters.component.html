@@ -20,10 +20,10 @@
       </mat-label>
       <div class="filterSection">
         <mat-form-field style="margin-right: 10px; width: 130px">
+          <mat-label style="font-size:14px;">Column(s) filtered</mat-label>
           <mat-select
-            placeholder="Column(s) filtered"
             (selectionChange)="onFilterChange()"
-            style="text-align: left"
+            style="text-align: left; font-size:14px;"
             [(ngModel)]="ontologyService.parametersColumnFiltered"
             [matTooltip]="ontologyService.parametersColumnFiltered"
           >

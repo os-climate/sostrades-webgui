@@ -42,7 +42,11 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
   public isLoading: boolean;
   public columnName = ColumnName;
   public displayedColumns = ['processName', 'repositoryName', 'modelUsingProcess', 'action', 'access', 'information'];
-  public colummnsFilter = ['All columns', 'Process Name', 'Repository Name'];
+  public columnsFilter = [
+    ColumnName.ALL_COLUMNS,
+    ColumnName.PROCESS,
+    ColumnName.REPOSITORY
+  ];
   public dataSourceProcess = new MatTableDataSource<Process>();
   public markdownDocumentation: MardownDocumentation;
   public expandedElement: Process;

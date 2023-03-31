@@ -34,16 +34,14 @@
   align-items: center;
   height: 100%;
   width: 100%;
+  padding:20px;
 }
 
 .mat-mdc-dialog-title {
   margin-bottom: 15px;
 }
 
-mat-form-field {
-  flex: 1;
-  margin-top: 0 !important;
-}
+
 
 .user-container {
   height: 60px;
@@ -102,7 +100,6 @@ mat-form-field {
 }
 
 .mat-mdc-dialog-content {
-  padding: 0;
   width: 100%;
   margin: unset;
   display: flex !important;
@@ -111,4 +108,9 @@ mat-form-field {
 .select-right {
   min-width: 136px;
   padding: 0 8px 0 8px;
+}
+
+
+.mat-mdc-select-arrow{
+  align-self:baseline !important;
 }
