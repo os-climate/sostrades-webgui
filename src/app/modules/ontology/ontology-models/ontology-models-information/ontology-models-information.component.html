@@ -50,7 +50,7 @@
           </span>
         </mat-expansion-panel-header>
         <div class="panel-open">
-          <table class="table table-sm table-borderless">     
+          <table class="table table-sm">     
             <ng-container *ngFor="let classInheritance of data.modelStatus.classInheritance">
               <tr style="border-bottom: 1px solid lightgray">
                 <td
@@ -83,7 +83,7 @@
           </span>
         </mat-expansion-panel-header>
         <div class="panel-open">
-            <table mat-table [dataSource]="dataSourceProcessUsed" matSort class="table table-sm table-borderless">
+            <table mat-table [dataSource]="dataSourceProcessUsed" matSort class="table table-sm">
             <ng-container  matColumnDef='label'>
               <th mat-header-cell *matHeaderCellDef>Name</th>
               <td
@@ -150,7 +150,7 @@
           </span>
         </mat-expansion-panel-header>
         <div class="panel-open">
-            <table mat-table [dataSource]="dataSourceInputsParameters" matSort class="table table-sm table-borderless">
+            <table mat-table [dataSource]="dataSourceInputsParameters" matSort class="table table-sm">
             <ng-container  matColumnDef='parameterLabel'>
               <th mat-header-cell *matHeaderCellDef>Name</th>
               <td
@@ -217,7 +217,7 @@
           </span>
         </mat-expansion-panel-header>
         <div class="panel-open">
-          <table mat-table [dataSource]="dataSourceOutputsParameters" matSort class="table table-sm table-borderless">
+          <table mat-table [dataSource]="dataSourceOutputsParameters" matSort class="table table-sm">
             <!-- parameter label -->
             <ng-container  matColumnDef='parameterLabel'>
               <th mat-header-cell *matHeaderCellDef>Name</th>
