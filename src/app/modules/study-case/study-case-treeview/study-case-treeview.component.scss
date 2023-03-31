@@ -60,9 +60,7 @@
 
 
 
-mat-tree {
-  margin-left: 10px;
-}
+
 
 .mat-tree-node {
   padding: 0;
@@ -103,7 +101,7 @@ li ul {
   margin-left: -11px;
   padding-left: 19px;
 }
-mat-icon{
+.mat-icon{
   width: 24px;
   overflow: visible;
 }
@@ -126,6 +124,8 @@ mat-icon{
   padding-left: 2px;
   padding-right: 2px;
 }
+
+
 
 .VIRTUAL {
   background: radial-gradient(circle at 6px 6px, purple, #000);
@@ -211,11 +211,9 @@ mat-icon{
 
 .toolbar {
   height: 35px;
+  justify-content: right;
 }
 
-.toolbar-spacer {
-  flex: 1 1 auto;
-}
 
 .toolbar-item-shadow {
   box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),

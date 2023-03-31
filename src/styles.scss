@@ -55,6 +55,10 @@ body {
   overflow: visible;
 }
 
+.mat-mdc-button-touch-target {
+  height: 24px !important;
+}
+
 .mdc-text-field{
   font-size:14px !important;
   padding: 0px !important;
@@ -548,6 +552,7 @@ ul {
 }
 
 .custom-tooltip-class {
+  margin:10px !important;
   max-width: unset !important;
   white-space: pre-line !important;
   text-align: center !important;
