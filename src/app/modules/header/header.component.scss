@@ -1,6 +1,4 @@
-.menu-spacer {
-  flex: 1 1 auto;
-}
+
 
 
 
@@ -63,4 +61,7 @@
 }
 .sos-menu{
   font-size: 13px !important;
+}
+.mat-mdc-menu-item{
+  min-height: 35px !important;
 }

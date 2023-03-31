@@ -5,14 +5,11 @@
 }
 
 .fullscreen-button {
-  margin-left: 15px;
-  margin-right: 15px;
-}
-.tab-group {
-  height: 100%; 
-  width: 100%; 
-  background-color: white; 
-  margin-top: -15px;
+  right: 10px;
+  z-index: 1;
+  position: absolute;
+  top: 4px;
+
 }
 
 .markdown-container {
@@ -43,14 +40,14 @@
 }
 .button{
   height: 28px;
-  line-height: 24px;
+  line-height: 28px;
 }
-.filter-level-fullscreen {
-  margin-top: 5px;
-  text-align: end;
-  margin-bottom: -5px;
+.filter-level{ 
+  position: absolute;
+  top: 4px;
+  right: 145px;
+  z-index: 1;
 }
-
 .user-level-item {
   font-size: 13px;
 }

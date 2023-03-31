@@ -77,6 +77,7 @@
 
 .mat-expansion-panel-header-title {
   font-size: 13px;
+  font-weight: 400;
 }
 .expansion-panel {
   margin-bottom: 10px;
@@ -90,10 +91,9 @@
 }
 
 .mat-mdc-icon-button {
-  min-height: 0 !important;
-  height: auto;
-  width: auto;
-  line-height: unset !important;
+  display: flex;
+  height: 20px;
+  padding-top:5px;
 }
 
 .create-group {
@@ -141,7 +141,7 @@ td.mat-mdc-cell {
 }
 
 .mat-mdc-cell {
-  font-size: 13px;
+  font-size: 12px;
   color: unset;
   min-height: 0px !important;
 }
