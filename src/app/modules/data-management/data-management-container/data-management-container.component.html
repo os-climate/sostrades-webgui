@@ -26,7 +26,7 @@
     *ngIf="objectKey(allDisciplinesDataDict).length > 0"
       mat-button
       style="cursor: default;margin-left: 4px;"
-      [color]="treeNodeData.isValidated ? 'mat-success' :'mat-undetermined'"
+      [class]="treeNodeData.isValidated ? 'mat-success' :'mat-undetermined'"
      > 
      {{treeNodeData.isValidated ? 'Validated':'Not validated'}}
       </button>

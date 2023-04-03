@@ -19,6 +19,7 @@
 
 .mat-column {
   flex: 1;
+  font-size: 12px;
 }
 
 .mat-column-identifier {
@@ -45,6 +46,11 @@
   max-height: 20px !important;
 }
 
+.custom-font {
+  font-size: 12px;
+}
+
+
 .custom-tooltip {
   word-break: break-all !important;
   white-space: normal !important;
@@ -56,7 +62,6 @@
 
 
 .mat-mdc-button {
-  height: 20px;
   padding-left: 2px;
   padding-right: 2px;
 }
