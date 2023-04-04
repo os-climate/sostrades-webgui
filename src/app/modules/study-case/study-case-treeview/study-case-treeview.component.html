@@ -1,6 +1,6 @@
 <div class="configure-container">
   <div class="filter-zone" *ngIf="originTreeNode">
-    <button mat-icon-button class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></button>
+    <i class="fa-solid fa-magnifying-glass filter-icon cursor" (click)="applyFilterValue(filterTreeInput)"></i>
     <input
       class="filter-input"
       matInput
@@ -10,9 +10,9 @@
       [placeholder]="isSearchOption?'Search variable':'Filter treeview'"
       (click)="applyFilter($event)"
     />
-    <button mat-icon-button [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h">
+    <i [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h cursor">
 
-    </button>
+    </i>
     <mat-menu #searchoption="matMenu">
       <mat-button-toggle-group ngDefaultControl [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
         <mat-button-toggle mat-menu-item value="false"
@@ -28,9 +28,7 @@
       </mat-button-toggle-group>
     </mat-menu>
   </div>
-  <mat-toolbar class="toolbar" *ngIf="originTreeNode">
-    <div class="toolbar-spacer"></div>
-
+  <mat-toolbar class="toolbar d-flex" *ngIf="originTreeNode">
     <button
       id="btn-treeview-save-synchronise"
       mat-button
@@ -46,14 +44,6 @@
         aria-label="Save changes"
         matTooltip="Save changes"
         *ngIf="showChangesButtons && !executionStarted"
-        style="
-          height: 24px;
-          width: 24px;
-          padding-top: 2px;
-          padding-left: 3px;
-          padding-right: 3px;
-          padding-bottom: 6px;
-        "
       />
       <img
         src="/assets/save_sync_disabled.svg"
@@ -62,14 +52,6 @@
         aria-label="Save changes"
         matTooltip="Save changes"
         *ngIf="!showChangesButtons || executionStarted"
-        style="
-          height: 24px;
-          width: 24px;
-          padding-top: 2px;
-          padding-left: 3px;
-          padding-right: 3px;
-          padding-bottom: 6px;
-        "
       />
     </button>
 
@@ -124,15 +106,9 @@
       (click)="onHideStatus()"
       *ngIf="showStatus"
       class="toolbar-item-shadow"
+      matTooltip="Hide status"
     >
-      <mat-icon
-        class="toolbar-icon-font-aw status-off"
-        aria-hidden="false"
-        aria-label="Hide status"
-        matTooltip="Hide status"
-      >
-        visibility</mat-icon
-      >
+    <i class="fa-sharp fa-solid fa-eye"></i>
     </button>
     <button
       id="btn-treeview-show-status"
@@ -141,21 +117,14 @@
       *ngIf="!showStatus"
       class="toolbar-item-shadow"
     >
-      <mat-icon
-        class="toolbar-icon-font-aw"
-        aria-hidden="false"
-        aria-label="Show status"
-        matTooltip="Show status"
-      >
-      visibility_off
-     </mat-icon
-      >
+    <i class="fa-solid fa-eye-slash"></i>
     </button>
     <button
     mat-button
     (click)="onHideState()"
     *ngIf="showState"
     class="toolbar-item-shadow"
+    matTooltip="Show status"
   >
   <i
   class="fa-solid fa-square-check toolbar-icon-font-aw status-off"
@@ -299,12 +268,11 @@
               [id]="'btn-treeview-node-' + node.fullNamespace"
               (click)="nodeClick(node)"
               mat-button
-              [matTooltip]="
-                node.modelsFullPathList  | ontologyDisciplineConverter
-              "
+              [matTooltip]="node.modelsFullPathList  | ontologyDisciplineConverter"
+              positionAtOrigin="False"
               matTooltipClass="custom-tooltip-class"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
-              style="margin-left: 5px !important; font-size: 13px"
+              style="margin-left: 5px !important; font-size: 13px;white-space: nowrap;display:block;"
             >
               <i
                 [ngClass]="node | disciplineIconMappingConverter"
@@ -333,9 +301,8 @@
       >
         <li class="tree-container">
           <div class="mat-tree-node">
-            <button
+            <span
               [id]="'btn-treeview-expand-' + node.fullNamespace"
-              mat-icon-button
               matTreeNodeToggle
               [attr.aria-label]="'toggle ' + node.name"
               (click)="saveTreeViewPreferences(node)"
@@ -344,15 +311,12 @@
               [id]="treeControl.isExpanded(node)
               ? 'chevron-down-' + node.fullNamespace
               : 'chevron-right-'+ node.fullNamespace"
-                [ngClass]="
-                  treeControl.isExpanded(node)
-                    ? 'fas fa-chevron-down fa-fw'
-                    : 'fas fa-chevron-right fa-fw'
-                "
-                style="margin-left: 1px"
+              [ngClass]="treeControl.isExpanded(node) ? 'fas fa-chevron-down fa-fw': 'fas fa-chevron-right fa-fw'"
+              style="margin-left: 1px"
+              class="cursor"
               >
               </i>
-            </button>
+            </span>
             <div
               [id]="'text-treeview-status-' + node.fullNamespace + '-' + node.status"
               *ngIf="node.status.length > 0 && showStatus"
@@ -389,9 +353,10 @@
               [matTooltip]="
                 node.modelsFullPathList | ontologyDisciplineConverter
               "
+              positionAtOrigin="False"
               matTooltipClass="custom-tooltip-class"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
-              style="margin-left: 4px !important; font-size: 13px"
+              style="margin-left: 4px !important; font-size: 13px; white-space: nowrap;display:block;"
             >
               <i
                 [ngClass]="node | disciplineIconMappingConverter"

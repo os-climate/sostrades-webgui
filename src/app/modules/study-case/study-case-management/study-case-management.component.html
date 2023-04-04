@@ -29,15 +29,15 @@
       Number of Studies <b>{{ studyCount }}</b>
     </mat-label>
     <div class="filterSection" *ngIf="getFilter">
-      <mat-form-field style="margin-right: 10px; width: 120px">
+      <mat-form-field style="margin-right: 10px; width: 130px;">
+        <mat-label style="font-size:14px;">Column(s) filtered</mat-label>
         <mat-select
-          placeholder="Column(s) filtered"
           (selectionChange)="onFilterChange()"
-          style="text-align: left"
+          style="text-align: left;font-size:14px;   "
           [(ngModel)]="studyCaseDataService.studyManagementColumnFiltered"
           [matTooltip]="studyCaseDataService.studyManagementColumnFiltered"
         >
-          <mat-option *ngFor="let item of colummnsFilter" [value]="item" style='text-transform: capitalize;'>
+          <mat-option *ngFor="let item of colummnsFilter" [value]="item" style='text-transform: capitalize;font-size:14px;'>
             {{ item }}
           </mat-option>
         </mat-select>
@@ -79,13 +79,7 @@
     </button>
   </div>
 
-  <div
-    [ngStyle]="
-      selection.hasValue()
-        ? { height: 'calc(100% - 98px)' }
-        : { height: 'calc(100% - 63px)' }
-    "
-  >
+  <div>
     <div class="loading-zone" *ngIf="isLoading">
       <app-progress-bar
         progressMode="indeterminate"
@@ -105,7 +99,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            style="padding: 0 6px; text-align: unset"
+            style="text-align: left"
           >
             <mat-checkbox
               (change)="$event ? masterToggle() : null"
@@ -116,7 +110,7 @@
             </mat-checkbox>
           </th>
 
-          <td mat-cell *matCellDef="let element" style="padding: 0 6px">
+          <td mat-cell *matCellDef="let element" >
             <mat-checkbox
               [id]="'checkbox-study-management-' + element.name +'-' + element.groupName"
               (click)="$event.stopPropagation()"
@@ -159,11 +153,15 @@
             <i *ngIf="getFilter" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
-          <td mat-cell *matCellDef="let element" [matTooltip]="element.name">
-            <a routerLink="/study/{{element.id}}"
+          <td mat-cell *matCellDef="let element" >
+            <a 
+              routerLink="/study/{{element.id}}"
               class="link-study-title"
-              [id]="'title-study-management-load-' + element.groupName +'-' + element.name">
+              [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
+              
+              >
               {{ element.name }}
+              
             </a>
           </td>
         </ng-container>
@@ -177,9 +175,9 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.groupName"
+            
           >
-            {{ element.groupName }}
+            <spasn [matTooltip]="element.groupName">{{ element.groupName }}</spasn>
           </td>
         </ng-container>
 
@@ -192,9 +190,9 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.repository"
+            
           >
-            {{ element.repositoryDisplayName }}
+            <span [matTooltip]="element.repository">{{ element.repositoryDisplayName }}</span>
           </td>
         </ng-container>
 
@@ -204,8 +202,8 @@
             <i *ngIf="getFilter" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.PROCESS, $event)" ></i>
           </th>
-          <td mat-cell *matCellDef="let element" [matTooltip]="element.process">
-            {{ element.processDisplayName }}
+          <td mat-cell *matCellDef="let element" >
+            <span [matTooltip]="element.process">{{ element.processDisplayName }}</span>
           </td>
         </ng-container>
 

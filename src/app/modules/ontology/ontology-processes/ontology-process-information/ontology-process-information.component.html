@@ -1,4 +1,4 @@
-<div>
+<div class="container">
     <h2 mat-dialog-title style="text-align: center;">
         <h2>
           <b>{{ data.process.processName }}</b>
@@ -48,7 +48,7 @@
             </span>
           </mat-expansion-panel-header>
           <div class="panel-open">
-            <table mat-table [dataSource]="dataSourceModelsUsingByProcess" matSort class="table table-sm table-borderless">
+            <table mat-table [dataSource]="dataSourceModelsUsingByProcess" matSort class="table table-sm">
               <ng-container  matColumnDef='disciplineList'>
                 <th mat-header-cell *matHeaderCellDef>Model<span *ngIf="data.process.quantityDisciplinesUsed > 1" >s</span></th>
                 <td
@@ -84,6 +84,7 @@
               mat-row
               class="table-row"
               *matRowDef="let row; columns: modelsUsingByProcessColumns"
+              style="border-bottom: 1px solid black"
               ></tr>
             </table> 
           </div>
@@ -99,7 +100,7 @@
             </span>
           </mat-expansion-panel-header>
           <div class="panel-open">
-            <table mat-table [dataSource]="dataSourceAssociatedUsecase" matSort class="table table-sm table-borderless">
+            <table mat-table [dataSource]="dataSourceAssociatedUsecase" matSort class="table table-sm">
               <ng-container  matColumnDef='name'>
                 <th mat-header-cell *matHeaderCellDef>Name</th>
                 <td
@@ -143,6 +144,7 @@
               mat-row
               class="table-row"
               *matRowDef="let row; columns: associatedUsecaseColumn"
+              style="border-bottom: 1px solid black"
               ></tr>
             </table> 
           </div>

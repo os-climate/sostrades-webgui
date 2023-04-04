@@ -5,6 +5,7 @@
   align-items: center;
   max-height: 100%;
   width: 100%;
+  padding: 20px;
 }
 
 .informations {
@@ -13,11 +14,14 @@
   flex-direction: column;
 }
 
-.mat-dialog-title {
-  padding-bottom: 10px;
+.mat-mdc-dialog-title {
   margin: 0;
-  height: 52px;
 }
+.mdc-dialog__title::before {
+  display:block !important;
+  height:0 !important;
+}
+
 
 // table CSS
 .mat-accordion{
@@ -51,8 +55,9 @@
   flex: 1;
 }
 
-th.mat-header-cell {
+th.mat-mdc-header-cell {
   text-align: left;
+  font-size:12px;
 }
 
 th.mat-sort-header-sorted {
@@ -60,32 +65,32 @@ th.mat-sort-header-sorted {
   text-align: left;
 }
 
-td.mat-cell {
+td.mat-mdc-cell {
   text-align: left;
   padding: 3px;
   vertical-align: top;
 }
 
 
-.mat-cell {
+.mat-mdc-cell {
   min-height: 20px;
   font-size: 12px;
   color: unset;
 }
 
-tr.mat-row {
+tr.mat-mdc-row {
   height: auto;
 }
 
 .table {
   margin-bottom: initial;
 }
-.mat-table {
+.mat-mdc-table {
   border-collapse: separate;
   width: 100%;
 }
 
-th.mat-header-cell:first-of-type {
+th.mat-mdc-header-cell:first-of-type {
   padding-left: initial;
 }
 

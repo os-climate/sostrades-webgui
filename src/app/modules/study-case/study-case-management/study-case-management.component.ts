@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { Study } from 'src/app/models/study.model';
@@ -40,7 +40,7 @@ import { StudyCaseCreationComponent } from '../study-case-creation/study-case-cr
 @Component({
   selector: 'app-study-case-management',
   templateUrl: './study-case-management.component.html',
-  styleUrls: ['./study-case-management.component.scss'],
+  styleUrls: ['./study-case-management.component.scss']
 })
 
 export class StudyCaseManagementComponent implements OnInit, OnDestroy {
@@ -397,8 +397,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(StudyCaseEditComponent, {
       disableClose: false,
-      width: '400px',
-      height: '400px',
       data: dialogData
     });
 

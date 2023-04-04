@@ -1,4 +1,4 @@
-<div class="flex-container container-dialog" *ngIf="isLoading">
+<div class="container-dialog" *ngIf="isLoading">
   <app-progress-bar
     progressMode="indeterminate"
     progressText="Loading form information"
@@ -6,8 +6,8 @@
 </div>
 
 <div class="flex-container"  *ngIf="!isLoading">
-    <div class="row" style="margin-bottom: 10px !important;">
-      <h1 class="col-11" style="text-align: center">
+    <div>
+      <h1 style="text-align: center">
         Edit study
       </h1>
     </div> 
@@ -15,7 +15,7 @@
     <br>
     <div class="edit-group" [formGroup]="editForm">
         <div id="name">   
-          <mat-form-field style="width: 100%;">
+          <mat-form-field>
             <mat-label>Study name</mat-label>
             <input
             id='studyName' 
@@ -35,7 +35,7 @@
         </div>
         <br>
         <br>
-        <mat-form-field style="width: 100%;">
+        <mat-form-field>
             <mat-select id='group' placeholder="Group name" formControlName="groupId" (selectionChange)="onChange($event.value)">
               <mat-option
                 *ngFor="let group of this.groupList"
@@ -53,16 +53,15 @@
         <div id="saveOrCancel" class="d-flex justify-content-around">
             <button
             id='cancel' 
-            mat-button 
+            mat-raised-button 
             (click)="onCancelClick()"
             >Cancel
             </button>
             <button
             id='submit'
-            mat-button
+            mat-raised-button
             (click)="submitForm()"
             [disabled]="!editForm.valid || !editForm.dirty || this.disableForm"
-            
             >
             Save
             </button>

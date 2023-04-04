@@ -60,15 +60,14 @@
 
 
 
-mat-tree {
-  margin-left: 10px;
-}
+
 
 .mat-tree-node {
   padding: 0;
   min-height: 24px;
   background-color: white;
   z-index: 1 !important;
+  
 }
 
 li.mat-tree-node,
@@ -102,30 +101,31 @@ li ul {
   margin-left: -11px;
   padding-left: 19px;
 }
+.mat-icon{
+  width: 24px;
+  overflow: visible;
+}
 
 .last-child-left-border {
   border-left: 1px solid white;
   margin-left: -11px !important; // necessary to overload 'li ul' margin-left
   padding-left: 18px !important;
 }
-
+.cursor{
+  cursor: pointer;
+}
 .fa-fw {
   width: auto;
 }
 
-.mat-icon-button {
-  line-height: unset;
-  height: 24px;
-  width: 14px;
-  outline: 0;
-}
-
-.mat-button {
+.mat-mdc-button {
   line-height: unset;
   height: 24px;
   padding-left: 2px;
   padding-right: 2px;
 }
+
+
 
 .VIRTUAL {
   background: radial-gradient(circle at 6px 6px, purple, #000);
@@ -163,6 +163,7 @@ li ul {
   color: white;
   height: 18px;
   min-width: 18px;
+  width: 18px;
   font-size: 12px;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   text-align: center;
@@ -187,30 +188,37 @@ li ul {
 
 .status-on {
   color: black;
+  margin-right: 2px;
 }
 
 .toolbar-icon {
   font-size: 20px;
-  margin-top: -4px;
+  height: 24px;
+  width: 24px;
+  padding-top: 2px;
+  padding-left: 6px;
+  padding-right: 3px;
+  padding-bottom: 6px;
+  margin-top: 3px;
 }
 
 .toolbar-icon-font-aw {
   font-size: 18px;
   height: 26px;
   width: 24px;
+  margin-top: 10px;
 }
 
 .toolbar {
   height: 35px;
+  justify-content: right;
 }
 
-.toolbar-spacer {
-  flex: 1 1 auto;
-}
 
 .toolbar-item-shadow {
   box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    width: 28px;
 }
 
 .waiting-refresh {
@@ -235,8 +243,8 @@ li ul {
   padding-top: 10px;
 }
 
-.mat-progress-spinner,
-.mat-spinner {
+.mat-mdc-progress-spinner,
+.mat-mdc-progress-spinner {
   stroke: #3fb53f !important;
 }
 

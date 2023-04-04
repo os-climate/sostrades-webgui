@@ -72,10 +72,12 @@
   overflow-y: auto;
   border-collapse: separate;
   margin-bottom: 0 !important;
+  table-layout: fixed;
 }
 
 .mat-expansion-panel-header-title {
   font-size: 13px;
+  font-weight: 400;
 }
 .expansion-panel {
   margin-bottom: 10px;
@@ -88,11 +90,10 @@
   color: grey;
 }
 
-.mat-icon-button {
-  min-height: 0 !important;
-  height: auto;
-  width: auto;
-  line-height: unset !important;
+.mat-mdc-icon-button {
+  display: flex;
+  height: 20px;
+  padding-top:5px;
 }
 
 .create-group {
@@ -104,12 +105,12 @@
   background-color: #f9f9f9;
 }
 
-th.mat-header-cell:last-of-type {
+th.mat-mdc-header-cell:last-of-type {
   text-align: left !important;
   padding-left: 3px;
 }
 
-th.mat-header-cell:last-of-type {
+th.mat-mdc-header-cell:last-of-type {
   padding-right: 5px;
 }
 
@@ -121,7 +122,7 @@ td:first-of-type {
   flex: 1;
 }
 
-th.mat-header-cell {
+th.mat-mdc-header-cell {
   text-align: center;
 }
 
@@ -129,7 +130,7 @@ th.mat-sort-header-sorted {
   color: black;
 }
 
-td.mat-cell {
+td.mat-mdc-cell {
   text-align: left;
   padding: 3px;
 }
@@ -139,12 +140,13 @@ td.mat-cell {
   vertical-align: middle;
 }
 
-.mat-cell {
+.mat-mdc-cell {
   font-size: 12px;
   color: unset;
+  min-height: 0px !important;
 }
 
-tr.mat-row {
+tr.mat-mdc-row {
   height: auto;
   min-height: 0;
 }
@@ -154,20 +156,20 @@ table td {
   border-top: 0;
 }
 
-.mat-table {
+.mat-mdc-table {
   border-collapse: separate;
   width: 100%;
   margin-bottom: 0 !important;
 }
 
-td.mat-cell:first-of-type,
-th.mat-header-cell:first-of-type,
+td.mat-mdc-cell:first-of-type,
+th.mat-mdc-header-cell:first-of-type,
 mat-footer-cell:first-of-type {
   padding-left: 10px;
 }
 
-td.mat-cell:last-of-type,
-th.mat-header-cell:last-of-type,
+td.mat-mdc-cell:last-of-type,
+th.mat-mdc-header-cell:last-of-type,
 mat-footer-cell:last-of-type {
   padding-right: 4px;
 }
@@ -179,8 +181,28 @@ tr.table-row:hover {
 .table th,
 table td {
   border-top: 0;
+
 }
 
-::ng-deep.mat-radio-label {
-    margin: auto;
-    }
+.mat-column-name{
+  width:30%;
+}
+
+.mat-column-description{
+  width:50%;
+}
+.mat-column-default{
+  width:15%;
+}
+.mat-column-confidential{
+  width:20%;
+}
+.mat-column-users{
+  width:5%;
+}
+.mat-column-edit{
+  width:5%;
+}
+.mat-column-delete{
+  width:5%;
+}

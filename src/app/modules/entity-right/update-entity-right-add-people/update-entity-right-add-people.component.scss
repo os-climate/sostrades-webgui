@@ -10,6 +10,9 @@
   border-color: lightgray;
 }
 
+.mat-mdc-form-field{
+  height:auto !important;
+}
 .chip-box {
   display: flex;
   align-items: center;
@@ -34,16 +37,14 @@
   align-items: center;
   height: 100%;
   width: 100%;
+  padding:20px;
 }
 
-.mat-dialog-title {
+.mat-mdc-dialog-title {
   margin-bottom: 15px;
 }
 
-mat-form-field {
-  flex: 1;
-  margin-top: 0 !important;
-}
+
 
 .user-container {
   height: 60px;
@@ -65,7 +66,7 @@ mat-form-field {
   font: 22px Arial, sans-serif;
 }
 
-.mat-option {
+.mat-mdc-option {
   height: unset;
 }
 
@@ -101,8 +102,7 @@ mat-form-field {
   height: 40px !important;
 }
 
-.mat-dialog-content {
-  padding: 0;
+.mat-mdc-dialog-content {
   width: 100%;
   margin: unset;
   display: flex !important;
@@ -111,4 +111,9 @@ mat-form-field {
 .select-right {
   min-width: 136px;
   padding: 0 8px 0 8px;
+}
+
+
+.mat-mdc-select-arrow{
+  align-self:baseline !important;
 }

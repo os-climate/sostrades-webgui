@@ -15,9 +15,6 @@ sostrades-webgui depends on software with compatible licenses that are listed be
 `liradb2000/markdown-it-mermaid <https://www.npmjs.com/package/@liradb2000/markdown-it-mermaid>`_
     MIT
 
-`angular-resize-event <https://www.npmjs.com/package/angular-resize-event>`_
-    MIT
-
 `angular-split <https://www.npmjs.com/package/angular-split>`_
     Apache v2.0
     

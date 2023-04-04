@@ -29,7 +29,11 @@ export class OntologyParametersComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   private parameterToShowAtStartup: string;
   public displayedColumns = ['id', 'label', 'nb_disciplines_using_parameter', 'parameterInfo'];
-  public columnsFilter = ['All columns', 'Parameter ID', 'Parameter Name'];
+  public columnsFilter = [
+    ColumnName.ALL_COLUMNS,
+    ColumnName.ID,
+    ColumnName.LABEL
+  ];
   public dataSourceParameters = new MatTableDataSource<OntologyParameter>();
 
   @Input() dashboard = true;

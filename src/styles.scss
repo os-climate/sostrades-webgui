@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/cdk/overlay-prebuilt.css";
+@import "@angular/cdk/overlay-prebuilt.css";
 
 html {
   scroll-behavior: smooth;
@@ -13,19 +13,10 @@ body {
 body {
   margin: 0 !important;
   font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
 }
 
-label.mat-checkbox-layout {
-  margin: 0 !important;
-}
 
-.mat-tab-body-wrapper {
-  flex-grow: 1 !important;
-}
-
-.mat-tab-body-content {
-  overflow: unset !important;
-}
 
 .mat-accordion {
   display: flex !important;
@@ -45,65 +36,167 @@ label.mat-checkbox-layout {
   min-height: 0 !important;
 }
 
-.mat-button {
+.mat-mdc-button {
   min-width: 0px !important;
   outline: 0 !important;
+  $letter-spacing: 'normal'!important;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  margin: 0px;
+  min-width: 64px;
+  line-height: 36px;
+  padding: 0px;
+  border-radius: 4px;
+  overflow: visible;
 }
 
-.mat-menu-item {
+
+
+.mdc-text-field{
+  font-size:14px !important;
+  padding: 0px !important;
+}
+
+.mat-badge-content{
+  top:0px !important;
+  right:0px !important;
+}
+
+.mdc-button{
+  letter-spacing:normal !important;
+}
+
+.mdc-data-table__row{
+  height: auto !important;
+  
+}
+.mdc-data-table__row:last-child .mdc-data-table__cell{
+  border-bottom: rgba(0,0,0,.12) !important;
+  border-bottom-width: 1px !important;
+  border-bottom-style: solid !important;
+}
+.mat-mdc-cell{
+  padding: 3px !important;
+}
+
+.mat-mdc-header-cell{
+  color:rgba(0,0,0,0.54) !important;
+  font-weight: 500;
+}
+
+.mat-mdc-form-field {
+  --mat-mdc-form-field-floating-label-scale: 0.75;
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+  height: 65px;
+}
+
+.mat-mdc-raised-button{
+  letter-spacing: normal;
+}
+.mat-mdc-tab{
+  flex-grow: 0 !important;
+}
+.mdc-tab{
+  letter-spacing: normal;
+  opacity: .8;
+  font-size: 12px !important;
+  height: auto!important;
+  display:inline-flex;
+  min-width:0px;
+
+  padding: 3px !important;
+  margin: 3px !important;
+  min-height: 30px !important;
+  color:#000000;
+  
+
+}
+
+.mat-mdc-form-field-infix{
+  padding-top: 16px !important;
+}
+
+
+.mdc-floating-label{
+  margin-top:-10px !important;
+}
+
+.mdc-tab :active{
+  color:#000000;
+}
+
+.mat-mdc-menu-item {
   outline: 0 !important;
 }
 
-.mat-flat-button {
+.mat-mdc-unelevated-button {
   outline: 0 !important;
 }
 
-.mat-mini-fab {
+.mat-mdc-mini-fab {
   outline: 0 !important;
 }
 
-.mat-icon-button {
+
+.mat-mdc-icon-button {
   outline: 0 !important;
+  
+}
+
+.mdc-icon-button{
+  font-size: 14px !important;
+  padding:0 6px !important;
 }
 
 .mat-sort-header-button {
   outline: none !important;
 }
 
-.mat-menu-panel {
+.mat-mdc-menu-panel {
   min-height: 0px !important;
 }
 
-.mat-snack-bar-container {
+.mat-mdc-snack-bar-container {
   min-width: fit-content !important;
 }
 
 /* SnackBar custom styles*/
-.snackBarError {
-  max-width: 80% !important;
-  background: #e4002b;
-  color: white;
-}
-.snackBarError .mat-simple-snackbar-action {
-  color: white;
+
+.mat-mdc-snack-bar-container {
+  &.snackBarError {
+    --mdc-snackbar-container-color: #e4002b;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
 }
 
-.snackBarInformation {
-  max-width: 80% !important;
-  background: #08875b;
-  color: white;
-}
-.snackBarInformation .mat-simple-snackbar-action {
-  color: white;
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled){
+  background-color:transparent
 }
 
-.snackBarWarning {
-  max-width: 80% !important;
-  background: #fbca32;
-  color: black;
+.mat-mdc-snack-bar-container {
+  &.snackBarInformation {
+    --mdc-snackbar-container-color: #08875b;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
 }
-.snackBarWarning .mat-simple-snackbar-action {
-  color: black;
+
+.mat-mdc-snack-bar-container {
+  &.snackBarWarning {
+    --mdc-snackbar-container-color: #fbca32;
+    --mat-mdc-snack-bar-button-color: black;
+    --mdc-snackbar-supporting-text-color: black;
+  }
 }
 
 /* D3 class style for d3-force-graph-directive */
@@ -125,8 +218,7 @@ text {
 div.tooltip {
   // position: absolute;
   // text-align: center;
-  // /*width: 60px;
-  // height: 28px;*/
+  // __<<ngThemingMigrationEscapedComment3>>__
   // padding: 2px;
   // font: 12px sans-serif;
   // background: lightsteelblue;
@@ -143,23 +235,23 @@ div.tooltip {
 }
 
 .mat-danger {
-  background-color: #e4002b;
-  color: #ffffff;
+  background-color: #e4002b !important;
+  color: #ffffff !important;
 }
 
 .mat-warning {
-  background-color: #fbca32;
-  color: #000000;
+  background-color: #fbca32 !important;
+  color: #000000 !important;
 }
 
 .mat-success {
-  background-color: #08875b;
-  color: #ffffff;
+  background-color: #08875b !important;
+  color: #ffffff !important;
 }
 
 .mat-undetermined {
-  background-color: grey;
-  color: #ffffff;
+  background-color: grey !important;
+  color: #ffffff !important;
 }
 
 .mat-icon-danger {
@@ -178,7 +270,7 @@ div.tooltip {
   color: grey;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   margin-top: -10px !important;
 }
 
@@ -206,21 +298,7 @@ div.tooltip {
   border-color: darkorange !important;
 }
 
-.csvDialog {
-  mat-dialog-container {
-    padding: 0;
-  }
-}
 
-.mat-tab-label,
-.mat-tab-label-active {
-  min-width: 0 !important;
-  padding: 3px !important;
-  margin: 3px !important;
-  font-size: 12px !important;
-  min-height: 0px !important;
-  height: auto !important;
-}
 
 .mat-sort-header-button {
   border-bottom: none !important;
@@ -472,6 +550,7 @@ ul {
 }
 
 .custom-tooltip-class {
+  margin:10px !important;
   max-width: unset !important;
   white-space: pre-line !important;
   text-align: center !important;
@@ -503,4 +582,6 @@ ul {
 // Html table
 .table thead th {
   border-bottom: 1px solid #dee2e6 !important;
+  
 }
+
