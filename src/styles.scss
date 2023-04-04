@@ -50,14 +50,12 @@ body {
   margin: 0px;
   min-width: 64px;
   line-height: 36px;
-  padding: 0 16px;
+  padding: 0px;
   border-radius: 4px;
   overflow: visible;
 }
 
-.mat-mdc-button-touch-target {
-  height: 24px !important;
-}
+
 
 .mdc-text-field{
   font-size:14px !important;
@@ -155,7 +153,7 @@ body {
 
 .mdc-icon-button{
   font-size: 14px !important;
-  padding: 0px;
+  padding:0 6px !important;
 }
 
 .mat-sort-header-button {
