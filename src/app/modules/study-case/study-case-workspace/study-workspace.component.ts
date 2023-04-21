@@ -52,6 +52,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public userLevelList: string[];
   public selectedUserlevel: string;
   private routerSubscription: Subscription;
+  public newUserLevelValue: number;
+
 
 
 
@@ -99,6 +101,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.userLevel = new UserLevel();
     this.userLevelList = this.userLevel.userLevelList;
     this.routerSubscription = null;
+    this.newUserLevelValue = 0
   }
 
   ngOnInit() {
@@ -253,9 +256,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
 
-  changeUserLevel(newUserLevelValue: number) {
-    this.selectedUserlevel = this.userLevelList[newUserLevelValue];
-    this.filterService.filters.userLevel = newUserLevelValue + 1; // Userlevel starting at 1
+  changeUserLevel(event) {
+    this.newUserLevelValue = event[0]._value
+    this.selectedUserlevel = this.userLevelList[this.newUserLevelValue];
+    this.filterService.filters.userLevel = this.newUserLevelValue + 1; // Userlevel starting at 1
   }
 
   closeSearchPanel() {
