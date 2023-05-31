@@ -34,7 +34,6 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
-  private loadingStudies = [];
 
   public studyManagementData: Study[];
   public studyManagementFilter: string;
@@ -45,6 +44,7 @@ export class StudyCaseDataService extends DataHttpService {
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
   public favoriteStudy: Study[];
+  public lastStudyOpened: Study[];
 
   // Make innerLogs private so it's not accessible from the outside,
   // expose it as logs$ observable (read-only) instead.
@@ -64,6 +64,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = null;
 
     this.favoriteStudy = [];
+    this.lastStudyOpened = [];
     this.studyManagementData = [];
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
@@ -71,7 +72,6 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
-    this.loadingStudies = [];
   }
 
 
@@ -83,28 +83,11 @@ export class StudyCaseDataService extends DataHttpService {
     this.studyLoaded = loadedStudy;
   }
 
-  setStudyToLoad(studyId: number) {
-    // remove previous opened study from the loading studies
-    this.closeStudyLoading();
-    // Add a study into the list of loading studies
-    if (this.loadingStudies.indexOf(studyId.toString()) === -1) {
-        this.loadingStudies.push(studyId.toString());
-    }
-  }
-
-  isStudyLoading(studyId: number) {
-    // Check that a study is into the list of loading studies
-    return this.loadingStudies.indexOf(studyId.toString()) !== -1;
-  }
-
-  closeStudyLoading() {
-      this.loadingStudies = [];
-  }
-
   clearCache() {
     this.studyLoaded = null;
     this.studyManagementData = [];
     this.favoriteStudy = [];
+    this.lastStudyOpened = [];
     this.studySelectedValues.clear();
     this.studyManagementFilter = '';
     this.studyManagementColumnFiltered = ColumnName.ALL_COLUMNS;
@@ -143,6 +126,33 @@ export class StudyCaseDataService extends DataHttpService {
   removeFavoriteStudy(studyId: number, userId: number) {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
   }
+
+  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    };
+    const url = `${this.apiRoute}/${studyId}/edit`;
+    return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+  copyStudy(studyId: number, studyName: string, groupId: number): Observable<Study> {
+    const payload = {
+      study_id : studyId,
+      new_study_name: studyName,
+      group_id: groupId
+    };
+    const url = `${this.apiRoute}/${studyId}/copy`;
+    return this.http.post<Study>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -189,25 +199,6 @@ export class StudyCaseDataService extends DataHttpService {
     const data = {
       parameter_key: parameterKey,
       notification_id: notificationId
-    };
-
-    return this.http.post(url, data, options);
-  }
-
-  getStudyLogs(studyId): Observable<Blob> {
-
-    const options: {
-      headers?: HttpHeaders;
-      observe?: 'body';
-      params?: HttpParams;
-      reportProgress?: boolean;
-      responseType: 'blob';
-    } = {
-      responseType: 'blob'
-    };
-    const url = `${this.apiRoute}/logs/download`;
-    const data = {
-      studyid: studyId
     };
 
     return this.http.post(url, data, options);
@@ -296,27 +287,42 @@ export class StudyCaseDataService extends DataHttpService {
     Object.entries(loadedStudy.treeview.rootDict).forEach(treeNode => {
       const treeNodeValue = treeNode[1];
       const treeNodeKey = treeNode[0];
-      Object.entries(treeNodeValue.data).forEach(nodeData => {
-        const nodeDataValue = nodeData[1];
-        const nodeDataKey = nodeData[0];
-        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
-        if ( ontologyParameter !== null) {
-          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== '') {
-            loadedStudy.treeview.rootDict[treeNodeKey].data[nodeDataKey].displayName = displayName;
+      Object.entries(treeNodeValue.dataManagementDisciplineDict).forEach(discipline => {
+        const disciplineValue = discipline[1];
+        const disciplineKey = discipline[0];
+        Object.entries(disciplineValue.numericalParameters).forEach(nodeData => {
+          const nodeDataValue = nodeData[1];
+          const nodeDataKey = nodeData[0];
+          const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
+          if ( ontologyParameter !== null) {
+            const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+            if (displayName !== '') {
+              loadedStudy.treeview.rootDict[treeNodeKey].dataManagementDisciplineDict[disciplineKey].numericalParameters[nodeDataKey].displayName = displayName;
+            }
           }
-        }
-      });
-      Object.entries(treeNodeValue.dataDisc).forEach(nodeData => {
-        const nodeDataValue = nodeData[1];
-        const nodeDataKey = nodeData[0];
-        const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
-        if ( ontologyParameter !== null) {
-          const displayName = this.GetOntologyParameterLabel(ontologyParameter);
-          if (displayName !== '') {
-            loadedStudy.treeview.rootDict[treeNodeKey].dataDisc[nodeDataKey].displayName = displayName;
+        });
+        Object.entries(disciplineValue.disciplinaryInputs).forEach(nodeData => {
+          const nodeDataValue = nodeData[1];
+          const nodeDataKey = nodeData[0];
+          const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
+          if ( ontologyParameter !== null) {
+            const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+            if (displayName !== '') {
+              loadedStudy.treeview.rootDict[treeNodeKey].dataManagementDisciplineDict[disciplineKey].disciplinaryInputs[nodeDataKey].displayName = displayName;
+            }
           }
-        }
+        });
+        Object.entries(disciplineValue.disciplinaryOutputs).forEach(nodeData => {
+          const nodeDataValue = nodeData[1];
+          const nodeDataKey = nodeData[0];
+          const ontologyParameter = this.ontologyService.getParameter(nodeDataValue.variableKey);
+          if ( ontologyParameter !== null) {
+            const displayName = this.GetOntologyParameterLabel(ontologyParameter);
+            if (displayName !== '') {
+              loadedStudy.treeview.rootDict[treeNodeKey].dataManagementDisciplineDict[disciplineKey].disciplinaryOutputs[nodeDataKey].displayName = displayName;
+            }
+          }
+        });
       });
     });
   }
@@ -353,7 +359,12 @@ export class StudyCaseDataService extends DataHttpService {
         if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
           if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {
             this.onStudyCaseChange.emit(null);
-            this.router.navigate([Routing.STUDY_MANAGEMENT]);
+            const url = this.router.url;
+            if (url.includes(Routing.STUDY_MANAGEMENT)) {
+              this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+              } else {
+              this.router.navigate([url]);
+            }
           }
         }
       }));
@@ -500,8 +511,7 @@ export class StudyCaseDataService extends DataHttpService {
         setTimeout(() => {
           this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
         }, 2000);
-      } 
-      else {
+      } else {
         allocationObservable.next(allocation);
       }
 

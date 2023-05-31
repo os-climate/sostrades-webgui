@@ -40,7 +40,7 @@ export class StudyCaseDirectAccessComponent implements OnInit {
             );
           }
           else{
-            this.router.navigate([Routing.STUDY_MANAGEMENT]);
+            this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
           }
         })
       } else {

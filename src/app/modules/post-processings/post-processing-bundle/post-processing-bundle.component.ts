@@ -8,6 +8,7 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { LoadStatus } from 'src/app/models/study.model';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-post-processing-bundle',
@@ -23,9 +24,9 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public displayProgressBar: boolean;
   public displayHeader: boolean;
   public displayFilterButton: boolean;
-  public displayFilters: boolean;
   public isCalculationRunning: boolean;
   public isReadOnlyMode: boolean;
+  public additionalDisciplineName: string;
   calculationChangeSubscription: Subscription;
   validationChangeSubscription: Subscription;
   studyStatusChangeSubscription: Subscription;
@@ -40,12 +41,12 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.displayProgressBar = false;
     this.displayHeader = false;
     this.displayFilterButton = false;
-    this.displayFilters = false;
     this.calculationChangeSubscription = null;
     this.validationChangeSubscription = null;
     this.studyStatusChangeSubscription = null;
     this.isCalculationRunning = false;
     this.isReadOnlyMode = false;
+    this.additionalDisciplineName = '';
   }
 
   ngOnInit() {
@@ -74,6 +75,12 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation => {
       this.plot(false);
     });
+
+    // show the discipline label if there are 2 or more discipline with the same model at the same node
+    if(this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== '' 
+    && this.postProcessingBundle.showDisciplineName) {
+      this.additionalDisciplineName = ` : ${this.postProcessingBundle.disciplineName}`
+    }
   }
 
   ngOnDestroy() {
@@ -105,7 +112,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         }
         this.postProcessingService.resumePostProcessingRequestQueue();
         this.displayProgressBar = false;
-        this.calculationService.getLog(this.studyCaseDataService.loadedStudy.studyCase.id);
       }, errorReceived => {
         const error = errorReceived as SoSTradesError;
         if (error.redirect) {

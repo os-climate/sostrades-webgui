@@ -27,6 +27,8 @@ export class Study {
     public isCommenter: boolean,
     public isRestrictedViewer: boolean,
     public isFavorite: boolean,
+    public isLastStudyOpened: boolean,
+    public openingDate: Date,
   ) {
   }
 
@@ -53,7 +55,9 @@ export class Study {
       jsonData[StudyAttributes.ISCONTRIBUTOR],
       jsonData[StudyAttributes.ISCOMMENTER],
       jsonData[StudyAttributes.ISRESTRICTEDVIEWER],
-      jsonData[StudyAttributes.ISFAVORITE]
+      jsonData[StudyAttributes.ISFAVORITE],
+      jsonData[StudyAttributes.IS_LAST_STUDY_OPENED],
+      jsonData[StudyAttributes.OPENING_DATE],
       );
     return result;
   }
@@ -104,7 +108,7 @@ export class StudyCasePayload {
               public process: string,
               public group: number,
               public reference: string,
-              public type: string){ }
+              public type: string) { }
 }
 
 /**
@@ -150,7 +154,9 @@ export enum StudyAttributes {
   ISCONTRIBUTOR = 'is_contributor',
   ISCOMMENTER = 'is_commenter',
   ISRESTRICTEDVIEWER = 'is_restricted_viewer',
-  ISFAVORITE = 'is_favorite'
+  ISFAVORITE = 'is_favorite',
+  IS_LAST_STUDY_OPENED = 'is_last_study_opened',
+  OPENING_DATE = 'opening_date'
 }
 
 export enum LoadedStudyAttributes {

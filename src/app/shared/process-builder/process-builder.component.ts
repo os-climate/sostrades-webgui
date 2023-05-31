@@ -1,10 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { NodeData, IoType, ProcessBuilderAttribute, ProcessBuilderData } from 'src/app/models/node-data.model';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { NodeData, IoType, ProcessBuilderData } from 'src/app/models/node-data.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
-import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
-import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
-import { SpreadsheetDialogData } from 'src/app/models/dialog-data.model';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 
 
@@ -13,7 +9,7 @@ import { StudyCaseCreationService } from 'src/app/services/study-case/study-case
   templateUrl: './process-builder.component.html',
   styleUrls: ['./process-builder.component.scss']
 })
-export class ProcessBuilderComponent implements OnInit {
+export class ProcessBuilderComponent implements OnInit, OnDestroy {
 
   @Input() nodeData: NodeData;
   @Input() namespace: string;
@@ -36,6 +32,10 @@ export class ProcessBuilderComponent implements OnInit {
         this.isReadOnly = false;
       }
     }
+  }
+
+  ngOnDestroy() {
+   this.studyCaseCreationService.closeStudyCaseCreationDialog();
   }
 
   onClickShow() {

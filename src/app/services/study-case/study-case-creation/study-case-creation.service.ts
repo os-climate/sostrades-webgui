@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
 import { NodeData, ProcessBuilderAttribute, ProcessBuilderData } from 'src/app/models/node-data.model';
@@ -19,7 +19,7 @@ import { StudyCaseMainService } from '../main/study-case-main.service';
 })
 export class StudyCaseCreationService {
 
-
+  private dialogRef: MatDialogRef<StudyCaseCreationComponent>;
   constructor(
     private dialog: MatDialog,
     public studyCaseDataService: StudyCaseDataService,
@@ -35,12 +35,12 @@ export class StudyCaseCreationService {
     const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
     dialogData.process = process;
 
-    const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
+    this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
       disableClose: true,
       data: dialogData
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.dialogRef.afterClosed().subscribe(result => {
       const resultCreateStudyRef = result as StudyCaseCreateDialogData;
 
       if ((resultCreateStudyRef !== null) && (resultCreateStudyRef !== undefined)) {
@@ -114,12 +114,12 @@ export class StudyCaseCreationService {
         dialogData.studyType = processBuilderData.usecaseInfoType;
         dialogData.studyId = processBuilderData.usecaseInfoIdentifier;
 
-        const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
+        this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
           disableClose: true,
           data: dialogData
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        this.dialogRef.afterClosed().subscribe(result => {
           const studyCaseData = result as StudyCaseCreateDialogData;
           observer.next(studyCaseData);
         });
@@ -136,5 +136,12 @@ export class StudyCaseCreationService {
       });
     });
     return observableResult;
+  }
+
+  closeStudyCaseCreationDialog() {
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
+    }
   }
 }

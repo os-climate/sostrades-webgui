@@ -26,7 +26,7 @@ export class StudyCaseLogging {
 export enum StudyCaseLoggingAttributes {
 
   NAME = 'name',
-  LEVEL = 'log_level_name',
+  LEVEL = 'level',
   MESSAGE = 'message',
   CREATED = 'created',
   EXCEPTION = 'exception'

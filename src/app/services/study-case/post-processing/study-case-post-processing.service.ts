@@ -35,12 +35,10 @@ export class StudyCasePostProcessingService extends PostProcessingHttpService {
   private loadStudyTimeout(studyId: number, loaderObservable: Subscriber<boolean>, reload: boolean) {
     this.internalLoadStudy(studyId, reload).subscribe(loaded => {
       if (loaded === false) {
-        console.log('new timer');
         setTimeout(() => {
           this.loadStudyTimeout(studyId,loaderObservable, false);
         }, 2000);
       } else {
-        console.log('found');
         loaderObservable.next(loaded);
       }
     },

@@ -59,7 +59,7 @@ export class StudyCaseManagementContainerComponent implements OnInit, OnDestroy 
     let fragment;
     switch (event.index) {
       case 0:
-        fragment = Routing.STUDY_CASE;
+        fragment = Routing.STUDY_MANAGEMENT;
         this.headerService.changeTitle(NavigationTitle.STUDY_MANAGEMENT);
         break;
       case 1:
@@ -77,8 +77,8 @@ export class StudyCaseManagementContainerComponent implements OnInit, OnDestroy 
     this.setVisibility(this.index);
 
     // navigate only if the router url is not already up-to-date
-    if (!((this.router.url.includes(Routing.STUDY_MANAGEMENT)) && (this.router.url.includes(fragment)))) {
-      this.router.navigate([Routing.STUDY_MANAGEMENT, fragment]);
+    if (!((this.router.url.includes(Routing.STUDY_CASE)) && (this.router.url.includes(fragment)))) {
+      this.router.navigate([Routing.STUDY_CASE, fragment]);
     }
    }
 

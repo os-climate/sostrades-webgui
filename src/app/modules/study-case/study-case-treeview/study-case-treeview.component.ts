@@ -16,7 +16,7 @@ import { DisciplineStatus, StudyCalculationStatus } from 'src/app/models/study-c
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { StudyCaseStatusInformationComponent } from '../study-case-status-information/study-case-status-information.component';
 import { ValidationDialogData, UsersRoomDialogData, StudyCaseModificationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
@@ -90,6 +90,11 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   public isSearchOption: boolean;
 
   public dataSource: MatTreeNestedDataSource<TreeNode>;
+  private dialogRefValidate: MatDialogRef<ValidationDialogComponent>;
+  private dialogRefStatus: MatDialogRef<StudyCaseStatusInformationComponent>;
+  private dialogRefRoom: MatDialogRef<UserRoomDialogComponent>;
+  private dialogRefModification: MatDialogRef<StudyCaseModificationDialogComponent>;
+
 
   @ViewChild('filter', { static: false }) private filterElement: ElementRef;
 
@@ -337,6 +342,24 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.onTreeNodeNavigationSubscription.unsubscribe();
       this.onTreeNodeNavigationSubscription = null;
     }
+    if (this.dialogRefStatus !== null && this.dialogRefStatus !== undefined) {
+      this.dialogRefStatus.close();
+      this.dialogRefStatus = null;
+    }
+    if (this.dialogRefValidate !== null && this.dialogRefValidate !== undefined) {
+      this.dialogRefValidate.close();
+      this.dialogRefValidate = null;
+    }
+    if (this.dialogRefRoom !== null && this.dialogRefRoom !== undefined) {
+      this.dialogRefRoom.close();
+      this.dialogRefRoom = null;
+    }
+    if (this.dialogRefModification !== null && this.dialogRefModification !== undefined) {
+      this.dialogRefModification.close();
+      this.dialogRefModification = null;
+    }
+
+    this.studyDialogService.closeAccessLink();
   }
 
   get currentSelectedNode(): TreeNode {
@@ -371,18 +394,20 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.treeControl.expand(treenode);
 
     // Retrieve related disciplines
-    let discNames = []
-    if (nodeData.disciplineFullPathList.length === 0 || this.filterService.filters.showSimpleDisplay) {
+    const discNames = [];
+    if (this.filterService.filters.showSimpleDisplay) {
       discNames.push('Data');
     } else {
-      nodeData.disciplineFullPathList.forEach(discName => {
-        discNames.push(discName);
+      Object.keys(treenode.dataManagementDisciplineDict).forEach(displineKey => {
+        if (nodeData.identifier.indexOf(displineKey) > -1) {
+        discNames.push(displineKey);
+        }
       });
     }
 
 
     setTimeout(() => {
-      //Expand disciplines
+      // Expand disciplines
       discNames.forEach(discName => {
         this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${discName}`);
 
@@ -541,14 +566,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         validationDialogData.title = 'Claim execution right';
         validationDialogData.buttonOkText = 'Claim & Start execution';
 
-        const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+        this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
           width: '500px',
           height: '220px',
           data: validationDialogData,
         });
 
-        dialogRefValidate.afterClosed().subscribe((result) => {
+        this.dialogRefValidate.afterClosed().subscribe((result) => {
           const validationData: ValidationDialogData = result as ValidationDialogData;
 
           if (validationData !== null && validationData !== undefined) {
@@ -593,13 +618,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
           const studyCase = this.studyCaseDataService.loadedStudy.studyCase;
           this.calculationService.execute(this.studyCaseDataService.loadedStudy).subscribe(response => {
-
+            
             // Send socket notification
             this.socketService.executeStudy(studyCase.id, true);
 
             this.subscribeToExecution();
             this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(studyCase.id);
-
+            this.postProcessingService.clearPostProcessingDict();
 
 
             this.snackbarService.showInformation('Study case successfully submitted');
@@ -651,14 +676,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         validationDialogData.title = 'Stop execution';
         validationDialogData.buttonOkText = 'Stop execution';
 
-        const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+        this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
           width: '500px',
           height: '220px',
           data: validationDialogData,
         });
 
-        dialogRefValidate.afterClosed().subscribe((result) => {
+        this.dialogRefValidate.afterClosed().subscribe((result) => {
           const validationData: ValidationDialogData = result as ValidationDialogData;
 
           if (validationData !== null && validationData !== undefined) {
@@ -754,13 +779,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         // Reload the study in order to get all post postprocessing data
         const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
           let loadedstudyCase = resultLoadedStudy as LoadedStudy;
-          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, false, (isStudyLoaded)=>{
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, (isStudyLoaded)=>{
               studySubscription.unsubscribe();
               // Cleaning old subscriptions
               this.cleanExecutionSubscriptions();
               this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
               this.calculationService.onCalculationChange.emit(false);
-            }, false, false, true);
+            }, false, true).subscribe();
           }, errorReceived => {
           const error = errorReceived as SoSTradesError;
           if (error.redirect) {
@@ -794,8 +819,10 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           this.onShowStatus();
           this.studyIsDone = false;
         }
+        this.postProcessingService.clearPostProcessingDict();
         this.postProcessingService.resetPostProcessingQueue();
         this.startBackgroundLoadingPostProcessing();
+        
 
         this.snackbarService.showInformation('Study case successfully reloaded');
         this.loadingDialogService.closeLoading();
@@ -842,7 +869,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   onShowStatusInformation() {
-    const dialogRef = this.dialog.open(StudyCaseStatusInformationComponent, {
+    this.dialogRefStatus = this.dialog.open(StudyCaseStatusInformationComponent, {
       disableClose: false
     });
   }
@@ -852,7 +879,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     usersRoomDialogData.users = this.usersInRoom;
     usersRoomDialogData.studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
 
-    const dialogRef = this.dialog.open(UserRoomDialogComponent, {
+    this.dialogRefRoom = this.dialog.open(UserRoomDialogComponent, {
       disableClose: false,
       width: '850px',
       height: '600px',
@@ -872,13 +899,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     validationDialogData.buttonOkText = 'Reload Study';
     validationDialogData.title = 'Reload Study';
 
-    const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+    this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
       width: '500px',
       height: '220px',
       data: validationDialogData
     });
-    dialogRefValidate.afterClosed().subscribe((result) => {
+    this.dialogRefValidate.afterClosed().subscribe((result) => {
       const validationData: ValidationDialogData = result as ValidationDialogData;
 
       if (validationData !== null && validationData !== undefined) {
@@ -904,7 +931,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     const studyCaseModificatioDialogData = new StudyCaseModificationDialogData();
     studyCaseModificatioDialogData.changes = studyParameters;
 
-    const dialogRefValidate = this.dialog.open(StudyCaseModificationDialogComponent, {
+    this.dialogRefModification = this.dialog.open(StudyCaseModificationDialogComponent, {
       disableClose: true,
       width: '1100px',
       height: '800px',
@@ -912,7 +939,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       data: studyCaseModificatioDialogData
     });
 
-    dialogRefValidate.afterClosed().subscribe(result => {
+    this.dialogRefModification.afterClosed().subscribe(result => {
       const resultData: StudyCaseModificationDialogData = result as StudyCaseModificationDialogData;
 
       if ((resultData !== null) && (resultData !== undefined)) {
@@ -1134,14 +1161,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       validationDialogData.message = `You have made unsaved changes in your study save & synchronise your changes before launching calculation ?`;
       validationDialogData.buttonOkText = 'Save & Run';
 
-      const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+      this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
         width: '500px',
         height: '220px',
         data: validationDialogData
       });
 
-      dialogRefValidate.afterClosed().subscribe(result => {
+      this.dialogRefValidate.afterClosed().subscribe(result => {
         const validationData: ValidationDialogData = result as ValidationDialogData;
 
         if ((validationData !== null) && (validationData !== undefined)) {
@@ -1174,7 +1201,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             postProcessingBundle.forEach(bdl => {
               this.postProcessingService.addPostProcessingRequestToQueue(
                 this.studyCaseDataService.loadedStudy,
-                this.root.rootDict[key].fullNamespace,
+                bdl.disciplineName,
                 bdl);
             });
           }

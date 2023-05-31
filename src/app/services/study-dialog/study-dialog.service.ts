@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { StudyLink } from 'src/app/models/dialog-data.model';
 import { Study } from 'src/app/models/study.model';
 import { StudyCaseLinkInformationComponent } from 'src/app/modules/study-case/study-case-link-information/study-case-link-information.component';
@@ -9,6 +9,9 @@ import { StudyCaseLinkInformationComponent } from 'src/app/modules/study-case/st
 })
 export class StudyDialogService {
 
+  private dialogRef: MatDialogRef<StudyCaseLinkInformationComponent>;
+
+
   constructor(private dialog: MatDialog) { }
 
   showAccessLink(study: Study) {
@@ -16,9 +19,16 @@ export class StudyDialogService {
     studyLinkDialogData.studyName = study.name;
     studyLinkDialogData.htmlLink = `${window.location.origin}/study/${study.id}`;
 
-    const dialogRef = this.dialog.open(StudyCaseLinkInformationComponent, {
+    this.dialogRef = this.dialog.open(StudyCaseLinkInformationComponent, {
       disableClose: false,
       data: studyLinkDialogData,
     });
+  }
+
+  closeAccessLink() {
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
+    }
   }
 }
