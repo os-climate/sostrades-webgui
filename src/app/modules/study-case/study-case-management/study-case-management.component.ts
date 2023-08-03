@@ -247,10 +247,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
           this.dataSourceStudies = new MatTableDataSource<Study>(favoriteAndRecentStudies);
         } else {
-          this.studyCaseDataService.studyManagementData = studies;
-          this.dataSourceStudies = new MatTableDataSource<Study>(
-            this.studyCaseDataService.studyManagementData
-          );
+          this.dataSourceStudies = new MatTableDataSource<Study>(studies);
         }
         this.dataSourceStudies.sortingDataAccessor = (item, property) => {
           return typeof item[property] === 'string'
