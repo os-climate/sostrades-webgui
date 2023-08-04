@@ -107,6 +107,7 @@ export class StudyCaseDataService extends DataHttpService {
         response.forEach(study => {
           studies.push(Study.Create(study));
         });
+        this.studyManagementData = studies;
         return studies;
       }));
   }
