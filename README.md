@@ -25,7 +25,7 @@ For example : `"test": "set USERNAME_TEST=user_test&& set USERNAME_PASSWORD=user
 
 Run `npm test` to execute.
 
-Run  `npx playwright codegen` to launch test generator. 
+Run  `npx playwright codegen` to launch test generator.
 
 ## Further help
 
