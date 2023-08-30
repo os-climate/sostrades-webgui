@@ -24,14 +24,13 @@ export class CsvData {
               // Create dataframe entry
               dataframeDescriptor.columns[key] = new DataframeDescriptorItem();
               dataframeDescriptor.columns[key].columnType = 'unknown string';
-              dataframeDescriptor.columns[key].isColumnEditable = true;
-              dataframeDescriptor.columns[key].columnRange = [];
             }
 
             // Creating line infos
             csvRowDict[key].type = dataframeDescriptor.columns[key].columnType;
             csvRowDict[key].isEditable = dataframeDescriptor.columns[key].isColumnEditable;
             csvRowDict[key].range = dataframeDescriptor.columns[key].columnRange;
+            csvRowDict[key].isRemovable = dataframeDescriptor.columns[key].isColumnRemovable;
           }
         });
         result.csvRowList.push(csvRowDict);

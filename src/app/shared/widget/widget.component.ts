@@ -102,6 +102,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
       this.nodeData.identifier,
       this.nodeData.type.toString(),
       UpdateParameterType.SCALAR,
+      null,
       this.namespace,
       this.discipline,
       value,
