@@ -6,6 +6,7 @@ export class JSpreadSheetProperties {
   public onafterchanges: any;
   public oninsertrow: any;
   public ondeleterow: any;
+  public onbeforedeletecolumn:any;
   public plugins: {}[];
 
   constructor(
@@ -38,9 +39,19 @@ export class JSpreadSheetProperties {
     } else {
       // Looping through descriptor if one column is not editable disable row addition and deletion
       Object.keys(this.dataframeDescriptor.columns).forEach(colName => {
-        if (this.dataframeDescriptor.columns[colName].isColumnEditable === false) {
+        const columnName = this.dataframeDescriptor.columns[colName]
+        if (columnName.isColumnEditable === false) {
           this.allowDeleteRow = false;
           this.allowInsertRow = false;
+        }
+        
+        if (columnName.isColumnRemovable) {
+          Object.values(this.columns).forEach( (column:any) => { 
+            if (colName === column.title)
+            {
+             this.allowDeleteColumn = true;
+            }
+          })
         }
       });
     }
@@ -66,8 +77,6 @@ export class JSpreadSheetColumns {
               || dataframeDescriptor.columns[columnName] === null) {// Column is not described
               // Create dataframe entry
               dataframeDescriptor.columns[columnName] = new DataframeDescriptorItem();
-              dataframeDescriptor.columns[columnName].isColumnEditable = true;
-              dataframeDescriptor.columns[columnName].columnRange = [];
               // Add list type to force type checking
               if (listType !== null) {
                 dataframeDescriptor.columns[columnName].columnType = listType;
@@ -83,7 +92,8 @@ export class JSpreadSheetColumns {
           const newColumn = new JSpreadSheetColumnDef(
             columnName,
             columnType,
-            !dataframeDescriptor.columns[columnName].isColumnEditable
+            !dataframeDescriptor.columns[columnName].isColumnEditable,
+            dataframeDescriptor.columns[columnName].isColumnRemovable
           );
           result.columnsData.push(newColumn);
         }
@@ -99,7 +109,8 @@ export class JSpreadSheetColumns {
               const newColumn = new JSpreadSheetColumnDef(
                 columnName,
                 dataframeDescriptor.columns[columnName].columnType,
-                !dataframeDescriptor.columns[columnName].isColumnEditable
+                !dataframeDescriptor.columns[columnName].isColumnEditable,
+                dataframeDescriptor.columns[columnName].isColumnRemovable
               );
               result.columnsData.push(newColumn);
             }
@@ -117,6 +128,7 @@ export class JSpreadSheetColumnDef {
     public title: string,
     public type: string,
     public readOnly: boolean = false,
+    public removable: boolean = false,
     public mask = null,
     public allowEmpty: boolean = false,
     public width = '100%'
