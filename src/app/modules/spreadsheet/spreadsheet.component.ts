@@ -31,6 +31,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   public rowData: { [colName: string]: JSpreadSheetRowData }[];
   public title: string;
   public contentHeight: number = 56;
+  public columnsToDeleted : string[];
 
   @ViewChild("spreadsheet") spreadsheet: ElementRef;
   public jExcelSpreadSheet: any;
@@ -52,6 +53,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     this.rowData = [];
     this.hasCsvChanges = false;
     this.isCsvEditable = true;
+    this.columnsToDeleted = [];
   }
 
   ngOnInit(): void {
@@ -190,6 +192,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       jExcelProperties.editable = false;
       jExcelProperties.allowDeleteRow = false;
       jExcelProperties.allowInsertRow = false;
+      jExcelProperties.allowDeleteColumn = false;
       this.isLargeFile = true;
     }
 
@@ -201,9 +204,32 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       this.unlockSaveButton();
     };
 
-    jExcelProperties.ondeleterow = () => {
+    jExcelProperties.ondeleterow = () => { 
       this.unlockSaveButton();
     };
+
+    
+    jExcelProperties.onbeforedeletecolumn = (instance, index) => {
+      
+      let deleteColumn = false;
+      const columnFromColumnsDef = Object.values(this.columnsDef).map((column:any) => column.title);
+      const columnNameSelected = columnFromColumnsDef[index];
+      
+      if (columnNameSelected !== null && columnNameSelected !== undefined && index != -1) {
+        const dataframeDescriptor = this.data.nodeData.dataframeDescriptor.columns[columnNameSelected];
+        if (dataframeDescriptor.isColumnRemovable) {
+          deleteColumn = true
+          this.unlockSaveButton();
+          this.columnsToDeleted.push(columnNameSelected)
+          // Return true to delete the column.
+          return deleteColumn;
+        } else {
+          this.snackbarService.showWarning(`This column ${columnNameSelected} is not removable`);
+          // Return false to cancel the user action.
+          return deleteColumn;
+        }
+      }
+    }
 
     this.isTableLoaded = true;
     this.jExcelSpreadSheet = jExcel(this.spreadsheet.nativeElement, jExcelProperties);
@@ -369,6 +395,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         this.data.nodeData.identifier,
         this.data.nodeData.type.toString(),
         UpdateParameterType.SCALAR,
+        null,
         this.data.namespace,
         this.data.discipline,
         newDataList,
@@ -385,6 +412,14 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
     } else {
 
+      // Check if a column has been removed
+        if (this.columnsToDeleted.length > 0) {
+            this.columnsToDeleted.forEach( deletedColumn => { 
+              // delete colums from dataframeDescriptor dictionnary
+              delete this.data.nodeData.dataframeDescriptor.columns[deletedColumn]
+            })    
+        }
+        
         // Saving dataframe, array or dict type
         this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.data.nodeData.displayName}.csv`);
         // Generate string b64 file for local storage
@@ -393,6 +428,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
           this.data.nodeData.identifier,
           UpdateParameterType.CSV,
           UpdateParameterType.CSV,
+          this.columnsToDeleted,
           this.data.namespace,
           this.data.discipline,
           null,
