@@ -149,6 +149,7 @@ export class LoginComponent implements OnInit {
     const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
     console.log('url from study : ' + studyUrlRequested)
     this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
+      this.snackbarService.closeSnackbarIfOpened();
       if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
         
         this.router.navigate([studyUrlRequested]);
