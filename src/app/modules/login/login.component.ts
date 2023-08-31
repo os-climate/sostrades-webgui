@@ -148,11 +148,11 @@ export class LoginComponent implements OnInit {
     this.loadingLogin = true;
     this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
       const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
-
+      console.log('url from study : ' + studyUrlRequested)
       if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
         this.router.navigate([studyUrlRequested]);
       } else {
-        document.location.href = githubOauthUrl
+        this.router.navigate([Routing.HOME]);
         console.log('url from git : ' + githubOauthUrl)
       }
       this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
