@@ -1089,6 +1089,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
               nodeDataCache.variableId,
               nodeDataCache.variableType,
               nodeDataCache.changeType,
+              nodeDataCache.columnDeleted,
               nodeDataCache.namespace,
               nodeDataCache.discipline,
               nodeDataCache.newValue,

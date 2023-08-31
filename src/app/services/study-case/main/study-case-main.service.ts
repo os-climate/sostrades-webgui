@@ -252,6 +252,10 @@ export class StudyCaseMainService extends MainHttpService {
       parametersList.forEach(parameter => {
         if (parameter.changeType === UpdateParameterType.CSV) { // Case file uploaded
           formData.append('file', TypeConversionTools.b64StringToFile(parameter.newValue, parameter.variableId + '.csv'));
+          // Check if columns has been deleded
+          if (parameter.columnDeleted !== undefined && parameter.columnDeleted !== null && parameter.columnDeleted.length > 0) {
+           formData.append('column_deleted', JSON.stringify(parameter.columnDeleted));
+          }
           fileInfos[parameter.variableId + '.csv'] = {
             variable_id: parameter.variableId,
             discipline: parameter.discipline,
@@ -273,7 +277,7 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   // tslint:disable-next-line: max-line-length
-  private updateStudyParametersTimeout(studyId: number, requestUrl: string, formData: FormData, loaderObservable: Subscriber<LoadedStudy>) {
+  private updateStudyParametersTimeout(studyId: number, requestUrl: string, formData: FormData,  loaderObservable: Subscriber<LoadedStudy>) {
     this.http.post(requestUrl, formData).pipe(map(response => {
       return LoadedStudy.Create(response);
     })).subscribe(loadedStudy => {

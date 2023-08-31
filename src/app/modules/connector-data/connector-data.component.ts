@@ -37,6 +37,7 @@ export class ConnectorDataComponent implements OnInit {
         this.data.nodeData.identifier,
         this.data.nodeData.type.toString(),
         UpdateParameterType.CONNECTOR_DATA,
+        null,
         this.data.namespace,
         this.data.discipline,
         this.innerConnectorData,
