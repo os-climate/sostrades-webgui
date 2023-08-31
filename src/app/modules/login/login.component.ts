@@ -152,7 +152,7 @@ export class LoginComponent implements OnInit {
       if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
         this.router.navigate([studyUrlRequested]);
       } else {
-        this.router.navigate([Routing.HOME]);
+        document.location.href = githubOauthUrl
         console.log('url from git : ' + githubOauthUrl)
       }
       this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
