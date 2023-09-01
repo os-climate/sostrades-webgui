@@ -17,29 +17,23 @@ export class TreenodeTools {
         });
       }
 
-      if (Object.keys(treenode.data).length > 0) {
-        Object.keys(treenode.data).forEach(d => {
-          
-          if (ontologyRequest.ontology_request.parameter_usages.indexOf(treenode.data[d].variableKey) < 0) {
-            ontologyRequest.ontology_request.parameter_usages.push(treenode.data[d].variableKey);
-          }
+      if (Object.keys(treenode.dataManagementDisciplineDict).length > 0) {
+        Object.values(treenode.dataManagementDisciplineDict).forEach(discipline => {
+          Object.keys(discipline.allDataDict).forEach(d => {
+            
+            if (ontologyRequest.ontology_request.parameter_usages.indexOf(discipline.allDataDict[d].variableKey) < 0) {
+              ontologyRequest.ontology_request.parameter_usages.push(discipline.allDataDict[d].variableKey);
+            }
+          });
         });
       }
 
-      if (Object.keys(treenode.dataDisc).length > 0) {
-        Object.keys(treenode.dataDisc).forEach(d => {
-          
-          if (ontologyRequest.ontology_request.parameter_usages.indexOf(treenode.dataDisc[d].variableKey) < 0) {
-            ontologyRequest.ontology_request.parameter_usages.push(treenode.dataDisc[d].variableKey);
-          }
-          
-        });
-      }
       if (treenode.children.value.length > 0) {
         treenode.children.value.forEach(tn => {
           this.recursiveTreenodeExtract(tn, ontologyRequest);
         });
       }
     }
+
   }
 }

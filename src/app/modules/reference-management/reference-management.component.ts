@@ -10,6 +10,7 @@ import { ProcessGenerationStatus } from 'src/app/models/reference-generation-sta
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { Study } from 'src/app/models/study.model';
+import { ProcessService } from 'src/app/services/process/process.service';
 import { ReferenceGenerationObserverService } from 'src/app/services/reference-generation-observer/reference-generation-observer.service';
 import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -68,6 +69,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private elementRef: ElementRef,
+    public processService: ProcessService,
     public studyCaseDataService: StudyCaseDataService,
     public referenceDataService: ReferenceDataService,
     private snackbarService: SnackbarService,
@@ -200,6 +202,8 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
           study.studyType = 'Reference';
         }
         study.isRegeneratingReference = false;
+        // Add this reference to the list of its process
+        this.AddGeneratedRefenceToProcessList(study)
       } else {
         this.snackbarService.showError(
           'Error while generating reference ' + study.process + '.' + study.name + ' : ' + refDoneStatus.generationLogs
@@ -209,6 +213,13 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       this.referenceGenerationObserverService.removeReferenceGenerationObserver(study.id);
     });
   }
+   private AddGeneratedRefenceToProcessList(study: Study){
+    if (this.processService.processManagemenentData !== null && this.processService.processManagemenentData !== undefined && this.processService.processManagemenentData.length > 0) {
+      const process = this.processService.processManagemenentData.find(process => process.processId === study.process )
+      process.referenceList.push(study)
+    }
+   }
+
   hasFilter(column: ColumnName): boolean {
     const bool = this.referenceDataService.referenceSelectedValues.get(column) !== undefined
                 && this.referenceDataService.referenceSelectedValues.get(column) !== null

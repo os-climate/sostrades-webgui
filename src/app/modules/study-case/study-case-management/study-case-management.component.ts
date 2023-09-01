@@ -4,7 +4,8 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData, EditStudyCaseDialogData, FilterDialogData} from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData,
+  EditStudyCaseDialogData, FilterDialogData, StudyCaseCreateDialogData} from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -31,7 +32,9 @@ import { StudyCaseCreationService } from 'src/app/services/study-case/study-case
 import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
 import { ColumnName } from 'src/app/models/column-name.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
-import { filter } from 'rxjs/operators';
+import { ProcessService } from 'src/app/services/process/process.service';
+import { Process } from 'src/app/models/process.model';
+import { StudyCaseCreationComponent } from '../study-case-creation/study-case-creation.component';
 
 
 @Component({
@@ -114,7 +117,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
     private studyDialogService: StudyDialogService,
-    private headerService: HeaderService,
+    private processService: ProcessService,
     private userService: UserService,
     private studyCreationService: StudyCaseCreationService,
   ) {
@@ -163,11 +166,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     this.socketService.onCurrentStudyEdited.subscribe(refreshList => {
       if (refreshList) {
-        this.studyCaseMainService.closeStudy(true);
-        this.studyCaseLocalStorageService.removeStudiesFromLocalStorage();
         this.loadStudyManagementData();
       }
-      });
+    });
   }
 
   ngOnDestroy() {
@@ -226,20 +227,27 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.dataSourceStudies = new MatTableDataSource<Study>(null);
 
+    // Check if there are seleted checkbox then clear them
+    if ((this.selection !== null && this.selection !== undefined) && this.selection.selected.length > 0) {
+      this.selection.clear();
+    }
     this.studyCaseDataService.getStudies().subscribe(
       (studies) => {
-              // Retrieving study case list
+      // Retrieving study case list
         if (this.getOnlyFavoriteStudy) {
-          this.studyCaseDataService.favoriteStudy = studies.filter(study =>
-              study.isFavorite === true);
-          this.dataSourceStudies = new MatTableDataSource<Study>(
-            this.studyCaseDataService.favoriteStudy
-          );
+          // Filter studies list by favorite studies
+          this.studyCaseDataService.favoriteStudy = studies.filter(study => study.isFavorite === true);
+          // Filter studies list by last opened studies sorted by most recent opening date
+          this.studyCaseDataService.lastStudyOpened = studies
+            .filter(study => study.isLastStudyOpened === true && study.isFavorite === false)
+            .sort((studyA, studyB) => new Date(studyB.openingDate).getTime() - new Date(studyA.openingDate).getTime());
+
+          // Concat favorite studies list with last studies opened list
+          const favoriteAndRecentStudies = this.studyCaseDataService.favoriteStudy.concat(this.studyCaseDataService.lastStudyOpened);
+
+          this.dataSourceStudies = new MatTableDataSource<Study>(favoriteAndRecentStudies);
         } else {
-          this.studyCaseDataService.studyManagementData = studies;
-          this.dataSourceStudies = new MatTableDataSource<Study>(
-            this.studyCaseDataService.studyManagementData
-          );
+          this.dataSourceStudies = new MatTableDataSource<Study>(studies);
         }
         this.dataSourceStudies.sortingDataAccessor = (item, property) => {
           return typeof item[property] === 'string'
@@ -301,10 +309,80 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       if (changeHandled) {
         /**
          * Changes 23/09/2022
-         * Call createStudyCase with 'null' as process to launch a non process intialized modal
+         * Call createStudyCase with 'null' as process and 'null' study_name to launch a non process and non reference intialized modal
          */
         this.studyCreationService.showCreateStudyCaseDialog(null);
         }
+    });
+  }
+
+  copyStudy(study: Study) {
+    this.handleUnsavedChanges(changeHandled => {
+      if (changeHandled) {
+        /**
+         * Create 02/12/2022
+         * Retrieve the process from the study case process_id copied
+         * Call createStudyCase with the process and the study_name from the study case copied to launch intialized modal
+         */
+        let selectedProcess: Process;
+
+        if (this.processService.processManagemenentData === null || this.processService.processManagemenentData === undefined
+            || this.processService.processManagemenentData.length === 0) {
+          this.loadingDialogService.showLoading(`Retrieving of "${study.process}" in ontology processes list`);
+        }
+        this.processService.getUserProcesses(false).subscribe( processes => {
+          selectedProcess = processes.find(p => p.processId === study.process);
+          this.loadingDialogService.closeLoading();
+          // Check rights on the process before open createStudyCase modal
+          if (selectedProcess.isManager || selectedProcess.isContributor) {
+            const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
+            dialogData.process = selectedProcess;
+            dialogData.studyId = study.id;
+
+            const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
+              disableClose: true,
+              data: dialogData
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              const studyCaseData = result as StudyCaseCreateDialogData;
+              if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
+                if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
+                  this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
+                  this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId)
+                  .subscribe(copyStudy => {
+                    if (copyStudy !== null && copyStudy !== undefined) {
+                    this.loadingDialogService.closeLoading();
+                    this.snackbarService.showInformation(`Study ${copyStudy.name} has been succesfully copied from ${study.name}`);
+                    this.loadStudyManagementData();
+                    }
+                  }, errorReceived => {
+                    const error = errorReceived as SoSTradesError;
+                    if (error.redirect) {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showError(error.description);
+                    } else {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showError(`Error copying ${study.name}: "${error.description}"`);
+                    }
+                  });
+                }
+              }
+            });
+          } else {
+            this.snackbarService.showWarning(
+              `You cannot copy "${study.name}" beacause you do not have access to the process "${study.process}".`
+              );
+          }
+        } , errorReceived => {
+          const error = errorReceived as SoSTradesError;
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            const errorMessage = `Error loading process list for form : ${error.description}`;
+            this.snackbarService.showError(errorMessage);
+          }
+        });
+      }
     });
   }
 
@@ -327,20 +405,27 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       const editStudyCaseData: EditStudyCaseDialogData = result as EditStudyCaseDialogData;
       if (editStudyCaseData !== null && editStudyCaseData !== undefined) {
         if (editStudyCaseData.cancel === false) {
-          this.studyCaseMainService.closeStudy(true);
-          this.loadingDialogService.showLoading(`Updating study (${editStudyCaseData.studyName}). Please wait`);
-          this.studyCaseMainService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
-            loadStudy => {
-              this.studyCasePostProcessingService.resetStudyFromCache(loadStudy.studyCase.id).subscribe(() => {
-                this.socketService.updateStudy(loadStudy.studyCase.id);
+          // Close study if the loaded study is the same that the study edited
+          if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+            if (this.studyCaseDataService.loadedStudy.studyCase.id === study.id) {
+              this.studyCaseMainService.closeStudy(true);
+            }
+          }
+          this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.studyName}. Please wait`);
+          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
+            studyIsEdited => {
+                if (studyIsEdited) {
+                this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe(() => {
+                this.socketService.updateStudy(study.id);
                 this.loadingDialogService.closeLoading();
-                this.snackbarService.showInformation(`Study (${loadStudy.studyCase.name}) has been succesfully updated `);
+                this.snackbarService.showInformation(`Study ${editStudyCaseData.studyName} has been succesfully updated `);
                 this.loadStudyManagementData();
               }, errorReceived => {
                 this.snackbarService.showError('Error updating study\n' + errorReceived.description);
                 this.loadingDialogService.closeLoading();
               });
-            },
+            }
+          },
             errorReceived => {
               const error = errorReceived as SoSTradesError;
               if (error.redirect) {
@@ -356,6 +441,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 
   deleteStudiesValidation(studies: Study[]) {
     // Warn user is trying to delete current loaded study

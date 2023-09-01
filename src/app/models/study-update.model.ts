@@ -8,6 +8,7 @@ export class StudyUpdateParameter {
     public variableId: string,
     public variableType: string,
     public changeType: UpdateParameterType,
+    public columnDeleted: string[],
     public namespace: string,
     public discipline: string,
     public newValue: any,
@@ -23,6 +24,7 @@ export class StudyUpdateParameter {
       jsonData[StudyUpdateParameterAttributes.VARIABLEID],
       jsonData[StudyUpdateParameterAttributes.VARIABLETYPE],
       jsonData[StudyUpdateParameterAttributes.CHANGETYPE],
+      jsonData[StudyUpdateParameterAttributes.DELETED_COLUMN],
       jsonData[StudyUpdateParameterAttributes.NAMESPACE],
       jsonData[StudyUpdateParameterAttributes.DISCIPLINE],
       jsonData[StudyUpdateParameterAttributes.NEWVALUE],
@@ -56,7 +58,8 @@ export enum StudyUpdateParameterAttributes {
   OLDVALUE = 'old_value',
   OLDVALUEBLOB = 'old_value_blob',
   LASTMODIFIED = 'last_modified',
-  NOTIFICATIONID = 'notification_id'
+  NOTIFICATIONID = 'notification_id',
+  DELETED_COLUMN = 'deleted_column'
 }
 
 export enum UpdateParameterType {

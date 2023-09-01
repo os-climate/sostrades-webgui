@@ -5,7 +5,7 @@
     matInput
     [formControl]="inputFormControl"
     [type]="nodeData.type"
-    placeholder="Enter a value"
+    [placeholder]="placeholder"
     [errorStateMatcher]="matcher"
     [ngModel]="nodeData.value"
     (input)="onInputChange($event.target.value)"
@@ -20,7 +20,7 @@
       matInput
       [formControl]="inputFormControl"
       [type]="nodeData.type"
-      placeholder="Enter a value"
+      [placeholder]="placeholder"
       [errorStateMatcher]="matcher"
       [ngModel]="nodeData.value"
       (input)="onInputChange($event.target.value)"

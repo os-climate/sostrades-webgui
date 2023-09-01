@@ -15,7 +15,16 @@
     </mat-icon>
       Refresh list
     </button>   
-    <h2 *ngIf="getTitle" id="favorite-studies-title">Favorite studies</h2>
+    <h2 *ngIf="getTitle" id="favorite-studies-title">Last opened and favorite studies 
+        <i
+        class="fa-solid fa-circle-info"
+        matTooltip="This studies list contains, first, studies tagged as favorite and then the five last study opened unless the study is already among favorites."
+        style="font-size: 19px; color: #0b78b8;"
+        matTooltipPosition="right"
+        >
+        </i>
+    </h2>
+      
     <mat-label *ngIf="getFilter" class="number-studies">
       Number of Studies <b>{{ studyCount }}</b>
     </mat-label>
@@ -268,10 +277,21 @@
             color="accent"
             *ngIf="element.isManager"
             (click)="updateStudy(element)"
-            matTooltip="edit study case"
-          >
-          <i class="fa-solid fa-pen-to-square"></i>
-          </button>
+            matTooltip="Edit study case"
+            >
+            <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button
+            [id]="'btn-study-management-copy-' + element.groupName + '-' + element.name"
+            *ngIf="getCreateStudy"
+            style="margin-right: 5px"
+            mat-icon-button
+            color="accent"
+            (click)="copyStudy(element)"
+            matTooltip="Copy study case"
+            >
+            <i class="fa-solid fa-copy"></i>
+            </button>
 
             <button
               [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"

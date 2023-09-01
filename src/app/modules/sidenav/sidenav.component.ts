@@ -128,9 +128,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
                 // Saving changes
                 let studyParameters: StudyUpdateParameter[] = [];
                 studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(
-                  this.studyCaseLocalStorageService
-                    .getStudyIdWithUnsavedChanges()
-                    .toString()
+                  this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges().toString()
                 );
 
                 const studyCaseModificatioDialogData = new StudyCaseModificationDialogData();
@@ -152,9 +150,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
                   if (resultData !== null && resultData !== undefined) {
                     if (resultData.cancel !== true) {
                       this.studyCaseLocalStorageService.saveStudyChanges(
-                        this.studyCaseLocalStorageService
-                          .getStudyIdWithUnsavedChanges()
-                          .toString(),
+                        this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges().toString(),
                         resultData.changes,
                         false,
 

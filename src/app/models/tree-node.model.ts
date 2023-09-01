@@ -2,6 +2,7 @@ import { NodeData, CreateNodeDataDictionary, ValueType, INodeDataValueChange, Io
 import { BehaviorSubject } from 'rxjs';
 import { DisciplineStatus } from './study-case-execution-observer.model';
 import { PostProcessingBundle } from './post-processing-bundle.model';
+import { CreateDataManagementDisciplineDictionary, DataManagementDiscipline } from './data-management-discipline.model';
 
 export class TreeView {
   rootNode: TreeNode;
@@ -19,7 +20,17 @@ export class TreeView {
 
     Object.keys(result.rootDict).forEach(treenodeKey => {
       if (jsonPostProcessings !== undefined && jsonPostProcessings !== null) {
-        if (treenodeKey in jsonPostProcessings) {
+        Object.keys(result.rootDict[treenodeKey].dataManagementDisciplineDict).forEach(disciplineKey => {
+          if (disciplineKey in jsonPostProcessings) {
+            let postProc = (jsonPostProcessings[disciplineKey].map(cf => PostProcessingBundle.Create(cf)));
+            postProc.forEach(element => {
+              // indicate if the discipline name must be shown on bundle (in case if there are 2 or more discipline with the same model and thus the same name at the same node)
+              element.showDisciplineName = result.rootDict[treenodeKey].dataManagementDisciplineDict[disciplineKey].showLabel;
+              result.rootDict[treenodeKey].postProcessingBundle.push(element);
+            });
+          }
+        });
+        if (treenodeKey in jsonPostProcessings && result.rootDict[treenodeKey].postProcessingBundle.length == 0) {
           result.rootDict[treenodeKey].postProcessingBundle = jsonPostProcessings[treenodeKey].map(cf => PostProcessingBundle.Create(cf));
         }
       }
@@ -62,9 +73,8 @@ export class TreeNode implements INodeDataValueChange {
   isLastChild: boolean;
   isConfigured: boolean;
   private _status: DisciplineStatus;
-  dataDisc: { [id: string]: NodeData };
+  public dataManagementDisciplineDict: { [id: string]: DataManagementDiscipline };
   maturity: string;
-  public data: { [id: string]: NodeData };
 
   postProcessingBundle: PostProcessingBundle[];
   private _isRoot: boolean;
@@ -77,6 +87,7 @@ export class TreeNode implements INodeDataValueChange {
     public nodeType: string,
     public modelNameFullPath: string,
     public modelsFullPathList: string[],
+    jsonDisciplineDict: any,
     public fullNamespace: string,
     status: string,
     maturity: string,
@@ -94,15 +105,11 @@ export class TreeNode implements INodeDataValueChange {
     }
 
     this.status = DisciplineStatus.STATUS_NONE;
-    if (jsonData !== null && jsonData !== undefined) {
-      this.data = CreateNodeDataDictionary(jsonData, this, false);
+
+    if (jsonDisciplineDict !== null && jsonDisciplineDict !== undefined) {
+      this.dataManagementDisciplineDict = CreateDataManagementDisciplineDictionary(jsonDisciplineDict, this);
     } else {
-      this.data = {};
-    }
-    if (jsonDiscData !== null && jsonDiscData !== undefined) {
-      this.dataDisc = CreateNodeDataDictionary(jsonDiscData, this, true);
-    } else {
-      this.dataDisc = {};
+      this.dataManagementDisciplineDict = {};
     }
 
     this.postProcessingBundle = [];
@@ -145,6 +152,7 @@ export class TreeNode implements INodeDataValueChange {
       jsonData[TreeNodeAttributes.NODE_TYPE],
       jsonData[TreeNodeAttributes.MODEL_NAME_FULL_PATH],
       jsonData[TreeNodeAttributes.MODELS_NAME_FULL_PATH_LIST],
+      jsonData[TreeNodeAttributes.DATA_MANAGEMENT_DISCIPLINE_DICT],
       jsonData[TreeNodeAttributes.FULL_NAMESPACE],
       jsonData[TreeNodeAttributes.STATUS],
       jsonData[TreeNodeAttributes.MATURITY],
@@ -166,8 +174,11 @@ export class TreeNode implements INodeDataValueChange {
     }
 
     if (nodeDataDict !== null) {
-      Object.keys(result.data).forEach(key => {
-        nodeDataDict[result.data[key].identifier] = result.data[key];
+      Object.keys(result.dataManagementDisciplineDict).forEach(disciplineKey => {
+        let dataDict = result.dataManagementDisciplineDict[disciplineKey].allDataDict;
+          Object.keys(dataDict).forEach(key => {
+            nodeDataDict[dataDict[key].identifier] = dataDict[key];
+          });
       });
     }
 
@@ -197,17 +208,8 @@ export class TreeNode implements INodeDataValueChange {
   }
 
   public checkConfigured() {
-    let treeNodeConfigured = true;
-    // Check all treenode data is configured
-    if (this.data !== null && this.data !== undefined && Object.keys(this.data).length > 0) {
-      Object.keys(this.data).forEach(key => {
-        if (this.data[key].valueType === ValueType.EMPTY && this.data[key].ioType !== IoType.OUT) { // Missing values
-          treeNodeConfigured = false;
-        }
-      });
-    }
 
-    this.isConfigured = treeNodeConfigured;
+    this.isConfigured = this.checkTreeNodeConfigured();
 
     // Update parent treenode if it exist
     if (this.treeNodeParent !== null && this.treeNodeParent !== undefined) {
@@ -218,12 +220,16 @@ export class TreeNode implements INodeDataValueChange {
   public checkTreeNodeConfigured(): boolean {
     let treeNodeConfigured = true;
     // Check all treenode data is configured
-    if (this.data !== null && this.data !== undefined && Object.keys(this.data).length > 0) {
-      Object.keys(this.data).forEach(key => {
-        if (this.data[key].valueType === ValueType.EMPTY && this.data[key].ioType !== IoType.OUT) { // Missing values
-          treeNodeConfigured = false;
-        }
+    if (this.dataManagementDisciplineDict !== null && this.dataManagementDisciplineDict !== undefined && Object.keys(this.dataManagementDisciplineDict).length > 0) {
+      Object.keys(this.dataManagementDisciplineDict).forEach(disciplineKey => {
+        let dataDict = this.dataManagementDisciplineDict[disciplineKey].allDataDict;
+        Object.keys(dataDict).forEach(key => {
+          if (dataDict[key].valueType === ValueType.EMPTY && dataDict[key].ioType !== IoType.OUT) { // Missing values
+            treeNodeConfigured = false;
+          }
+        });
       });
+    
     }
     return treeNodeConfigured;
   }
@@ -254,6 +260,7 @@ export enum TreeNodeAttributes {
   IDENTIFIER = 'identifier',
   MODEL_NAME_FULL_PATH = 'model_name_full_path',
   MODELS_NAME_FULL_PATH_LIST = 'models_full_path_list',
+  DATA_MANAGEMENT_DISCIPLINE_DICT = 'data_management_disciplines',
   FULL_NAMESPACE = 'full_namespace'
 }
 

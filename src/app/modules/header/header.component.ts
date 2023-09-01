@@ -62,31 +62,43 @@ export class HeaderComponent implements OnInit {
     this.headerService.onChangeTitle.subscribe(result => {
       this.title = result;
     });
-
-    if (this.router.url.includes(Routing.HOME)) {
-      this.title = NavigationTitle.HOME;
-    } else if (this.router.url.includes(Routing.STUDY_MANAGEMENT)) {
-      this.title =  NavigationTitle.STUDY_MANAGEMENT;
-    } else if (this.router.url.includes(Routing.ONTOLOGY_MAIN)) {
-      this.title = NavigationTitle.ONTOLOGY_MAIN;
-    } else if (this.router.url.includes(Routing.MODELS)) {
-      this.title = NavigationTitle.MODELS;
-    } else if (this.router.url.includes(Routing.PROCESSES)) {
-      this.title = NavigationTitle.PROCESS;
-    } else if (this.router.url.includes(Routing.ONTOLOGY_PARAMETERS)) {
-      this.title = NavigationTitle.ONTOLOGY_PARAMETERS;
-    } else if (this.router.url.includes(Routing.STUDY_WORKSPACE)) {
-      this.title = NavigationTitle.STUDY_WORKSPACE;
-    } else if (this.router.url.includes(Routing.GROUP_MANAGEMENT)) {
-      this.title = NavigationTitle.GROUP_MANAGEMENT;
-    } else if (this.router.url.includes(Routing.USER_MANAGEMENT)) {
-      this.title = NavigationTitle.USER_MANAGEMENT;
-    } else if (this.router.url.includes(Routing.PROCESSES_MANAGEMENT)) {
-      this.title = NavigationTitle.PROCESSES_MANAGEMENT;
-    } else if (this.router.url.includes(Routing.EXECUTION_MANAGEMENT)) {
-      this.title = NavigationTitle.EXECUTION_MANAGEMENT;
-    } else {
-      this.title = NavigationTitle.HOME;
+    switch (this.router.url !== '') {
+      case this.router.url.includes(Routing.HOME):
+        this.title = NavigationTitle.HOME;
+        break;
+      case this.router.url.includes(Routing.STUDY_MANAGEMENT):
+        this.title = NavigationTitle.STUDY_MANAGEMENT;
+        break;
+      case this.router.url.includes(Routing.ONTOLOGY_MAIN):
+        this.title = NavigationTitle.ONTOLOGY_MAIN;
+        break;
+      case this.router.url.includes(Routing.MODELS):
+        this.title = NavigationTitle.MODELS;
+        break;
+      case this.router.url.includes(Routing.PROCESSES):
+        this.title = NavigationTitle.PROCESS;
+        break;
+      case this.router.url.includes(Routing.ONTOLOGY_PARAMETERS):
+        this.title = NavigationTitle.ONTOLOGY_PARAMETERS;
+        break;
+      case this.router.url.includes(Routing.STUDY_WORKSPACE):
+        this.title = NavigationTitle.STUDY_WORKSPACE;
+        break;
+      case this.router.url.includes(Routing.GROUP_MANAGEMENT):
+        this.title = NavigationTitle.GROUP_MANAGEMENT;
+        break;
+      case this.router.url.includes(Routing.USER_MANAGEMENT):
+        this.title = NavigationTitle.USER_MANAGEMENT;
+        break;
+      case this.router.url.includes(Routing.PROCESSES_MANAGEMENT):
+        this.title = NavigationTitle.PROCESSES_MANAGEMENT;
+        break;
+      case this.router.url.includes(Routing.EXECUTION_MANAGEMENT):
+        this.title = NavigationTitle.EXECUTION_MANAGEMENT;
+        break;
+      default:
+        this.title = NavigationTitle.HOME;
+        break;
     }
   }
 
@@ -99,21 +111,21 @@ export class HeaderComponent implements OnInit {
 
   // Study Management
   onClickStudyManagement() {
-    this.router.navigate([Routing.STUDY_MANAGEMENT]);
-    this.trigger.closeMenu();
+    this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
     this.title = NavigationTitle.STUDY_MANAGEMENT;
     this.headerService.changeIndexTab(0);
   }
 
   onClickStudyCase() {
-    this.router.navigate([Routing.STUDY_MANAGEMENT, Routing.STUDY_CASE]);
+    this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+    this.trigger.closeMenu();
     this.title = NavigationTitle.STUDY_MANAGEMENT;
     this.headerService.changeIndexTab(0);
 
   }
 
   onClickReferenceManagement() {
-    this.router.navigate([Routing.STUDY_MANAGEMENT, Routing.REFERENCE_MANAGEMENT]);
+    this.router.navigate([Routing.STUDY_CASE, Routing.REFERENCE_MANAGEMENT]);
     this.title = NavigationTitle.STUDY_MANAGEMENT;
     this.headerService.changeIndexTab(2);
   }

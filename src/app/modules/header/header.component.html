@@ -12,6 +12,7 @@
       <mat-menu #mainMenu="matMenu" class="mainMenu">
 
         <button
+        id="home-menu-button"
         mat-menu-item
         (click)="onClickWelcomePage()">
         <mat-icon class="blue_color">home</mat-icon>
@@ -21,7 +22,7 @@
         id="study-menu-button"
         mat-menu-item 
         [matMenuTriggerFor]="StudyManagement"
-        (click)="onClickStudyManagement()">
+        (click)="onClickStudyCase()">
         <mat-icon class="blue_color">subject</mat-icon>
         Study
         </button>
@@ -34,6 +35,7 @@
         Ontology
         </button>
         <button 
+        id="group-management-menu-button"
         mat-menu-item  
         (click)="onClickGroupManagement()">
         <mat-icon class="blue_color">group</mat-icon>
@@ -41,7 +43,7 @@
       </mat-menu>
 
       <mat-menu  #StudyManagement="matMenu">
-          <button mat-menu-item id="study_management-menu-button" (click)="onClickStudyCase()">Study Management</button>
+          <button mat-menu-item id="study_management-menu-button" (click)="onClickStudyManagement()">Study Management</button>
           <button mat-menu-item id="reference-menu-button" (click)="onClickReferenceManagement()">Reference Management</button>
       </mat-menu>
 
