@@ -2,17 +2,24 @@ import { PostProcessingFilter } from './post-processing-filter.model';
 
 
 export class PostProcessingBundle {
+  public displayFilter: boolean;
 
+  //showDisciplineName parameter indicates if the discipline label must be shown in addition of the discipline model name
+  public showDisciplineName: boolean;
   constructor(
     public name: string,
+    public disciplineName: string,
     public filters: PostProcessingFilter[],
     public plotly: any[],
     public plotlyParetoFront: any[]) {
+      this.displayFilter = false;
+      this.showDisciplineName = false;
   }
 
   public static Create(jsonData: any): PostProcessingBundle {
 
     let name = '';
+    let disciplineName = '';
     let filters = [];
     let plotly = [];
     let plotlyParetoFront = [];
@@ -23,6 +30,12 @@ export class PostProcessingBundle {
         jsonData[PostProcessingBundleAttributes.NAME] !== undefined &&
         jsonData[PostProcessingBundleAttributes.NAME] !== null) {
         name = jsonData[PostProcessingBundleAttributes.NAME];
+      }
+
+      if (jsonData.hasOwnProperty(PostProcessingBundleAttributes.DISCIPLINE_NAME) &&
+        jsonData[PostProcessingBundleAttributes.DISCIPLINE_NAME] !== undefined &&
+        jsonData[PostProcessingBundleAttributes.DISCIPLINE_NAME] !== null) {
+          disciplineName = jsonData[PostProcessingBundleAttributes.DISCIPLINE_NAME];
       }
 
       if (jsonData.hasOwnProperty(PostProcessingBundleAttributes.FILTERS) &&
@@ -47,7 +60,7 @@ export class PostProcessingBundle {
       }
     }
 
-    return new PostProcessingBundle(name, filters, plotly, plotlyParetoFront);
+    return new PostProcessingBundle(name, disciplineName, filters, plotly, plotlyParetoFront);
   }
 
   public UpdatePlots(jsonData: any): void {
@@ -73,6 +86,7 @@ export class PostProcessingBundle {
 
 export enum PostProcessingBundleAttributes {
   NAME = 'name',
+  DISCIPLINE_NAME = 'discipline_name',
   FILTERS = 'filters',
   POST_PROCESSINGS = 'post_processings',
   PARETO_CHART = 'is_pareto_trade_chart'

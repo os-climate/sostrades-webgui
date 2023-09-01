@@ -1,17 +1,11 @@
-import { Component, OnInit, OnDestroy, EventEmitter, LOCALE_ID, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
 import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { CoeditionDialogData, ExecutionDialogData } from 'src/app/models/dialog-data.model';
-import { StudyCaseNotificationsChangesDialogComponent } from '../study-case-notifications-changes-dialog/study-case-notifications-changes-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/services/user/user.service';
-import { StudyCaseExecutionDialogComponent } from '../study-case-execution-dialog/study-case-execution-dialog.component';
-import { formatDate } from '@angular/common';
-import { LoadedStudy } from 'src/app/models/study.model';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 
@@ -36,13 +30,13 @@ export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewIn
   private logList: StudyCaseLogging[];
   public bottomAnchorLog: boolean;
   private scrollContainer: any;
+  private dialogRef: MatDialogRef<StudyCaseExecutionExceptionDialogComponent>;
+
 
   constructor(
     private dialog: MatDialog,
-    private userService: UserService,
-    private socketService: SocketService,
     private studyCaseDataService: StudyCaseDataService,
-    private appDataService: AppDataService) {
+ ) {
 
       this.studyCaseSubscription = null;
       this.studyCaseId = -1;
@@ -70,6 +64,11 @@ export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewIn
     if (this.logsSubscription !== null && this.logsSubscription !== undefined) {
       this.logsSubscription.unsubscribe();
       this.logsSubscription = null;
+    }
+
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
     }
   }
 
@@ -102,12 +101,11 @@ export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   private getLogs() {
-    //get studylog only if logger is initialized
+    // get studylog only if logger is initialized
     if (this.studyCaseDataService.loadedStudy !== undefined && this.studyCaseDataService.loadedStudy !== null){
       this.studyCaseId = this.studyCaseDataService.loadedStudy.studyCase.id;
     }
-    
-    if (this.studyCaseId !== -1){
+    if (this.studyCaseId !== -1) {
       this.studyCaseDataService.getLog(this.studyCaseId);
     }
   }
@@ -134,7 +132,7 @@ export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewIn
 
   showException(message: string) {
 
-    const dialogRef = this.dialog.open(StudyCaseExecutionExceptionDialogComponent, {
+    this.dialogRef = this.dialog.open(StudyCaseExecutionExceptionDialogComponent, {
       disableClose: false,
       width: '80vw',
       height: '80vh',

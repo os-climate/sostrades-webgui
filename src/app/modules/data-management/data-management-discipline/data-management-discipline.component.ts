@@ -28,6 +28,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
   public isCalculationRunning: boolean;
   public modelDetails: string[][];
   public disciplineIcon: string;
+  public additionalLabel: string;
 
   public disciplinaryInputsOrdered: NodeData[];
   public disciplinaryOutputsOrdered: NodeData[];
@@ -55,6 +56,15 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    //because modelNameFullPath can not be unique, add the discipline label to define the name of the discipline
+    this.additionalLabel = '';
+    if (this.disciplineData.label !== 'Data' && this.disciplineData.showLabel)
+    {
+      this.additionalLabel = ` : ${this.disciplineData.label}`;
+    }
+
+
     this.disciplinaryInputsOrdered = NodeDataTools.createOrderedListFromNodeDataDict(this.disciplineData.disciplinaryInputs);
     this.disciplinaryOutputsOrdered = NodeDataTools.createOrderedListFromNodeDataDict(this.disciplineData.disciplinaryOutputs);
     this.numericalParametersOrdered = NodeDataTools.createOrderedListFromNodeDataDict(this.disciplineData.numericalParameters);

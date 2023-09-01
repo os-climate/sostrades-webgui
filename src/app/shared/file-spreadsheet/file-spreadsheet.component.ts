@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
@@ -19,7 +19,7 @@ import { Papa } from 'ngx-papaparse';
   templateUrl: './file-spreadsheet.component.html',
   styleUrls: ['./file-spreadsheet.component.scss']
 })
-export class FileSpreadsheetComponent implements OnInit {
+export class FileSpreadsheetComponent implements OnInit, OnDestroy {
 
   @Input() nodeData: NodeData;
   @Input() namespace: string;
@@ -33,7 +33,9 @@ export class FileSpreadsheetComponent implements OnInit {
   public isReadOnly: boolean;
   public isListType: boolean;
   public isArrayType: boolean;
-  public hasSubTypeDescriptor: boolean
+  public hasSubTypeDescriptor: boolean;
+  private dialogRef: MatDialogRef<SpreadsheetComponent>;
+
 
   constructor(
     private loadingDialogService: LoadingDialogService,
@@ -62,7 +64,7 @@ export class FileSpreadsheetComponent implements OnInit {
         this.isListType = true;
       }
 
-      if (this.nodeData.subTypeDescriptor !== null && this.nodeData.subTypeDescriptor !== undefined){
+      if (this.nodeData.subTypeDescriptor !== null && this.nodeData.subTypeDescriptor !== undefined) {
           this.hasSubTypeDescriptor = true;
       }
 
@@ -70,6 +72,13 @@ export class FileSpreadsheetComponent implements OnInit {
         this.isArrayType = true;
       }
 
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.dialogRef !== null && this.dialogRef !== undefined) {
+      this.dialogRef.close();
+      this.dialogRef = null;
     }
   }
 
@@ -146,6 +155,7 @@ export class FileSpreadsheetComponent implements OnInit {
               this.nodeData.identifier,
               this.nodeData.type.toString(),
               UpdateParameterType.SCALAR,
+              null,
               this.namespace,
               this.discipline,
               newDataList,
@@ -170,6 +180,7 @@ export class FileSpreadsheetComponent implements OnInit {
           this.nodeData.identifier,
           UpdateParameterType.CSV,
           UpdateParameterType.CSV,
+          null,
           this.namespace,
           this.discipline,
           null,
@@ -250,11 +261,11 @@ export class FileSpreadsheetComponent implements OnInit {
           ) ||
           (this.isArrayType && (this.nodeData.value === null && updateParameter === null))
           ) {
-        const dialogRef = this.dialog.open(SpreadsheetComponent, {
+        this.dialogRef = this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData
         });
-        dialogRef.afterClosed().subscribe((result) => {
+        this.dialogRef.afterClosed().subscribe((result) => {
           if (result.cancel === false) {
             this.stateUpdate.emit();
           }
@@ -263,11 +274,11 @@ export class FileSpreadsheetComponent implements OnInit {
       } else {
         if (updateParameter !== null) { // Temporay file in local storage
           spreadsheetDialogData.file = TypeConversionTools.b64StringToBlob(updateParameter.newValue);
-          const dialogRef = this.dialog.open(SpreadsheetComponent, {
+          this.dialogRef = this.dialog.open(SpreadsheetComponent, {
             disableClose: true,
             data: spreadsheetDialogData
           });
-          dialogRef.afterClosed().subscribe((result) => {
+          this.dialogRef.afterClosed().subscribe((result) => {
             if (result.cancel === false) {
               this.stateUpdate.emit();
             }
@@ -276,11 +287,11 @@ export class FileSpreadsheetComponent implements OnInit {
         } else { // File in distant server
           this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe(file => {
             spreadsheetDialogData.file = new Blob([file]);
-            const dialogRef = this.dialog.open(SpreadsheetComponent, {
+            this.dialogRef = this.dialog.open(SpreadsheetComponent, {
               disableClose: true,
               data: spreadsheetDialogData
             });
-            dialogRef.afterClosed().subscribe((result) => {
+            this.dialogRef.afterClosed().subscribe((result) => {
               if (result.cancel === false) {
                 this.stateUpdate.emit();
               }
@@ -366,3 +377,4 @@ export class FileSpreadsheetComponent implements OnInit {
 
 
 }
+
