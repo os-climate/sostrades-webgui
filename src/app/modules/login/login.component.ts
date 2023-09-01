@@ -147,38 +147,18 @@ export class LoginComponent implements OnInit {
   loginWithGithub() {
     this.loadingLogin = true;
     const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
-    console.log('url from study: ' + studyUrlRequested)
     this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
       this.snackbarService.closeSnackbarIfOpened();
-      console.log('url from git: ' + githubOauthUrl)
+      document.location.href = githubOauthUrl
+      this.loadingLogin = false;
       if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
-        console.log('url from study 2: ' + studyUrlRequested)
         this.router.navigate([studyUrlRequested]);
-      } else {
-        console.log('url from git 2: ' + githubOauthUrl)
-        document.location.href = githubOauthUrl
       }
       this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
-      this.loadingLogin = false;
      
     }, (err) => {
       this.snackbarService.showError('Error at GitHub login : ' + err);
       this.loadingLogin = false;
     });
   }
-//   RoutingAfterLogin() {
-//     this.snackbarService.closeSnackbarIfOpened();
-
-//     // Retrieving study access url if it exists and rerouting if appropriated
-//     const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
-
-//     if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
-//       this.router.navigate([studyUrlRequested]);
-//     } else {
-//       this.router.navigate([Routing.HOME]);
-//     }
-//     this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
-//     this.loadingLogin = false;
-//  }
-
 }
