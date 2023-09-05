@@ -67,7 +67,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       // Case user try to load study from link and not authenticated
       if (this.location.path().includes('/study/')) {
         // Saving in local storage study requested url
-        console.log('save in locale strorage : ', this.location.path())
         this.studyCaseLocalStorage.setStudyUrlRequestedInLocalStorage(this.location.path());
       }
       this.router.navigate([Routing.LOGIN], { queryParams: { autologon: '' } });
