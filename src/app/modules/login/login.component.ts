@@ -157,7 +157,7 @@ export class LoginComponent implements OnInit {
         console.log('redirectUrl = ', redirectUrl)
       }
       else {
-        githubOauthUrl = githubOauthUrl
+        document.location.href = githubOauthUrl
       }
       this.loadingLogin = false;
       this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
