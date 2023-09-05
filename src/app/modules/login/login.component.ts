@@ -148,16 +148,12 @@ export class LoginComponent implements OnInit {
     this.loadingLogin = true;
     this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
       this.snackbarService.closeSnackbarIfOpened();
-      
+      document.location.href = githubOauthUrl;
       const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
-      console.log('github url : ', githubOauthUrl, 'study url : ', studyUrlRequested )
       if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
-        const redirectUrl = `${githubOauthUrl}&redirect_uri=${encodeURIComponent(`${window.location.origin}${studyUrlRequested}`)}`
-        document.location.href = redirectUrl;
-        console.log('redirectUrl = ', redirectUrl)
-      }
-      else {
-        document.location.href = githubOauthUrl
+        const redirectStudyUrlRequested = `${window.location.origin}${studyUrlRequested}`
+        document.location.href = redirectStudyUrlRequested;
+        console.log('redirectUrl = ', redirectStudyUrlRequested);
       }
       this.loadingLogin = false;
       this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
