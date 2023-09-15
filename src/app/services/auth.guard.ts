@@ -48,20 +48,20 @@ export class AuthGuard implements CanActivate, CanActivateChild {
               this.snackbarService.showError('Error at reloading your credentials, please log in again');
               this.isLoadingCurrentUser = false;
             }
+            
           }));
       } else {
-        const studyUrl = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
-        if (this.location.path().includes('/saml?token')) {
-          // If loading app component from saml check if study requested and route if needed
-          if (studyUrl !== undefined && studyUrl !== null && studyUrl.length > 0) {
-            this.router.navigate([studyUrl]);
+
+          // Retrieving study access url if it exists and rerouting if appropriated
+          const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
+
+          if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
+            this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
+            this.router.navigate([studyUrlRequested]);
           }
-        }
-        if (!this.location.path().includes('/saml/acs')) {
-          // Removing study requested routing already done if needed
           this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
-        }
-        return true;
+        
+          return true;
       }
     } else {
       // Case user try to load study from link and not authenticated
