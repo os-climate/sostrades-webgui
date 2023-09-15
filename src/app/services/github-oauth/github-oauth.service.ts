@@ -20,17 +20,7 @@ export class GithubOAuthService extends DataHttpService {
     return this.http.get<boolean>(`${this.apiRoute}/available`);
   }
 
-  getGithubOAuthUrl(redirectUri : string): Observable<string> {
-    if(redirectUri !== null && redirectUri !== undefined) {
-      const payload = { redirect_uri: redirectUri }; 
-      return this.http.post<string>(`${this.apiRoute}/authorize`, payload).pipe(map(
-        response => {
-          return response;
-        }
-        ));
-    } 
-  }
-  // getGithubOAuthUrl(): Observable<string> {
-  //   return this.http.get<string>(`${this.apiRoute}/authorize`);
-  // } 
+  getGithubOAuthUrl(): Observable<string> {
+    return this.http.get<string>(`${this.apiRoute}/authorize`);
+  } 
 }

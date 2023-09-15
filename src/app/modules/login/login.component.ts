@@ -126,14 +126,14 @@ export class LoginComponent implements OnInit {
         this.snackbarService.closeSnackbarIfOpened();
 
         // Retrieving study access url if it exists and rerouting if appropriated
-        const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
+        // const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
 
-        if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
-          this.router.navigate([studyUrlRequested]);
-        } else {
-          this.router.navigate([Routing.HOME]);
-        }
-        this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
+        // if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
+        //   this.router.navigate([studyUrlRequested]);
+        // } else {
+        this.router.navigate([Routing.HOME]);
+        // }
+        // this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
         this.loadingLogin = false;
 
       },
@@ -146,36 +146,15 @@ export class LoginComponent implements OnInit {
 
   loginWithGithub() {
     this.loadingLogin = true;
-    let redirectUri = ''
-    const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
-    
-    if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
-      redirectUri = studyUrlRequested
-    }
-    console.log('redirect_uri : ', redirectUri)
-    this.githubOauthService.getGithubOAuthUrl(redirectUri).subscribe(githubOauthUrl => {
-      console.log('url : ', githubOauthUrl)
+    this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
       this.snackbarService.closeSnackbarIfOpened();
       document.location.href = githubOauthUrl;
       this.loadingLogin = false;
-      this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
+      
       
     }, (err) => {
       this.snackbarService.showError('Error at GitHub login : ' + err);
       this.loadingLogin = false;
     });
   }
-  // loginWithGithub() {
-  //   this.loadingLogin = true;
-  //   this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
-  //     this.snackbarService.closeSnackbarIfOpened();
-  //     document.location.href = githubOauthUrl;
-  //     this.loadingLogin = false;
-  //     this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
-      
-  //   }, (err) => {
-  //     this.snackbarService.showError('Error at GitHub login : ' + err);
-  //     this.loadingLogin = false;
-  //   });
-  // }
 }
