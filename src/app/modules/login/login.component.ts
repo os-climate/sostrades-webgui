@@ -124,16 +124,7 @@ export class LoginComponent implements OnInit {
     this.auth.authenticate(username, password).subscribe(
       () => {
         this.snackbarService.closeSnackbarIfOpened();
-
-        // Retrieving study access url if it exists and rerouting if appropriated
-        // const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
-
-        // if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
-        //   this.router.navigate([studyUrlRequested]);
-        // } else {
         this.router.navigate([Routing.HOME]);
-        // }
-        // this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
         this.loadingLogin = false;
 
       },
