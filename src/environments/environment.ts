@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  API_MAIN_URL: 'http://127.0.0.1:5000',
-  API_DATA_URL: 'http://127.0.0.1:5001',
-  API_MESSAGE_URL: 'http://127.0.0.1:5002',
-  API_POST_PROCESSING_URL: 'http://127.0.0.1:5003',
+  API_MAIN_URL: 'http://127.0.0.1:8000',
+  API_DATA_URL: 'http://127.0.0.1:8001',
+  API_MESSAGE_URL: 'http://127.0.0.1:8002',
+  API_POST_PROCESSING_URL: 'http://127.0.0.1:8003',
   API_ONTOLOGY_DIRECT_URL: 'https://sostrades.eu.airbus.corp:31664'
 };
 
