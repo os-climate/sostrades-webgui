@@ -46,6 +46,7 @@
         <input
           matInput
           #filter
+          id="filter"
           (keyup)="applyFilter($event)"
           placeholder="Filter"
           [(ngModel)]="studyCaseDataService.studyManagementFilter"

@@ -33,6 +33,7 @@
 
     <button
       mat-button
+      id="btn-treeview-save-synchronise"
       (click)="saveAndSynchronise()"
       [disabled]="!showChangesButtons || executionStarted"
       *ngIf="!(isStudyReadOnly || isStudyNoData)"
@@ -263,7 +264,7 @@
         <li style="padding-left: 24px !important">
           <div class="mat-tree-node">
             <div
-              [id]="'text-treeview-status-' + node.fullNamespace"
+              [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
               *ngIf="node.status.length > 0 && showStatus"
               style="margin-left: 4px"
               [ngClass]="'execution-bullet ' + node.status"
@@ -350,7 +351,7 @@
               </i>
             </button>
             <div
-              [id]="'text-treeview-status-' + node.fullNamespace"
+              [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
               *ngIf="node.status.length > 0 && showStatus"
               [ngClass]="'execution-bullet ' + node.status"
               style="margin-left: 4px; cursor: default;"
