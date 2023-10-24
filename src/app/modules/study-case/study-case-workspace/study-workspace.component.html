@@ -1,3 +1,103 @@
+<div *ngIf="showView && !showSearch" id="process-buttons">
+  <div id="process"
+    (click)="goToProcessDocumentation(processIdentifier)"
+    [matTooltip]="'Go to the process '+ processIdentifier+ ' documentation'"
+    >
+    <span >
+      <!-- <span id="repository-idendifier">{{processRepositoryIdendifier}} - </span> -->
+      <span id="process-identifier"> {{processIdentifier}} </span>
+    </span>
+  </div>
+  <div class="filter-level-fullscreen">
+    <button
+    class="button"
+    mat-flat-button
+    color="accent"
+    [matMenuTriggerFor]="menuFilters"
+    aria-label="filters menu"
+    *ngIf="hasAccessToStudy">
+    Filters
+    </button>
+    <mat-menu #menuFilters="matMenu">
+      <div mat-menu-item>
+        <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showReadOnly">
+          Show not editable inputs data
+        </mat-checkbox>
+      </div>
+      <div mat-menu-item>
+        <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showSimpleDisplay">
+          Show simple display for data View
+        </mat-checkbox>
+      </div>
+    </mat-menu>
+    <button
+    mat-flat-button
+    color="accent"
+    [matMenuTriggerFor]="menuUserLevel"
+    aria-label="user level menu"
+    class="button"
+      *ngIf="hasAccessToStudy && !studyCaseDataService.loadedStudy.noData">
+      <mat-icon style="
+          float: left;
+          margin-left: 2px;
+          font-size: 16px;
+          height: 24px;
+          line-height: unset;
+        ">visibility</mat-icon>
+      {{ selectedUserlevel }}
+    </button>
+    <mat-menu #menuUserLevel="matMenu">
+      <mat-selection-list multiple="false" #userLevelSelectionList
+        (selectionChange)="changeUserLevel($event.option.value)">
+        <mat-list-option class="user-level-item" *ngFor="let userLevelName of userLevelList; let i = index" [value]="i">
+          {{ userLevelName }}
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-menu>
+    <button
+    mat-raised-button
+    color="accent"
+    *ngIf="showView && !isFullScreenOn && !calculationService.logFullSizeViewActive"
+    aria-label="fullscreen"
+    class="fullscreen-button button"
+    (click)="goFullScreen()"
+    >
+    Fullscreen
+    <mat-icon
+      style="float: right; font-size: 16px; height: 26px; line-height: unset"
+      >fullscreen</mat-icon
+    >
+    </button>
+    <button
+      mat-raised-button
+      color="accent"
+      *ngIf="showView && isFullScreenOn"
+      aria-label="Exit"
+      class="fullscreen-button button"
+      (click)="exitFullScreen()"
+    >
+      Exit
+      <mat-icon
+        style="float: right; font-size: 16px; height: 26px; line-height: unset"
+        >fullscreen_exit</mat-icon
+      >
+    </button>
+  </div>
+  
+  <div style="height: 100%; width: 100%; background-color: white" *ngIf="showSearch">
+    <div style="float: right;">
+      <button
+          mat-icon-button
+          color="accent"
+          matTooltip="Close search panel"
+          (click)="closeSearchPanel()"
+        >
+          <i class="far fa-window-close"> </i>
+        </button>
+    </div>
+  <app-search-panel></app-search-panel>
+  </div>
+</div>
 <div #tabGroup style="height: 100%; width: 100%; background-color: white"
 *ngIf="!showSearch">
   <mat-tab-group
@@ -48,97 +148,4 @@
       <app-dashboard></app-dashboard>
     </mat-tab>
   </mat-tab-group>
-<div *ngIf="showView" class="filter-level">
-  <button
-  class="button"
-  mat-flat-button
-  color="accent"
-  [matMenuTriggerFor]="menuFilters"
-  aria-label="filters menu"
-  style="margin-right: 15px;"
-  *ngIf="hasAccessToStudy">
-  Filters
-  </button>
-  <mat-menu #menuFilters="matMenu">
-    <div mat-menu-item>
-      <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showReadOnly">
-        Show not editable inputs data
-      </mat-checkbox>
-    </div>
-    <div mat-menu-item>
-      <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showSimpleDisplay">
-        Show simple display for data View
-      </mat-checkbox>
-    </div>
-  </mat-menu>
-    <button
-    mat-flat-button
-    color="accent"
-    [matMenuTriggerFor]="menuUserLevel"
-    aria-label="user level menu"
-    class="button"
-      *ngIf="hasAccessToStudy && !studyCaseDataService.loadedStudy.noData">
-      <mat-icon style="
-          float: left;
-          margin-left: 2px;
-          font-size: 16px;
-          height: 24px;
-          line-height: unset;
-        ">visibility</mat-icon>
-      {{ selectedUserlevel }}
-    </button>
-    <mat-menu #menuUserLevel="matMenu">
-      <mat-selection-list multiple="false" #userLevelSelectionList
-        (selectionChange)="changeUserLevel($event.option.value)">
-        <mat-list-option class="user-level-item" *ngFor="let userLevelName of userLevelList; let i = index" [value]="i">
-          {{ userLevelName }}
-        </mat-list-option>
-      </mat-selection-list>
-    </mat-menu>
-  </div>
-  <button
-    mat-raised-button
-    color="accent"
-    *ngIf="
-      showView && !isFullScreenOn && !calculationService.logFullSizeViewActive
-    "
-    aria-label="fullscreen"
-    class="fullscreen-button button"
-    (click)="goFullScreen()"
-  >
-    Fullscreen
-    <mat-icon
-      style="float: right; font-size: 16px; height: 26px; line-height: unset"
-      >fullscreen</mat-icon
-    >
-  </button>
-  <button
-    mat-raised-button
-    color="accent"
-    *ngIf="showView && isFullScreenOn"
-    aria-label="Exit"
-    class="fullscreen-button button"
-    (click)="exitFullScreen()"
-  >
-    Exit
-    <mat-icon
-      style="float: right; font-size: 16px; height: 26px; line-height: unset"
-      >fullscreen_exit</mat-icon
-    >
-  </button>
-</div>
-<div style="height: 100%; width: 100%; background-color: white"
-*ngIf="showSearch">
-  <div style="float: right;">
-    <button
-        mat-icon-button
-        color="accent"
-
-        matTooltip="Close search panel"
-        (click)="closeSearchPanel()"
-      >
-        <i class="far fa-window-close"> </i>
-      </button>
-  </div>
-  <app-search-panel></app-search-panel>
 </div>
