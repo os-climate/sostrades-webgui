@@ -19,7 +19,7 @@ export enum ColumnName {
     FAVORITE = 'isFavorite',
     CREATION_DATE = 'creationDate',
     MODIFICATION_DATE = 'modificationDate',
-    GROUP = 'groupName',
+    GROUP = 'group',
     STATUS = 'executionStatus',
     REGENERATION_STATUS = 'regenerationStatus',
     DESCRIPTION = 'description',
