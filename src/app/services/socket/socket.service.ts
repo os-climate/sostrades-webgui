@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import io from 'socket.io-client';
+import {io} from 'socket.io-client';
 
 import { User } from 'src/app/models/user.model';
 import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
