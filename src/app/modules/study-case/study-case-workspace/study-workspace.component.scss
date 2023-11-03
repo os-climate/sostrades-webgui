@@ -4,12 +4,25 @@
   padding: 5px;
 }
 
-.fullscreen-button {
-  right: 10px;
-  z-index: 1;
-  position: absolute;
-  top: 4px;
+#process-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 3px;
+}
 
+#process {
+  cursor: pointer;
+  margin-left: 5px;
+  margin-top: 7px;
+}
+
+#repository-idendifier {
+  font-size: 11px;
+}
+
+#process-identifier {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .markdown-container {
@@ -38,16 +51,17 @@
 .bookmarks-title {
   font-weight: bold;
 }
-.button{
+
+.button {
   height: 28px;
   line-height: 28px;
+  margin-right: 5px;
 }
-.filter-level{ 
-  position: absolute;
-  top: 4px;
-  right: 145px;
-  z-index: 1;
+
+.filter-level-fullscreen {
+  margin-right: 5px;
 }
+
 .user-level-item {
   font-size: 13px;
 }

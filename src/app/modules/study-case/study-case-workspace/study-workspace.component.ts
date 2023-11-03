@@ -6,14 +6,16 @@ import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
 import { FilterService } from 'src/app/services/filter/filter.service';
-import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { UserLevel } from 'src/app/models/user-level.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+import { ProcessService } from 'src/app/services/process/process.service';
+import { Routing } from 'src/app/models/routing.model';
+import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 
 
@@ -52,6 +54,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public userLevelList: string[];
   public selectedUserlevel: string;
   private routerSubscription: Subscription;
+  public processIdentifier : string;
 
 
 
@@ -68,7 +71,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
     public calculationService: CalculationService,
+    private router: Router,
+    private snackbarService: SnackbarService,
     public filterService: FilterService,
+    public processService: ProcessService,
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private userService: UserService,
     private route: ActivatedRoute,
@@ -99,6 +105,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.userLevel = new UserLevel();
     this.userLevelList = this.userLevel.userLevelList;
     this.routerSubscription = null;
+    this.processIdentifier = '';
   }
 
   ngOnInit() {
@@ -106,7 +113,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showSearch = false;
     this.setDiplayableItems();
 
-    this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(studyLoaded => {
+    this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
       this.setDiplayableItems();
     });
 
@@ -148,6 +155,9 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showPostProcessing = false;
         this.showDashboard = false;
       }
+
+      // Set process
+      this.processIdentifier = this.studyCaseDataService.loadedStudy.studyCase.processDisplayName;
 
       // Check if study is loaded without data
       if (this.studyCaseDataService.loadedStudy.noData) {
@@ -235,6 +245,26 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDocumentationContent = true;
       }
     }
+  }
+
+  goToProcessDocumentation(processIdentifier: string) {
+    /* Navigate on the documation of the process targeted */
+    // Retrieve list of process to retrieve the ontology name if the study is open in read_only_mode because in read_onl_mode there are not ontology for processes.
+    this.processService.getUserProcesses(false).subscribe(processes => {
+      const process = processes.find(process => process.processId === processIdentifier);
+      if (process !== null && process !== undefined ) {
+        if (processIdentifier === process.processName) {
+          this.snackbarService.showWarning(`The ontology informations for ${processIdentifier} are not available`)
+        }
+        else {
+        processIdentifier = process.processName;
+        this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
+        } 
+      } else {
+        this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
+      }
+      
+    });
   }
 
   goFullScreen() {
