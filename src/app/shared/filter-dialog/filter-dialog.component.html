@@ -9,7 +9,7 @@
     <div class="filter">        
         <mat-form-field style="width: 100%;">
             <mat-select
-                id='process'
+                id='selection'
                 [formControl]="researchMultiCtrl" 
                 [placeholder]="datas.possibleStringValues.length > 0 ? datas.possibleStringValues.length + ' Values': datas.possibleStringValues.lenght + ' Value'" 
                 (selectionChange)="onDataChange($event.value)"
