@@ -57,7 +57,7 @@ export class OntologyModelStatus {
       definition: 'Definition',
       uri: 'URI',
       pythonClass: 'Python Class',
-      pythonModulePath: ' Pyhton Module Path',
+      pythonModulePath: ' Python Module Path',
       version: 'Version',
       type: 'Type',
       category: 'Category',

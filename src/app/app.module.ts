@@ -58,7 +58,6 @@ import { UserManagementComponent } from './modules/user/user-management/user-man
 import { CreateUserComponent } from './modules/user/user-creation/user-creation.component';
 import { UserUpdateComponent } from './modules/user/user-update/user-update.component';
 import { UserAppLoadingComponent } from './modules/user/user-app-loading/user-app-loading.component';
-import { CurrentUserNoRightsComponent } from './modules/user/user-no-rights/user-no-rights.component';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
 
 import fr from '@angular/common/locales/fr';
@@ -165,7 +164,6 @@ registerLocaleData(fr);
     CreateUserComponent,
     UserUpdateComponent,
     UserAppLoadingComponent,
-    CurrentUserNoRightsComponent,
     StudyCaseExecutionManagementComponent,
     UserRoomDialogComponent,
     StudyCaseEventContainerComponent,

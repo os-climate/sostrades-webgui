@@ -8,7 +8,6 @@ import { StudyCaseManagementContainerComponent } from './modules/study-case/stud
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { StudyGuard } from './services/study.guard';
 import { StudyManagerGuard } from './services/study-manager.guard';
-import { CurrentUserNoRightsComponent } from './modules/user/user-no-rights/user-no-rights.component';
 import { NoAccessGuard } from './services/no-access.guard';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
 import { SamlComponent } from './modules/saml/saml.component';
@@ -128,11 +127,6 @@ const routes: Routes = [
         component: OntologyProcessesComponent,
         canActivate: [StudyManagerGuard]
       },
-      {
-        path: Routing.NO_ACCESS,
-        component: CurrentUserNoRightsComponent,
-        canActivate: [NoAccessGuard]
-      }
     ]
   },
   {
