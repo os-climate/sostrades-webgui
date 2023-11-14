@@ -18,7 +18,6 @@ export class AdminGuard implements CanActivate {
     if (this.userService.hasAccessToAdmin()) {
       return true;
     } else {
-      this.router.navigate([Routing.MODELS_STATUS]);
       this.snackbarService.showError('You don\'t have the permission to access this ressource');
     }
   }

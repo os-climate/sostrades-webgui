@@ -47,7 +47,7 @@ export class OntologyParameter {
       unit: 'Unit',
       uri: 'URI',
       definitionSource: 'Definition Source',
-      ACLtag: 'Airbus Common Language Tag',
+      ACLtag: 'RDS',
       code_repositories: 'Code Repositories',
       possible_units: 'Possible Units',
       possible_datatypes: 'Possible Datatypes',

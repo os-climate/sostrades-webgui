@@ -1,6 +1,6 @@
-<div class="parameter-text">
+<div class="slide-toogle">
   <mat-slide-toggle
-    id="mat-slider-input"
+    [id]="'slide-toggle-' + nodeData.identifier"
     class="text-zone"
     [ngModel]="nodeData.value"
     (change)="onInputChange($event.checked)"
