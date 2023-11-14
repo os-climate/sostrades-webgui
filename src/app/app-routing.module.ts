@@ -8,7 +8,6 @@ import { StudyCaseManagementContainerComponent } from './modules/study-case/stud
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { StudyGuard } from './services/study.guard';
 import { StudyManagerGuard } from './services/study-manager.guard';
-import { NoAccessGuard } from './services/no-access.guard';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
 import { SamlComponent } from './modules/saml/saml.component';
 import { StudyCaseDirectAccessComponent } from './modules/study-case/study-case-direct-access/study-case-direct-access.component';
@@ -23,6 +22,7 @@ import { OntologyProcessesComponent } from './modules/ontology/ontology-processe
 import { OntologyMainComponent } from './modules/ontology/ontology-main/ontology-main.component';
 import { OntologyContainerComponent } from './modules/ontology/ontology-container/ontology-container.component';
 import { OntologyModelsComponent } from './modules/ontology/ontology-models/ontology-models.component';
+import { NoServerComponent } from './modules/no-server/no-server.component';
 
 
 const routes: Routes = [
@@ -144,6 +144,10 @@ const routes: Routes = [
   {
     path: Routing.RESET_PASSWORD,
     component: ResetPasswordComponent
+  },
+  {
+    path: Routing.NO_SERVER,
+    component: NoServerComponent
   }
 ];
 

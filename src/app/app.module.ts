@@ -122,6 +122,7 @@ import { OntologyProcessInformationComponent } from './modules/ontology/ontology
 import { StudyCaseCreationComponent } from './modules/study-case/study-case-creation/study-case-creation.component';
 import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NoServerComponent } from './modules/no-server/no-server.component';
 
 registerLocaleData(fr);
 
@@ -219,6 +220,7 @@ registerLocaleData(fr);
     OntologyProcessInformationComponent,
     StudyCaseCreationComponent,
     ProcessBuilderComponent,
+    NoServerComponent,
   ],
   imports: [
     BrowserModule,
