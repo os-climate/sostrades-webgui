@@ -16,7 +16,6 @@ export enum Routing {
     USER_MANAGEMENT = 'user-management',
     EXECUTION_MANAGEMENT = 'execution-management',
     PROCESSES_MANAGEMENT = 'processes-management',
-    NO_ACCESS = 'no-access',
     LOGIN = 'login',
     LOGOUT = 'logout',
     SAML = 'saml',

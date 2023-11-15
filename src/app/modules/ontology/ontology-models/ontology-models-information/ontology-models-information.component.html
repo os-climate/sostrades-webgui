@@ -117,7 +117,7 @@
                   [matTooltip]="element.process_label + ' information\'s'"
                 >
                   <i 
-                  [id]="'go-to-'+ element.process_label"
+                  [id]="'go-to-process-'+ element.process_id"
                   (click)="goToProcess(element.process_label)" 
                   class="fa-solid fa-circle-arrow-right" 
                   style="color: #0b78b8; cursor: pointer;"
@@ -182,7 +182,7 @@
                   [matTooltip]="element.parameter_label + ' information\'s'"
                 >
                   <i
-                  [id]="'go-to-'+ element.parameter_label"
+                  [id]="'go-to-input-parameter-'+ element.parameter_id"
                   (click)="goToParameter(element.parameter_label)" 
                   class="fa-solid fa-circle-arrow-right" 
                   style="color: #0b78b8; cursor: pointer;"
@@ -250,7 +250,8 @@
                   *matCellDef="let element"
                   [matTooltip]="element.parameter_label + ' information\'s'"
                 >
-                  <i 
+                  <i
+                  [id]="'go-to-output-parameter-'+ element.parameter_id"
                   (click)="goToParameter(element.parameter_label)" 
                   class="fa-solid fa-circle-arrow-right" 
                   style="color: #0b78b8; cursor: pointer;"
