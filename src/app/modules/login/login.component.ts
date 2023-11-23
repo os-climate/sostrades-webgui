@@ -145,6 +145,7 @@ export class LoginComponent implements OnInit {
     }, (err) => {
       this.snackbarService.showError('Error at GitHub login : ' + err);
       this.loadingLogin = false;
+      this.router.navigate([Routing.LOGIN]);
     });
   }
 }
