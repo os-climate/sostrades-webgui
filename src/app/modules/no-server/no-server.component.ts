@@ -31,7 +31,9 @@ export class NoServerComponent implements OnInit {
       this.platform = 'local'
     } else {
       this.url = this.router.url;
+      console.log(this.url);
       const urlPart = this.url.split('.');
+      console.log(urlPart);
       this.platform = urlPart[0];
     }
   }
