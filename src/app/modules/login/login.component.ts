@@ -100,7 +100,7 @@ export class LoginComponent implements OnInit {
         }
       }, (errorReceived) => {
         this.showLogin = true;
-        if (errorReceived.status == 502) {
+        if (errorReceived.statusCode == 502) {
           this.router.navigate([Routing.NO_SERVER]);
         } else {
           this.snackbarService.showError('Error getting application info : ' + errorReceived.statusText);
@@ -143,7 +143,7 @@ export class LoginComponent implements OnInit {
       
       
     }, (err) => {
-      if (err.status == 502) {
+      if (err.statusCode == 502) {
         this.router.navigate([Routing.NO_SERVER]);        
       } else {
         this.snackbarService.showError('Error at GitHub login : ' + err.statusText);
