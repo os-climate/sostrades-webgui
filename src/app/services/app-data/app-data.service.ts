@@ -444,7 +444,7 @@ export class AppDataService extends DataHttpService {
       this.userService.getCurrentUser().subscribe((_) => {
         this.startConnectionStatusTimer();
       }, error => {
-        if (error.status == 502) {
+        if (error.statusCode == 502) {
           this.router.navigate([Routing.NO_SERVER]);
         }
       });
