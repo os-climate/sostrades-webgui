@@ -143,17 +143,13 @@ export class LoginComponent implements OnInit {
       
       
     }, (err) => {
-      this.snackbarService.showError('Error at GitHub login : ' + err);
-      this.loadingLogin = false;
-      this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
-        this.showGitHubLogin = showGitHubLogin
-        this.showLogin = true;
-      }, error => {
-        if (error.status == 502) {
-          this.router.navigate([Routing.NO_SERVER]);        
-        }
-      });
-      
+      if (err.status == 502) {
+        this.router.navigate([Routing.NO_SERVER]);        
+      } else {
+        this.snackbarService.showError('Error at GitHub login : ' + err.statusText);
+      }
+      this.loadingLogin = false; 
+        
     });
   }
 }
