@@ -98,13 +98,10 @@ export class LoginComponent implements OnInit {
               this.showLogin = true;
             });
         }
-      }, (errorReceived) => {
+      }, errorReceived => {
         this.showLogin = true;
         const error = errorReceived as SoSTradesError;
-        if (errorReceived.status == 502) {
-          this.router.navigate([Routing.NO_SERVER]);
-        }
-        else if (error.redirect) {
+        if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
           this.snackbarService.showError('Error getting application info : ' + error.description);
