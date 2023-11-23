@@ -24,6 +24,7 @@ import { OntologyProcessesComponent } from './modules/ontology/ontology-processe
 import { OntologyMainComponent } from './modules/ontology/ontology-main/ontology-main.component';
 import { OntologyContainerComponent } from './modules/ontology/ontology-container/ontology-container.component';
 import { OntologyModelsComponent } from './modules/ontology/ontology-models/ontology-models.component';
+import { NoServerComponent } from './modules/no-server/no-server.component';
 
 
 const routes: Routes = [
@@ -153,7 +154,7 @@ const routes: Routes = [
   },
   {
     path: Routing.NO_SERVER,
-    component: ResetPasswordComponent
+    component: NoServerComponent
   }
 ];
 
