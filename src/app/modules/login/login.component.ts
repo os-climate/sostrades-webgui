@@ -144,6 +144,7 @@ export class LoginComponent implements OnInit {
       
     }, (err) => {
       this.snackbarService.showError('Error at GitHub login : ' + err);
+      this.loadingLogin = false;
       this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
         this.showGitHubLogin = showGitHubLogin
         this.showLogin = true;
