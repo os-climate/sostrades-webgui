@@ -150,6 +150,10 @@ const routes: Routes = [
   {
     path: Routing.RESET_PASSWORD,
     component: ResetPasswordComponent
+  },
+  {
+    path: Routing.NO_SERVER,
+    component: ResetPasswordComponent
   }
 ];
 
