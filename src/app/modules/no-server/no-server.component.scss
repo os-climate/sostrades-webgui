@@ -1,0 +1,33 @@
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 60%;
+    width: 100%;
+
+}
+
+#platform-name {
+    font-weight: bold;
+}
+
+.image-container {
+    width: 100px;
+    transform: translate(-50%, -50%);
+    animation: moveRight 6s linear infinite;
+}
+
+@keyframes moveRight {
+    0% {
+        transform: translateX(-50%);
+    }
+
+    50% {
+        transform: translateX(50%);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
