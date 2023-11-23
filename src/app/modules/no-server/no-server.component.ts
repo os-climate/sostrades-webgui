@@ -26,7 +26,7 @@ export class NoServerComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.url = window.location.href;
+    this.url = window.location.origin;
     if (this.url.includes('http://localhost:')) {
       this.platform = 'local'
     } else {
