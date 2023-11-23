@@ -443,6 +443,10 @@ export class AppDataService extends DataHttpService {
     this.connectionStatusTimer = setTimeout(() => {
       this.userService.getCurrentUser().subscribe((_) => {
         this.startConnectionStatusTimer();
+      }, error => {
+        if (error.status == 502) {
+          this.router.navigate([Routing.NO_SERVER]);
+        }
       });
     }, 5000);
   }
