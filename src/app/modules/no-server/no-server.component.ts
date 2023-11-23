@@ -13,7 +13,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 export class NoServerComponent implements OnInit {
 
   public platform : string;
-  private url : string;
+  private host : string;
   public isLoading: boolean;
   constructor(
     private router: Router,
@@ -21,26 +21,18 @@ export class NoServerComponent implements OnInit {
     private snackbarService: SnackbarService,
   ) {
     this.platform = '';
-    this.url = '';
+    this.host = '';
     this.isLoading = false;
    }
 
   ngOnInit() {
-    this.url = window.location.origin;
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-    const path = window.location.pathname;
-    const search = window.location.search;
-    const hash = window.location.hash;  
-    const fullUrl = `${protocol}//${host}${path}${search}${hash}`;
-    console.log(`${protocol}//${host}//${path}//${search}//${hash}`)
-    console.log('URL complète : ', fullUrl);
-    if (this.url.includes('http://localhost:')) {
+    this.host = window.location.host;
+    if (this.host.includes('localhost:')) {
       this.platform = 'local'
     } else {
-      this.url = this.router.url;
-      console.log(this.url);
-      const urlPart = this.url.split('.');
+      this.host = this.router.url;
+      console.log(this.host);
+      const urlPart = this.host.split('.');
       console.log(urlPart);
       this.platform = urlPart[0];
     }
