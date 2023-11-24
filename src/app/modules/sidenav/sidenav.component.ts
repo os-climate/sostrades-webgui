@@ -95,7 +95,8 @@ export class SidenavComponent implements OnInit, OnDestroy {
   onClickTreeview(loadedStudy: LoadedStudy) {
     this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`}});
     this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
-    }
+    this.studyCaseMainService.setStudyIsActive();
+  }
 
   onClickSwitchEditStudy(event: any)
   {

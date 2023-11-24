@@ -247,6 +247,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     }
   }
 
+  onClickStudyWorkspace(){
+    this.studyCaseMainService.setStudyIsActive();
+  }
+
   goToProcessDocumentation(processIdentifier: string) {
     /* Navigate on the documation of the process targeted */
     // Retrieve list of process to retrieve the ontology name if the study is open in read_only_mode because in read_onl_mode there are not ontology for processes.
