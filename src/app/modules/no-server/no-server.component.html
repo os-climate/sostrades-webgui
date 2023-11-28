@@ -1,0 +1,18 @@
+<div class="flex-container">
+    <h1> <span id="platform-name" >{{platform}}</span> platform is down at the moment </h1>
+    <div class="image-container">
+        <img src="/assets/SOS_TRADES_LOGO_NOIR.svg" alt="Image Description">
+    </div>
+    <br>
+    <p> Please check if it is up with this button</p>
+    <span>
+        <button 
+        mat-raised-button
+        (click)="goToLogin()"
+        [color]="isLoading ? '' : 'primary'"
+        [disabled]="isLoading"
+        >
+            Is it up ?
+        </button>
+    </span>
+</div>

@@ -366,6 +366,15 @@ export class StudyCaseMainService extends MainHttpService {
     }
   }
 
+  setStudyIsActive(){
+    const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-active`;
+    return this.http.post(url,{}).subscribe(ok => {
+    }, error => {
+      console.log(error);
+    });;
+  }
+  
+
   private updateStudyCaseDataService(loadedStudy: LoadedStudy) {
     const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
 
@@ -375,5 +384,7 @@ export class StudyCaseMainService extends MainHttpService {
 
     this.studyCaseDataService.setCurrentStudy(loadedStudy);
   }
+
+
 
 }
