@@ -46,12 +46,7 @@ export class NoServerComponent implements OnInit {
       this.isLoading =false;
     }, 
     error => {
-      if (error.statusCode == 502) {
-          this.snackbarService.showWarning(`The platform is still down, please restart in few minutes.`);
-      } else {
-        this.router.navigate([Routing.LOGIN]);
-        this.snackbarService.showError('Error getting application info : ' + error.statusText);
-      }
+      this.snackbarService.showWarning(`The platform is still down, please restart in few minutes.`);
       this.isLoading =false;
     }
   )}
