@@ -98,13 +98,12 @@ export class LoginComponent implements OnInit {
               this.showLogin = true;
             });
         }
-      }, errorReceived => {
+      }, (errorReceived) => {
         this.showLogin = true;
-        const error = errorReceived as SoSTradesError;
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
+        if (errorReceived.statusCode == 502) {
+          this.router.navigate([Routing.NO_SERVER]);
         } else {
-          this.snackbarService.showError('Error getting application info : ' + error.description);
+          this.snackbarService.showError('Error getting application info : ' + errorReceived.statusText);
         }
       });
     },
@@ -129,7 +128,11 @@ export class LoginComponent implements OnInit {
 
       },
       (err) => {
-        this.snackbarService.showError('Error at login : ' + err);
+        if (err.statusCode == 502) {
+          this.router.navigate([Routing.NO_SERVER]);        
+        } else {
+           this.snackbarService.showError('Error at login : ' + err);
+        }
         this.loadingLogin = false;
       }
     );
@@ -144,8 +147,13 @@ export class LoginComponent implements OnInit {
       
       
     }, (err) => {
-      this.snackbarService.showError('Error at GitHub login : ' + err);
-      this.loadingLogin = false;
+      if (err.statusCode == 502) {
+        this.router.navigate([Routing.NO_SERVER]);        
+      } else {
+        this.snackbarService.showError('Error at GitHub login : ' + err.statusText);
+      }
+      this.loadingLogin = false; 
+        
     });
   }
 }

@@ -497,9 +497,14 @@ export class StudyCaseDataService extends DataHttpService {
       response => {
         return StudyCaseAllocation.Create(response);
       })).subscribe(allocation => {
-      setTimeout(() => {
-        this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer);
-      }, 2000);
+        if (allocation.status !== StudyCaseAllocationStatus.DONE){
+          setTimeout(() => {
+            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer);
+          }, 2000);
+        }
+        else{
+          observer.next(allocation);
+        }
     },
     error => {
       observer.error(error);
