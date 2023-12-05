@@ -77,7 +77,7 @@
       mat-button
       id="btn-treeview-start-calculation"
       (click)="onStartExecution()"
-      *ngIf="!executionStarted && !(isStudyReadOnly || isStudyNoData)"
+      *ngIf="!executionStarted && !(isStudyReadOnly || isStudyNoData) && canExecute"
       class="toolbar-item-shadow"
       [disabled]="!studyIsLoaded || executionStarted"
     >
@@ -101,7 +101,7 @@
       (click)="onStopExecution()"
       *ngIf="executionStarted && !(isStudyReadOnly || isStudyNoData)"
       class="toolbar-item-shadow"
-      [disabled]="!studyIsLoaded"
+      [disabled]="!studyIsLoaded && !canExecute"
     >
       <mat-icon
         [ngClass]="

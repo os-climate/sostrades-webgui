@@ -15,6 +15,7 @@ import { ReferenceGenerationObserverService } from 'src/app/services/reference-g
 import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 
 @Component({
@@ -25,6 +26,7 @@ import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialo
 export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   public isAllReferencesRegenerating: boolean;
+  public canGenerateReference: boolean;
   public isLoading: boolean;
   public columnName = ColumnName;
 
@@ -69,6 +71,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private elementRef: ElementRef,
+    private userService: UserService,
     public processService: ProcessService,
     public studyCaseDataService: StudyCaseDataService,
     public referenceDataService: ReferenceDataService,
@@ -81,9 +84,13 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.referenceGenerationDoneSubscription = null;
     this.referenceGenerationUpdateSubscription = null;
     this.referenceCount = 0;
+    this.canGenerateReference = false;
   }
 
   ngOnInit(): void {
+    
+    //Check if the user has the execution rights to generate a reference
+    this.canGenerateReference = this.userService.hasExecutionRights();
 
     // Load data first time component initialised
     if (this.referenceDataService.referenceManagementData === null
