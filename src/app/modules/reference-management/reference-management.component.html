@@ -144,7 +144,8 @@
         <ng-container [matColumnDef]="columnName.ACTION">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
-            <button
+            <button 
+              *ngIf="canGenerateReference"
               style="margin: 0 5px"
               [id]="
               'btn-generate-reference-' +

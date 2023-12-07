@@ -85,6 +85,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
   public isStudyNoData: boolean;
   public isStudyReadOnly: boolean;
+  public canExecute: boolean;
 
   public isTreeViewFiltered: boolean;
   public isSearchOption: boolean;
@@ -156,6 +157,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     this.isStudyNoData = false;
     this.isStudyReadOnly = false;
+    this.canExecute = false;
 
     this.isTreeViewFiltered = false;
     this.isSearchOption = true;
@@ -174,6 +176,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         // Applying no data and read only values
         this.isStudyNoData = currentLoadedStudy.noData;
         this.isStudyReadOnly = currentLoadedStudy.readOnly;
+        
+        //Check if the user has the execution rights to compute the study
+        this.canExecute = this.userService.hasExecutionRights();
 
         // Refreshing filter
         this.filterTreeInput = '';
