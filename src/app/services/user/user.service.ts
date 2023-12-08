@@ -158,6 +158,17 @@ export class UserService extends DataHttpService {
     return isStudyAuth;
   }
 
+  hasExecutionRights(): boolean {
+    let isExecutionAuth = false;
+    if (this.currentUserExist()) {
+      if (this.currentUser.modules.filter(x => x === 'EXECUTION').length === 1) {
+        isExecutionAuth = true;
+      }
+    }
+
+    return isExecutionAuth;
+  }
+
   getFullUsernameWithNameInCapitalize(): string {
     if (this.currentUserExist()) {
       return `${this.currentUser.user.firstname} ${this.currentUser.user.lastname.charAt(0).toUpperCase() + this.currentUser.user.lastname.slice(1).toLowerCase()}`;
