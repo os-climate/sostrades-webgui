@@ -72,12 +72,12 @@ export class AuthService extends DataHttpService {
         } else {
           errorMessage = 'Username or password incorrect';
         }
-      } else if (error.status === 0) {
-        errorMessage = `No response from server`;
-      } else if (error instanceof SoSTradesError) {
-        errorMessage = error.description;
-      } else {
-        errorMessage = `bad auth response: ${error.status}: ${error.statusText} ${JSON.stringify(error.error)}`;
+      } else if (error.status !== 502) {
+        if (error instanceof SoSTradesError) {
+          errorMessage = error.description;
+        } else {
+          errorMessage = `bad auth response: ${error.status}: ${error.statusText} ${JSON.stringify(error.error)}`;
+        }       
       }
     }
     return throwError(errorMessage);

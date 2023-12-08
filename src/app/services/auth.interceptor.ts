@@ -32,12 +32,6 @@ export class AuthInterceptor implements HttpInterceptor {
         catchError((err) => {
           const error = this.convertToSoSTradesError(err);
 
-          if (error.statusCode === 0) { // Case no response from server
-            error.description = 'No response from server';
-            this.router.navigate([Routing.LOGIN]);
-            this.auth.deauthenticate();
-            error.redirect = true;
-          }
 
           if (error.statusCode === 401) { // User not authenticated
             return this.handle401Error(request, next);
