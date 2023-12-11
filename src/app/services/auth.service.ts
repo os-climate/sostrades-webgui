@@ -60,28 +60,28 @@ export class AuthService extends DataHttpService {
   }
 
   // Handle authentication errors
-  private errorHandler(error: HttpErrorResponse) {
-    let errorMessage = '';
-
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `authentication error: ${error.error.message}`;
-    } else {
-      if (error.status === 403) {
-        if (error.error && error.error.description) {
-          errorMessage = error.error.description;
-        } else {
-          errorMessage = 'Username or password incorrect';
-        }
-      } else if (error.status !== 502) {
-        if (error instanceof SoSTradesError) {
-          errorMessage = error.description;
-        } else {
-          errorMessage = `bad auth response: ${error.status}: ${error.statusText} ${JSON.stringify(error.error)}`;
-        }       
-      }
-    }
-    return throwError(errorMessage);
-  }
+  // private errorHandler(error: HttpErrorResponse) {
+  //   let errorMessage = '';
+  //   console.log(error);
+  //   if (error.error instanceof ErrorEvent) {
+  //     errorMessage = `authentication error: ${error.error.message}`;
+  //   } else {
+  //     if (error.status === 403) {
+  //       if (error.error && error.error.description) {
+  //         errorMessage = error.error.description;
+  //       } else {
+  //         errorMessage = 'Username or password incorrect';
+  //       }
+  //     } else if (error.status !== 502) {
+  //       if (error instanceof SoSTradesError) {
+  //         errorMessage = error.description;
+  //       } else {
+  //         errorMessage = `bad auth response: ${error.status}: ${error.statusText} ${JSON.stringify(error.error)}`;
+  //       }       
+  //     }
+  //   }
+  //   return throwError(errorMessage);
+  // }
 
   // subscribe to get authentication status updates
   subscribe(next: (status: boolean) => void) {
@@ -117,7 +117,6 @@ export class AuthService extends DataHttpService {
             })
           );
         }),
-        catchError(this.errorHandler)
       );
   }
 
@@ -152,25 +151,20 @@ export class AuthService extends DataHttpService {
       })
     };
 
-    // Removing loaded study and closing socket connection
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
-      this.studyCaseDataService.setCurrentStudy(null);
-    }
-
-    // Cleaning application cache
-    this.clearCache();
-    this.socketService.closeConnection();
-    localStorage.clear();
-
-    this.authStatus.next(false);
     return this.http.post(`${this.apiRoute}/logout`, {}, opts)
       .pipe(
-        map(response => null),
-        catchError(this.errorHandler),
-        finalize(() => {
-          this.router.navigate([Routing.LOGIN]);
-        })
+        map(() => {
+          // Removing loaded study and closing socket connection
+          if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+            this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+            this.studyCaseDataService.setCurrentStudy(null);
+          }
+          // Cleaning application cache
+          this.clearCache();
+          this.socketService.closeConnection();
+          localStorage.clear();
+          this.authStatus.next(false);
+        }),
       );
   }
 

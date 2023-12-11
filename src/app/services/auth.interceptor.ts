@@ -70,7 +70,7 @@ export class AuthInterceptor implements HttpInterceptor {
         catchError(err => {
           const error = this.convertToSoSTradesError(err)
           this.router.navigate([Routing.LOGIN]);
-          this.auth.deauthenticate();
+          this.auth.deauthenticate().subscribe();
           error.redirect = true;
           this.snackBarService.showError(error.description);
           return of(error);
