@@ -100,6 +100,8 @@ export class LoginComponent implements OnInit {
         }
       }, (errorReceived) => {
         this.showLogin = true;
+        this.loggerService.log('Error getting application info : ', errorReceived);
+        console.log(errorReceived);
         if (errorReceived.status == 502) {
           this.router.navigate([Routing.NO_SERVER]);
         } else {
