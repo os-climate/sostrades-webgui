@@ -146,6 +146,7 @@ export class LoginComponent implements OnInit {
       
       
     }, (err) => {
+      console.log(err)
       if (err.status == 502) {
         this.router.navigate([Routing.NO_SERVER]);        
       } else {
