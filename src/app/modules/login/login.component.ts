@@ -125,12 +125,14 @@ export class LoginComponent implements OnInit {
         this.loadingLogin = false;
 
       },
-      (err) => {
-        if (err.status == 502 || err.status == 0) {
+      (error) => {
+        this.loggerService.log(error)
+        console.log(error)
+        if (error.status == 502 || error.status == 0) {
           // err.status == 0 can only appear on local
           this.router.navigate([Routing.NO_SERVER]);        
         } else {
-           this.snackbarService.showError('Error at login : ' + err.error.description);
+           this.snackbarService.showError('Error at login : ' + error.error.description);
         }
         this.loadingLogin = false;
       }
@@ -145,12 +147,13 @@ export class LoginComponent implements OnInit {
       this.loadingLogin = false;
       
       
-    }, (err) => {
-      console.log(err)
-      if (err.status == 502) {
+    }, (error) => {
+      this.loggerService.log(error)
+      console.log(error)
+      if (error.status == 502) {
         this.router.navigate([Routing.NO_SERVER]);        
       } else {
-        this.snackbarService.showError('Error at GitHub login : ' + err.statusText);
+        this.snackbarService.showError('Error at GitHub login : ' + error.statusText);
       }
       this.loadingLogin = false; 
         
