@@ -72,36 +72,32 @@ export class LoginComponent implements OnInit {
       }
       this.loggerService.log(`autologon : ${this.autoLogon}`);
 
-      this.appDataService.getAppInfo().subscribe(platformInfo => {
-        if (platformInfo !== null && platformInfo !== undefined) {
-          this.platform = platformInfo.platform;
+      this.appDataService.getAppInfo().subscribe(platformInfo => {    
+          
+        this.platform = platformInfo.platform;
 
+        this.samlService.getSSOUrl().subscribe(ssoUrl => {
+          this.ssoUrl = ssoUrl;
 
-          this.samlService.getSSOUrl().subscribe(ssoUrl => {
-            this.ssoUrl = ssoUrl;
+          if (this.autoLogon === true && this.ssoUrl !== '') {
+            document.location.href = this.ssoUrl;
+          } else {
 
-            if (this.autoLogon === true && this.ssoUrl !== '') {
-              document.location.href = this.ssoUrl;
-            } else {
-
-              this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
-                this.showGitHubLogin = showGitHubLogin;
-                this.showLogin = true;
-              }, error => {
-                this.showLogin = true;
-              });
+            this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
+              this.showGitHubLogin = showGitHubLogin;
               this.showLogin = true;
-            }
-          },
-            error => {
-              this.ssoUrl = '';
+            }, error => {
               this.showLogin = true;
             });
-        }
+            this.showLogin = true;
+          }
+        },
+          error => {
+            this.ssoUrl = '';
+            this.showLogin = true;
+          });
       }, (errorReceived) => {
         this.showLogin = true;
-        this.loggerService.log('Error getting application info : ', errorReceived);
-        console.log(errorReceived);
         if (errorReceived.status == 502) {
           this.router.navigate([Routing.NO_SERVER]);
         } else {
@@ -134,7 +130,7 @@ export class LoginComponent implements OnInit {
           // err.status == 0 can only appear on local
           this.router.navigate([Routing.NO_SERVER]);        
         } else {
-           this.snackbarService.showError('Error at login : ' + err);
+           this.snackbarService.showError('Error at login : ' + err.error.description);
         }
         this.loadingLogin = false;
       }

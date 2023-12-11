@@ -457,8 +457,6 @@ export class AppDataService extends DataHttpService {
           this.onNoServerResponse.emit(this.hasNoServerAvailable);
         }
       }, error => {
-        this.loggerService.log('Error getting current user : ', error);
-        console.log(error);
         if (error.statusCode == 502) {
           this.startConnectionStatusTimer();
           this.hasNoServerAvailable = true;
