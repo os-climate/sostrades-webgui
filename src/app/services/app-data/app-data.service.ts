@@ -235,46 +235,34 @@ export class AppDataService extends DataHttpService {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {
             if (loadingCanceled === true) {
             } else {
-              this.studyCaseMainService
-                .loadtudyInReadOnlyModeIfNeeded(studyId)
-                .subscribe(
+              this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
                   (loadedStudy) => {
                     if (loadingCanceled === true) {
-                    } else {
-                      if (
-                        loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE
-                      ) {
-                        this.loadingDialogService.disableCancelLoading(true);
+                      } else {
+                        if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
+                          this.loadingDialogService.disableCancelLoading(true);
 
-                        // clear post processing dictionnary
-                        this.postProcessingService.clearPostProcessingDict();
+                          // clear post processing dictionnary
+                          this.postProcessingService.clearPostProcessingDict();
 
-                        // Set post processing dictionnary from the loaded study
-                        this.postProcessingService.setPostProcessing(
-                          loadedStudy
-                        );
-                        // load read only mode
-                        this.studyCaseLoadingService
-                          .finalizeLoadedStudyCase(
+                          // Set post processing dictionnary from the loaded study
+                          this.postProcessingService.setPostProcessing(loadedStudy);
+                          
+                          // load read only mode
+                          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
+                        } else {
+                          const studyNeedsLoading =
+                            loadedStudy.loadStatus !== LoadStatus.LOADED;
+                          this.launchLoadStudy(
+                            studyNeedsLoading,
+                            loadedStudy.studyCase.id,
                             loadedStudy,
                             isStudyLoaded,
-                            false,
-                            true
-                          )
-                          .subscribe(messageObserver);
-                      } else {
-                        const studyNeedsLoading =
-                          loadedStudy.loadStatus !== LoadStatus.LOADED;
-                        this.launchLoadStudy(
-                          studyNeedsLoading,
-                          loadedStudy.studyCase.id,
-                          loadedStudy,
-                          isStudyLoaded,
-                          true,
-                          false
-                        );
+                            true,
+                            false
+                          );
+                        }
                       }
-                    }
                   },
                   (errorReceived) => {
                     this.loggerService.log(errorReceived);

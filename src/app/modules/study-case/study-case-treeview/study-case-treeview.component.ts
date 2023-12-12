@@ -37,6 +37,7 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-execution-system-load.model';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
+import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 
 
 @Component({
@@ -128,7 +129,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private loadingDialogService: LoadingDialogService,
     private studyDialogService: StudyDialogService,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private studyCaseValidationService: StudyCaseValidationService
   ) {
     this.onStudyCaseChangeSubscription = null;
     this.onTradeSpaceSelectionChangedSubscription = null;
@@ -783,13 +785,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
         // Reload the study in order to get all post postprocessing data
         const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
-          let loadedstudyCase = resultLoadedStudy as LoadedStudy;
+        let loadedstudyCase = resultLoadedStudy as LoadedStudy;
         this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, (isStudyLoaded)=>{
               studySubscription.unsubscribe();
               // Cleaning old subscriptions
               this.cleanExecutionSubscriptions();
               this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
               this.calculationService.onCalculationChange.emit(false);
+              this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
             }, false, true).subscribe();
           }, errorReceived => {
           const error = errorReceived as SoSTradesError;

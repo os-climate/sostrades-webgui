@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { TreeNodeDataService } from '../../../services/tree-node-data.service';
 import { TreeNode } from '../../../models/tree-node.model';
-import { IoType, WidgetType } from '../../../models/node-data.model';
 import { Subscription } from 'rxjs';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -9,8 +8,8 @@ import { DataManagementInformationComponent } from 'src/app/modules/data-managem
 import { NodeDataTools } from 'src/app/tools/node-data.tools';
 import { DataManagementDiscipline } from 'src/app/models/data-management-discipline.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
-import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
+import { TreeNodeDialogData } from 'src/app/models/dialog-data.model';
+import { StudyCaseValidation, ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { LoadedStudy } from 'src/app/models/study.model';
@@ -29,7 +28,6 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   @Input() disciplineData: DataManagementDiscipline;
 
 
-  public resultData: StudyCaseValidationDialogData;
   public showMaturity: boolean;
   public countItemsInDict = NodeDataTools.countDisplayableItemsInNodeDataDict;
   public treeNodeData: TreeNode;
@@ -103,10 +101,14 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.validationChangeSubcription = this.socketService.onNodeValidatationChange.subscribe(changeValidation => {
-      if (changeValidation) {
-        this.studyCaseLoadingService.loadValidations(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe();
-      }
+    this.validationChangeSubcription = this.socketService.onNodeValidatationChange.subscribe(validationChange => {
+      const newValidationChange = StudyCaseValidation.Create(validationChange);
+      this.studyCaseValidationService.addValidationToLocalList(newValidationChange, true);
+      Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach((element) => {
+        if (element.fullNamespace == newValidationChange.namespace) {
+          element.isValidated = newValidationChange.validationState === ValidationTreeNodeState.VALIDATED;
+        }
+      });
     });
   }
 
@@ -134,30 +136,24 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     event.preventDefault();
 
+    
+    const treeNodedialogData = new TreeNodeDialogData();
+    treeNodedialogData.node = this.treeNodeData;
 
-    const dialogData: StudyCaseValidationDialogData = new StudyCaseValidationDialogData();
-    dialogData.namespace = this.treeNodeData.fullNamespace;
-
-    if (this.treeNodeData.isValidated) {
-      dialogData.validationState = ValidationTreeNodeState.INVALIDATED;
-    } else {
-      dialogData.validationState = ValidationTreeNodeState.VALIDATED;
-    }
 
     this.dialogRefValidate = this.dialog.open(StudyCaseValidationDialogComponent, {
       disableClose: true,
       width: '1100px',
       height: '600px',
       panelClass: 'csvDialog',
-      data: this.treeNodeData
+      data: treeNodedialogData
     });
 
-    this.dialogRefValidate.afterClosed().subscribe(() => {
-         if (this.treeNodeData.isValidated) {
-             this.treeNodeData.isValidated = false;
-           } else {
-          this.treeNodeData.isValidated = true;
-         }
+    this.dialogRefValidate.afterClosed().subscribe((result) => {
+       const validation: TreeNodeDialogData = result as  TreeNodeDialogData;
+       if (validation.cancel !== true) {
+        this.treeNodeData.isValidated = !validation.node.isValidated
+       }
     });
   }
 

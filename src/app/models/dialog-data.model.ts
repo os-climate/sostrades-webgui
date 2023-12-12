@@ -4,11 +4,11 @@ import { StudyUpdateParameter } from './study-update.model';
 import { EntityRight, EntityResourceRights } from './entity-right.model';
 import { AccessRight } from './access-right.model';
 import { NodeData } from './node-data.model';
-import { StudyCaseValidation } from './study-case-validation.model';
 import { Process } from './process.model';
 import { OntologyParameter } from './ontology-parameter.model';
 import { OntologyModelStatus } from './ontology-model-status.model';
 import { ColumnName } from './column-name.model';
+import { TreeNode } from './tree-node.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -192,20 +192,6 @@ export class StudyCaseModificationDialogData extends AbstractDialogData {
   }
 }
 
-export class StudyCaseValidationDialogData extends AbstractDialogData {
-  namespace: string;
-  disciplineName: string;
-  validationState: string;
-  validationList: StudyCaseValidation[];
-
-  public constructor() {
-    super();
-    this.namespace = '';
-    this.disciplineName = '';
-    this.validationState = '';
-    this.validationList = [];
-  }
-}
 
 
 export class TableListListEditDialogData extends AbstractDialogData {
@@ -434,3 +420,13 @@ export class NewsDialogData extends AbstractDialogData {
     this.message = '';
   }
 }
+
+export class TreeNodeDialogData extends AbstractDialogData {
+
+  public node: TreeNode;
+
+  public constructor() {
+    super();
+    this.node = null;
+  }
+} 
