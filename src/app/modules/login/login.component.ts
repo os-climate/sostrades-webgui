@@ -126,8 +126,6 @@ export class LoginComponent implements OnInit {
 
       },
       (error) => {
-        this.loggerService.log(error)
-        console.log(error)
         if (error.status == 502 || error.status == 0) {
           // err.status == 0 can only appear on local
           this.router.navigate([Routing.NO_SERVER]);        
@@ -145,15 +143,11 @@ export class LoginComponent implements OnInit {
       this.snackbarService.closeSnackbarIfOpened();
       document.location.href = githubOauthUrl;
       this.loadingLogin = false;
-      
-      
-    }, (error) => {
-      this.loggerService.log(error)
-      console.log(error)
-      if (error.status == 502) {
+    }, (error) => {     
+      if (error.statusCode == 502) {
         this.router.navigate([Routing.NO_SERVER]);        
       } else {
-        this.snackbarService.showError('Error at GitHub login : ' + error.statusText);
+        this.snackbarService.showError('Error at GitHub login : ' + error.name);
       }
       this.loadingLogin = false; 
         
