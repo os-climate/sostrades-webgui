@@ -1,12 +1,7 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { TreeNode } from 'src/app/models/tree-node.model';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
-import { ResizedEvent } from 'angular-resize-event';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { StudyCaseValidationDialogData } from 'src/app/models/dialog-data.model';
-import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
-import { StudyCaseValidationDialogComponent } from '../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadedStudy } from 'src/app/models/study.model';
 

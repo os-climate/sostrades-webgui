@@ -1,10 +1,11 @@
 import { EventEmitter, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Location } from "@angular/common";
-import { StudyCaseValidation } from "src/app/models/study-case-validation.model";
+import { StudyCaseValidation, ValidationTreeNodeState } from "src/app/models/study-case-validation.model";
 import { Observable, of } from "rxjs";
 import { map } from "rxjs/operators";
 import { DataHttpService } from "../http/data-http/data-http.service";
+import { TreeView } from "src/app/models/tree-node.model";
 
 @Injectable({
   providedIn: "root",
@@ -69,14 +70,8 @@ export class StudyCaseValidationService extends DataHttpService {
       );
   }
 
-  addValidationToLocalList(
-    studyVal: StudyCaseValidation,
-    isNewValidation: boolean
-  ) {
-    if (
-      this.studyValidationDict[`${studyVal.namespace}`] !== null &&
-      this.studyValidationDict[`${studyVal.namespace}`] !== undefined
-    ) {
+  addValidationToLocalList(studyVal: StudyCaseValidation, isNewValidation: boolean) {
+    if (this.studyValidationDict[`${studyVal.namespace}`] !== null && this.studyValidationDict[`${studyVal.namespace}`] !== undefined) {
       if (isNewValidation) {
         this.studyValidationDict[`${studyVal.namespace}`].unshift(studyVal);
       } else {
@@ -85,5 +80,15 @@ export class StudyCaseValidationService extends DataHttpService {
     } else {
       this.studyValidationDict[`${studyVal.namespace}`] = [studyVal];
     }
+  }
+
+  setValidationOnNode(studyTreeview: TreeView) {
+    Object.values(studyTreeview.rootDict).forEach((element) => {
+      const studyCaseValidation = this.studyValidationDict[element.fullNamespace];
+      if (studyCaseValidation !== undefined && studyCaseValidation !== null) {
+        const lastValidation = studyCaseValidation[0];
+        element.isValidated = lastValidation.validationState === ValidationTreeNodeState.VALIDATED;
+      }
+    });
   }
 }

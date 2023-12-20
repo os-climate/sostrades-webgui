@@ -10,7 +10,7 @@
 }
 
 .home-title {
-  margin-left:70px
+  margin-left: 70px
 }
 
 .version-container {
@@ -39,14 +39,31 @@
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.blue_color{
+.blue_color {
   color: #0B78B8
 }
+
 ::ng-deep .mainMenu {
   width: 200px;
   margin-top: 20px;
 }
 
-#toolbar{
+#toolbar {
   padding: 0;
+}
+
+#no-server {
+  background-color: #fbca32;
+  color: black;
+  text-align: center;
+}
+
+#no-server span {
+  line-height: 40px;
+  font-weight: 500;
+}
+
+.warning-icon {
+  color: red;
+  font-size: 20px;
 }

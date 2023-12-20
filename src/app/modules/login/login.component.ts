@@ -72,35 +72,33 @@ export class LoginComponent implements OnInit {
       }
       this.loggerService.log(`autologon : ${this.autoLogon}`);
 
-      this.appDataService.getAppInfo().subscribe(res => {
-        if (res !== null && res !== undefined) {
-          this.platform = res['platform'];
+      this.appDataService.getAppInfo().subscribe(platformInfo => {    
+          
+        this.platform = platformInfo.platform;
 
+        this.samlService.getSSOUrl().subscribe(ssoUrl => {
+          this.ssoUrl = ssoUrl;
 
-          this.samlService.getSSOUrl().subscribe(ssoUrl => {
-            this.ssoUrl = ssoUrl;
+          if (this.autoLogon === true && this.ssoUrl !== '') {
+            document.location.href = this.ssoUrl;
+          } else {
 
-            if (this.autoLogon === true && this.ssoUrl !== '') {
-              document.location.href = this.ssoUrl;
-            } else {
-
-              this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
-                this.showGitHubLogin = showGitHubLogin;
-                this.showLogin = true;
-              }, error => {
-                this.showLogin = true;
-              });
+            this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
+              this.showGitHubLogin = showGitHubLogin;
               this.showLogin = true;
-            }
-          },
-            error => {
-              this.ssoUrl = '';
+            }, error => {
               this.showLogin = true;
             });
-        }
+            this.showLogin = true;
+          }
+        },
+          error => {
+            this.ssoUrl = '';
+            this.showLogin = true;
+          });
       }, (errorReceived) => {
         this.showLogin = true;
-        if (errorReceived.statusCode == 502) {
+        if (errorReceived.status == 502) {
           this.router.navigate([Routing.NO_SERVER]);
         } else {
           this.snackbarService.showError('Error getting application info : ' + errorReceived.statusText);
@@ -127,11 +125,12 @@ export class LoginComponent implements OnInit {
         this.loadingLogin = false;
 
       },
-      (err) => {
-        if (err.statusCode == 502) {
+      (error) => {
+        if (error.status == 502 || error.status == 0) {
+          // err.status == 0 can only appear on local
           this.router.navigate([Routing.NO_SERVER]);        
         } else {
-           this.snackbarService.showError('Error at login : ' + err);
+           this.snackbarService.showError('Error at login : ' + error.error.description);
         }
         this.loadingLogin = false;
       }
@@ -144,13 +143,11 @@ export class LoginComponent implements OnInit {
       this.snackbarService.closeSnackbarIfOpened();
       document.location.href = githubOauthUrl;
       this.loadingLogin = false;
-      
-      
-    }, (err) => {
-      if (err.statusCode == 502) {
+    }, (error) => {     
+      if (error.statusCode == 502) {
         this.router.navigate([Routing.NO_SERVER]);        
       } else {
-        this.snackbarService.showError('Error at GitHub login : ' + err.statusText);
+        this.snackbarService.showError('Error at GitHub login : ' + error.name);
       }
       this.loadingLogin = false; 
         
