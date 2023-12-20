@@ -3,6 +3,7 @@ import { FormGroup, FormControl } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import { TreeNodeDialogData } from "src/app/models/dialog-data.model";
 import { SoSTradesError } from "src/app/models/sos-trades-error.model";
 import {StudyCaseValidation,ValidationTreeNodeState} from "src/app/models/study-case-validation.model";
 import { TreeNode } from "src/app/models/tree-node.model";
@@ -42,7 +43,7 @@ export class StudyCaseValidationDialogComponent implements OnInit {
     private loadingDialogService: LoadingDialogService,
     private studyCaseValidationService: StudyCaseValidationService,
     public dialogRef: MatDialogRef<StudyCaseValidationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public treeNodedata: TreeNode
+    @Inject(MAT_DIALOG_DATA) public data: TreeNodeDialogData
   ) {
     this.buttonValidationText = '';
   }
@@ -52,52 +53,38 @@ export class StudyCaseValidationDialogComponent implements OnInit {
       validationComment: new FormControl(''),
     });
     this.dataSourceChanges = new MatTableDataSource<StudyCaseValidation>(
-    this.studyCaseValidationService.studyValidationDict[this.treeNodedata.fullNamespace]);
+    this.studyCaseValidationService.studyValidationDict[this.data.node.fullNamespace]);
     this.dataSourceChanges.sortingDataAccessor = (item, property) => {
       return typeof item[property] === 'string'
         ? item[property].toLowerCase()
         : item[property];
     };
     this.dataSourceChanges.sort = this.sort;
-    if (this.treeNodedata.isValidated) {
-      this.buttonValidationText = 'Invalidate data';
-    } else {
-      this.buttonValidationText = 'Validate data';
-    }
+    this.buttonValidationText = this.data.node.isValidated ? 'Invalidate data' : 'Validate data';
   }
 
   validateData() {
     const validComment = this.validationForm.value.validationComment;
     let validation = '';
-
-    if (this.treeNodedata.isValidated) {
-      validation = this.validationStates.INVALIDATED;
-    } else {
-      validation = this.validationStates.VALIDATED;
-    }
+    validation = this.data.node.isValidated ? ValidationTreeNodeState.INVALIDATED : ValidationTreeNodeState.VALIDATED;
     this.loadingDialogService.showLoading( `Saving discipline validation change`);
     this.studyCaseValidationService
       .createStudyValidationData(
         this.studyCaseDataService.loadedStudy.studyCase.id,
-        this.treeNodedata.fullNamespace,
+        this.data.node.fullNamespace,
         validComment,
         validation
         )
       .subscribe(
-        (res) => {
-          this.socketService.validationChange(
-            this.studyCaseDataService.loadedStudy.studyCase.id, this.treeNodedata.name, validation);
+        (studyCaseValidation) => {
+          this.socketService.validationChange(this.studyCaseDataService.loadedStudy.studyCase.id, this.data.node.name, studyCaseValidation);
           this.loadingDialogService.closeLoading();
-          this.dialogRef.close(this.treeNodedata);
-          if (validation === ValidationTreeNodeState.VALIDATED) {
-            this.snackbarService.showInformation(`${this.treeNodedata.name} datas' validation successfully done`);
-          } else {
-            this.snackbarService.showInformation(`${this.treeNodedata.name} datas' invalidation successfully done`);
-          }
+          this.dialogRef.close(this.data);
+          this.snackbarService.showInformation(`${this.data.node.name} datas has been successfully ${validation.toLocaleLowerCase()}`);
         },
         (errorReceived) => {
           this.loadingDialogService.closeLoading();
-          this.dialogRef.close(this.treeNodedata);
+          this.dialogRef.close(this.data);
           const error = errorReceived as SoSTradesError;
           if (error.redirect) {
             this.snackbarService.showError(error.description);
@@ -109,11 +96,7 @@ export class StudyCaseValidationDialogComponent implements OnInit {
   }
 
   onCancelClick() {
-    if (this.treeNodedata.isValidated) {
-      this.treeNodedata.isValidated = false;
-    } else {
-      this.treeNodedata.isValidated = true;
-    }
-    this.dialogRef.close(this.treeNodedata);
+    this.data.cancel = true;
+    this.dialogRef.close(this.data);
   }
 }

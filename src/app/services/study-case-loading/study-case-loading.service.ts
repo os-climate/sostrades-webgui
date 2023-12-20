@@ -1,22 +1,15 @@
-import { LoadedStudy, LoadStatus } from "src/app/models/study.model";
+import { LoadedStudy } from "src/app/models/study.model";
 import { Injectable, EventEmitter } from "@angular/core";
-import { delay, map } from "rxjs/operators";
 import { combineLatest, Observable, Observer, Subscriber } from "rxjs";
 import { StudyCaseValidationService } from "../study-case-validation/study-case-validation.service";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
-import {
-  StudyCaseValidation,
-  ValidationTreeNodeState,
-} from "src/app/models/study-case-validation.model";
+import { StudyCaseValidation} from "src/app/models/study-case-validation.model";
 import { StudyCaseExecutionObserverService } from "src/app/services/study-case-execution-observer/study-case-execution-observer.service";
 import { OntologyService } from "../ontology/ontology.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
-import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
 import { PostOntology } from "src/app/models/ontology.model";
 import { TreenodeTools } from "src/app/tools/treenode.tool";
-import { SocketService } from "../socket/socket.service";
 import { CoeditionNotification } from "src/app/models/coedition-notification.model";
-import { SelectComponent } from "src/app/shared/select/select.component";
 
 @Injectable({
   providedIn: "root",
@@ -27,7 +20,6 @@ export class StudyCaseLoadingService {
 
   constructor(
     private studyCaseValidationService: StudyCaseValidationService,
-    private socketService: SocketService,
     private studyCaseDataService: StudyCaseDataService,
     private ontologyService: OntologyService,
     private snackbarService: SnackbarService,
@@ -111,9 +103,7 @@ export class StudyCaseLoadingService {
       messageObserver.next(`Loading ontology and notifications`);
       const calls = [];
       calls.push(this.loadOntology(loadedStudy));
-      calls.push(
-        this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id)
-      );
+      calls.push(this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id));
       calls.push(this.loadValidations(loadedStudy.studyCase.id));
 
       combineLatest(calls).subscribe(
@@ -125,48 +115,18 @@ export class StudyCaseLoadingService {
 
           messageObserver.next("Loading notifications");
 
-          const notifications =
-            resultnotifications as CoeditionNotification[];
-          this.socketService.notificationList = notifications;
+          this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
 
           messageObserver.next("Loading validation");
-
-          Object.values(
-            this.studyCaseDataService.loadedStudy.treeview.rootDict
-          ).forEach((element) => {
-            const studyCaseValidation =
-              this.studyCaseValidationService.studyValidationDict[
-                element.fullNamespace
-              ];
-
-            if (
-              studyCaseValidation !== undefined &&
-              studyCaseValidation !== null
-            ) {
-              element.isValidated =
-                studyCaseValidation[0].validationState ===
-                ValidationTreeNodeState.VALIDATED;
-            }
-          });
+          this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
 
           //end loading
-          this.terminateStudyCaseLoading(
-            loadedStudy,
-            isStudyCreated,
-            messageObserver
-          );
+          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
         },
         (errorReceived) => {
           // Notify user
-          this.snackbarService.showError(
-            `Error while loading, the following error occurs: ${errorReceived.description}`
-          );
-
-          this.terminateStudyCaseLoading(
-            loadedStudy,
-            isStudyCreated,
-            messageObserver
-          );
+          this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
+          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
         }
       );
     }

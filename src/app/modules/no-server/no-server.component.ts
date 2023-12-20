@@ -37,9 +37,9 @@ export class NoServerComponent implements OnInit {
 
   goToLogin(){
     this.isLoading = true;
-    this.appDataService.getAppInfo().subscribe(res => {
-      if (res !== null && res !== undefined) {
-        this.platform = res['platform'];
+    this.appDataService.getAppInfo().subscribe(platformInfo => {
+      if (platformInfo !== null && platformInfo !== undefined) {
+        this.platform = platformInfo.platform;
         this.snackbarService.showInformation(`The platform ${this.platform} turn on`);
         this.router.navigate([Routing.LOGIN]);
       }

@@ -39,7 +39,7 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataSourceNotifications = new MatTableDataSource<CoeditionNotification>(this.socketService.notificationList);
+    this.dataSourceNotifications = new MatTableDataSource<CoeditionNotification>(this.studyCaseDataService.studyCoeditionNotifications);
 
     this.onNewNotificationSubscription = this.socketService.onNewNotification.subscribe(notification => {
       this.onNotificationAction(notification);
@@ -67,8 +67,7 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
 
     // Refreshing notifications
     this.studyCaseDataService.getStudyNotifications(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(notifications => {
-      this.socketService.notificationList = notifications;
-      this.dataSourceNotifications = new MatTableDataSource<CoeditionNotification>(this.socketService.notificationList);
+      this.dataSourceNotifications = new MatTableDataSource<CoeditionNotification>(notifications);
     });
 
     // Handle submission or execution
@@ -91,7 +90,7 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
         default:
           break;
       }
-      this.dataSourceNotifications = new MatTableDataSource<CoeditionNotification>(this.socketService.notificationList);
+      this.dataSourceNotifications = new MatTableDataSource<CoeditionNotification>(this.studyCaseDataService.studyCoeditionNotifications);
     }
 
   }

@@ -16,6 +16,7 @@ import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
+import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 
 
 @Injectable({
@@ -29,10 +30,9 @@ export class SocketService {
   public onStudySubmissionEnd: EventEmitter<boolean>;
   public onCurrentStudyDeleted: EventEmitter<boolean>;
   public onCurrentStudyEdited: EventEmitter<boolean>;
-  public onNodeValidatationChange: EventEmitter<boolean>;
+  public onNodeValidatationChange: EventEmitter<StudyCaseValidation>;
 
 
-  public notificationList: CoeditionNotification[];
   private notificationQueue: CoeditionNotification[];
 
   private socket: any;
@@ -52,8 +52,7 @@ export class SocketService {
     this.onStudySubmissionEnd = new EventEmitter<boolean>();
     this.onCurrentStudyDeleted = new EventEmitter<boolean>();
     this.onCurrentStudyEdited = new EventEmitter<boolean>();
-    this.onNodeValidatationChange = new EventEmitter<boolean>();
-    this.notificationList = [];
+    this.onNodeValidatationChange = new EventEmitter<StudyCaseValidation>();
     this.notificationQueue = [];
   }
 
@@ -144,47 +143,47 @@ export class SocketService {
       const users = data.users as User[];
       this.onRoomUserUpdate.emit(users);
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
-      this.notificationList.unshift(notification);
+      this.addNewNotificationOnList(notification)
       this.addNotificationToQueue(notification);
     });
 
     this.socket.on('study-saved', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, data.changes, false);
-      this.notificationList.unshift(notification);
+      this.addNewNotificationOnList(notification)
       this.addNotificationToQueue(notification);
     });
 
     this.socket.on('study-submitted', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
-      this.notificationList.unshift(notification);
+      this.addNewNotificationOnList(notification)
       this.addNotificationToQueue(notification);
     });
 
     this.socket.on('study-executed', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
-      this.notificationList.unshift(notification);
+      this.addNewNotificationOnList(notification)
       this.addNotificationToQueue(notification);
     });
 
     this.socket.on('study-claimed', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
-      this.notificationList.unshift(notification);
+      this.addNewNotificationOnList(notification)
       this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized = data.user_id_execution_authorized;
       this.addNotificationToQueue(notification);
     });
 
     this.socket.on('study-reloaded', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
-      this.notificationList.unshift(notification);
+      this.addNewNotificationOnList(notification)
       this.addNotificationToQueue(notification);
     });
 
     this.socket.on('validation-change', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
-      this.notificationList.unshift(notification);
+      this.addNewNotificationOnList(notification)
       this.addNotificationToQueue(notification);
       if (this.userService.getFullUsername() !== data.author) {
-        this.onNodeValidatationChange.emit(true);
+        this.onNodeValidatationChange.emit(data.study_case_validation);
       }
     });
 
@@ -238,7 +237,6 @@ export class SocketService {
 
   leaveRoom(studyCaseId: number) {
     if (this.socket) {
-      this.notificationList = [];
       this.socket.emit('leave', { study_case_id: studyCaseId });
     }
   }
@@ -286,10 +284,10 @@ export class SocketService {
     }
   }
 
-  validationChange(studyCaseId: number, treeNodedataName: string, validation: string) {
+  validationChange(studyCaseId: number, treeNodedataName: string, studyCaseValidation: StudyCaseValidation) {
     if (this.socket) {
       this.socket.emit('validation-change',
-      { study_case_id: studyCaseId, validation_state: validation, treenode_data_name: treeNodedataName});
+      { study_case_id: studyCaseId, study_case_validation: studyCaseValidation, treenode_data_name: treeNodedataName});
     }
   }
 
@@ -325,6 +323,13 @@ export class SocketService {
     }
   }
 
+  private addNewNotificationOnList(notification : CoeditionNotification) {
+    const notifications = this.studyCaseDataService.studyCoeditionNotifications
+    if (notifications !== null && notifications !== undefined) {
+      this.studyCaseDataService.studyCoeditionNotifications.unshift(notification)
+    }
+  }
+
   onUpdateFinished() {
     this.notificationQueue.shift();
     if (this.notificationQueue.length > 0) {
@@ -335,7 +340,7 @@ export class SocketService {
   getParameterChangesList(parameterName: string): StudyUpdateParameter[] {
     const changes: StudyUpdateParameter[] = [];
 
-    const notificationWithChanges = this.notificationList.filter(x => x.type === CoeditionType.SAVE);
+    const notificationWithChanges = this.studyCaseDataService.studyCoeditionNotifications.filter(x => x.type === CoeditionType.SAVE);
 
     notificationWithChanges.forEach(notif => {
       if (notif.changes !== null && notif.changes !== undefined && notif.changes.length > 0) {
