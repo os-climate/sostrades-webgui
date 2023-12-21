@@ -11,6 +11,8 @@ import { Routing } from 'src/app/models/routing.model';
 import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { Subscription } from 'rxjs';
+import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 
 @Component({
@@ -28,6 +30,8 @@ export class HeaderComponent implements OnInit {
   public title: string;
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;
+  public onNoServerSubscription: Subscription;
+  public displayMessageNoServer: boolean;
   constructor(
     private router: Router,
     private auth: AuthService,
@@ -36,6 +40,7 @@ export class HeaderComponent implements OnInit {
     public studyCaseDataService: StudyCaseDataService,
     public dialog: MatDialog,
     private userService: UserService,
+    private snackbarService: SnackbarService,
     private appDataService: AppDataService,
     public filterService: FilterService) {
 
@@ -44,6 +49,8 @@ export class HeaderComponent implements OnInit {
     this.title = '';
     this.hasAccessToStudyManager = false;
     this.hasAccessToStudy = false;
+    this.onNoServerSubscription = null;
+    this.displayMessageNoServer = false;
   }
 
   ngOnInit(): void {
@@ -51,11 +58,20 @@ export class HeaderComponent implements OnInit {
     this.username = this.userService.getFullUsernameWithNameInCapitalize();
     this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
     this.hasAccessToStudy = this.userService.hasAccessToStudy();
+    
+    this.onNoServerSubscription = this.appDataService.onNoServerResponse.subscribe(response => {
+      if (response) {
+        this.displayMessageNoServer = true;
+      }
+      else {
+        this.displayMessageNoServer = false;
+      }
+    });
 
-    this.appDataService.getAppInfo().subscribe(res => {
-      if (res !== null && res !== undefined) {
-        this.versionDate = res['version'];
-        this.platform = res['platform'];
+    this.appDataService.getAppInfo().subscribe(platformInfo => {
+      if (platformInfo !== null && platformInfo !== undefined) {
+        this.versionDate = platformInfo.version;
+        this.platform = platformInfo.platform;
       }
     });
 
@@ -99,6 +115,13 @@ export class HeaderComponent implements OnInit {
       default:
         this.title = NavigationTitle.HOME;
         break;
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.onNoServerSubscription !== null) {
+      this.onNoServerSubscription.unsubscribe();
+      this.onNoServerSubscription = null;
     }
   }
 
@@ -191,6 +214,15 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    this.auth.deauthenticate().subscribe();
+    this.auth.deauthenticate().subscribe(() => {
+      this.router.navigate([Routing.LOGIN]);
+    }, error => {
+        if (error.status == 502 || error.status == 0) {
+          this.snackbarService.showError('No response from server');
+        } else {
+          this.snackbarService.showError('Error at logout : ' + error.statusText);
+        }
+    }
+    );
   }
 }

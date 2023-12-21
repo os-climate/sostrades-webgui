@@ -34,7 +34,7 @@ export class StudyCaseDataService extends DataHttpService {
   public tradeScenarioList: Scenario[];
 
   private studyLoaded: LoadedStudy;
-
+  public studyCoeditionNotifications: CoeditionNotification[];
   public studyManagementData: Study[];
   public studyManagementFilter: string;
   public studyManagementColumnFiltered: string;
@@ -62,7 +62,7 @@ export class StudyCaseDataService extends DataHttpService {
     private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
-
+    this.studyCoeditionNotifications = [];
     this.favoriteStudy = [];
     this.lastStudyOpened = [];
     this.studyManagementData = [];
@@ -85,6 +85,7 @@ export class StudyCaseDataService extends DataHttpService {
 
   clearCache() {
     this.studyLoaded = null;
+    this.studyCoeditionNotifications = [];
     this.studyManagementData = [];
     this.favoriteStudy = [];
     this.lastStudyOpened = [];
@@ -163,6 +164,7 @@ export class StudyCaseDataService extends DataHttpService {
         response.forEach(notif => {
           notifications.push(CoeditionNotification.Create(notif));
         });
+        this.studyCoeditionNotifications = notifications
         return notifications;
       }));
   }

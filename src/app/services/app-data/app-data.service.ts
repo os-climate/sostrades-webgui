@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 import {
   LoadedStudy,
   LoadStatus,
@@ -15,7 +15,7 @@ import { LoggerService } from "../logger/logger.service";
 import { DataHttpService } from "../http/data-http/data-http.service";
 import { StudyCaseMainService } from "../study-case/main/study-case-main.service";
 import { StudyCasePostProcessingService } from "../study-case/post-processing/study-case-post-processing.service";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { combineLatest } from "rxjs";
 import { StudyCaseAllocationStatus } from "src/app/models/study-case-allocation.model";
 import { StudyCaseLoadingService } from "../study-case-loading/study-case-loading.service";
@@ -24,6 +24,7 @@ import { Router } from "@angular/router";
 import { Routing } from "src/app/models/routing.model";
 import { StudyCaseLocalStorageService } from "../study-case-local-storage/study-case-local-storage.service";
 import { UserService } from "../user/user.service";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
@@ -31,6 +32,11 @@ import { UserService } from "../user/user.service";
 export class AppDataService extends DataHttpService {
   // Timer use to check connection status server side
   private connectionStatusTimer;
+  public onNoServerResponse: EventEmitter<boolean>;
+  public platformInfo : any;
+  public hasNoServerAvailable: boolean;
+  public support : any;
+
   constructor(
     private http: HttpClient,
     private studyCaseLoadingService: StudyCaseLoadingService,
@@ -48,6 +54,10 @@ export class AppDataService extends DataHttpService {
   ) {
     super(location, "application");
     this.connectionStatusTimer = null;
+    this.platformInfo = null;
+    this.onNoServerResponse = new EventEmitter<boolean>();
+    this.hasNoServerAvailable = false;
+    this.support = null;
   }
 
   createCompleteStudy(study: StudyCasePayload, isStudyCreated: any) {
@@ -225,46 +235,34 @@ export class AppDataService extends DataHttpService {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {
             if (loadingCanceled === true) {
             } else {
-              this.studyCaseMainService
-                .loadtudyInReadOnlyModeIfNeeded(studyId)
-                .subscribe(
+              this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
                   (loadedStudy) => {
                     if (loadingCanceled === true) {
-                    } else {
-                      if (
-                        loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE
-                      ) {
-                        this.loadingDialogService.disableCancelLoading(true);
+                      } else {
+                        if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
+                          this.loadingDialogService.disableCancelLoading(true);
 
-                        // clear post processing dictionnary
-                        this.postProcessingService.clearPostProcessingDict();
+                          // clear post processing dictionnary
+                          this.postProcessingService.clearPostProcessingDict();
 
-                        // Set post processing dictionnary from the loaded study
-                        this.postProcessingService.setPostProcessing(
-                          loadedStudy
-                        );
-                        // load read only mode
-                        this.studyCaseLoadingService
-                          .finalizeLoadedStudyCase(
+                          // Set post processing dictionnary from the loaded study
+                          this.postProcessingService.setPostProcessing(loadedStudy);
+                          
+                          // load read only mode
+                          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
+                        } else {
+                          const studyNeedsLoading =
+                            loadedStudy.loadStatus !== LoadStatus.LOADED;
+                          this.launchLoadStudy(
+                            studyNeedsLoading,
+                            loadedStudy.studyCase.id,
                             loadedStudy,
                             isStudyLoaded,
-                            false,
-                            true
-                          )
-                          .subscribe(messageObserver);
-                      } else {
-                        const studyNeedsLoading =
-                          loadedStudy.loadStatus !== LoadStatus.LOADED;
-                        this.launchLoadStudy(
-                          studyNeedsLoading,
-                          loadedStudy.studyCase.id,
-                          loadedStudy,
-                          isStudyLoaded,
-                          true,
-                          false
-                        );
+                            true,
+                            false
+                          );
+                        }
                       }
-                    }
                   },
                   (errorReceived) => {
                     this.loggerService.log(errorReceived);
@@ -438,11 +436,22 @@ export class AppDataService extends DataHttpService {
   }
 
   public startConnectionStatusTimer() {
-    this.stopConnectionStatusTimer();
 
     this.connectionStatusTimer = setTimeout(() => {
       this.userService.getCurrentUser().subscribe((_) => {
         this.startConnectionStatusTimer();
+        if (this.hasNoServerAvailable) {
+          this.hasNoServerAvailable = false;
+          this.onNoServerResponse.emit(this.hasNoServerAvailable);
+        }
+      }, error => {
+        if (error.statusCode == 502) {
+          this.startConnectionStatusTimer();
+          this.hasNoServerAvailable = true;
+          this.onNoServerResponse.emit(this.hasNoServerAvailable);
+        } else {
+          this.stopConnectionStatusTimer();
+        }
       });
     }, 5000);
   }
@@ -456,10 +465,30 @@ export class AppDataService extends DataHttpService {
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
-  getAppInfo() {
-    return this.http.get(this.apiRoute + "/infos");
+  public getAppInfo() {
+    if (this.platformInfo !== null && this.platformInfo !== undefined) {
+       return of(this.platformInfo);
+    }
+    else {
+      return this.http.get(this.apiRoute + "/infos").pipe(map(
+        response => {
+          this.platformInfo = response
+          return this.platformInfo;      
+        }
+      ));  
+    }
   }
   getAppSupport() {
-    return this.http.get(this.apiRoute + "/support");
+    if (this.support !== null && this.support !== undefined) {
+      return of(this.support);
+   }
+   else {
+    return this.http.get(this.apiRoute + "/support").pipe(map(
+       response => {
+         this.support = response
+         return this.support;      
+       }
+     ));  
+   }
   }
 }
