@@ -13,25 +13,58 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 export class NoServerComponent implements OnInit {
 
   public platform : string;
-  private host : string;
   public isLoading: boolean;
+  private connectionStatusTimer: any;
   constructor(
     private router: Router,
     private appDataService: AppDataService,
     private snackbarService: SnackbarService,
   ) {
     this.platform = '';
-    this.host = '';
     this.isLoading = false;
+    this.connectionStatusTimer = null;
    }
 
   ngOnInit() {
-    this.host = window.location.host;
-    if (this.host.includes('localhost:')) {
-      this.platform = 'local'
+    if ((this.appDataService.platformInfo !== null && this.appDataService.platformInfo !== undefined) && this.appDataService.platformInfo.platform.trim() !== "") {
+      this.platform = this.appDataService.platformInfo.platform
     } else {
-      const urlPart = this.host.split('.');
-      this.platform = urlPart[0];
+      const host = window.location.host;
+      if (host.includes('localhost:')) {
+        this.platform = 'Local'
+      } else {
+        const urlPart = host.split('.');
+        this.platform = urlPart[0].charAt(0).toUpperCase() + urlPart[0].slice(1);
+      }
+    }
+    
+    this.startConnectionStatusTimer();
+  }
+
+  private startConnectionStatusTimer() {
+
+    this.connectionStatusTimer = setTimeout(() => {
+      this.appDataService.getAppInfo().subscribe((platformInfo) => {
+        if (platformInfo !== null && platformInfo !== undefined) {
+          this.stopConnectionStatusTimer();
+          this.router.navigate([Routing.LOGIN]);
+          this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turn on`);
+        }
+      }, 
+      error => {
+        if (error.status == 502 || error.status == 0) {
+          this.startConnectionStatusTimer();
+        } else {
+          this.snackbarService.showError('Error getting application info : ' + error.statusText);
+        }
+      });
+    }, 5000);
+  }
+
+  private stopConnectionStatusTimer() {
+    if (this.connectionStatusTimer) {
+      clearTimeout(this.connectionStatusTimer);
+      this.connectionStatusTimer = null;
     }
   }
 
@@ -40,13 +73,13 @@ export class NoServerComponent implements OnInit {
     this.appDataService.getAppInfo().subscribe(platformInfo => {
       if (platformInfo !== null && platformInfo !== undefined) {
         this.platform = platformInfo.platform;
-        this.snackbarService.showInformation(`The platform ${this.platform} turn on`);
+        this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turn on`);
         this.router.navigate([Routing.LOGIN]);
       }
       this.isLoading =false;
     }, 
     error => {
-      this.snackbarService.showWarning(`The platform is still down, please restart in few minutes.`);
+      this.snackbarService.showWarning(`The platform is still down, you will redirect to the Login page in few minutes.`);
       this.isLoading =false;
     }
   )}
