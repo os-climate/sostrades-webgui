@@ -466,18 +466,14 @@ export class AppDataService extends DataHttpService {
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
   public getAppInfo() {
-    if (this.platformInfo !== null && this.platformInfo !== undefined) {
-       return of(this.platformInfo);
-    }
-    else {
       return this.http.get(this.apiRoute + "/infos").pipe(map(
         response => {
           this.platformInfo = response
           return this.platformInfo;      
         }
-      ));  
-    }
+      )); 
   }
+
   getAppSupport() {
     if (this.support !== null && this.support !== undefined) {
       return of(this.support);
