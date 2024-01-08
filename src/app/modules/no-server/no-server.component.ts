@@ -73,13 +73,13 @@ export class NoServerComponent implements OnInit {
     this.appDataService.getAppInfo().subscribe(platformInfo => {
       if (platformInfo !== null && platformInfo !== undefined) {
         this.platform = platformInfo.platform;
-        this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turn on`);
+        this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turned on`);
         this.router.navigate([Routing.LOGIN]);
       }
       this.isLoading =false;
     }, 
     error => {
-      this.snackbarService.showWarning(`The platform is still down, you will redirect to the Login page in few minutes.`);
+      this.snackbarService.showWarning(`The platform is still down, you will be redirected to the Login page in few minutes.`);
       this.isLoading =false;
     }
   )}
