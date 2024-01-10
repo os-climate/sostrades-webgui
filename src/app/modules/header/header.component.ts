@@ -67,13 +67,18 @@ export class HeaderComponent implements OnInit {
         this.displayMessageNoServer = false;
       }
     });
-
-    this.appDataService.getAppInfo().subscribe(platformInfo => {
-      if (platformInfo !== null && platformInfo !== undefined) {
-        this.versionDate = platformInfo.version;
-        this.platform = platformInfo.platform;
-      }
-    });
+    if (this.appDataService.platformInfo !== null && this.appDataService.platformInfo !== undefined) {
+      this.versionDate = this.appDataService.platformInfo.version;
+      this.platform = this.appDataService.platformInfo.platform;
+    } else {
+        this.appDataService.getAppInfo().subscribe(platformInfo => {
+          if (platformInfo !== null && platformInfo !== undefined) {
+            this.versionDate = platformInfo.version;
+            this.platform = platformInfo.platform;
+          }
+        });
+    }
+    
 
     this.headerService.onChangeTitle.subscribe(result => {
       this.title = result;
