@@ -9,10 +9,12 @@ import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { Routing } from 'src/app/models/routing.model';
 import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
-import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription } from 'rxjs';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
+import { SocketService } from 'src/app/services/socket/socket.service';
 
 
 @Component({
@@ -31,13 +33,17 @@ export class HeaderComponent implements OnInit {
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;
   public onNoServerSubscription: Subscription;
+  private onNoStudyServerSubscription: Subscription;
   public displayMessageNoServer: boolean;
+  public displayMessageNoStudyServer: boolean;
   constructor(
     private router: Router,
     private auth: AuthService,
     private headerService: HeaderService,
     public contactDialogService: ContactDialogService,
     public studyCaseDataService: StudyCaseDataService,
+    public studyCaseMainService: StudyCaseMainService,
+    private socketService: SocketService,
     public dialog: MatDialog,
     private userService: UserService,
     private snackbarService: SnackbarService,
@@ -50,7 +56,9 @@ export class HeaderComponent implements OnInit {
     this.hasAccessToStudyManager = false;
     this.hasAccessToStudy = false;
     this.onNoServerSubscription = null;
+    this.onNoStudyServerSubscription = null;
     this.displayMessageNoServer = false;
+    this.displayMessageNoStudyServer = false;
   }
 
   ngOnInit(): void {
@@ -58,15 +66,24 @@ export class HeaderComponent implements OnInit {
     this.username = this.userService.getFullUsernameWithNameInCapitalize();
     this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
     this.hasAccessToStudy = this.userService.hasAccessToStudy();
-    
+
+    this.onStudyServerSubscribe();
+
     this.onNoServerSubscription = this.appDataService.onNoServerResponse.subscribe(response => {
       if (response) {
+        this.onNoStudyServerSubscription.unsubscribe();
         this.displayMessageNoServer = true;
       }
       else {
         this.displayMessageNoServer = false;
+        // if a study is opened, check if the study server is up
+        if(this.studyCaseDataService.loadedStudy !== null || this.studyCaseDataService.loadedStudy !== undefined){
+          this.studyCaseMainService.checkStudyIsUpAndLoaded();
+          this.onStudyServerSubscribe();
+        }
       }
     });
+
     if (this.appDataService.platformInfo !== null && this.appDataService.platformInfo !== undefined) {
       this.versionDate = this.appDataService.platformInfo.version;
       this.platform = this.appDataService.platformInfo.platform;
@@ -123,10 +140,33 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  onStudyServerSubscribe(){
+    this.onNoStudyServerSubscription = this.studyCaseMainService.onNoStudyServer.subscribe(isLoaded => {
+        this.displayMessageNoStudyServer = !isLoaded;
+    });
+  }
+
+  reloadStudy()
+  {
+    this.appDataService.loadCompleteStudy(
+      this.studyCaseDataService.loadedStudy.studyCase.id, 
+      this.studyCaseDataService.loadedStudy.studyCase.name, 
+      (isStudyLoaded) => {
+        if (isStudyLoaded) {
+          // Joining room
+          this.socketService.joinRoom(
+            this.studyCaseDataService.loadedStudy.studyCase.id
+          );
+        }
+      });
+  }
+
   ngOnDestroy() {
     if (this.onNoServerSubscription !== null) {
       this.onNoServerSubscription.unsubscribe();
       this.onNoServerSubscription = null;
+      this.onNoStudyServerSubscription.unsubscribe();
+      this.onNoStudyServerSubscription = null;
     }
   }
 
@@ -222,7 +262,7 @@ export class HeaderComponent implements OnInit {
     this.auth.deauthenticate().subscribe(() => {
       this.router.navigate([Routing.LOGIN]);
     }, error => {
-        if (error.status == 502 || error.status == 0) {
+        if (error.statusCode == 502 || error.statusCode == 0) {
           this.snackbarService.showError('No response from server');
         } else {
           this.snackbarService.showError('Error at logout : ' + error.statusText);

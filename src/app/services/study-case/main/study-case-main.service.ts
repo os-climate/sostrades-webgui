@@ -23,6 +23,7 @@ import { I } from '@angular/cdk/keycodes';
 export class StudyCaseMainService extends MainHttpService {
 
   onCloseStudy: EventEmitter<boolean> = new EventEmitter();
+  onNoStudyServer: EventEmitter<boolean> = new EventEmitter();
 
   constructor(
     private http: HttpClient,
@@ -367,11 +368,31 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   setStudyIsActive(){
+    // save the date of the last user activity on the study
     const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-active`;
-    return this.http.post(url,{}).subscribe(ok => {
+    return this.http.post<boolean>(url,{}).subscribe(isLoaded => {
+      this.setNoStudyHeader(isLoaded);
     }, error => {
-      console.log(error);
-    });;
+      if (error.statusCode == 502|| error.statusCode == 0){
+        this.setNoStudyHeader(false);
+      }
+    });
+  }
+
+  checkStudyIsUpAndLoaded(){
+    //Check if the study pod server is up and if the study is loaded
+    const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-up-and-loaded`;
+    return this.http.get<boolean>(url).subscribe(isLoaded => {
+      this.setNoStudyHeader(isLoaded);
+    }, error => {
+      if (error.statusCode == 502||error.statusCode == 0){
+        this.setNoStudyHeader(false);
+      }
+    });
+  }
+
+  setNoStudyHeader(isLoaded: boolean){
+    this.onNoStudyServer.emit(isLoaded);
   }
   
 
