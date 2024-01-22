@@ -71,15 +71,18 @@ export class HeaderComponent implements OnInit {
 
     this.onNoServerSubscription = this.appDataService.onNoServerResponse.subscribe(response => {
       if (response) {
+        // we unsubscribe the check if study server is up to show only the header if the data server is not up
+        // because if the data is not up, no need to know if the study server is up or not
         this.onNoStudyServerSubscription.unsubscribe();
         this.displayMessageNoServer = true;
       }
       else {
         this.displayMessageNoServer = false;
-        // if a study is opened, check if the study server is up
+        // After the data server is up again, check if the study server is also up
         if(this.studyCaseDataService.loadedStudy !== null || this.studyCaseDataService.loadedStudy !== undefined){
-          this.studyCaseMainService.checkStudyIsUpAndLoaded();
+          // subscribe again to show the study server if not up
           this.onStudyServerSubscribe();
+          this.studyCaseMainService.checkStudyIsUpAndLoaded();
         }
       }
     });
