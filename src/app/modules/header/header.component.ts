@@ -34,6 +34,7 @@ export class HeaderComponent implements OnInit {
   public hasAccessToStudy: boolean;
   public onNoServerSubscription: Subscription;
   private onNoStudyServerSubscription: Subscription;
+  private onCloseStudySubscription: Subscription;
   public displayMessageNoServer: boolean;
   public displayMessageNoStudyServer: boolean;
   constructor(
@@ -138,6 +139,12 @@ export class HeaderComponent implements OnInit {
     this.onNoStudyServerSubscription = this.studyCaseMainService.onNoStudyServer.subscribe(isLoaded => {
         this.displayMessageNoStudyServer = !isLoaded;
     });
+    //if the study is closed, the header should not be visible
+    this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(closed=>{
+      if(this.displayMessageNoStudyServer){
+        this.displayMessageNoStudyServer = false;
+      }
+    })
   }
 
   reloadStudy()
@@ -166,8 +173,14 @@ export class HeaderComponent implements OnInit {
     if (this.onNoServerSubscription !== null) {
       this.onNoServerSubscription.unsubscribe();
       this.onNoServerSubscription = null;
+    }
+    if (this.onNoStudyServerSubscription !== null) {
       this.onNoStudyServerSubscription.unsubscribe();
       this.onNoStudyServerSubscription = null;
+    }
+    if (this.onCloseStudySubscription !== null) {
+      this.onCloseStudySubscription.unsubscribe();
+      this.onCloseStudySubscription = null;
     }
   }
 
