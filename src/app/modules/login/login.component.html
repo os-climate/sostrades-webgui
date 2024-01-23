@@ -1,6 +1,6 @@
 <div class="flex-container" *ngIf="showLogin">
   <mat-card class="login-form" style="text-align: center">
-    <mat-card-title style="padding-top: 20px; display:block">
+    <mat-card-title style=" display:block"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
       <div id="logos">
  
        <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
