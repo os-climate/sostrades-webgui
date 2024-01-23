@@ -370,12 +370,9 @@ export class StudyCaseMainService extends MainHttpService {
   setStudyIsActive(){
     // save the date of the last user activity on the study
     const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-active`;
-    return this.http.post<boolean>(url,{}).subscribe(isLoaded => {
-      this.setNoStudyHeader(isLoaded);
+    return this.http.post(url,{}).subscribe(isOK => {
     }, error => {
-      if (error.statusCode == 502|| error.statusCode == 0){
-        this.setNoStudyHeader(false);
-      }
+      console.log(error);
     });
   }
 

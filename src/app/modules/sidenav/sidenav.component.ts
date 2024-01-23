@@ -102,9 +102,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
   {
     event.stopPropagation();
     event.preventDefault();
-    //check server is up
-    this.studyCaseMainService.checkStudyIsUpAndLoaded();
-    this.appDataService.loadStudyInEditionMode()
+    this.appDataService.loadStudyInEditionMode();
   }
 
   closeStudy(event: any) {
