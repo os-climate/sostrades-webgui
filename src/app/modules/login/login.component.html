@@ -1,7 +1,34 @@
 <div class="flex-container" *ngIf="showLogin">
   <mat-card class="login-form" style="text-align: center">
-    <mat-card-title style="padding-top: 20px">
-      SoSTrades {{ platform }}
+    <mat-card-title style="padding-top: 20px; display:block">
+      <div id="logos">
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
+       class="logo"
+       >
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_SECOND_PATH.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_SECOND_PATH.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND_PATH.HEIGHT }"
+       class="logo"
+       >   
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_THIRD_PATH.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_THIRD_PATH.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD_PATH.HEIGHT }"
+       class="logo"
+       >
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH_PATH.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_FOURTH_PATH.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH_PATH.HEIGHT }"
+       class="logo"
+       >  
+     </div>
+     <br>
+      <p>SoSTrades {{ platform }}</p>
     </mat-card-title>
     <mat-card-content style="display: flex; flex-direction: column">
       <form [formGroup]="loginForm" (ngSubmit)="submit()">

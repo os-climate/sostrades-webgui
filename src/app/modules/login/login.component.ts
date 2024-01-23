@@ -12,6 +12,7 @@ import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-
 import { RoutingState } from 'src/app/services/routing-state/routing-state.service';
 import { Routing } from 'src/app/models/routing.model';
 import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.service';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit {
   public showGitHubLogin: boolean;
   public ssoUrl: string;
   private autoLogon: boolean;
+  environment = environment;
 
   loginForm = new FormGroup({
     username: new FormControl('', Validators.required),
