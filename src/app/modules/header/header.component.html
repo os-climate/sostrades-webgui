@@ -1,7 +1,6 @@
 
-<mat-toolbar id="toolbar"color="primary" class="d-flex justify-content-between" >
+<mat-toolbar id="toolbar"color="primary" class="d-flex justify-content-between"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
   <div id="mainMenu-img" style="display: flex;">
-    <div id="mainMenu">
       <button
       id="main-menu-button"
       mat-button
@@ -51,18 +50,39 @@
         <button mat-menu-item id="models-menu-button" (click)="onClickModelsStatus()">Models</button>
         <button mat-menu-item id="processes-menu-button" (click)="onClickOntologyProcesses()">Processes</button>
         <button mat-menu-item id="parameters-menu-button"(click)="onClickOntologyParameters()">Parameters</button>
-       
      </mat-menu>
-    </div>
-    <div>
-      <img src="/assets/SOS_TRADES_LOGO_BLANC.svg"
-    height="100%"
-    style="cursor: pointer; height: 45px; margin-left: 50px;"
-    (click)="onClickWelcomePage()"
-    />
-    </div>
+     <div
+      (click)="onClickWelcomePage()"
+      id="logos"
+      >
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
+       class="logo"
+      >
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_SECOND.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
+       class="logo"
+      >   
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_THIRD.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
+       class="logo"
+      >
+ 
+       <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH.PATH !== ''"
+       [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
+       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
+       class="logo"
+       >  
+     </div>
   </div>
-    <div id="title" style="margin-bottom:10px;" [ngClass]="title==='Home'? 'home-title':''">
+
+    <div id="title">
       <h1 value="Home"> {{title}}</h1>
     </div>   
     <div id="username-second-menu" style="display: flex;">

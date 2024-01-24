@@ -9,10 +9,6 @@
   height: 35px;
 }
 
-.home-title {
-  margin-left: 70px
-}
-
 .version-container {
   height: 70%;
   border: solid;
@@ -64,6 +60,7 @@
   border: solid;
   border-width: 1px;
 }
+
 #no-server span {
   line-height: 40px;
   font-weight: 500;
@@ -72,4 +69,12 @@
 .warning-icon {
   color: red;
   font-size: 20px;
+}
+
+#logos {
+  cursor: pointer;
+}
+
+.logo {
+  margin-left: 20px;
 }
