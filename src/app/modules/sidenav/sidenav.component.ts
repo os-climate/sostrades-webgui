@@ -102,7 +102,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
   {
     event.stopPropagation();
     event.preventDefault();
-    this.appDataService.loadStudyInEditionMode()
+    this.appDataService.loadStudyInEditionMode();
   }
 
   closeStudy(event: any) {

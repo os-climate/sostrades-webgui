@@ -443,9 +443,14 @@ export class AppDataService extends DataHttpService {
         if (this.hasNoServerAvailable) {
           this.hasNoServerAvailable = false;
           this.onNoServerResponse.emit(this.hasNoServerAvailable);
+        }else{
+          //check study pod is up
+          if(this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined){
+            this.studyCaseMainService.checkStudyIsUpAndLoaded();
+          }
         }
       }, error => {
-        if (error.statusCode == 502) {
+        if (error.statusCode == 502 || error.statusCode == 0) {
           this.startConnectionStatusTimer();
           this.hasNoServerAvailable = true;
           this.onNoServerResponse.emit(this.hasNoServerAvailable);
