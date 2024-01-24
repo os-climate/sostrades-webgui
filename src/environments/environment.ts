@@ -15,15 +15,15 @@ export const environment = {
     PATH : "assets/SOS_TRADES_LOGO_BLANC.svg",
     HEIGHT : "40px"
   },
-  SOS_TRADES_LOGO_SECOND_PATH: {
+  SOS_TRADES_LOGO_SECOND: {
     PATH : "assets/OscLogoWhite.png",
     HEIGHT : "50px"
   },
-  SOS_TRADES_LOGO_THIRD_PATH: {
+  SOS_TRADES_LOGO_THIRD: {
     PATH : "",
     HEIGHT : ""
   },
-  SOS_TRADES_LOGO_FOURTH_PATH: {
+  SOS_TRADES_LOGO_FOURTH: {
     PATH : "",
     HEIGHT : ""
   }
