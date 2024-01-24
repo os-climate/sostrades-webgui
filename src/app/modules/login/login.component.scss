@@ -48,3 +48,13 @@ mat-card-content {
   border-radius: 5px;
 }
 
+#logos {
+  justify-content: space-evenly;
+  align-items: center;
+  display: flex;
+  margin-right: 20px;
+}
+
+.logo {
+  margin-left: 20px;
+}
