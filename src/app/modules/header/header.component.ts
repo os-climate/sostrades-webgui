@@ -15,6 +15,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SocketService } from 'src/app/services/socket/socket.service';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class HeaderComponent implements OnInit {
   public versionDate: string;
   public platform: string;
   public title: string;
+  environment = environment;
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;
   public onNoServerSubscription: Subscription;
