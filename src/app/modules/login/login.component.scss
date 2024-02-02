@@ -1,6 +1,5 @@
 .flex-container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
@@ -57,4 +56,26 @@ mat-card-content {
 
 .logo {
   margin-left: 20px;
+}
+
+#icon {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#logos-box {
+  display: flex;
+  justify-content: space-around;
+}
+
+.login-logos {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#icon-login {
+  cursor: pointer;
+  font-size: 20px;
 }

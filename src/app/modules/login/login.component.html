@@ -1,107 +1,137 @@
 <div class="flex-container" *ngIf="showLogin">
-  <mat-card class="login-form" style="text-align: center">
-    <mat-card-title style=" display:block"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
-      <div id="logos">
- 
-       <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
-       [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
-       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
-       class="logo"
-       >
- 
-       <img *ngIf="environment.SOS_TRADES_LOGO_SECOND.PATH !== ''"
-       [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
-       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
-       class="logo"
-       >   
- 
-       <img *ngIf="environment.SOS_TRADES_LOGO_THIRD.PATH !== ''"
-       [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
-       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
-       class="logo"
-       >
- 
-       <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH.PATH !== ''"
-       [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
-       [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
-       class="logo"
-       >  
-     </div>
-     <br>
-      <p>SoSTrades {{ platform }}</p>
-    </mat-card-title>
-    <mat-card-content style="display: flex; flex-direction: column">
-      <form [formGroup]="loginForm" (ngSubmit)="submit()">
-        <p>
-          <mat-form-field>
-            <input
-              id="input-login-username"
-              type="text"
-              name="username"
-              matInput
-              placeholder="Username"
-              formControlName="username"
-              autocomplete
-            />
-          </mat-form-field>
-        </p>
-
-        <p>
-          <mat-form-field>
-            <input
-              id="input-login-password"
-              type="password"
-              name="password"
-              matInput
-              placeholder="Password"
-              formControlName="password"
-              autocomplete
-            />
-          </mat-form-field>
-        </p>
-
-        <p *ngIf="error" class="error">
-          {{ error }}
-        </p>
-
-        <div style="margin-top: -7.5px; margin-bottom: 20px">
-          <button
-            id="btn-login-log-in"
-            mat-raised-button
-            [appButtonSpinner]="loadingLogin"
-            type="submit"
-            [disabled]="!loginForm.valid"
-            mat-button
-            aria-label="btn-login-log-in"
-          >
-            Login
-          </button>
+  <div style="display:flex">
+    <mat-card class="login-form" style="text-align: center; min-width: 360px ">
+      <mat-card-title style=" display:block"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
+        <div id="logos">
+  
+        <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
+        [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
+        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
+        class="logo"
+        >
+  
+        <img *ngIf="environment.SOS_TRADES_LOGO_SECOND.PATH !== ''"
+        [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
+        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
+        class="logo"
+        >   
+  
+        <img *ngIf="environment.SOS_TRADES_LOGO_THIRD.PATH !== ''"
+        [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
+        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
+        class="logo"
+        >
+  
+        <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH.PATH !== ''"
+        [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
+        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
+        class="logo"
+        >  
+      </div>
+      <br>
+        <p>SoSTrades {{ platform }}</p>
+      </mat-card-title>
+      <mat-card-content style="display: flex; flex-direction: column">
+        <div>
+          <h2 *ngIf="!loginWithCredential">Connect using</h2>
         </div>
-        <mat-divider></mat-divider>
-      </form>
+        <div id="logos-box">
+          <div *ngIf="!loginWithCredential"> 
+          
+            <div style="display:flex">
+              <div  (click)="loginWithGithub()" class="login-logos">
+                <span>Github Account</span>
+                <img
+                    [src]="logoPath.GITHUB_LOGO"
+                    aria-label="GitHub logo"
+                    style="width: 50px;"
+                />
 
-      <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="ssoUrl !== ''">
-        <a href="{{ ssoUrl }}">
-          <button mat-raised-button mat-button>
-            <i class="fa-solid fa-right-to-bracket"></i>
-            SAML SSO
-          </button>
-        </a>
-      </div>
-      <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="showGitHubLogin">
-          <button mat-raised-button mat-button (click)="loginWithGithub()">
-            Connect with
-            <img
-              src="/assets/GitHub_Logo.png"
-              aria-label="GitHub logo"
-              style="
-                width: 50px;
-                margin-left: 5px;
-                border-radius: 5px;
-              "
-            />
-          </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
+              </div>
+              <i class="fa-solid fa-circle-info" style="color: #0b78b8; margin-left: 10px;"></i>
+            </div>
+            <br>
+            <a href="https://github.com/signup?source=login" target="_blank">Don't have a github account ?</a>
+              
+              <!-- <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="ssoUrl !== ''">
+                    <a href="{{ ssoUrl }}">
+                      <button mat-raised-button mat-button>
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        SAML SSO
+                      </button>
+                    </a>
+                  </div> -->
+              
+          </div>
+          <div class="login-logos">
+            <span *ngIf="!loginWithCredential">SoSTrades Account</span>
+              <i 
+              *ngIf="loginWithCredential"
+              id='icon-login' 
+              class="fa-solid fa-arrow-right-to-bracket"
+              [style]="loginWithCredential ? 'transform: rotate(180deg)' : ''" 
+              [matTooltip]="loginWithCredential ? 'Hide login with credential' : ''" 
+              (click)="displayLoginWithCredential()" 
+              [ngStyle]="{ 'color': environment.SOS_TRADES_HEADER_COLOR_HEX }" >
+              </i> 
+              <img
+              *ngIf="!loginWithCredential"
+              [src]="logoPath.SOS_TRADES_LOGO_BLACK"
+              aria-label="Sostrades logo"
+              style="width: 100px;"
+              (click)="displayLoginWithCredential()" 
+          />
+          </div>
+        </div>
+        <form *ngIf="loginWithCredential" [formGroup]="loginForm" (ngSubmit)="submit()">
+          <br>
+          <p>
+            <mat-form-field>
+              <input
+                id="input-login-username"
+                type="text"
+                name="username"
+                matInput
+                placeholder="Username"
+                formControlName="username"
+                autocomplete
+              />
+            </mat-form-field>
+          </p>
+
+          <p>
+            <mat-form-field>
+              <input
+                id="input-login-password"
+                type="password"
+                name="password"
+                matInput
+                placeholder="Password"
+                formControlName="password"
+                autocomplete
+              />
+            </mat-form-field>
+          </p>
+
+          <p *ngIf="error" class="error">
+            {{ error }}
+          </p>
+
+          <div style="margin-top: -7.5px; margin-bottom: 20px">
+            <button
+              id="btn-login-log-in"
+              mat-raised-button
+              [appButtonSpinner]="loadingLogin"
+              type="submit"
+              [disabled]="!loginForm.valid"
+              mat-button
+              aria-label="btn-login-log-in"
+            >
+              Login
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

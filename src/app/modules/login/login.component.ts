@@ -13,6 +13,7 @@ import { RoutingState } from 'src/app/services/routing-state/routing-state.servi
 import { Routing } from 'src/app/models/routing.model';
 import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.service';
 import { environment } from 'src/environments/environment';
+import { LogoPath } from 'src/app/models/logo-path.model';
 
 
 @Component({
@@ -29,7 +30,9 @@ export class LoginComponent implements OnInit {
   public showGitHubLogin: boolean;
   public ssoUrl: string;
   private autoLogon: boolean;
-  environment = environment;
+  public loginWithCredential: boolean;
+  public environment = environment;
+  public logoPath = LogoPath;
 
   loginForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -54,6 +57,7 @@ export class LoginComponent implements OnInit {
     this.showGitHubLogin = false;
     this.ssoUrl = '';
     this.autoLogon = false;
+    this.loginWithCredential = false;
   }
 
   ngOnInit() {
@@ -114,6 +118,14 @@ export class LoginComponent implements OnInit {
           this.router.navigate([Routing.LOGIN]);
         }
       });
+  }
+
+  displayLoginWithCredential() {
+    if(this.loginWithCredential) {
+      this.loginWithCredential = false
+    }else {
+      this.loginWithCredential = true
+    }
   }
 
   submit() {
