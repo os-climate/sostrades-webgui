@@ -1,0 +1,17 @@
+export enum Logo {
+    ASSETS = '/assets/',
+    SOS_TRADES_LOGO_WHITE = 'SOS_TRADES_LOGO_BLANC.svg',
+    OSC_LOGO_WHITE = 'OscLogoWhite.png',
+    GITHUB_LOGO_NAME ='GitHub_Logo.png',
+    GITHUB_LOGO = 'github-mark.png',
+    SOS_TRADES_LOGO_BLACK= 'SOS_TRADES_LOGO_NOIR.svg'
+}
+
+
+export const LogoPath = {
+    GITHUB_LOGO_NAME: Logo.ASSETS + Logo.GITHUB_LOGO_NAME,
+    GITHUB_LOGO: Logo.ASSETS + Logo.GITHUB_LOGO,
+    SOS_TRADES_LOGO_WHITE: Logo.ASSETS + Logo.SOS_TRADES_LOGO_WHITE,
+    SOS_TRADES_LOGO_BLACK: Logo.ASSETS + Logo.SOS_TRADES_LOGO_BLACK,
+    OSC_LOGO_WHITE: Logo.ASSETS +Logo.OSC_LOGO_WHITE
+};
