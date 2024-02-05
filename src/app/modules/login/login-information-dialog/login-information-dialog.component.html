@@ -1,0 +1,20 @@
+<div [ngClass]="githubInfos ? 'body' : ''">
+    <div *ngIf="githubInfos">
+        <h3 style="text-align: center;">For you first connection on the <span style="text-decoration: underline;">{{data.platform}}</span> platform</h3>
+        <p>After clicking on the GitHub icon, you will be redirected to an authorization page like the image below.</p>
+        <p>You need to click the button <span style="font-weight: bold;">"Authorize b4pm-devops"</span>, and then your GitHub account will be associated with our platform.</p>
+        <p>Then, you ou will be able to log in.</p>
+        <img [src]="logoPath.GITHUB_FIRST_CONNECTION_PATH" style="width: 100%;">
+    </div>
+    <div *ngIf="sostradesInfos">
+        <p> <i class="fa-solid fa-triangle-exclamation warning-icon"></i> The best way is to create a github account by clicking on the previous github icon button and use it to connect on the sostrades platform.</p> 
+        <p>To create a SoSTrades account, please contact the sostrades team at <a id="mail" [href]="hrefEmail" target="_blank"> {{data.support}}</a> the developper team.</p>
+        <p>Please provide your <span style="font-weight: bold;">first name, last name and email</span>.</p>
+        <p>Then, a username will be provided with a link to change your password.</p>  
+        
+    </div>
+    <div style="display:flex; justify-content: center; margin-top: 10px;">
+        <button mat-button (click)="onClickOk()">Ok</button>
+    </div>
+    
+</div>
