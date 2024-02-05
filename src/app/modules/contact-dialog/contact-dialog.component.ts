@@ -9,7 +9,8 @@ import { AppDataService } from 'src/app/services/app-data/app-data.service';
 })
 export class ContactDialogComponent implements OnInit {
 
-  public mail : string
+  public mail : string;
+  public hrefEmail: string;
   
   constructor( 
     public appDataService : AppDataService,
@@ -23,6 +24,10 @@ export class ContactDialogComponent implements OnInit {
          this.mail = result['support']
       } 
     )
+    if (this.mail !== null && this.mail !== undefined){
+      this.hrefEmail= `mailto:${this.mail}?subject=[SOSTRADES]`;
+    }
+    
   }
   closeContactDialog() {
     if (this.dialogRef !== null && this.dialogRef !== undefined) {
