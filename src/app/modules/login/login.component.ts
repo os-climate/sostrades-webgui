@@ -14,6 +14,7 @@ import { Routing } from 'src/app/models/routing.model';
 import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.service';
 import { environment } from 'src/environments/environment';
 import { LogoPath } from 'src/app/models/logo-path.model';
+import { LoginInformationDialogComponent } from './login-information-dialog/login-information-dialog.component';
 
 
 @Component({
@@ -33,6 +34,8 @@ export class LoginComponent implements OnInit {
   public loginWithCredential: boolean;
   public environment = environment;
   public logoPath = LogoPath;
+  public isLocalPlatform : boolean;
+  public support: string;
 
   loginForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -58,6 +61,8 @@ export class LoginComponent implements OnInit {
     this.ssoUrl = '';
     this.autoLogon = false;
     this.loginWithCredential = false;
+    this.isLocalPlatform = false;
+    this.support='';
   }
 
   ngOnInit() {
@@ -78,9 +83,15 @@ export class LoginComponent implements OnInit {
       }
       this.loggerService.log(`autologon : ${this.autoLogon}`);
 
+      this.appDataService.getAppSupport().subscribe(response=> {
+        this.support = response['support']
+      });
       this.appDataService.getAppInfo().subscribe(platformInfo => {    
           
         this.platform = platformInfo.platform;
+        // if(this.platform == 'Local'.toLocaleLowerCase()) {
+        //   this.isLocalPlatform = true;
+        // }
 
         this.samlService.getSSOUrl().subscribe(ssoUrl => {
           this.ssoUrl = ssoUrl;
@@ -126,6 +137,12 @@ export class LoginComponent implements OnInit {
     }else {
       this.loginWithCredential = true
     }
+  }
+  openLoginInfos(infosTo: string) {
+    const data = {infos: infosTo, platform: this.platform, support: this.support}
+    this.dialog.open(LoginInformationDialogComponent, {
+      data: data
+    });
   }
 
   submit() {

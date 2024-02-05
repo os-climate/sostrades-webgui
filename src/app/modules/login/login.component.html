@@ -7,50 +7,60 @@
         <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
         [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
         [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
-        class="logo"
+        class="logo-header"
         >
   
         <img *ngIf="environment.SOS_TRADES_LOGO_SECOND.PATH !== ''"
         [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
         [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
-        class="logo"
+        class="logo-header"
         >   
   
         <img *ngIf="environment.SOS_TRADES_LOGO_THIRD.PATH !== ''"
         [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
         [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
-        class="logo"
+        class="logo-header"
         >
   
         <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH.PATH !== ''"
         [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
         [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
-        class="logo"
+        class="logo-header"
         >  
       </div>
       <br>
         <p>SoSTrades {{ platform }}</p>
       </mat-card-title>
-      <mat-card-content style="display: flex; flex-direction: column">
+      <mat-card-content style="display: flex; flex-direction: column; margin-bottom: 20px;">
         <div>
-          <h2 *ngIf="!loginWithCredential">Connect using</h2>
+          <h1 *ngIf="!loginWithCredential">Connect using</h1>
         </div>
         <div id="logos-box">
           <div *ngIf="!loginWithCredential"> 
           
-            <div style="display:flex">
-              <div  (click)="loginWithGithub()" class="login-logos">
-                <span>Github Account</span>
-                <img
-                    [src]="logoPath.GITHUB_LOGO"
+            <div class="logos-information margin-bottom">
+              <div class="login-logos">
+                <span class="margin-bottom">Github Account 
+                  <i class="fa-solid fa-circle-info information-icon" (click)="openLoginInfos(logoPath.GITHUB_LOGO_PATH)"></i>
+                </span>
+                <button 
+                  mat-raised-button 
+                  class="mat-focus-indicator mat-button mat-raised-button mat-button-base" 
+                  (click)="loginWithGithub()"
+                  id="github-account-button"
+                >
+                  <img
+                  src="/assets/GitHub_Logo.png"
+                  width="80px"
+                  />
+                  <img
+                    [src]="logoPath.GITHUB_LOGO_PATH"
                     aria-label="GitHub logo"
                     style="width: 50px;"
-                />
-
+                  />
+                </button>
               </div>
-              <i class="fa-solid fa-circle-info" style="color: #0b78b8; margin-left: 10px;"></i>
             </div>
-            <br>
             <a href="https://github.com/signup?source=login" target="_blank">Don't have a github account ?</a>
               
               <!-- <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="ssoUrl !== ''">
@@ -63,24 +73,40 @@
                   </div> -->
               
           </div>
-          <div class="login-logos">
-            <span *ngIf="!loginWithCredential">SoSTrades Account</span>
-              <i 
-              *ngIf="loginWithCredential"
-              id='icon-login' 
-              class="fa-solid fa-arrow-right-to-bracket"
-              [style]="loginWithCredential ? 'transform: rotate(180deg)' : ''" 
-              [matTooltip]="loginWithCredential ? 'Hide login with credential' : ''" 
-              (click)="displayLoginWithCredential()" 
-              [ngStyle]="{ 'color': environment.SOS_TRADES_HEADER_COLOR_HEX }" >
-              </i> 
-              <img
-              *ngIf="!loginWithCredential"
-              [src]="logoPath.SOS_TRADES_LOGO_BLACK"
-              aria-label="Sostrades logo"
-              style="width: 100px;"
-              (click)="displayLoginWithCredential()" 
-          />
+          <br *ngIf="!loginWithCredential">
+          <div *ngIf="!loginWithCredential" class="or-bar">OR</div>
+          <div >
+            <div class="logos-information">
+              <div class="login-logos">
+                <span class="margin-bottom" *ngIf="!loginWithCredential">SoSTrades Account 
+                  <i *ngIf="!isLocalPlatform" class="fa-solid fa-circle-info information-icon" (click)="openLoginInfos(logoPath.SOS_TRADES_LOGO_BLACK_PATH)"></i>
+                </span>
+                <i 
+                *ngIf="loginWithCredential"
+                id='icon-login' 
+                class="fa-solid fa-arrow-right-to-bracket"
+                [style]="loginWithCredential ? 'transform: rotate(180deg)' : ''" 
+                [matTooltip]="loginWithCredential ? 'Hide login with sostrades account' : ''" 
+                (click)="displayLoginWithCredential()" 
+                [ngStyle]="{ 'color': environment.SOS_TRADES_HEADER_COLOR_HEX }" >
+                </i>
+                <button 
+                *ngIf="!loginWithCredential"
+                id="sostrades-account-button" 
+                mat-raised-button 
+                class="mat-focus-indicator mat-button mat-raised-button mat-button-base" 
+                (click)="displayLoginWithCredential()" 
+                style="padding: 10px;"
+                >
+                  
+                  <img
+                  [src]="logoPath.SOS_TRADES_LOGO_BLACK_PATH"
+                  aria-label="Sostrades logo"
+                  style="width: 100px;"
+                  />
+                </button>
+              </div>   
+            </div>
           </div>
         </div>
         <form *ngIf="loginWithCredential" [formGroup]="loginForm" (ngSubmit)="submit()">
