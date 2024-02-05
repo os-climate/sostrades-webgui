@@ -25,8 +25,17 @@
             (click)="onClickSwitchEditStudy($event)">
             <i class="fa-solid fa-repeat" style="color: #0b78b8;"></i>
             Switch to edition mode
-        </button>
+          </button>
         </p>
+        <button 
+            mat-button
+            class="edit-button" 
+            id="study-switch-test_remove-cache" 
+            matTooltip="clear the cache"
+            (click)="onClickReleaseStudyCache($event)">
+            <i class="fa-solid fa-repeat" style="color: #0b78b8;"></i>
+            Release study cache
+        </button>
         
       </div>
 

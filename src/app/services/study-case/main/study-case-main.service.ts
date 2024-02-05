@@ -376,6 +376,14 @@ export class StudyCaseMainService extends MainHttpService {
     });
   }
 
+  releaseStudyCache(){
+    const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/reset-cache`;
+    return this.http.post(url,{}).subscribe(isOK => {
+    }, error => {
+      console.log(error);
+    });
+  }
+
   checkStudyIsUpAndLoaded(){
     //Check if the study pod server is up and if the study is loaded
     const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-up-and-loaded`;

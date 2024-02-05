@@ -105,6 +105,11 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.appDataService.loadStudyInEditionMode();
   }
 
+  onClickReleaseStudyCache(event: any)
+  {
+    this.studyCaseMainService.releaseStudyCache();
+  }
+
   closeStudy(event: any) {
     event.stopPropagation();
     event.preventDefault();

@@ -243,10 +243,10 @@ export class AppDataService extends DataHttpService {
                           this.loadingDialogService.disableCancelLoading(true);
 
                           // clear post processing dictionnary
-                          this.postProcessingService.clearPostProcessingDict();
+                          //this.postProcessingService.clearPostProcessingDict();
 
                           // Set post processing dictionnary from the loaded study
-                          this.postProcessingService.setPostProcessing(loadedStudy);
+                          //this.postProcessingService.setPostProcessing(loadedStudy);
                           
                           // load read only mode
                           this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
@@ -386,9 +386,9 @@ export class AppDataService extends DataHttpService {
       );
     }
 
-    loadingCalls.push(
-      this.studyCasePostProcessingService.loadStudy(studyId, false)
-    );
+    // loadingCalls.push(
+    //   this.studyCasePostProcessingService.loadStudy(studyId, false)
+    // );
     combineLatest(loadingCalls).subscribe(
       ([resultLoadedStudy, isLoaded]) => {
         if (isstudyNeedLoaded) {
