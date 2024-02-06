@@ -35,7 +35,6 @@ export class LoginComponent implements OnInit {
   public environment = environment;
   public logoPath = LogoPath;
   public isLocalPlatform : boolean;
-  public support: string;
 
   loginForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -62,7 +61,6 @@ export class LoginComponent implements OnInit {
     this.autoLogon = false;
     this.loginWithCredential = false;
     this.isLocalPlatform = false;
-    this.support='';
   }
 
   ngOnInit() {
@@ -83,9 +81,7 @@ export class LoginComponent implements OnInit {
       }
       this.loggerService.log(`autologon : ${this.autoLogon}`);
 
-      this.appDataService.getAppSupport().subscribe(response=> {
-        this.support = response['support']
-      });
+      
       this.appDataService.getAppInfo().subscribe(platformInfo => {    
           
         this.platform = platformInfo.platform;
