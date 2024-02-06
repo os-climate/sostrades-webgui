@@ -14,7 +14,6 @@ export class LoginInformationDialogComponent implements OnInit {
   public sostradesInfos: boolean;
   public githubInfos:boolean;
   public logoPath = LogoPath;
-  public hrefEmail : string;
   
 
 
@@ -24,19 +23,15 @@ export class LoginInformationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data) {
       this.sostradesInfos = false;
       this.githubInfos = false;
-      this.hrefEmail = '';
      }
 
   ngOnInit(): void {
-    if (this.data.infos == this.logoPath.GITHUB_LOGO_PATH) {
+    if (this.data.logoPath == this.logoPath.GITHUB_LOGO_PATH) {
       this.githubInfos = true;
     }
-    else if (this.data.infos == this.logoPath.SOS_TRADES_LOGO_BLACK_PATH) {
+    else if (this.data.logoPath == this.logoPath.SOS_TRADES_LOGO_BLACK_PATH) {
       this.sostradesInfos = true;
     }
-    if(this.data.support !== null && this.data.support !== undefined) {
-        this.hrefEmail= `mailto:${this.data.support}?subject=[SOSTRADES CREATE ACCOUNT]`;
-      }
   }
   onClickOk() {
     this.dialogRef.close();

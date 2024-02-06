@@ -89,9 +89,9 @@ export class LoginComponent implements OnInit {
       this.appDataService.getAppInfo().subscribe(platformInfo => {    
           
         this.platform = platformInfo.platform;
-        // if(this.platform == 'Local'.toLocaleLowerCase()) {
-        //   this.isLocalPlatform = true;
-        // }
+        if (this.platform == 'Local'.toLocaleLowerCase()) {
+          this.isLocalPlatform = true;
+        }
 
         this.samlService.getSSOUrl().subscribe(ssoUrl => {
           this.ssoUrl = ssoUrl;
@@ -100,8 +100,11 @@ export class LoginComponent implements OnInit {
             document.location.href = this.ssoUrl;
           } else {
 
-            this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
-              this.showGitHubLogin = showGitHubLogin;
+            this.githubOauthService.getGithubOAuthAvailable().subscribe(response => {
+              this.showGitHubLogin = response;
+              if(!this.showGitHubLogin){
+                this.loginWithCredential = true;
+              }
               this.showLogin = true;
             }, error => {
               this.showLogin = true;
@@ -132,14 +135,16 @@ export class LoginComponent implements OnInit {
   }
 
   displayLoginWithCredential() {
-    if(this.loginWithCredential) {
-      this.loginWithCredential = false
-    }else {
-      this.loginWithCredential = true
+    if (this.showGitHubLogin) {
+      if (this.loginWithCredential) {
+        this.loginWithCredential = false;
+      } else {
+        this.loginWithCredential = true;
+      }
     }
   }
-  openLoginInfos(infosTo: string) {
-    const data = {infos: infosTo, platform: this.platform, support: this.support}
+  openLoginInfos(logoPath: string) {
+    const data = {logoPath: logoPath, platform: this.platform}
     this.dialog.open(LoginInformationDialogComponent, {
       data: data
     });

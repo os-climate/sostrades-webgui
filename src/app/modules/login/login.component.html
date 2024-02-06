@@ -36,7 +36,7 @@
           <h1 *ngIf="!loginWithCredential">Connect using</h1>
         </div>
         <div id="logos-box">
-          <div *ngIf="!loginWithCredential"> 
+          <div *ngIf="!loginWithCredential && showGitHubLogin"> 
           
             <div class="logos-information margin-bottom">
               <div class="login-logos">
@@ -74,22 +74,22 @@
               
           </div>
           <br *ngIf="!loginWithCredential">
-          <div *ngIf="!loginWithCredential" class="or-bar">OR</div>
+          <div *ngIf="!loginWithCredential && !showGitHubLogin" class="or-bar">OR</div>
           <div >
             <div class="logos-information">
               <div class="login-logos">
                 <span class="margin-bottom" *ngIf="!loginWithCredential">SoSTrades Account 
                   <i *ngIf="!isLocalPlatform" class="fa-solid fa-circle-info information-icon" (click)="openLoginInfos(logoPath.SOS_TRADES_LOGO_BLACK_PATH)"></i>
                 </span>
-                <i 
-                *ngIf="loginWithCredential"
-                id='icon-login' 
-                class="fa-solid fa-arrow-right-to-bracket"
-                [style]="loginWithCredential ? 'transform: rotate(180deg)' : ''" 
-                [matTooltip]="loginWithCredential ? 'Hide login with sostrades account' : ''" 
-                (click)="displayLoginWithCredential()" 
-                [ngStyle]="{ 'color': environment.SOS_TRADES_HEADER_COLOR_HEX }" >
-                </i>
+                  <i 
+                  *ngIf="loginWithCredential && showGitHubLogin"
+                  id='icon-login' 
+                  class="fa-solid fa-arrow-right-to-bracket"
+                  [style]="loginWithCredential ? 'transform: rotate(180deg)' : ''" 
+                  [matTooltip]="loginWithCredential ? 'Hide login with sostrades account' : ''" 
+                  (click)="displayLoginWithCredential()" 
+                  [ngStyle]="{ 'color': environment.SOS_TRADES_HEADER_COLOR_HEX }" >
+                  </i>
                 <button 
                 *ngIf="!loginWithCredential"
                 id="sostrades-account-button" 
