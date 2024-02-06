@@ -13,6 +13,8 @@ import { RoutingState } from 'src/app/services/routing-state/routing-state.servi
 import { Routing } from 'src/app/models/routing.model';
 import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.service';
 import { environment } from 'src/environments/environment';
+import { LogoPath } from 'src/app/models/logo-path.model';
+import { LoginInformationDialogComponent } from './login-information-dialog/login-information-dialog.component';
 
 
 @Component({
@@ -29,7 +31,11 @@ export class LoginComponent implements OnInit {
   public showGitHubLogin: boolean;
   public ssoUrl: string;
   private autoLogon: boolean;
-  environment = environment;
+  public loginWithCredential: boolean;
+  public environment = environment;
+  public logoPath = LogoPath;
+  public isLocalPlatform : boolean;
+  public support: string;
 
   loginForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -54,6 +60,9 @@ export class LoginComponent implements OnInit {
     this.showGitHubLogin = false;
     this.ssoUrl = '';
     this.autoLogon = false;
+    this.loginWithCredential = false;
+    this.isLocalPlatform = false;
+    this.support='';
   }
 
   ngOnInit() {
@@ -74,9 +83,15 @@ export class LoginComponent implements OnInit {
       }
       this.loggerService.log(`autologon : ${this.autoLogon}`);
 
+      this.appDataService.getAppSupport().subscribe(response=> {
+        this.support = response['support']
+      });
       this.appDataService.getAppInfo().subscribe(platformInfo => {    
           
         this.platform = platformInfo.platform;
+        if (this.platform == 'Local'.toLocaleLowerCase()) {
+          this.isLocalPlatform = true;
+        }
 
         this.samlService.getSSOUrl().subscribe(ssoUrl => {
           this.ssoUrl = ssoUrl;
@@ -85,8 +100,11 @@ export class LoginComponent implements OnInit {
             document.location.href = this.ssoUrl;
           } else {
 
-            this.githubOauthService.getGithubOAuthAvailable().subscribe(showGitHubLogin => {
-              this.showGitHubLogin = showGitHubLogin;
+            this.githubOauthService.getGithubOAuthAvailable().subscribe(response => {
+              this.showGitHubLogin = response;
+              if(!this.showGitHubLogin){
+                this.loginWithCredential = true;
+              }
               this.showLogin = true;
             }, error => {
               this.showLogin = true;
@@ -114,6 +132,22 @@ export class LoginComponent implements OnInit {
           this.router.navigate([Routing.LOGIN]);
         }
       });
+  }
+
+  displayLoginWithCredential() {
+    if (this.showGitHubLogin) {
+      if (this.loginWithCredential) {
+        this.loginWithCredential = false;
+      } else {
+        this.loginWithCredential = true;
+      }
+    }
+  }
+  openLoginInfos(logoPath: string) {
+    const data = {logoPath: logoPath, platform: this.platform}
+    this.dialog.open(LoginInformationDialogComponent, {
+      data: data
+    });
   }
 
   submit() {

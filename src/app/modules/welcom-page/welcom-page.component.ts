@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LogoPath } from 'src/app/models/logo-path.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { UserService } from 'src/app/services/user/user.service';
 
@@ -12,6 +13,7 @@ export class WelcomPageComponent implements OnInit {
   public username: string;
   public hasAccessToAdmin: boolean;
   public hasAccessToStudy: boolean;
+  public logoPath = LogoPath;
 
 
   constructor(
