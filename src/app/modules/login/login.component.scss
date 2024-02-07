@@ -1,6 +1,5 @@
 .flex-container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
@@ -55,6 +54,62 @@ mat-card-content {
   margin-right: 20px;
 }
 
-.logo {
+.logo-header {
   margin-left: 20px;
+}
+
+#icon {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#logos-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-logos {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#icon-login {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.logos-information {
+  display: flex;
+  justify-content: center;
+}
+
+.information-icon {
+  color: #0b78b8;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.margin-bottom {
+  margin-bottom: 10px;
+}
+
+.or-bar {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.35);
+  margin: 8px 0px;
+}
+
+.or-bar::before,
+.or-bar::after {
+  content: "";
+  flex-grow: 1;
+  background: rgba(0, 0, 0, 0.35);
+  height: 1px;
+  font-size: 0px;
+  line-height: 0px;
+  margin: 0px 8px;
 }

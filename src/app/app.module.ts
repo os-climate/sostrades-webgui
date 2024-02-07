@@ -123,6 +123,7 @@ import { StudyCaseCreationComponent } from './modules/study-case/study-case-crea
 import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NoServerComponent } from './modules/no-server/no-server.component';
+import { LoginInformationDialogComponent } from './modules/login/login-information-dialog/login-information-dialog.component';
 
 registerLocaleData(fr);
 
@@ -221,6 +222,7 @@ registerLocaleData(fr);
     StudyCaseCreationComponent,
     ProcessBuilderComponent,
     NoServerComponent,
+    LoginInformationDialogComponent,
   ],
   imports: [
     BrowserModule,
