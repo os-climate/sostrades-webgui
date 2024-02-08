@@ -7,7 +7,7 @@
     "build": "ng build",
     "test": "npx playwright test e2e-playwright --workers=1",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e" 
   },
   "private": true,
   "dependencies": {
@@ -42,6 +42,7 @@
     "ngx-papaparse": "~5.0.0",
     "rxjs": "~6.6.7",
     "socket.io-client": "~4.7.2",
+    "engine.io-parser": "5.2.1",
     "tslib": "~2.2.0",
     "zone.js": "~0.11.4"
   },
