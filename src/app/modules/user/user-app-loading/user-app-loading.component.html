@@ -1,6 +1,11 @@
 <div class="flex-container">
   <div class="waiting-container mat-elevation-z8">
-    <img src="/assets/SOS_TRADES_LOGO_BLANC.svg" class="logo-zone" />
+    <div [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }" style="display: flex; justify-content: space-between;">
+          <img 
+            [src]="logoPath.SOS_TRADES_LOGO_WHITE_PATH" 
+            class="logo-zone" 
+          />
+    </div>
 
     <div>
       <mat-progress-spinner
