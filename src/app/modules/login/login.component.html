@@ -147,13 +147,18 @@
             <button
               id="btn-login-log-in"
               mat-raised-button
-              [appButtonSpinner]="loadingLogin"
               type="submit"
               [disabled]="!loginForm.valid"
               mat-button
               aria-label="btn-login-log-in"
             >
-              Login
+              <span *ngIf="!loadingLogin">Login</span>
+              <mat-progress-spinner
+              *ngIf="loadingLogin"
+              diameter="40"
+              mode="indeterminate"
+              style="margin:0 auto; width: 40px; height: 40px;"
+            ></mat-progress-spinner>
             </button>
           </div>
         </form>

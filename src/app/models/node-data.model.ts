@@ -1,4 +1,3 @@
-import { ThrowStmt } from '@angular/compiler';
 import { DataframeDescriptor } from './dataframe-descriptor.model';
 import { TreeNode } from './tree-node.model';
 
@@ -72,7 +71,7 @@ export class ProcessBuilderData {
    * @param data json dictionary with attended values
    * @returns ProcessBuilderData
    */
-  public static Create(data: {}): ProcessBuilderData {
+  public static Create(data: any): ProcessBuilderData {
     let repositoryIdentifier = '';
     let processIdentifier = '';
     let usecaseDataName = '';
