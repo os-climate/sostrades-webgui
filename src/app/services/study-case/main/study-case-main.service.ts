@@ -241,7 +241,7 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   //#region update study
-  // tslint:disable-next-line: max-line-length
+  // eslint-disable-next-line max-len
   updateStudyParameters(parametersList: StudyUpdateParameter[], studyId: string): Observable<LoadedStudy> {
     const url = `${this.apiRoute}/${studyId}/parameters`;
 
@@ -277,7 +277,7 @@ export class StudyCaseMainService extends MainHttpService {
     return loaderObservable;
   }
 
-  // tslint:disable-next-line: max-line-length
+  // eslint-disable-next-line max-len
   private updateStudyParametersTimeout(studyId: number, requestUrl: string, formData: FormData,  loaderObservable: Subscriber<LoadedStudy>) {
     this.http.post(requestUrl, formData).pipe(map(response => {
       return LoadedStudy.Create(response);
@@ -356,7 +356,7 @@ export class StudyCaseMainService extends MainHttpService {
     const formData = new FormData();
 
     if (files.length > 0) {
-      // tslint:disable-next-line: prefer-for-of
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let fileIndex = 0; fileIndex < files.length; ++fileIndex) {
 
         const file = files[fileIndex];

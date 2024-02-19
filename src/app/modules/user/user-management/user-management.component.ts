@@ -92,7 +92,7 @@ export class UserManagementComponent implements OnInit {
 
     // Prevent admin from deleting user
     const validationDialogData = new ValidationDialogData();
-    // tslint:disable-next-line: max-line-length
+    // eslint-disable-next-line max-len
     validationDialogData.message = `You are about to delete the user "${user.username}". This will delete user private groups (user is the only member of the group) and studies related, proceed ?`;
 
     const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
@@ -132,7 +132,7 @@ export class UserManagementComponent implements OnInit {
   resetPassword(user: User) {
     // Ask for a confirmation
     const validationDialogData = new ValidationDialogData();
-    // tslint:disable-next-line: max-line-length
+    // eslint-disable-next-line max-len
     validationDialogData.message = `You are about to reset the user "${user.username}" password. proceed ?`;
 
     const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {

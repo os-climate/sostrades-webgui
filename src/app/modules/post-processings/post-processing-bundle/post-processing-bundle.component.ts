@@ -99,7 +99,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.loadingMessage = 'Requesting charts';
     this.displayProgressBar = true;
 
-    // tslint:disable-next-line: max-line-length
+    // eslint-disable-next-line max-len
     this.postProcessingService.getPostProcessing(
       needToUpdate,
       this.studyCaseDataService.loadedStudy,

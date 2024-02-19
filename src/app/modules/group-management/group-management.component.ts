@@ -144,7 +144,7 @@ export class GroupManagementComponent implements OnInit {
 
     const groupName = this.createGroupForm.value.groupName;
     this.loadingDialogService.showLoading(`Creation of the Group "${groupName}". Please wait.`);
-    // tslint:disable-next-line: max-line-length
+    // eslint-disable-next-line max-len
     this.groupDataService.createGroup(this.createGroupForm.value.groupName, this.createGroupForm.value.groupDescription, this.checkboxConfidential).subscribe(res => {
       const newGroup: Group = res as Group;
 
@@ -225,7 +225,7 @@ export class GroupManagementComponent implements OnInit {
   deleteGroup(group: Group) {
 
     const validationDialogData = new ValidationDialogData();
-    // tslint:disable-next-line: max-line-length
+    // eslint-disable-next-line max-len
     validationDialogData.message = `You are about to delete the Group (${group.name}). This will also delete the studies in this group, are you sure you want to proceed ?`;
     validationDialogData.buttonOkText = 'Delete';
 

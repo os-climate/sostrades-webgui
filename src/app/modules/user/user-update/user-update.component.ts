@@ -90,10 +90,10 @@ export class UserUpdateComponent implements OnInit {
       this.dialogRef.close(this.data);
       if (resUpdate.newProfile) {
         if (resUpdate.mailSend) {
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           this.snackbarService.showInformation(`Update of user "${this.updateUserForm.value.username}" successfull, and notification mail successfully sent.`);
         } else {
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           this.snackbarService.showWarning(`Update of user "${this.updateUserForm.value.username}" successfull, but server was unable to notify user by mail.`);
         }
       } else {

@@ -104,7 +104,7 @@ export class AuthService extends DataHttpService {
           // now get user info
           const opts = {
             headers: new HttpHeaders({
-              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // tslint:disable-line:object-literal-key-quotes
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // eslint-disable-line quote-props
             })
           };
 
@@ -129,7 +129,7 @@ export class AuthService extends DataHttpService {
     // now get user info
     const opts = {
       headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // tslint:disable-line:object-literal-key-quotes
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // eslint-disable-line quote-props
       })
     };
 
@@ -147,7 +147,7 @@ export class AuthService extends DataHttpService {
   deauthenticate() {
     const opts = {
       headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + localStorage.getItem('refreshToken')  // tslint:disable-line:object-literal-key-quotes
+        'Authorization': 'Bearer ' + localStorage.getItem('refreshToken')  // eslint-disable-line quote-props
       })
     };
 

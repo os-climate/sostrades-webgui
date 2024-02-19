@@ -660,7 +660,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             }
           });
         } else {
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           this.snackbarService.showWarning('Missing mandatory data before being able to execute study case (Node => ' + dataMissing[0] + ', ...)');
         }
       }
@@ -757,7 +757,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
         if (statusList.length > 0) {
           statusList.forEach(key => {
-            // tslint:disable-next-line: max-line-length
+            // eslint-disable-next-line max-len
             if (studyCaseStatusList.disciplinesStatus[key] === DisciplineStatus.STATUS_CONFIGURE || studyCaseStatusList.disciplinesStatus[key] === DisciplineStatus.STATUS_VIRTUAL || studyCaseStatusList.disciplinesStatus[key] === DisciplineStatus.STATUS_NONE) {
               this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
             } else {
@@ -1166,7 +1166,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     if (this.studyCaseLocalStorageService.studiesHaveUnsavedChanges()) {
       const validationDialogData = new ValidationDialogData();
-      // tslint:disable-next-line: max-line-length
+      // eslint-disable-next-line max-len
       validationDialogData.message = `You have made unsaved changes in your study save & synchronise your changes before launching calculation ?`;
       validationDialogData.buttonOkText = 'Save & Run';
 

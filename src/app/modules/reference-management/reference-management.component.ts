@@ -30,7 +30,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   public isLoading: boolean;
   public columnName = ColumnName;
 
-  // tslint:disable-next-line: max-line-length
+  // eslint-disable-next-line max-len
   public displayedColumns = [
     ColumnName.REGENERATION_STATUS,
     ColumnName.NAME,
@@ -183,7 +183,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
           this.subscribeToRegeneration(refGenId, study);
         }, (errorReceived) => {
           const error = errorReceived as SoSTradesError;
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           this.snackbarService.showError(`Reference regeneration failed for ${study.process}.${study.name} with error ${error.description}`);
           study.isRegeneratingReference = false;
           study.regenerationStatus = 'FAILED';

@@ -52,7 +52,7 @@ export class PostProcessingService extends PostProcessingHttpService {
       }));
   }
 
-  // tslint:disable-next-line: max-line-length
+  // eslint-disable-next-line max-len
   getPostProcessing(needToUpdate: boolean, study: LoadedStudy, disciplineKey: string, moduleName: string, postProcessingFilters: PostProcessingFilter[]): Observable<any[]> {
 
     let postProcessingBundle: any = null;
@@ -87,7 +87,7 @@ export class PostProcessingService extends PostProcessingHttpService {
         responseType: 'text' as const
       };
 
-      // tslint:disable-next-line: max-line-length
+      // eslint-disable-next-line max-len
       return this.http.post(`${this.apiRoute}/${study.studyCase.id}/post-processing`, request, options).pipe(map(response => {
 
         // Add check regarding numpy python type that are not manage by the JSON parser

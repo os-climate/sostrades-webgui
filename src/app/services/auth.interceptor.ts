@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
     private snackBarService: SnackbarService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // tslint:disable-next-line: max-line-length
+    // eslint-disable-next-line max-len
     if (!/.*\/api\/data\/auth\/.*/.test(request.url) && !/.*\/api\/data\/application\/info.*/.test(request.url) && !/.*\/api\/data\/saml\/.*/.test(request.url)) {
       if (this.auth.isAuthenticated()) {
         request = this.addToken(request, this.auth.getJwtToken());

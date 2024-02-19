@@ -14,7 +14,7 @@ import { DataStorage } from 'src/app/models/data-storage.model';
 import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
 import { NodeData } from 'src/app/models/node-data.model';
 
-// tslint:disable: max-line-length
+/* eslint-disable max-len */
 
 @Injectable({
   providedIn: 'root'
@@ -176,7 +176,7 @@ export class StudyCaseLocalStorageService {
       studiesContainer = this.getStudiesParametersFromLocalStorage();
       Object.keys(studiesContainer.studies).forEach(key => {
         if (Object.keys(studiesContainer.studies[key]).length > 0) {
-          // tslint:disable-next-line: radix
+          // eslint-disable-next-line radix
           studyId = parseInt(key);
           this.unsavedChanges.emit(true);
         }
@@ -234,7 +234,7 @@ export class StudyCaseLocalStorageService {
         } else {
           this.removeStudyParametersFromLocalStorage(studyId);
           this.loadingDialogService.closeLoading();
-          // tslint:disable-next-line: radix
+          // eslint-disable-next-line radix
           this.socketService.saveStudy(parseInt(studyId), studyParameters);
           this.socketService.leaveRoom(parseInt(studyId));
           this.studyCaseDataService.onStudyCaseChange.emit(null);

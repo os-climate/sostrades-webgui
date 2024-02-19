@@ -158,7 +158,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
                         (isSaveDone) => {
                           if (isSaveDone) {
                             // Send socket notifications
-                            // tslint:disable-next-line: max-line-length
+                            // eslint-disable-next-line max-len
                             this.socketService.saveStudy(
                               this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges(),
                               resultData.changes

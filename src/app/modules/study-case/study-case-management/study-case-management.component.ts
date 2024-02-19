@@ -54,7 +54,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   public isLoading: boolean;
   public isFavorite: boolean;
-  // tslint:disable-next-line: max-line-length
+  // eslint-disable-next-line max-len
   public displayedColumns = [
     ColumnName.SELECTED,
     ColumnName.FAVORITE,
@@ -886,7 +886,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                       (isSaveDone) => {
                         if (isSaveDone) {
                           // Send socket notifications
-                          // tslint:disable-next-line: max-line-length
+                          // eslint-disable-next-line max-len
                           this.socketService.saveStudy(
                             this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges(),
                             resultData.changes

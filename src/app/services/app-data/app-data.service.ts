@@ -410,14 +410,14 @@ export class AppDataService extends DataHttpService {
         ) {
           this.loadingDialogService.updateMessage(`Loading unsaved changes`);
           let studyParameters: StudyUpdateParameter[] = [];
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           studyParameters =
             this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(
               studyId.toString()
             );
 
           studyParameters.forEach((element) => {
-            // tslint:disable-next-line: max-line-length
+            // eslint-disable-next-line max-len
             this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[
               element.variableId
             ].value = element.newValue;
