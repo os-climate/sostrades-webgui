@@ -12,7 +12,6 @@ import { Study } from 'src/app/models/study.model';
 import { UserApplicationRight } from 'src/app/models/user.model';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { ProcessService } from 'src/app/services/process/process.service';
-import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { UserService } from 'src/app/services/user/user.service';
