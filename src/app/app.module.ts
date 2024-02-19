@@ -234,7 +234,7 @@ registerLocaleData(fr);
         TableVirtualScrollModule,
         ClipboardModule,
         MatTooltipModule,
-        AngularSplitModule.forRoot()
+        AngularSplitModule,
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

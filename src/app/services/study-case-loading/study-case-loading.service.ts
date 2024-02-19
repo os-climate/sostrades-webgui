@@ -1,6 +1,6 @@
 import { LoadedStudy } from "src/app/models/study.model";
 import { Injectable, EventEmitter } from "@angular/core";
-import { combineLatest, Observable, Observer, Subscriber } from "rxjs";
+import { combineLatest, Observable, Observer, of, Subscriber } from "rxjs";
 import { StudyCaseValidationService } from "../study-case-validation/study-case-validation.service";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
 import { StudyCaseValidation} from "src/app/models/study-case-validation.model";
@@ -101,34 +101,33 @@ export class StudyCaseLoadingService {
       this.studyCaseDataService.tradeScenarioList = [];
 
       messageObserver.next(`Loading ontology and notifications`);
-      const calls = [];
-      calls.push(this.loadOntology(loadedStudy));
-      calls.push(this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id));
-      calls.push(this.loadValidations(loadedStudy.studyCase.id));
 
-      combineLatest(calls).subscribe(
-        ([resultVoid, resultnotifications, resultValidation]) => {
+      const ontology$ = of(this.loadOntology(loadedStudy));
+      const notifications$ = of(this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id));
+      const loadedStudy$ = of(this.loadValidations(loadedStudy.studyCase.id));
+      
+      combineLatest([ontology$,notifications$,loadedStudy$]).subscribe( {
+        next: ([resultVoid, resultnotifications, resultValidation]) => {
           messageObserver.next("Loading ontology");
-
           this.studyCaseDataService.updateParameterOntology(loadedStudy);
-
-
-          messageObserver.next("Loading notifications");
-
-          this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
-
+          
+          resultnotifications.subscribe((notifications: CoeditionNotification[]) => {
+            messageObserver.next("Loading notifications");
+            this.studyCaseDataService.studyCoeditionNotifications = notifications;
+          });
+      
           messageObserver.next("Loading validation");
           this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
-
+      
           //end loading
           this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
         },
-        (errorReceived) => {
+        error: (errorReceived) => {
           // Notify user
           this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
           this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
         }
-      );
+      });
     }
   }
 
