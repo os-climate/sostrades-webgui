@@ -12,16 +12,16 @@
   width: 100%;
 }
 
-.mat-select {
+.mat-mdc-select {
   width: 100%;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   width: 100%;
   margin-bottom: 10px;
 }
 
-.mat-dialog-title {
+.mat-mdc-dialog-title {
   margin-bottom: 15px;
 }
 
@@ -30,19 +30,19 @@ mat-header-cell:nth-child(2) {
   flex: 0 0 15%;
 }
 
-.mat-cell {
+.mat-mdc-cell {
   padding: 0 5px 0 5px;
   max-height: 60px !important;
   line-height: 60px;
   justify-content: right;
 }
 
-.mat-row {
+.mat-mdc-row {
   height: 60px;
   min-height: 0;
 }
 
-.mat-header-cell {
+.mat-mdc-header-cell {
   padding: 0 5px 0 5px;
   justify-content: right;
 }
@@ -92,11 +92,11 @@ mat-header-cell:nth-child(2) {
   color: grey;
 }
 
-.mat-option {
+.mat-mdc-option {
   height: unset;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   margin: 0;
 }
 
@@ -113,10 +113,11 @@ mat-header-cell:nth-child(2) {
   width: 120px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
 ::ng-deep .mat-select-arrow {
   margin: 0 0 0 8px;
 }
 
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   margin: 0 !important;
 }

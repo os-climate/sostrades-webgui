@@ -15,14 +15,17 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
 label.mat-checkbox-layout {
   margin: 0 !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .mat-tab-body-wrapper {
   flex-grow: 1 !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .mat-tab-body-content {
   overflow: unset !important;
 }
@@ -45,24 +48,24 @@ label.mat-checkbox-layout {
   min-height: 0 !important;
 }
 
-.mat-button {
+.mat-mdc-button {
   min-width: 0px !important;
   outline: 0 !important;
 }
 
-.mat-menu-item {
+.mat-mdc-menu-item {
   outline: 0 !important;
 }
 
-.mat-flat-button {
+.mat-mdc-unelevated-button {
   outline: 0 !important;
 }
 
-.mat-mini-fab {
+.mat-mdc-mini-fab {
   outline: 0 !important;
 }
 
-.mat-icon-button {
+.mat-mdc-icon-button {
   outline: 0 !important;
 }
 
@@ -70,11 +73,11 @@ label.mat-checkbox-layout {
   outline: none !important;
 }
 
-.mat-menu-panel {
+.mat-mdc-menu-panel {
   min-height: 0px !important;
 }
 
-.mat-snack-bar-container {
+.mat-mdc-snack-bar-container {
   min-width: fit-content !important;
 }
 
@@ -83,7 +86,7 @@ label.mat-checkbox-layout {
   background: #e4002b;
   color: white;
 }
-.snackBarError .mat-simple-snackbar-action {
+.snackBarError .mat-mdc-snack-bar-action {
   color: white;
 }
 
@@ -91,7 +94,7 @@ label.mat-checkbox-layout {
   background: #08875b;
   color: white;
 }
-.snackBarInformation .mat-simple-snackbar-action {
+.snackBarInformation .mat-mdc-snack-bar-action {
   color: white;
 }
 
@@ -99,7 +102,7 @@ label.mat-checkbox-layout {
   background: #fbca32;
   color: black;
 }
-.snackBarWarning .mat-simple-snackbar-action {
+.snackBarWarning .mat-mdc-snack-bar-action {
   color: black;
 }
 
@@ -174,7 +177,7 @@ div.tooltip {
   color: grey;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   margin-top: -10px !important;
 }
 
@@ -203,11 +206,13 @@ div.tooltip {
 }
 
 .csvDialog {
+  /* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version. */
   mat-dialog-container {
     padding: 0;
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .mat-tab-label,
 .mat-tab-label-active {
   min-width: 0 !important;

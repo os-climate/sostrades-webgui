@@ -1,16 +1,16 @@
-<mat-chip-list
+<mat-chip-listbox
   class="chip-list mat-chip-list-stacked"
   [multiple]="false"
   [selectable]="true"
 >
-  <mat-chip
+  <mat-chip-option
     *ngFor="let viz of visualisationsAvailable"
     [selected]="viz.selected"
     (click)="onChipClick(viz.name)"
     color="accent"
-    >{{ viz.name }}</mat-chip
+    >{{ viz.name }}</mat-chip-option
   >
-</mat-chip-list>
+</mat-chip-listbox>
 <div class="flex-container">
   <app-visualisation-interface-diagram
     *ngIf="showInterfaceDiagramContent"
