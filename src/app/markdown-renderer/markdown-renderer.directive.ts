@@ -1,9 +1,8 @@
-import { Directive, Input, ElementRef, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { Directive, Input, ElementRef} from '@angular/core';
 import MarkdownIt from 'markdown-it';
 import * as MarkdownItFootnote from 'markdown-it-footnote';
 import * as MarkdownItTexmath from 'markdown-it-texmath';
 import * as Katex from 'katex';
-import MarkdownItMermaid from '@liradb2000/markdown-it-mermaid';
 
 @Directive({
   selector: '[appMarkdownRenderer]'
@@ -56,15 +55,6 @@ export class MarkdownRendererDirective {
         macros: {
           '\\RR': '\\mathbb{R}'
         }
-      }
-    });
-    this.markdownIt.use(MarkdownItMermaid, {
-      startOnLoad: false,
-      securityLevel: true,
-      theme: 'default',
-      flowchart: {
-        htmlLabels: false,
-        useMaxWidth: true,
       }
     });
   }

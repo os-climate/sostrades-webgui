@@ -1,6 +1,6 @@
 <div class="configure-container">
   <div class="filter-zone" *ngIf="originTreeNode">
-    <button mat-icon-button class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></button>
+    <i class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></i>
     <input
       class="filter-input"
       matInput
@@ -10,9 +10,7 @@
       [placeholder]="isSearchOption?'Search variable':'Filter treeview'"
       (click)="applyFilter($event)"
     />
-    <button mat-icon-button [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h">
-
-    </button>
+    <i  [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h"></i>
     <mat-menu #searchoption="matMenu">
       <mat-button-toggle-group ngDefaultControl [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
         <mat-button-toggle mat-menu-item value="false"
@@ -124,15 +122,9 @@
       (click)="onHideStatus()"
       *ngIf="showStatus"
       class="toolbar-item-shadow"
+      matTooltip="Hide status"
     >
-      <mat-icon
-        class="toolbar-icon-font-aw status-off"
-        aria-hidden="false"
-        aria-label="Hide status"
-        matTooltip="Hide status"
-      >
-        visibility</mat-icon
-      >
+      <i class="fa-sharp fa-solid fa-eye"></i>
     </button>
     <button
       id="btn-treeview-show-status"
@@ -140,16 +132,10 @@
       (click)="onShowStatus()"
       *ngIf="!showStatus"
       class="toolbar-item-shadow"
+      matTooltip="Show status"
     >
-      <mat-icon
-        class="toolbar-icon-font-aw"
-        aria-hidden="false"
-        aria-label="Show status"
-        matTooltip="Show status"
-      >
-      visibility_off
-     </mat-icon
-      >
+    <i class="fa-solid fa--slash"></i>
+
     </button>
     <button
     mat-button
@@ -330,7 +316,7 @@
       >
         <li class="tree-container">
           <div class="mat-tree-node">
-            <button
+            <span
               [id]="'btn-treeview-expand-' + node.fullNamespace"
               mat-icon-button
               matTreeNodeToggle
@@ -341,15 +327,12 @@
               [id]="treeControl.isExpanded(node)
               ? 'chevron-down-' + node.fullNamespace
               : 'chevron-right-'+ node.fullNamespace"
-                [ngClass]="
-                  treeControl.isExpanded(node)
-                    ? 'fas fa-chevron-down fa-fw'
-                    : 'fas fa-chevron-right fa-fw'
-                "
+                [ngClass]="treeControl.isExpanded(node) ? 'fas fa-chevron-down fa-fw' : 'fas fa-chevron-right fa-fw'"
                 style="margin-left: 1px"
+                class="cursor"
               >
               </i>
-            </button>
+            </span>
             <div
               [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
               *ngIf="node.status.length > 0 && showStatus"

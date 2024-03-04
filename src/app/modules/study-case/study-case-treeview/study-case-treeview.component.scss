@@ -11,7 +11,7 @@
   height: 100%;
   padding-top: 12px;
   overflow-x: hidden;
-  overflow-y: hidden;  
+  overflow-y: hidden;
   border-radius: 0 0 5px 5px;
 }
 
@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   padding: 4px;
-  margin:4px;
+  margin: 4px;
   background-color: white;
   border: solid;
   border-width: 1px;
@@ -35,10 +35,10 @@
 }
 
 .filter-icon {
-  margin:2px;
+  margin: 2px;
 }
 
-.radio-label{
+.radio-label {
   margin-left: 5px;
   vertical-align: middle;
 }
@@ -202,6 +202,8 @@ li ul {
 
 .toolbar {
   height: 35px;
+  display: flex;
+  justify-content: space-around;
 }
 
 .toolbar-spacer {
@@ -241,7 +243,7 @@ li ul {
 }
 
 .iconValid {
-  margin-left: 4%; 
+  margin-left: 4%;
   cursor: default;
   font-size: 22px;
   height: 23px;
