@@ -230,7 +230,18 @@
           </td>
         </ng-container>
 
-        <!-- Status Column -->
+         <!-- Creation Status Column -->
+         <ng-container [matColumnDef]="columnName.CREATION_STATUS">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Creation Status
+            <i *ngIf="getFilter" id="filter-creation-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.CREATION_STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.CREATION_STATUS, $event)" ></i>
+          </th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="element.creationStatus">
+            <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="element.creationStatus == 'IN_ERROR'"  [matTooltip]="element.error"></i> <span [matTooltip]="element.creationStatus"> {{ element.creationStatus }} </span>
+          </td>
+        </ng-container>
+
+        <!-- Calculation Status Column -->
         <ng-container [matColumnDef]="columnName.STATUS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Status
             <i *ngIf="getFilter" id="filter-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
