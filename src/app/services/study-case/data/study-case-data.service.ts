@@ -3,7 +3,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { BehaviorSubject, Observable, Subscriber, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Observer, Subscriber, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
@@ -17,6 +17,7 @@ import { ColumnName } from 'src/app/models/column-name.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { Routing } from 'src/app/models/routing.model';
 import { Router } from '@angular/router';
+import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +60,7 @@ export class StudyCaseDataService extends DataHttpService {
     private http: HttpClient,
     private ontologyService: OntologyService,
     private location: Location,
+    private loadingDialogService: LoadingDialogService,
     private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
@@ -430,13 +432,7 @@ export class StudyCaseDataService extends DataHttpService {
     let query: Observable<StudyCaseAllocation>;
 
     const allocationObservable = new Observable<StudyCaseAllocation>((observer) => {
-
-      const studyCaseAllocationPayload = new  StudyCaseAllocationPayload(
-                                                          studyInformation.name,
-                                                          studyInformation.repository,
-                                                          studyInformation.process,
-                                                          studyInformation.group);
-      query = this.http.post<StudyCaseAllocation>(this.apiRoute, studyCaseAllocationPayload, this.options);
+      query = this.http.post<StudyCaseAllocation>(this.apiRoute, studyInformation, this.options);
       this.executeAllocationQuery(query, observer);
     });
 
@@ -500,8 +496,9 @@ export class StudyCaseDataService extends DataHttpService {
         return StudyCaseAllocation.Create(response);
       })).subscribe(allocation => {
         if (allocation.status !== StudyCaseAllocationStatus.DONE){
+          let startWaitingDate = Date.now()
           setTimeout(() => {
-            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer);
+            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer, startWaitingDate);
           }, 2000);
         }
         else{
@@ -513,11 +510,26 @@ export class StudyCaseDataService extends DataHttpService {
     });
   }
 
-  private getStudyCaseAllocationStatusTimeout(studyCaseId: number, allocationObservable: Subscriber<StudyCaseAllocation>) {
+  private getStudyCaseAllocationStatusTimeout(studyCaseId: number, allocationObservable: Subscriber<StudyCaseAllocation>, startWaitingDate: number) {
     this.internalStudyCaseAllocationStatus(studyCaseId).subscribe(allocation => {
-      if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS) {
+      if (allocation.status !== StudyCaseAllocationStatus.DONE) {
+        // if the pod is still at pending after one minutes, show potential problem message
+        if (allocation.status === StudyCaseAllocationStatus.PENDING){
+         if( Date.now() - startWaitingDate < 10000){
+            this.loadingDialogService.updateMessage("Study is created, Study pod is loading ...")
+          }
+          else{
+            this.loadingDialogService.updateMessage("Study is created, Study pod is still loading after a long time...\n \
+            you can wait a little longer or maybe try again later")
+            //TODO: add cancel button here
+
+          }
+        }
+        if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
+          this.loadingDialogService.updateMessage("Study pod is up.")
+        }
         setTimeout(() => {
-          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
+          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
         }, 2000);
       } else {
         allocationObservable.next(allocation);
