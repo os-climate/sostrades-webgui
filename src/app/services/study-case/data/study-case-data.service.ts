@@ -515,18 +515,18 @@ export class StudyCaseDataService extends DataHttpService {
       if (allocation.status !== StudyCaseAllocationStatus.DONE) {
         // if the pod is still at pending after one minutes, show potential problem message
         if (allocation.status === StudyCaseAllocationStatus.PENDING){
-         if( Date.now() - startWaitingDate < 10000){
-            this.loadingDialogService.updateMessage("Study is created, Study pod is loading ...")
+         if( Date.now() - startWaitingDate < 60000){
+            this.loadingDialogService.updateMessage("Study is half created, Study pod is loading ...")
           }
           else{
-            this.loadingDialogService.updateMessage("Study is created, Study pod is still loading after a long time...\n \
+            this.loadingDialogService.updateMessage("Study is half created, Study pod is still loading after a long time...\n \
             you can wait a little longer or maybe try again later")
             //TODO: add cancel button here
 
           }
         }
         if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
-          this.loadingDialogService.updateMessage("Study pod is up.")
+          this.loadingDialogService.updateMessage("Study pod is up...the study creation is in proress.")
         }
         setTimeout(() => {
           this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
