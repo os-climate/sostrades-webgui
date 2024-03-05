@@ -514,7 +514,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.internalStudyCaseAllocationStatus(studyCaseId).subscribe(allocation => {
       if (allocation.status !== StudyCaseAllocationStatus.DONE) {
         // if the pod is still at pending after one minutes, show potential problem message
-        if (allocation.status === StudyCaseAllocationStatus.PENDING){
+        if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
          if( Date.now() - startWaitingDate < 60000){
             this.loadingDialogService.updateMessage("Study is half created, Study pod is loading ...")
           }
@@ -528,6 +528,10 @@ export class StudyCaseDataService extends DataHttpService {
         if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
           this.loadingDialogService.updateMessage("Study pod is up...the study creation is in proress.")
         }
+        if (allocation.status === StudyCaseAllocationStatus.ERROR){
+          throw("Error while loading study pod: " + allocation.message);
+        }
+        
         setTimeout(() => {
           this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
         }, 2000);

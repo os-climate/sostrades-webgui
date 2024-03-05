@@ -30,6 +30,7 @@ export class Study {
     public isFavorite: boolean,
     public isLastStudyOpened: boolean,
     public openingDate: Date,
+    public error: string,
   ) {
   }
 
@@ -60,6 +61,7 @@ export class Study {
       jsonData[StudyAttributes.ISFAVORITE],
       jsonData[StudyAttributes.IS_LAST_STUDY_OPENED],
       jsonData[StudyAttributes.OPENING_DATE],
+      jsonData[StudyAttributes.ERROR],
       );
     return result;
   }
@@ -159,7 +161,8 @@ export enum StudyAttributes {
   ISRESTRICTEDVIEWER = 'is_restricted_viewer',
   ISFAVORITE = 'is_favorite',
   IS_LAST_STUDY_OPENED = 'is_last_study_opened',
-  OPENING_DATE = 'opening_date'
+  OPENING_DATE = 'opening_date',
+  ERROR = 'error'
 }
 
 export enum LoadedStudyAttributes {
