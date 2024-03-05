@@ -8,7 +8,7 @@ import { StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
 import { LoadedGroup } from 'src/app/models/group.model';
 import { Process } from 'src/app/models/process.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { Study } from 'src/app/models/study.model';
+import { CreationStatus, Study } from 'src/app/models/study.model';
 import { UserApplicationRight } from 'src/app/models/user.model';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { ProcessService } from 'src/app/services/process/process.service';
@@ -81,7 +81,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     /**
      * Create a placeholder reference to allow to choose nothing to initialize the study case
      */
-    this.emptyProcessRef = new Study(null, this.EMPTY_STUDY_NAME, '', '', '', null, null, '',
+    this.emptyProcessRef = new Study(null, this.EMPTY_STUDY_NAME, '', '', '', null, null, '',  '',
      '', '', 0, false, '', '', false, null, null, false, false, false, false, false, false, null);
 
   }
@@ -234,7 +234,9 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     if ((this.process !== null) && (this.process !== undefined)) {
       this.studyCaseDataService.getAuthorizedStudiesForProcess(this.process.processId, this.process.repositoryId).subscribe(studies => {
         studies.forEach(study => {
-          studyList.push(study);
+          if (study.creationStatus === CreationStatus.DONE){
+            studyList.push(study);
+          }
         });
         // Sort list of study by creation date
         studyList.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
