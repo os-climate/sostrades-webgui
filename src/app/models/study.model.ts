@@ -13,6 +13,7 @@ export class Study {
     public creationDate: Date,
     public modificationDate: Date,
     public executionStatus: string,
+    public creationStatus: string,
     public studyType: string,
     public groupName: string,
     public groupId: number,
@@ -29,6 +30,7 @@ export class Study {
     public isFavorite: boolean,
     public isLastStudyOpened: boolean,
     public openingDate: Date,
+    public error: string,
   ) {
   }
 
@@ -42,6 +44,7 @@ export class Study {
       jsonData[StudyAttributes.CREATIONDATE],
       jsonData[StudyAttributes.MODIFICATIONDATE],
       jsonData[StudyAttributes.EXECUTION_STATUS],
+      jsonData[StudyAttributes.CREATION_STATUS],
       jsonData[StudyAttributes.STUDY_TYPE],
       jsonData[StudyAttributes.GROUP_NAME],
       jsonData[StudyAttributes.GROUP_ID],
@@ -58,6 +61,7 @@ export class Study {
       jsonData[StudyAttributes.ISFAVORITE],
       jsonData[StudyAttributes.IS_LAST_STUDY_OPENED],
       jsonData[StudyAttributes.OPENING_DATE],
+      jsonData[StudyAttributes.ERROR],
       );
     return result;
   }
@@ -141,6 +145,7 @@ export enum StudyAttributes {
   CREATIONDATE = 'creation_date',
   MODIFICATIONDATE = 'modification_date',
   EXECUTION_STATUS = 'execution_status',
+  CREATION_STATUS = 'creation_status',
   STUDY_TYPE = 'study_type',
   GROUP_NAME = 'group_name',
   GROUP_ID = 'group_id',
@@ -156,7 +161,8 @@ export enum StudyAttributes {
   ISRESTRICTEDVIEWER = 'is_restricted_viewer',
   ISFAVORITE = 'is_favorite',
   IS_LAST_STUDY_OPENED = 'is_last_study_opened',
-  OPENING_DATE = 'opening_date'
+  OPENING_DATE = 'opening_date',
+  ERROR = 'error'
 }
 
 export enum LoadedStudyAttributes {
@@ -180,4 +186,9 @@ export enum LoadStatus {
   READ_ONLY_MODE = 'read_only_mode',
   LOADED = 'loaded',
   IN_ERROR = 'in_error'
+}
+
+export enum CreationStatus {
+  DONE = 'DONE',
+  
 }
