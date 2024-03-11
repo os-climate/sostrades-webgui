@@ -139,6 +139,8 @@ export class AppDataService extends DataHttpService {
     groupId: number,
     isStudyCreated: any
   ) {
+    this.loadingDialogService.showLoading(`Create study case ${newName}`);
+
     const messageObserver = {
       next: (message: string) =>
         this.loadingDialogService.updateMessage(message),

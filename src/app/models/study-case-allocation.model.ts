@@ -21,6 +21,8 @@ export class StudyCaseAllocation {
 }
 
 export enum StudyCaseAllocationStatus {
+  NOT_STARTED = 'NOT_STARTED',
+  PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
   ERROR = 'IN_ERROR',
   DONE = 'DONE'
