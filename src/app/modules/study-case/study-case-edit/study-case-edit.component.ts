@@ -41,7 +41,7 @@ export class StudyCaseEditComponent implements OnInit {
     })
 
     // Get group list 
-    this.groupDataService.getUserGroups().subscribe(response => {
+    this.groupDataService.getUserGroups(true).subscribe(response => {
       const grpList: LoadedGroup[] = response;
       grpList.forEach(group => {
         this.groupList.push(group);

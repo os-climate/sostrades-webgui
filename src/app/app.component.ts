@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
         this.socketService.openConnection('');
         const calls = [];
 
-        calls.push(this.groupDataService.loadAllGroups());
+        calls.push(this.groupDataService.getUserGroups(true));
         calls.push(this.userService.loadAllUsers());
 
         combineLatest(calls).subscribe();
