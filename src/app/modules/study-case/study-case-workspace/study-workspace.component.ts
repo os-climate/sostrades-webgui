@@ -208,6 +208,14 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
           }
         });
         this.modelsFullPathList = modelsFullPathListWithoutDuplicate;
+
+        // if node is root node, add process documentation
+        if (treenode === this.studyCaseDataService.loadedStudy.treeview.rootNode){
+          //build process path with repo.process
+          let repo = this.studyCaseDataService.loadedStudy.studyCase.repository
+          let process = this.studyCaseDataService.loadedStudy.studyCase.process
+          this.modelsFullPathList.push(repo.concat('.',process ))
+        }
       }
     });
   }
