@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Group, LoadedGroup } from 'src/app/models/group.model';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Location } from '@angular/common';
 import { DataHttpService } from '../http/data-http/data-http.service';
 import { ColumnName } from 'src/app/models/column-name.model';
@@ -19,6 +19,7 @@ export class GroupDataService extends DataHttpService {
   public groupManagementFilter: string;
   public groupManagementColumnFiltered: string;
   public groupSelectedValues = new Map <ColumnName, string[]>();
+  public loadedGroups: LoadedGroup[];
 
   constructor(
     private http: HttpClient,
@@ -28,9 +29,11 @@ export class GroupDataService extends DataHttpService {
     this.groupSelectedValues.clear();
     this.groupManagementFilter = '';
     this.groupManagementColumnFiltered = ColumnName.ALL_COLUMNS;
+    this.loadedGroups = []
   }
 
   clearCache() {
+    this.loadedGroups = [];
     this.groupManagementFilter = '';
     this.groupManagementColumnFiltered = ColumnName.ALL_COLUMNS;
     this.groupSelectedValues.clear();
@@ -67,15 +70,26 @@ export class GroupDataService extends DataHttpService {
     return this.http.post<Group>(`${this.apiRoute}/${groupId}`, payload, this.options);
   }
 
-  getUserGroups(): Observable<LoadedGroup[]> {
-    return this.http.get<LoadedGroup[]>(`${this.apiRoute}/user`).pipe(map(
+  getUserGroups(refreshList: boolean): Observable<LoadedGroup[]> {
+    let refreshStatus = refreshList;
+
+    if ((refreshStatus === false) && (this.loadedGroups.length === 0)) {
+      refreshStatus = true;
+    }
+
+    if (refreshStatus) {
+      return this.http.get<LoadedGroup[]>(`${this.apiRoute}/user`).pipe(map(
       response => {
         const groups: LoadedGroup[] = [];
         response.forEach(group => {
           groups.push(LoadedGroup.Create(group));
         });
-        return groups;
+        this.loadedGroups = groups ;
+        return this.loadedGroups
       }));
+    } else {
+      return of(this.loadedGroups)
+    }
   }
 
   deleteGroup(groupId: number) {

@@ -263,7 +263,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   }
 
   private setupGroup() {
-    this.groupDataService.getUserGroups().subscribe(response => {
+    this.groupDataService.getUserGroups(true).subscribe(response => {
       const grpList: LoadedGroup[] = response;
       grpList.forEach(group => {
         this.groupList.push(group);
