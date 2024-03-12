@@ -12,8 +12,6 @@ import { MaterialModule } from './material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 
-import { D3ForceGraphDirective } from './directives/d3-force-graph/d3-force-graph.directive';
-
 import { HeaderComponent } from './modules/header/header.component';
 import { SidenavComponent } from './modules/sidenav/sidenav.component';
 import { HomeComponent } from './modules/home/home.component';
@@ -68,7 +66,7 @@ import { StudyCaseModificationDialogComponent } from './modules/study-case/study
 import { SamlComponent } from './modules/saml/saml.component';
 import { DataManagementInformationComponent } from './modules/data-management/data-management-information/data-management-information.component';
 import { PostProcessingPlotlyComponent } from './shared/post-processing/post-processing-plotly/post-processing-plotly.component';
-import { MarkdownRendererDirective } from './markdown-renderer/markdown-renderer.directive';
+import { MarkdownRendererDirective } from './directives/markdown-renderer/markdown-renderer.directive';
 import { UpdateEntityRightComponent } from './modules/entity-right/update-entity-right/update-entity-right.component';
 import { UpdateEntityRightAddPeopleComponent } from './modules/entity-right/update-entity-right-add-people/update-entity-right-add-people.component';
 import { ReferenceManagementComponent } from './modules/reference-management/reference-management.component';
@@ -135,7 +133,6 @@ registerLocaleData(fr);
         SelectComponent,
         InputComponent,
         WidgetContainerComponent,
-        D3ForceGraphDirective,
         CouplingGraphComponent,
         ProgressBarComponent,
         WidgetComponent,

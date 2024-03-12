@@ -1,5 +1,6 @@
 import { Directive, Input, ElementRef} from '@angular/core';
 import MarkdownIt from 'markdown-it';
+import markdownItMermaid from 'markdown-it-mermaid'
 import * as MarkdownItFootnote from 'markdown-it-footnote';
 import * as MarkdownItTexmath from 'markdown-it-texmath';
 import * as Katex from 'katex';
@@ -55,6 +56,15 @@ export class MarkdownRendererDirective {
         macros: {
           '\\RR': '\\mathbb{R}'
         }
+      }
+    });
+    this.markdownIt.use(markdownItMermaid, {
+      startOnLoad: false,
+      securityLevel: true,
+      theme: 'default',
+      flowchart: {
+        htmlLabels: false,
+        useMaxWidth: true,
       }
     });
   }
