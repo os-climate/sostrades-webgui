@@ -101,34 +101,31 @@ export class StudyCaseLoadingService {
       this.studyCaseDataService.tradeScenarioList = [];
 
       messageObserver.next(`Loading ontology and notifications`);
-      const calls = [];
-      calls.push(this.loadOntology(loadedStudy));
-      calls.push(this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id));
-      calls.push(this.loadValidations(loadedStudy.studyCase.id));
+      
+      const loadedOntology$ = this.loadOntology(loadedStudy);
+      const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
+      const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
 
-      combineLatest(calls).subscribe(
-        ([resultVoid, resultnotifications, resultValidation]) => {
+      combineLatest([loadedOntology$,loadedNotifications$, loadedValidations$]).subscribe({
+        next: ([resultVoid, resultnotifications, resultValidation]) => {
           messageObserver.next("Loading ontology");
-
           this.studyCaseDataService.updateParameterOntology(loadedStudy);
-
-
+          
           messageObserver.next("Loading notifications");
-
           this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
-
+          
           messageObserver.next("Loading validation");
           this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
-
-          //end loading
+      
+          // End loading
           this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
         },
-        (errorReceived) => {
+        error: (errorReceived) => {
           // Notify user
           this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
           this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
         }
-      );
+      });      
     }
   }
 

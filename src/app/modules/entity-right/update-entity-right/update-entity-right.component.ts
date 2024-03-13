@@ -108,12 +108,12 @@ export class UpdateEntityRightComponent implements OnInit {
 
   _setAvailableEntities() {
 
-    const calls = [];
     // Refreshing user and group list in case new or removed groups
-    calls.push(this.groupDataService.loadAllGroups());
-    calls.push(this.userService.loadAllUsers());
+    const loadedAllGroups = this.groupDataService.loadAllGroups();
+    const loadedAllUsers = this.userService.loadAllUsers();
 
-    combineLatest(calls).subscribe(res => {
+
+    combineLatest([loadedAllGroups, loadedAllUsers]).subscribe(res => {
       this.groupDataService.allGroups.forEach(grp => {
         if (this.entitiesSelected.filter(x => x.entityObject.id === grp.id && x.entityType === EntityType.GROUP).length === 0) {
           this.entitiesAvailable.push(new EntityRight(-1, EntityType.GROUP, grp, null, false));
@@ -204,12 +204,15 @@ export class UpdateEntityRightComponent implements OnInit {
     this.dialogRef.close(null);
     this.loadingDialogService.showLoading(`Updating users and groups rights. Please wait.`);
 
-    this.entityRightService.applyEntitiesChanges(updatedEntityRight).subscribe(res => {
-      this.loadingDialogService.closeLoading();
-      this.snackbarService.showInformation(`Users and groups rights have been successfully updated.`);
-    }, errorReceived => {
-      this.loadingDialogService.closeLoading();
-      this.snackbarService.showError(errorReceived.description);
+    this.entityRightService.applyEntitiesChanges(updatedEntityRight).subscribe({
+      next: (res) => {
+        this.loadingDialogService.closeLoading();
+        this.snackbarService.showInformation(`Users and groups rights have been successfully updated.`);
+      },
+      error: (errorReceived) => {
+        this.loadingDialogService.closeLoading();
+        this.snackbarService.showError(errorReceived.description);
+      }
     });
   }
 
