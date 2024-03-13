@@ -84,7 +84,8 @@ export class GroupManagementComponent implements OnInit {
     private snackbarService: SnackbarService) {
     this.isLoading = true;
     this.checkboxConfidential = false;
-    this.setDefaultGroup = true;
+    this.setDefaultGroup = false;
+    this.user = null;
   }
 
   ngOnInit(): void {
@@ -95,10 +96,10 @@ export class GroupManagementComponent implements OnInit {
       groupDescription: new FormControl('', [Validators.required])
     });
 
-    this.loadGroupManagementData();
+    this.loadGroupManagementData(false);
   }
 
-  loadGroupManagementData() {
+  loadGroupManagementData(refresh: boolean) {
 
     this.isLoading = true;
     this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(null);
@@ -108,7 +109,7 @@ export class GroupManagementComponent implements OnInit {
       this.user = currentUser;
     });
 
-    this.groupDataService.getUserGroups().subscribe(groups => {
+    this.groupDataService.getUserGroups(refresh).subscribe(groups => {
       this.loadedGroups = groups;
       this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
       this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
@@ -158,7 +159,7 @@ export class GroupManagementComponent implements OnInit {
       this.snackbarService.showInformation(`Group "${groupName}" has been successfully created.`);
 
       // Reloading user groups list
-      this.loadGroupManagementData();
+      this.loadGroupManagementData(true);
 
       this.loadingDialogService.closeLoading();
 
@@ -204,7 +205,7 @@ export class GroupManagementComponent implements OnInit {
             _ => {
               this.loadingDialogService.closeLoading();
               this.snackbarService.showInformation(`Group (${editGroupData.name}) has been successfully updated `);
-              this.loadGroupManagementData();
+              this.loadGroupManagementData(true);
             },
             errorReceived => {
               const error = errorReceived as SoSTradesError;
@@ -248,7 +249,7 @@ export class GroupManagementComponent implements OnInit {
 
             // Reloading user groups list
             this.snackbarService.showInformation(`Group (${group.name}) has been succesfully deleted`);
-            this.loadGroupManagementData();
+            this.loadGroupManagementData(true);
             this.loadingDialogService.closeLoading();
           }, errorReceived => {
             if (errorReceived.redirect === false) {
@@ -261,7 +262,12 @@ export class GroupManagementComponent implements OnInit {
     });
   }
 
-
+  checkExistingDefaultGroup(group_id: number): boolean {
+    if (group_id != null && group_id > 0 && this.user && this.user.user && this.user.user.default_group_id != null) {
+      return group_id === this.user.user.default_group_id;
+    }
+    return false;
+  }
   changeDefaultGroup(event: MouseEvent, loadedGroup: LoadedGroup) {
 
     this.setDefaultGroup = false;
