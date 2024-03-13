@@ -202,26 +202,29 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   const userId = this.userService.getCurrentUserId();
   this.isFavorite = false;
   if (!study.isFavorite) {
-    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe(
-        () => {
-          study.isFavorite = true;
-          this.isFavorite = true;
-
-        }, error => {
+    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe({
+      next: () => {
+        study.isFavorite = true;
+        this.isFavorite = true;
+      },
+      error: (error) => {
         this.snackbarService.showWarning(error.description);
         this.isFavorite = true;
-      });
+      }
+    });
   } else {
-      this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe(
-      () => {
+    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe({
+    next: () => {
         study.isFavorite = false;
         this.isFavorite = true;
-      }, error => {
-      this.snackbarService.showWarning(error.description);
-      this.isFavorite = true;
-      });
-    }
+      },
+      error: (error) => {
+        this.snackbarService.showWarning(error.description);
+        this.isFavorite = true;
+      }
+    });
   }
+}
 
   loadStudyManagementData() {
     this.isLoading = true;
@@ -231,9 +234,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     if ((this.selection !== null && this.selection !== undefined) && this.selection.selected.length > 0) {
       this.selection.clear();
     }
-    this.studyCaseDataService.getStudies().subscribe(
-      (studies) => {
-      // Retrieving study case list
+    this.studyCaseDataService.getStudies().subscribe({
+      next: (studies) => {
+        // Retrieving study case list
         if (this.getOnlyFavoriteStudy) {
           // Filter studies list by favorite studies
           this.studyCaseDataService.favoriteStudy = studies.filter(study => study.isFavorite === true);
@@ -241,10 +244,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.studyCaseDataService.lastStudyOpened = studies
             .filter(study => study.isLastStudyOpened === true && study.isFavorite === false)
             .sort((studyA, studyB) => new Date(studyB.openingDate).getTime() - new Date(studyA.openingDate).getTime());
-
+    
           // Concat favorite studies list with last studies opened list
           const favoriteAndRecentStudies = this.studyCaseDataService.favoriteStudy.concat(this.studyCaseDataService.lastStudyOpened);
-
+    
           this.dataSourceStudies = new MatTableDataSource<Study>(favoriteAndRecentStudies);
         } else {
           this.dataSourceStudies = new MatTableDataSource<Study>(studies);
@@ -258,7 +261,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.onFilterChange();
         this.isLoading = false;
       },
-      (errorReceived) => {
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         this.studyCount = 0;
         if (error.redirect) {
@@ -271,7 +274,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           );
         }
       }
-    );
+    });
   }
 
   loadStudy(event: MouseEvent, study: Study) {
@@ -330,56 +333,61 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             || this.processService.processManagemenentData.length === 0) {
           this.loadingDialogService.showLoading(`Retrieving of "${study.process}" in ontology processes list`);
         }
-        this.processService.getUserProcesses(false).subscribe( processes => {
-          selectedProcess = processes.find(p => p.processId === study.process);
-          this.loadingDialogService.closeLoading();
-          // Check rights on the process before open createStudyCase modal
-          if (selectedProcess.isManager || selectedProcess.isContributor) {
-            const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
-            dialogData.process = selectedProcess;
-            dialogData.studyId = study.id;
-
-            const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
-              disableClose: true,
-              data: dialogData
-            });
-            dialogRef.afterClosed().subscribe(result => {
-              const studyCaseData = result as StudyCaseCreateDialogData;
-              if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
-                if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
-                  this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
-                  this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId)
-                  .subscribe(copyStudy => {
-                    if (copyStudy !== null && copyStudy !== undefined) {
-                    this.loadingDialogService.closeLoading();
-                    this.snackbarService.showInformation(`Study ${copyStudy.name} has been succesfully copied from ${study.name}`);
-                    this.loadStudyManagementData();
-                    }
-                  }, errorReceived => {
-                    const error = errorReceived as SoSTradesError;
-                    if (error.redirect) {
-                      this.loadingDialogService.closeLoading();
-                      this.snackbarService.showError(error.description);
-                    } else {
-                      this.loadingDialogService.closeLoading();
-                      this.snackbarService.showError(`Error copying ${study.name}: "${error.description}"`);
-                    }
-                  });
+        this.processService.getUserProcesses(false).subscribe({
+          next: (processes) => {
+            selectedProcess = processes.find(p => p.processId === study.process);
+            this.loadingDialogService.closeLoading();
+            // Check rights on the process before open createStudyCase modal
+            if (selectedProcess.isManager || selectedProcess.isContributor) {
+              const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
+              dialogData.process = selectedProcess;
+              dialogData.studyId = study.id;
+        
+              const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
+                disableClose: true,
+                data: dialogData
+              });
+              dialogRef.afterClosed().subscribe(result => {
+                const studyCaseData = result as StudyCaseCreateDialogData;
+                if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
+                  if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
+                    this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
+                    this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId).subscribe({
+                      next: (copyStudy) => {
+                        if (copyStudy !== null && copyStudy !== undefined) {
+                          this.loadingDialogService.closeLoading();
+                          this.snackbarService.showInformation(`Study ${copyStudy.name} has been succesfully copied from ${study.name}`);
+                          this.loadStudyManagementData();
+                        }
+                      },
+                      error: (errorReceived) => {
+                        const error = errorReceived as SoSTradesError;
+                        if (error.redirect) {
+                          this.loadingDialogService.closeLoading();
+                          this.snackbarService.showError(error.description);
+                        } else {
+                          this.loadingDialogService.closeLoading();
+                          this.snackbarService.showError(`Error copying ${study.name}: "${error.description}"`);
+                        }
+                      }
+                    });
+                  }
                 }
-              }
-            });
-          } else {
-            this.snackbarService.showWarning(
-              `You cannot copy "${study.name}" beacause you do not have access to the process "${study.process}".`
+              });
+            } else {
+              this.snackbarService.showWarning(
+                `You cannot copy "${study.name}" beacause you do not have access to the process "${study.process}".`
               );
-          }
-        } , errorReceived => {
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            const errorMessage = `Error loading process list for form : ${error.description}`;
-            this.snackbarService.showError(errorMessage);
+            }
+          },
+          error: (errorReceived) => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              const errorMessage = `Error loading process list for form : ${error.description}`;
+              this.snackbarService.showError(errorMessage);
+            }
           }
         });
       }
@@ -412,21 +420,25 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             }
           }
           this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.studyName}. Please wait`);
-          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
-            studyIsEdited => {
-                if (studyIsEdited) {
-                this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe(() => {
-                this.socketService.updateStudy(study.id);
-                this.loadingDialogService.closeLoading();
-                this.snackbarService.showInformation(`Study ${editStudyCaseData.studyName} has been succesfully updated `);
-                this.loadStudyManagementData();
-              }, errorReceived => {
-                this.snackbarService.showError('Error updating study\n' + errorReceived.description);
-                this.loadingDialogService.closeLoading();
-              });
-            }
-          },
-            errorReceived => {
+          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe({
+            next: (studyIsEdited) => {
+              if (studyIsEdited) {
+                this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe({
+                  next: () => {
+                    this.socketService.updateStudy(study.id);
+                    this.loadingDialogService.closeLoading();
+                    this.snackbarService.showInformation(`Study ${editStudyCaseData.studyName} has been succesfully updated`);
+                    this.loadStudyManagementData();
+                  },
+                  error: (errorReceived) => {
+                    const error = errorReceived as SoSTradesError;
+                    this.snackbarService.showError('Error updating study\n' + error.description);
+                    this.loadingDialogService.closeLoading();
+                  }
+                });
+              }
+            },
+            error: (errorReceived) => {
               const error = errorReceived as SoSTradesError;
               if (error.redirect) {
                 this.loadingDialogService.closeLoading();
@@ -436,7 +448,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 this.snackbarService.showError(`Error updating study-case: ${error.description}`);
               }
             }
-          );
+          });
         }
       }
     });
@@ -515,39 +527,40 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           }
 
           // Call API to delete study or studies
-          this.studyCaseDataService.deleteStudy(studies).subscribe(() => {
-            /*
-            Update 13/09/2022
-            Reload favorite study in welcome page when a study is deleted.
-            That's prevents the display of all studies after a deletion
-            */
-            if (this.getOnlyFavoriteStudy) {
-              this.loadStudyManagementData();
-            }
-            // Update table data source
-            this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData.filter(
-              x => !studies.map(s => s.id).includes(x.id));
-            this.dataSourceStudies = new MatTableDataSource<Study>(this.studyCaseDataService.studyManagementData);
-            // Remove local changes if current loaded study is deleted they exist
-            if (isCurrentLoadedStudyDeleted) {
-              this.studyCaseLocalStorageService.removeStudiesFromLocalStorage();
-            }
-            this.selection = new SelectionModel<Study>(true, []);
-            this.onFilterChange();
-
-            // Notify other users of deletion
-            studies.forEach(study => {
-              this.socketService.deleteStudy(study.id);
-            });
-
-            this.loadingDialogService.closeLoading();
-            if (isSingleDeletion) {
-              this.snackbarService.showInformation(`Deletion of study case "${studies[0].name}" successful`);
-            } else {
-              this.snackbarService.showInformation(`Deletion of ${studies.length} study cases successful`);
-            }
-          },
-            (errorReceived) => {
+          this.studyCaseDataService.deleteStudy(studies).subscribe({
+            next: () => {
+              /*
+              Update 13/09/2022
+              Reload favorite study in welcome page when a study is deleted.
+              That's prevents the display of all studies after a deletion
+              */
+              if (this.getOnlyFavoriteStudy) {
+                this.loadStudyManagementData();
+              }
+              // Update table data source
+              this.studyCaseDataService.studyManagementData = this.studyCaseDataService.studyManagementData.filter(
+                x => !studies.map(s => s.id).includes(x.id));
+              this.dataSourceStudies = new MatTableDataSource<Study>(this.studyCaseDataService.studyManagementData);
+              // Remove local changes if current loaded study is deleted they exist
+              if (isCurrentLoadedStudyDeleted) {
+                this.studyCaseLocalStorageService.removeStudiesFromLocalStorage();
+              }
+              this.selection = new SelectionModel<Study>(true, []);
+              this.onFilterChange();
+          
+              // Notify other users of deletion
+              studies.forEach(study => {
+                this.socketService.deleteStudy(study.id);
+              });
+          
+              this.loadingDialogService.closeLoading();
+              if (isSingleDeletion) {
+                this.snackbarService.showInformation(`Deletion of study case "${studies[0].name}" successful`);
+              } else {
+                this.snackbarService.showInformation(`Deletion of ${studies.length} study cases successful`);
+              }
+            },
+            error: (errorReceived) => {
               this.selection = new SelectionModel<Study>(true, []);
               this.onFilterChange();
               this.loadingDialogService.closeLoading();
@@ -562,7 +575,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 }
               }
             }
-          );
+          });
         }
       }
     });
@@ -573,50 +586,46 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.loadingDialogService.showLoading(`Retrieving study case data"${study.name}"`);
 
     if ((event.ctrlKey === true) && (event.altKey === true)) {
-      this.studyCaseMainService
-        .getStudyRaw(study.id.toString())
-        .subscribe((result) => {
+      this.studyCaseMainService.getStudyRaw(study.id.toString()).subscribe({
+        next: (result) => {
           this.loadingDialogService.closeLoading();
           const downloadLink = document.createElement('a');
           downloadLink.href = window.URL.createObjectURL(result);
           downloadLink.setAttribute('download', study.name);
           document.body.appendChild(downloadLink);
           downloadLink.click();
-        }, (errorReceived) => {
+        },
+        error: (errorReceived) => {
           const error = errorReceived as SoSTradesError;
           this.loadingDialogService.closeLoading();
           if (error.redirect) {
             this.snackbarService.showError(error.description);
           } else {
-            this.snackbarService.showError(
-              `Error downloading study case "${study.name}" : ${error.description}`
-            );
+            this.snackbarService.showError(`Error downloading study case "${study.name}" : ${error.description}`);
           }
         }
-      );
+      });
     } else {
 
-      this.studyCaseMainService
-        .getStudyZip(study.id.toString())
-        .subscribe((result) => {
+      this.studyCaseMainService.getStudyZip(study.id.toString()).subscribe({
+        next: (result) => {
           this.loadingDialogService.closeLoading();
           const downloadLink = document.createElement('a');
           downloadLink.href = window.URL.createObjectURL(result);
-          downloadLink.setAttribute('download', study.name + '.zip');
+          downloadLink.setAttribute('download', `${study.name}.zip`);
           document.body.appendChild(downloadLink);
           downloadLink.click();
-        }, (errorReceived) => {
+        },
+        error: (errorReceived) => {
           const error = errorReceived as SoSTradesError;
           this.loadingDialogService.closeLoading();
           if (error.redirect) {
             this.snackbarService.showError(error.description);
           } else {
-            this.snackbarService.showError(
-              `Error downloading study case "${study.name}" : ${error.description}`
-            );
+            this.snackbarService.showError(`Error downloading study case "${study.name}" : ${error.description}`);
           }
         }
-      );
+      });
     }
   }
 
@@ -920,17 +929,21 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
       this.loadingDialogService.showLoading(`Upload study case data "${study.name}"`);
 
-      this.studyCaseMainService.uploadStudyRaw(study.id.toString(), event.target.files).subscribe(_ => {
-        this.loadingDialogService.closeLoading();
-        this.snackbarService.showInformation('Upload successfull');
-        if (event.target.files) {
-          event.target.value = '';
-        }
-      }, error => {
-        this.loadingDialogService.closeLoading();
-        this.snackbarService.showError(error.description);
-        if (event.target.files) {
-          event.target.value = '';
+      this.studyCaseMainService.uploadStudyRaw(study.id.toString(), event.target.files).subscribe({
+        next: (_) => {
+          this.loadingDialogService.closeLoading();
+          this.snackbarService.showInformation('Upload successful');
+          if (event.target.files) {
+            event.target.value = '';
+          }
+        },
+        error: (error) => {
+          this.loadingDialogService.closeLoading();
+          const errorDescription = error?.description || 'An error occurred while uploading the study.';
+          this.snackbarService.showError(errorDescription);
+          if (event.target.files) {
+            event.target.value = '';
+          }
         }
       });
     }

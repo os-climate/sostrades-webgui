@@ -46,22 +46,24 @@ export class UserUpdateComponent implements OnInit {
       profile: new FormControl(this.data.userUpdated.userprofile === null ? 0 : this.data.userUpdated.userprofile, [Validators.required])
     });
 
-    this.userService.getUserProfiles().subscribe(res => {
-      this.userProfileList = res;
-      const nullProfile = new UserProfile();
-      nullProfile.id = 0;
-      nullProfile.name = 'No profile';
-      nullProfile.description = 'User without profile';
-      this.userProfileList.unshift(nullProfile);
-
-      this.isLoading = false;
-    }, errorReceived => {
-      this.isLoading = false;
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError(`Error retrieving user profile list : ${error.description}`);
+    this.userService.getUserProfiles().subscribe({
+      next: (res) => {
+        this.userProfileList = res;
+        const nullProfile = new UserProfile();
+        nullProfile.id = 0;
+        nullProfile.name = 'No profile';
+        nullProfile.description = 'User without profile';
+        this.userProfileList.unshift(nullProfile);
+        this.isLoading = false;
+      },
+      error: (errorReceived) => {
+        this.isLoading = false;
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError(`Error retrieving user profile list : ${error.description}`);
+        }
       }
     });
   }
@@ -84,28 +86,31 @@ export class UserUpdateComponent implements OnInit {
       this.data.userUpdated.userprofile = this.updateUserForm.value.profile;
     }
 
-    this.userService.updateUser(this.data.userUpdated).subscribe(res => {
-      const resUpdate = res as UpdateUserResponse;
-      this.loadingDialogService.closeLoading();
-      this.dialogRef.close(this.data);
-      if (resUpdate.newProfile) {
-        if (resUpdate.mailSend) {
-          // eslint-disable-next-line max-len
-          this.snackbarService.showInformation(`Update of user "${this.updateUserForm.value.username}" successfull, and notification mail successfully sent.`);
+    this.userService.updateUser(this.data.userUpdated).subscribe({
+      next: (res) => {
+        const resUpdate = res as UpdateUserResponse;
+        this.loadingDialogService.closeLoading();
+        this.dialogRef.close(this.data);
+        if (resUpdate.newProfile) {
+          if (resUpdate.mailSend) {
+            // eslint-disable-next-line max-len
+            this.snackbarService.showInformation(`Update of user "${this.updateUserForm.value.username}" successfull, and notification mail successfully sent.`);
+          } else {
+            // eslint-disable-next-line max-len
+            this.snackbarService.showWarning(`Update of user "${this.updateUserForm.value.username}" successfull, but server was unable to notify user by mail.`);
+          }
         } else {
-          // eslint-disable-next-line max-len
-          this.snackbarService.showWarning(`Update of user "${this.updateUserForm.value.username}" successfull, but server was unable to notify user by mail.`);
+          this.snackbarService.showInformation(`Update of user "${this.updateUserForm.value.username}" successfull`);
         }
-      } else {
-        this.snackbarService.showInformation(`Update of user "${this.updateUserForm.value.username}" successfull`);
-      }
-    }, errorReceived => {
-      this.loadingDialogService.closeLoading();
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError(`Error updating user : ${error.description}`);
+      },
+      error: (errorReceived) => {
+        this.loadingDialogService.closeLoading();
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError(`Error updating user : ${error.description}`);
+        }
       }
     });
   }

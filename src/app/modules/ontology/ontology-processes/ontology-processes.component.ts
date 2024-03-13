@@ -132,36 +132,38 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
        processCallback = this.processService.getUserProcesses(refreshProcess);
     }
 
-    processCallback.subscribe(processes => {
-      this.dataSourceProcess = new MatTableDataSource<Process>(processes);
-      this.dataSourceProcess.sortingDataAccessor = (item, property) => {
-        return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-      };
-      this.dataSourceProcess.sort = this.sort;
-      this.onFilterChange();
-      this.isLoading = false;
-
-      if ((this.fromModelInformation === true) && (this.fromModelInformation !== null)) {
-        const searchProcess = this.processService.processManagemenentData.find(
-          process => process.processName === this.processToShowAtStartup);
-        if (searchProcess !== null && searchProcess !== undefined) {
-          this.processToShowAtStartup = null;
-          this.fromModelInformation = false;
-          this.processService.processManagementFilter = searchProcess.processName;
-          this.onFilterChange();
-          this.displayDocumentation(searchProcess);
-        }
-      }
-
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.processCount = 0;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
+    processCallback.subscribe({
+      next: (processes) => {
+        this.dataSourceProcess = new MatTableDataSource<Process>(processes);
+        this.dataSourceProcess.sortingDataAccessor = (item, property) => {
+          return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+        };
+        this.dataSourceProcess.sort = this.sort;
         this.onFilterChange();
         this.isLoading = false;
-        this.snackbarService.showError('Error loading processes : ' + error.description);
+    
+        if ((this.fromModelInformation === true) && (this.fromModelInformation !== null)) {
+          const searchProcess = this.processService.processManagemenentData.find(
+            process => process.processName === this.processToShowAtStartup);
+          if (searchProcess !== null && searchProcess !== undefined) {
+            this.processToShowAtStartup = null;
+            this.fromModelInformation = false;
+            this.processService.processManagementFilter = searchProcess.processName;
+            this.onFilterChange();
+            this.displayDocumentation(searchProcess);
+          }
+        }
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.processCount = 0;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.onFilterChange();
+          this.isLoading = false;
+          this.snackbarService.showError('Error loading processes : ' + error.description);
+        }
       }
     });
   }

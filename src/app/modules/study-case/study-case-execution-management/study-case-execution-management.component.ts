@@ -45,20 +45,23 @@ export class StudyCaseExecutionManagementComponent implements OnInit {
     // Initialising filter with 'All columns'
     this.onFilterChange();
 
-    this.calculationService.getDashboard().subscribe(res => {
-      this.calculationDashboardList = res;
-      this.dataSourceDashboard = new MatTableDataSource<CalculationDashboard>(this.calculationDashboardList);
-      this.dataSourceDashboard.sortingDataAccessor = (item, property) => {
-        return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-      };
-      this.dataSourceDashboard.sort = this.sort;
-      this.isLoading = false;
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error loading execution dashboard information : ' + error.description);
+    this.calculationService.getDashboard().subscribe({
+      next: (res) => {
+        this.calculationDashboardList = res;
+        this.dataSourceDashboard = new MatTableDataSource<CalculationDashboard>(this.calculationDashboardList);
+        this.dataSourceDashboard.sortingDataAccessor = (item, property) => {
+          return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+        };
+        this.dataSourceDashboard.sort = this.sort;
+        this.isLoading = false;
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error loading execution dashboard information : ' + error.description);
+        }
       }
     });
   }
@@ -82,17 +85,20 @@ export class StudyCaseExecutionManagementComponent implements OnInit {
         if (validationData.cancel === false) {
           // Stop Execution
           this.loadingDialogService.showLoading(`Stopping execution of study case "${calculation.name}"`);
-          this.calculationService.stop(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe(res => {
-            calculation.executionStatus = "STOPPED"
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation(`Execution of study case ${calculation.name} execution n° ${calculation.studyCaseExecutionId} has been successfully stopped`);
-          }, errorReceived => {
-            this.loadingDialogService.closeLoading();
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.snackbarService.showError('Error loading execution dashboard information : ' + error.description);
+          this.calculationService.stop(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe({
+            next: (res) => {
+              calculation.executionStatus = "STOPPED";
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`Execution of study case ${calculation.name} execution n° ${calculation.studyCaseExecutionId} has been successfully stopped`);
+            },
+            error: (errorReceived) => {
+              this.loadingDialogService.closeLoading();
+              const error = errorReceived as SoSTradesError;
+              if (error.redirect) {
+                this.snackbarService.showError(error.description);
+              } else {
+                this.snackbarService.showError('Error stopping execution : ' + error.description);
+              }
             }
           });
         }
@@ -148,34 +154,38 @@ export class StudyCaseExecutionManagementComponent implements OnInit {
   downloadRawLogs(calculation: CalculationDashboard) {
 
 
-    this.calculationService.getExecutionRawLogs(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe(file => {
-
-      const downloadLink = document.createElement('a');
-      downloadLink.href = window.URL.createObjectURL(file);
-      downloadLink.setAttribute('download', `raw-sc${calculation.studyCaseId}-sce${calculation.studyCaseExecutionId}-logs.log`);
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error downloading raw log file :  No raw logs found for this study.');
+    this.calculationService.getExecutionRawLogs(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe({
+      next: (file) => {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(file);
+        downloadLink.setAttribute('download', `raw-sc${calculation.studyCaseId}-sce${calculation.studyCaseExecutionId}-logs.log`);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error downloading raw log file :  No raw logs found for this study.');
+        }
       }
-    });
+    });    
   }
 
 
 
   deleteStudyExecution(calculation: CalculationDashboard) {
 
-    this.calculationService.deleteStudycaseExecutionEntry(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe(_ => {
-      this.calculationDashboardList = this.calculationDashboardList.filter(x => x.studyCaseExecutionId !== calculation.studyCaseExecutionId);
-      this.dataSourceDashboard = new MatTableDataSource<CalculationDashboard>(this.calculationDashboardList);
-      this.snackbarService.showInformation('Entry successfully deleted');
-    },
-    error => {
-      this.snackbarService.showError(error);
+    this.calculationService.deleteStudycaseExecutionEntry(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe({
+      next: (_) => {
+        this.calculationDashboardList = this.calculationDashboardList.filter(x => x.studyCaseExecutionId !== calculation.studyCaseExecutionId);
+        this.dataSourceDashboard = new MatTableDataSource<CalculationDashboard>(this.calculationDashboardList);
+        this.snackbarService.showInformation('Entry successfully deleted');
+      },
+      error: (error) => {
+        this.snackbarService.showError(error);
+      }
     });
   }
 }

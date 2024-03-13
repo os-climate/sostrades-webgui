@@ -171,18 +171,20 @@ export class LoginComponent implements OnInit {
 
   loginWithGithub() {
     this.loadingLogin = true;
-    this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
-      this.snackbarService.closeSnackbarIfOpened();
-      document.location.href = githubOauthUrl;
-      this.loadingLogin = false;
-    }, (error) => {     
-      if (error.statusCode == 502) {
-        this.router.navigate([Routing.NO_SERVER]);        
-      } else {
-        this.snackbarService.showError('Error at GitHub login : ' + error.name);
+    this.githubOauthService.getGithubOAuthUrl().subscribe({
+      next: (githubOauthUrl) => {
+        this.snackbarService.closeSnackbarIfOpened();
+        document.location.href = githubOauthUrl;
+        this.loadingLogin = false;
+      },
+      error: (error) => {
+        if (error.statusCode == 502) {
+          this.router.navigate([Routing.NO_SERVER]);        
+        } else {
+          this.snackbarService.showError('Error at GitHub login : ' + error.name);
+        }
+        this.loadingLogin = false;
       }
-      this.loadingLogin = false; 
-        
     });
   }
 }

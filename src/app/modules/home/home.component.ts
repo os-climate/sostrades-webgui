@@ -83,7 +83,8 @@ export class HomeComponent implements OnInit, OnDestroy {
           if ((validationData !== null) && (validationData !== undefined)) {
             if (validationData.cancel !== true) {
 
-              this.studyCaseDataService.getStudies().subscribe(studies => {
+              this.studyCaseDataService.getStudies().subscribe({
+                next: studies => {
                 const study = studies.filter(x => x.id === this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges());
 
                 if (study[0] !== null && study[0] !== undefined) {
@@ -135,9 +136,10 @@ export class HomeComponent implements OnInit, OnDestroy {
                     this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges().toString());
                   this.snackbarService.showWarning('The study doesn\'t exist anymore in database, your local changes have been deleted.');
                 }
-              }, errorReceived => {
+              }, error: errorReceived => {
                 if (errorReceived.redirect !== true) { // Error with redirection
                   this.snackbarService.showError(errorReceived.description);
+                }
                 }
               });
             }

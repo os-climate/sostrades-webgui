@@ -84,17 +84,17 @@ export class ResetPasswordComponent implements OnInit {
     const password = this.resetPasswordForm.get('password').value;
 
     this.processingResetPassword = false;
-      this.userService.changePassword(password, token).subscribe(
-      () => {
+    this.userService.changePassword(password, token).subscribe({
+      next: () => {
         this.snackbarService.closeSnackbarIfOpened();
         this.router.navigate([Routing.LOGIN]);
         this.processingResetPassword = false;
       },
-      (err) => {
-        this.snackbarService.showError('Error while changing password : ' + err);
+      error: (err) => {
+        this.snackbarService.showError('Error while changing password: ' + err);
         this.processingResetPassword = false;
       }
-    );
+    });
   }
 }
 

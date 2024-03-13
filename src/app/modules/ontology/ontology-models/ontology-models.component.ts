@@ -127,13 +127,13 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
     this.ontologyService.modelStatusData = [];
     this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(null);
     // Retrieving study case list
-    this.ontologyService.getOntologyModelsStatus().subscribe(
-      (models) => {
+    this.ontologyService.getOntologyModelsStatus().subscribe({
+      next: (models) => {
         this.ontologyService.modelStatusData = models;
         this.initDataSource();
         this.hasLoadedModels = true;
       },
-      (errorReceived) => {
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         this.modelCount = 0;
         this.hasLoadedModels = false;
@@ -146,7 +146,7 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
           );
         }
       }
-    );
+    });
   }
   displayFilter(columnName: ColumnName, event) {
     event.stopPropagation();

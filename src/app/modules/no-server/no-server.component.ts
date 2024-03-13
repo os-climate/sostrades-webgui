@@ -44,18 +44,20 @@ export class NoServerComponent implements OnInit {
   private startConnectionStatusTimer() {
 
     this.connectionStatusTimer = setTimeout(() => {
-      this.appDataService.getAppInfo().subscribe((platformInfo) => {
-        if (platformInfo !== null && platformInfo !== undefined) {
-          this.stopConnectionStatusTimer();
-          this.router.navigate([Routing.LOGIN]);
-          this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turn on`);
-        }
-      }, 
-      error => {
-        if (error.status == 502 || error.status == 0) {
-          this.startConnectionStatusTimer();
-        } else {
-          this.snackbarService.showError('Error getting application info : ' + error.statusText);
+      this.appDataService.getAppInfo().subscribe({
+        next: (platformInfo) => {
+          if (platformInfo !== null && platformInfo !== undefined) {
+            this.stopConnectionStatusTimer();
+            this.router.navigate([Routing.LOGIN]);
+            this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turn on`);
+          }
+        },
+        error: (error) => {
+          if (error.status == 502 || error.status == 0) {
+            this.startConnectionStatusTimer();
+          } else {
+            this.snackbarService.showError('Error getting application info : ' + error.statusText);
+          }
         }
       });
     }, 5000);
@@ -70,17 +72,19 @@ export class NoServerComponent implements OnInit {
 
   goToLogin(){
     this.isLoading = true;
-    this.appDataService.getAppInfo().subscribe(platformInfo => {
-      if (platformInfo !== null && platformInfo !== undefined) {
-        this.platform = platformInfo.platform;
-        this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turned on`);
-        this.router.navigate([Routing.LOGIN]);
+    this.appDataService.getAppInfo().subscribe({
+      next: (platformInfo) => {
+        if (platformInfo !== null && platformInfo !== undefined) {
+          this.platform = platformInfo.platform;
+          this.snackbarService.showInformation(`The platform "${this.platform.charAt(0).toUpperCase() + this.platform.slice(1)}" turned on`);
+          this.router.navigate([Routing.LOGIN]);
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.snackbarService.showWarning(`The platform is still down, you will be redirected to the Login page in a few minutes.`);
+        this.isLoading = false;
       }
-      this.isLoading =false;
-    }, 
-    error => {
-      this.snackbarService.showWarning(`The platform is still down, you will be redirected to the Login page in few minutes.`);
-      this.isLoading =false;
-    }
-  )}
+    });
+  }
 }

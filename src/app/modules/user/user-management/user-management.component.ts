@@ -49,41 +49,46 @@ export class UserManagementComponent implements OnInit {
     this.onFilterChange();
 
     // Retrieving user list
-    this.userService.getUserList().subscribe(users => {
-      this.usersList = users;
-
-      this.userService.getUserProfiles().subscribe(userProfiles => {
-        this.usersProfilesList = userProfiles;
-
-        this.usersList.forEach(user => {
-          if (user.userprofile === null) {
-            user.userprofilename = 'No profile';
-          } else {
-            user.userprofilename = this.usersProfilesList.filter(x => x.id === user.userprofile)[0].name;
+    this.userService.getUserList().subscribe({
+      next: (users) => {
+        this.usersList = users;
+    
+        this.userService.getUserProfiles().subscribe({
+          next: (userProfiles) => {
+            this.usersProfilesList = userProfiles;
+    
+            this.usersList.forEach((user) => {
+              if (user.userprofile === null) {
+                user.userprofilename = 'No profile';
+              } else {
+                user.userprofilename = this.usersProfilesList.filter((x) => x.id === user.userprofile)[0].name;
+              }
+            });
+            this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
+            this.dataSourceUsers.sortingDataAccessor = (item, property) =>
+              typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+            this.dataSourceUsers.sort = this.sort;
+            this.isLoading = false;
+          },
+          error: (errorReceived) => {
+            this.isLoading = false;
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              this.snackbarService.showError('Error loading users profiles list : ' + error.description);
+            }
           }
         });
-        this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
-        this.dataSourceUsers.sortingDataAccessor = (item, property) => {
-          return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-        };
-        this.dataSourceUsers.sort = this.sort;
-        this.isLoading = false;
-      }, errorReceived => {
+      },
+      error: (errorReceived) => {
         this.isLoading = false;
         const error = errorReceived as SoSTradesError;
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.snackbarService.showError('Error loading users profiles list : ' + error.description);
+          this.snackbarService.showError('Error loading users list : ' + error.description);
         }
-      });
-    }, errorReceived => {
-      this.isLoading = false;
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error loading users list : ' + error.description);
       }
     });
   }
@@ -109,19 +114,22 @@ export class UserManagementComponent implements OnInit {
       if ((validationData !== null) && (validationData !== undefined)) {
         if (validationData.cancel === false) {
           this.loadingDialogService.showLoading(`Deletion of user "${user.username}"`);
-          this.userService.deleteUserFromAuthorizedList(user.id).subscribe(res => {
-            // Update table
-            this.usersList = this.usersList.filter(x => x.id !== user.id);
-            this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation(`Deletion of user "${user.username}" successfull`);
-          }, errorReceived => {
-            this.loadingDialogService.closeLoading();
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.snackbarService.showError(`Error deleting user "${user.username}" : ${error.description}`);
+          this.userService.deleteUserFromAuthorizedList(user.id).subscribe({
+            next: (res) => {
+              // Update table
+              this.usersList = this.usersList.filter((x) => x.id !== user.id);
+              this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`Deletion of user "${user.username}" successful`);
+            },
+            error: (errorReceived) => {
+              this.loadingDialogService.closeLoading();
+              const error = errorReceived as SoSTradesError;
+              if (error.redirect) {
+                this.snackbarService.showError(error.description);
+              } else {
+                this.snackbarService.showError(`Error deleting user "${user.username}" : ${error.description}`);
+              }
             }
           });
         }
@@ -149,28 +157,28 @@ export class UserManagementComponent implements OnInit {
       if ((validationData !== null) && (validationData !== undefined)) {
         if (validationData.cancel === false) {
           this.loadingDialogService.showLoading(`Reset user "${user.username}" password`);
-          this.userService.resetPassword(user.id).subscribe(res => {
-
-            validationDialogData.title = "Informations"
-            validationDialogData.message = `The following password reset link has been generated.\nSend it to the user to let him change its password.\n${res}`;
-            validationDialogData.showCancelButton = false;
-            this.dialog.open(ValidationDialogComponent, {
-              disableClose: true,
-
-              width: '500px',
-              height: '220px',
-              data: validationDialogData
-            });
-
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation(`${user.username} password has been successfully reset`);
-          }, errorReceived => {
-            this.loadingDialogService.closeLoading();
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.snackbarService.showError(`Error reseting user "${user.username}" password : ${error.description}`);
+          this.userService.resetPassword(user.id).subscribe({
+            next: (res) => {
+              validationDialogData.title = "Informations"
+              validationDialogData.message = `The following password reset link has been generated.\nSend it to the user to let him change its password.\n${res}`;
+              validationDialogData.showCancelButton = false;
+              this.dialog.open(ValidationDialogComponent, {
+                disableClose: true,
+                width: '500px',
+                height: '220px',
+                data: validationDialogData
+              });
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`${user.username} password has been successfully reset`);
+            },
+            error: (errorReceived) => {
+              this.loadingDialogService.closeLoading();
+              const error = errorReceived as SoSTradesError;
+              if (error.redirect) {
+                this.snackbarService.showError(error.description);
+              } else {
+                this.snackbarService.showError(`Error resetting user "${user.username}" password : ${error.description}`);
+              }
             }
           });
         }

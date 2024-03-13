@@ -275,15 +275,17 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    this.auth.deauthenticate().subscribe(() => {
-      this.router.navigate([Routing.LOGIN]);
-    }, error => {
+    this.auth.deauthenticate().subscribe({
+      next: () => {
+        this.router.navigate([Routing.LOGIN]);
+      },
+      error: (error) => {
         if (error.statusCode == 502 || error.statusCode == 0) {
           this.snackbarService.showError('No response from server');
         } else {
           this.snackbarService.showError('Error at logout : ' + error.statusText);
         }
-    }
-    );
+      }
+    });
   }
 }

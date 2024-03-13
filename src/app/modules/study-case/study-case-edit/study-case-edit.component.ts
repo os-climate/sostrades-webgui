@@ -41,21 +41,24 @@ export class StudyCaseEditComponent implements OnInit {
     })
 
     // Get group list 
-    this.groupDataService.getUserGroups().subscribe(response => {
-      const grpList: LoadedGroup[] = response;
-      grpList.forEach(group => {
-        this.groupList.push(group);
-      });
-      this.isLoading = false;
-      }, errorReceived => {
-          const error = errorReceived as SoSTradesError;
-          this.onCancelClick();
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError('Error loading group list for form : ' + error.description);
-          }
-      });
+    this.groupDataService.getUserGroups().subscribe({
+      next: (response) => {
+        const grpList: LoadedGroup[] = response;
+        grpList.forEach(group => {
+          this.groupList.push(group);
+        });
+        this.isLoading = false;
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.onCancelClick();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error loading group list for form : ' + error.description);
+        }
+      }
+    });
   }
   public onChange(event : any){
     this.editForm.valueChanges.subscribe(() => {

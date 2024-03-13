@@ -108,36 +108,38 @@ export class GroupManagementComponent implements OnInit {
       this.user = currentUser;
     });
 
-    this.groupDataService.getUserGroups().subscribe(groups => {
-      this.loadedGroups = groups;
-      this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
-      this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
-        switch (property) {
-          case 'name':
-            return typeof item.group.name === 'string' ? item.group.name.toLowerCase() : item.group.name;
-          case 'description':
-            return typeof item.group.description === 'string' ? item.group.description.toLowerCase() : item.group.name;
-          case 'confidential':
-            return typeof item.group.confidential;
-          default:
-            return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-        }
-      };
-      this.dataSourceMyGroups.sort = this.sort;
-      this.onFilterChange();
-      this.isLoading = false;
-
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
+    this.groupDataService.getUserGroups().subscribe({
+      next: (groups) => {
+        this.loadedGroups = groups;
+        this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
+        this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
+          switch (property) {
+            case 'name':
+              return typeof item.group.name === 'string' ? item.group.name.toLowerCase() : item.group.name;
+            case 'description':
+              return typeof item.group.description === 'string' ? item.group.description.toLowerCase() : item.group.name;
+            case 'confidential':
+              return typeof item.group.confidential;
+            default:
+              return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+          }
+        };
+        this.dataSourceMyGroups.sort = this.sort;
         this.onFilterChange();
         this.isLoading = false;
-        this.snackbarService.showError('Error loading user groups list : ' + error.description);
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.onFilterChange();
+          this.isLoading = false;
+          this.snackbarService.showError('Error loading user groups list : ' + error.description);
+        }
       }
     });
-  }
+  }    
 
 
   createGroup() {
@@ -145,36 +147,38 @@ export class GroupManagementComponent implements OnInit {
     const groupName = this.createGroupForm.value.groupName;
     this.loadingDialogService.showLoading(`Creation of the Group "${groupName}". Please wait.`);
     // eslint-disable-next-line max-len
-    this.groupDataService.createGroup(this.createGroupForm.value.groupName, this.createGroupForm.value.groupDescription, this.checkboxConfidential).subscribe(res => {
-      const newGroup: Group = res as Group;
-
-      const newLoadedGroup = new LoadedGroup(res, true, false, false);
-      this.loadedGroups.push(newLoadedGroup);
-      this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
-      // Reset fields
-      this.checkboxConfidential = false;
-      this.createGroupForm.reset();
-
-      this.snackbarService.showInformation(`Group "${groupName}" has been successfully created.`);
-
-      // Reloading user groups list
-      this.loadGroupManagementData();
-
-      this.loadingDialogService.closeLoading();
-
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
+    this.groupDataService.createGroup(this.createGroupForm.value.groupName, this.createGroupForm.value.groupDescription, this.checkboxConfidential).subscribe({
+      next: (res) => {
+        const newGroup: Group = res as Group;
+    
+        const newLoadedGroup = new LoadedGroup(res, true, false, false);
+        this.loadedGroups.push(newLoadedGroup);
+        this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
+        // Reset fields
+        this.checkboxConfidential = false;
+        this.createGroupForm.reset();
+    
+        this.snackbarService.showInformation(`Group "${groupName}" has been successfully created.`);
+    
+        // Reloading user groups list
+        this.loadGroupManagementData();
+    
         this.loadingDialogService.closeLoading();
-        this.snackbarService.showError(error.description);
-      } else {
-        this.onFilterChange();
-        this.createGroupForm.controls.groupName.reset();
-        this.loadingDialogService.closeLoading();
-        this.snackbarService.showError('Error creating group : ' + error.description);
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.loadingDialogService.closeLoading();
+          this.snackbarService.showError(error.description);
+        } else {
+          this.onFilterChange();
+          this.createGroupForm.controls.groupName.reset();
+          this.loadingDialogService.closeLoading();
+          this.snackbarService.showError('Error creating group : ' + error.description);
+        }
       }
     });
-  }
+  }    
 
   public hasError = (controlName: string, errorName: string) => {
     return this.createGroupForm.controls[controlName].hasError(errorName);
@@ -200,13 +204,13 @@ export class GroupManagementComponent implements OnInit {
         if (editGroupData.cancel === false) {
           this.loadingDialogService.showLoading(`Updating group (${editGroupData.name}). Please wait`);
 
-          this.groupDataService.updateGroup(loadedGroup.group.id, editGroupData.name, editGroupData.description).subscribe(
-            _ => {
+          this.groupDataService.updateGroup(loadedGroup.group.id, editGroupData.name, editGroupData.description).subscribe({
+            next: (_) => {
               this.loadingDialogService.closeLoading();
               this.snackbarService.showInformation(`Group (${editGroupData.name}) has been successfully updated `);
               this.loadGroupManagementData();
             },
-            errorReceived => {
+            error: (errorReceived) => {
               const error = errorReceived as SoSTradesError;
               if (error.redirect) {
                 this.loadingDialogService.closeLoading();
@@ -216,7 +220,7 @@ export class GroupManagementComponent implements OnInit {
                 this.snackbarService.showError(`Error updating group: ${error.description}`);
               }
             }
-          );
+          });
         }
       }
     });
@@ -242,20 +246,23 @@ export class GroupManagementComponent implements OnInit {
       if ((validationData !== null) && (validationData !== undefined)) {
         if (validationData.cancel === false) {
           this.loadingDialogService.showLoading(`Deletion of the Group (${group.name}). Please wait.`);
-          this.groupDataService.deleteGroup(group.id).subscribe(res => {
-            this.loadedGroups = this.loadedGroups.filter(x => x.group.id !== group.id);
-            this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
-
-            // Reloading user groups list
-            this.snackbarService.showInformation(`Group (${group.name}) has been succesfully deleted`);
-            this.loadGroupManagementData();
-            this.loadingDialogService.closeLoading();
-          }, errorReceived => {
-            if (errorReceived.redirect === false) {
+          this.groupDataService.deleteGroup(group.id).subscribe({
+            next: (res) => {
+              this.loadedGroups = this.loadedGroups.filter(x => x.group.id !== group.id);
+              this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
+          
+              // Reloading user groups list
+              this.snackbarService.showInformation(`Group (${group.name}) has been succesfully deleted`);
+              this.loadGroupManagementData();
               this.loadingDialogService.closeLoading();
-              this.snackbarService.showError(errorReceived.description);
+            },
+            error: (errorReceived) => {
+              if (errorReceived.redirect === false) {
+                this.loadingDialogService.closeLoading();
+                this.snackbarService.showError(errorReceived.description);
+              }
             }
-          });
+          });          
         }
       }
     });
@@ -266,16 +273,16 @@ export class GroupManagementComponent implements OnInit {
 
     this.setDefaultGroup = false;
     const userId = this.userService.getCurrentUserId();
-    this.userService.changeDefaultGroup(loadedGroup.group.id, userId).subscribe(
-      _ => {
+    this.userService.changeDefaultGroup(loadedGroup.group.id, userId).subscribe({
+      next: (_) => {
         this.user.user.default_group_id = loadedGroup.group.id;
         this.setDefaultGroup = true;
       },
-      error => {
+      error: (error) => {
         this.snackbarService.showError(error.description);
         this.setDefaultGroup = true;
       }
-    );
+    });
   }
 
   public hasFilter(column: ColumnName): boolean {

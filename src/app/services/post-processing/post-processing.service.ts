@@ -113,14 +113,17 @@ export class PostProcessingService extends PostProcessingHttpService {
         requestData.loadedStudy,
         requestData.disciplineKey,
         requestData.postProcessingBundle.name,
-        requestData.postProcessingBundle.filters).subscribe(postProcessing => {
-          this.setPostProcessingBundle(requestData, postProcessing);
-          const sub = requestData.subscription;
-          sub.next(postProcessing);
-          this.postProcessingQueue.shift();
-          this.startNextPostProcessingRequest();
-        }, errorReceived => {
-          this.loggerService.log(errorReceived);
+        requestData.postProcessingBundle.filters).subscribe({
+          next: (postProcessing) => {
+            this.setPostProcessingBundle(requestData, postProcessing);
+            const sub = requestData.subscription;
+            sub.next(postProcessing);
+            this.postProcessingQueue.shift();
+            this.startNextPostProcessingRequest();
+          },
+          error: (errorReceived) => {
+            this.loggerService.log(errorReceived);
+          }
         });
     }
   }

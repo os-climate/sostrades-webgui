@@ -97,24 +97,25 @@ onCreate() {
     if ((newsDialogData !== null) && (newsDialogData !== undefined)) {
       if (newsDialogData.cancel === false) {
         this.loadingDialogService.showLoading(`Create a news. Please wait.`);
-        this.newsService.createNews(newsDialogData.message).subscribe(response => {
-
-          // Add news on top of news and newsFiltered table
-          this.news.unshift(response);
-
-          this.displayAllOrOneNew();
-
-          this.loadingDialogService.closeLoading();
-          this.snackbarService.showInformation(`The news has been succesfully created`);
-        },
-        errorReceived => {
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
+        this.newsService.createNews(newsDialogData.message).subscribe({
+          next: (response) => {
+            // Add news on top of news and newsFiltered table
+            this.news.unshift(response);
+        
+            this.displayAllOrOneNew();
+        
             this.loadingDialogService.closeLoading();
-            this.snackbarService.showError(error.description);
-          } else {
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showError('Error creating news: ' + error.description);
+            this.snackbarService.showInformation(`The news has been successfully created`);
+          },
+          error: (errorReceived) => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError(error.description);
+            } else {
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError('Error creating news: ' + error.description);
+            }
           }
         });
       }
@@ -138,26 +139,28 @@ onCreate() {
       if ((newsDialogData !== null) && (newsDialogData !== undefined)) {
         if (newsDialogData.cancel === false) {
           this.loadingDialogService.showLoading(`Update message. Please wait.`);
-          this.newsService.updateNews(news.id, newsDialogData.message).subscribe(response => {
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation(`The message has been succesfully updated`);
-            news.message = response.message;
-            news.lastModificationDate = response.lastModificationDate;
-
-            // Sort news by lastModicationDate
-            this.newsFiltered = this.news.sort((a, b) =>
-              new Date(b.lastModificationDate).getTime() - new Date(a.lastModificationDate).getTime());
-
-            this.displayAllOrOneNew();
-          },
-          errorReceived => {
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
+          this.newsService.updateNews(news.id, newsDialogData.message).subscribe({
+            next: (response) => {
               this.loadingDialogService.closeLoading();
-              this.snackbarService.showError(error.description);
-            } else {
-              this.loadingDialogService.closeLoading();
-              this.snackbarService.showError('Error updating news: ' + error.description);
+              this.snackbarService.showInformation(`The message has been successfully updated`);
+              news.message = response.message;
+              news.lastModificationDate = response.lastModificationDate;
+          
+              // Sort news by lastModificationDate
+              this.newsFiltered = this.news.sort((a, b) =>
+                new Date(b.lastModificationDate).getTime() - new Date(a.lastModificationDate).getTime());
+          
+              this.displayAllOrOneNew();
+            },
+            error: (errorReceived) => {
+              const error = errorReceived as SoSTradesError;
+              if (error.redirect) {
+                this.loadingDialogService.closeLoading();
+                this.snackbarService.showError(error.description);
+              } else {
+                this.loadingDialogService.closeLoading();
+                this.snackbarService.showError('Error updating news: ' + error.description);
+              }
             }
           });
         }
@@ -188,25 +191,26 @@ onCreate() {
         if (validationData.cancel !== true) {
           if (validationData.validate === true) {
             this.loadingDialogService.showLoading(`Delete news. Please wait.`);
-            this.newsService.deleteNews(news).subscribe(() => {
-
-              // Remove news from table news and newsFiltered
-              const newsIndex = this.news.findIndex((currentNew) => currentNew.id === news.id);
-              if ((newsIndex >= 0) && (newsIndex < this.news.length)) {
-                this.news.splice(newsIndex, 1);
-                this.displayAllOrOneNew();
-              }
-              this.loadingDialogService.closeLoading();
-              this.snackbarService.showInformation(`The news (${news.message}) has been succesfully deleted`);
-            },
-            errorReceived => {
-              const error = errorReceived as SoSTradesError;
-              if (error.redirect) {
+            this.newsService.deleteNews(news).subscribe({
+              next: () => {
+                // Supprimer la news du tableau news et newsFiltered
+                const newsIndex = this.news.findIndex((currentNew) => currentNew.id === news.id);
+                if ((newsIndex >= 0) && (newsIndex < this.news.length)) {
+                  this.news.splice(newsIndex, 1);
+                  this.displayAllOrOneNew();
+                }
                 this.loadingDialogService.closeLoading();
-                this.snackbarService.showError(error.description);
-              } else {
-                this.loadingDialogService.closeLoading();
-                this.snackbarService.showError('Error deleting news: ' + error.description);
+                this.snackbarService.showInformation(`The news (${news.message}) has been successfully deleted`);
+              },
+              error: (errorReceived) => {
+                const error = errorReceived as SoSTradesError;
+                if (error.redirect) {
+                  this.loadingDialogService.closeLoading();
+                  this.snackbarService.showError(error.description);
+                } else {
+                  this.loadingDialogService.closeLoading();
+                  this.snackbarService.showError('Error deleting news: ' + error.description);
+                }
               }
             });
           }

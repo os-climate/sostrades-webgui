@@ -34,15 +34,18 @@ export class LinkComponent implements OnInit {
 
     this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
 
-    this.linkService.loadAllLinks().subscribe(links => {
-      this.links = links;
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.links = [];
-        this.snackbarService.showError('Error loading links : ' + error.description);
+    this.linkService.loadAllLinks().subscribe({
+      next: (links) => {
+        this.links = links;
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.links = [];
+          this.snackbarService.showError('Error loading links : ' + error.description);
+        }
       }
     });
   }
@@ -67,14 +70,14 @@ export class LinkComponent implements OnInit {
       if ((linkData !== null) && (linkData !== undefined)) {
         if (linkData.cancel === false) {
           this.loadingDialogService.showLoading(`Update link (${linkData.label}). Please wait.`);
-          this.linkService.updateLink(link.id, linkData.url, linkData.label, linkData.description).subscribe(res => {
-            console.log(res);
-            link.initFromLink(res);
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation(`Link (${linkData.label}) has been succesfully updated`);
-          },
-          errorReceived => {
-            const error = errorReceived as SoSTradesError;
+          this.linkService.updateLink(link.id, linkData.url, linkData.label, linkData.description).subscribe({
+            next: (res) => {
+              link.initFromLink(res);
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`Link (${linkData.label}) has been succesfully updated`);
+            },
+            error: (errorReceived) => {
+              const error = errorReceived as SoSTradesError;
               if (error.redirect) {
                 this.loadingDialogService.closeLoading();
                 this.snackbarService.showError(error.description);
@@ -82,6 +85,7 @@ export class LinkComponent implements OnInit {
                 this.loadingDialogService.closeLoading();
                 this.snackbarService.showError('Error updating link: ' + error.description);
               }
+            }
           });
         }
       }
@@ -108,20 +112,18 @@ export class LinkComponent implements OnInit {
       if (validationData !== null && validationData !== undefined) {
         if (validationData.cancel !== true) {
           if (validationData.validate === true) {
-            this.loadingDialogService.showLoading(`Delete link (${link.label}). Please wait.`);
-            this.linkService.deleteLink(link).subscribe(_ => {
-
-              const linkIndex = this.links.findIndex((currentLink) => currentLink.id == link.id);
-
-              if ((linkIndex >= 0) && (linkIndex < this.links.length)) {
-                this.links.splice(linkIndex, 1);
-              }
-
-              this.loadingDialogService.closeLoading();
-              this.snackbarService.showInformation(`Link (${link.label}) has been succesfully deleted`)
-            },
-            errorReceived => {
-              const error = errorReceived as SoSTradesError;
+              this.loadingDialogService.showLoading(`Delete link (${link.label}). Please wait.`);
+              this.linkService.deleteLink(link).subscribe({
+              next: (_) => {
+                const linkIndex = this.links.findIndex((currentLink) => currentLink.id == link.id);
+                if ((linkIndex >= 0) && (linkIndex < this.links.length)) {
+                  this.links.splice(linkIndex, 1);
+                }
+                this.loadingDialogService.closeLoading();
+                this.snackbarService.showInformation(`Link (${link.label}) has been succesfully deleted`)
+              },
+              error: (errorReceived) => {
+                const error = errorReceived as SoSTradesError;
                 if (error.redirect) {
                   this.loadingDialogService.closeLoading();
                   this.snackbarService.showError(error.description);
@@ -129,6 +131,7 @@ export class LinkComponent implements OnInit {
                   this.loadingDialogService.closeLoading();
                   this.snackbarService.showError('Error deleting link: ' + error.description);
                 }
+              }
             });
           }
         }
@@ -149,14 +152,15 @@ export class LinkComponent implements OnInit {
       if ((linkData !== null) && (linkData !== undefined)) {
         if (linkData.cancel === false) {
           this.loadingDialogService.showLoading(`Create new link (${linkData.label}). Please wait.`);
-          this.linkService.createLink(linkData.url, linkData.label, linkData.description).subscribe(res => {
-            console.log(res);
-            this.links.push(res);
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation(`Link (${linkData.label}) has been succesfully created`);
-          },
-          errorReceived => {
-            const error = errorReceived as SoSTradesError;
+          this.linkService.createLink(linkData.url, linkData.label, linkData.description).subscribe({
+            next: (res) => {
+              console.log(res);
+              this.links.push(res);
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`Link (${linkData.label}) has been succesfully created`);
+            },
+            error: (errorReceived) => {
+              const error = errorReceived as SoSTradesError;
               if (error.redirect) {
                 this.loadingDialogService.closeLoading();
                 this.snackbarService.showError(error.description);
@@ -164,6 +168,7 @@ export class LinkComponent implements OnInit {
                 this.loadingDialogService.closeLoading();
                 this.snackbarService.showError('Error creating link: ' + error.description);
               }
+            }
           });
         }
       }

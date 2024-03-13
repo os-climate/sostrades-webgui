@@ -105,21 +105,23 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
       this.studyCaseDataService.loadedStudy,
       this.fullNamespace,
       this.postProcessingBundle.name,
-      this.postProcessingBundle.filters).subscribe(postProcessing => {
-
-        if (postProcessing !== null && postProcessing !== undefined) {
-          this.postProcessingBundle.UpdatePlots(postProcessing);
-        }
-        this.postProcessingService.resumePostProcessingRequestQueue();
-        this.displayProgressBar = false;
-      }, errorReceived => {
-        const error = errorReceived as SoSTradesError;
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.displayProgressBar = false;
+      this.postProcessingBundle.filters).subscribe({
+        next: (postProcessing) => {
+          if (postProcessing !== null && postProcessing !== undefined) {
+            this.postProcessingBundle.UpdatePlots(postProcessing);
+          }
           this.postProcessingService.resumePostProcessingRequestQueue();
-          this.snackbarService.showError('Error loading charts : ' + error.description);
+          this.displayProgressBar = false;
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.displayProgressBar = false;
+            this.postProcessingService.resumePostProcessingRequestQueue();
+            this.snackbarService.showError('Error loading charts : ' + error.description);
+          }
         }
       });
   }

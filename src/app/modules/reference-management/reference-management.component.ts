@@ -135,8 +135,8 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.referenceDataService.referenceManagementData = [];
     this.dataSourceReferences = new MatTableDataSource<Study>(null);
 
-    this.referenceDataService.getReferences().subscribe(
-      (refs) => {
+    this.referenceDataService.getReferences().subscribe({
+      next: (refs) => {
         refs.forEach((ref) => {
           this.referenceDataService.referenceManagementData.push(ref);
           if (ref.isRegeneratingReference) {
@@ -155,7 +155,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
         this.onFilterChange();
         this.isLoading = false;
       },
-      (errorReceived) => {
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         this.referenceCount = 0;
         if (error.redirect) {
@@ -168,7 +168,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
           );
         }
       }
-    );
+    });
   }
 
   regenerateReference(study: Study) {
@@ -412,19 +412,21 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   downloadGenerationLogs(study: Study) {
     const refPath = study.repository + '.' + study.process + '.' + study.name;
-    this.referenceDataService.getLogs(refPath).subscribe(file => {
-
-      const downloadLink = document.createElement('a');
-      downloadLink.href = window.URL.createObjectURL(file);
-      downloadLink.setAttribute('download', refPath + '.log');
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error downloading log file : No logs found for ' + refPath + '. You should generate it first.');
+    this.referenceDataService.getLogs(refPath).subscribe({
+      next: (file) => {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(file);
+        downloadLink.setAttribute('download', refPath + '.log');
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error downloading log file: No logs found for ' + refPath + '. You should generate it first.');
+        }
       }
     });
   }

@@ -25,14 +25,16 @@ export class SamlComponent implements OnInit {
         this.loggerService.log(decodeURIComponent(params.token));
         const tokens = params.token.split('###');
 
-        this.authService.saml(tokens[0], tokens[1]).subscribe( _ => {
-          this.router.navigate(['']);
-        },
-        error => {
-          this.loggerService.log(error);
-          this.snackbarService.showError(error.description);
-          if (!error.redirect) {
-            this.router.navigate([Routing.LOGIN]);
+        this.authService.saml(tokens[0], tokens[1]).subscribe({
+          next: () => {
+            this.router.navigate(['']);
+          },
+          error: (error) => {
+            this.loggerService.log(error);
+            this.snackbarService.showError(error.description);
+            if (!error.redirect) {
+              this.router.navigate([Routing.LOGIN]);
+            }
           }
         });
       }

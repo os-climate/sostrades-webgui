@@ -68,31 +68,29 @@ export class StudyCaseValidationDialogComponent implements OnInit {
     let validation = '';
     validation = this.data.node.isValidated ? ValidationTreeNodeState.INVALIDATED : ValidationTreeNodeState.VALIDATED;
     this.loadingDialogService.showLoading( `Saving discipline validation change`);
-    this.studyCaseValidationService
-      .createStudyValidationData(
-        this.studyCaseDataService.loadedStudy.studyCase.id,
-        this.data.node.fullNamespace,
-        validComment,
-        validation
-        )
-      .subscribe(
-        (studyCaseValidation) => {
-          this.socketService.validationChange(this.studyCaseDataService.loadedStudy.studyCase.id, this.data.node.name, studyCaseValidation);
-          this.loadingDialogService.closeLoading();
-          this.dialogRef.close(this.data);
-          this.snackbarService.showInformation(`${this.data.node.name} datas has been successfully ${validation.toLocaleLowerCase()}`);
-        },
-        (errorReceived) => {
-          this.loadingDialogService.closeLoading();
-          this.dialogRef.close(this.data);
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError('Error validation : ' + error.description);
-          }
+    this.studyCaseValidationService.createStudyValidationData(
+      this.studyCaseDataService.loadedStudy.studyCase.id,
+      this.data.node.fullNamespace,
+      validComment,
+      validation
+    ).subscribe({
+      next: (studyCaseValidation) => {
+        this.socketService.validationChange(this.studyCaseDataService.loadedStudy.studyCase.id, this.data.node.name, studyCaseValidation);
+        this.loadingDialogService.closeLoading();
+        this.dialogRef.close(this.data);
+        this.snackbarService.showInformation(`${this.data.node.name} datas has been successfully ${validation.toLocaleLowerCase()}`);
+      },
+      error: (errorReceived) => {
+        this.loadingDialogService.closeLoading();
+        this.dialogRef.close(this.data);
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error validation : ' + error.description);
         }
-      );
+      }
+    });
   }
 
   onCancelClick() {
