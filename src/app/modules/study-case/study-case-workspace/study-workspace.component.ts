@@ -111,6 +111,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tabNameSelected = 'Documentation';
     this.showDocumentationContent = true
+
     this.showSearch = false;
     this.setDiplayableItems();
 
@@ -244,6 +245,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.showPostProcessingContent = false;
       this.showVisualisationContent = false;
       this.showDocumentationContent = false;
+
 
       if (event.tab.textLabel === 'Post processing') {
         this.showPostProcessingContent = true;
