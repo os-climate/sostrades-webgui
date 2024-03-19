@@ -2,7 +2,6 @@ import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'sr
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
-import { NodeData } from 'src/app/models/node-data.model';
 import { Observable, Subscriber } from 'rxjs';
 import { Router } from '@angular/router';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
@@ -11,10 +10,8 @@ import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
 import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
-import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
-import { Routing } from 'src/app/models/routing.model';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
-import { I } from '@angular/cdk/keycodes';
+import { Routing } from 'src/app/models/enumeration.model';
 
 
 @Injectable({

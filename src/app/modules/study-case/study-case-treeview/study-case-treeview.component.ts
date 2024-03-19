@@ -580,8 +580,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
         this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          width: '500px',
-          height: '220px',
           data: validationDialogData,
         });
 
@@ -693,8 +691,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
         this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          width: '500px',
-          height: '220px',
           data: validationDialogData,
         });
 
@@ -924,8 +920,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
-      width: '500px',
-      height: '220px',
       data: validationDialogData
     });
     this.dialogRefValidate.afterClosed().subscribe((result) => {
@@ -1187,8 +1181,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
       this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
-        width: '500px',
-        height: '220px',
         data: validationDialogData
       });
 

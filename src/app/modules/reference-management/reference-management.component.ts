@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { FilterDialogData } from 'src/app/models/dialog-data.model';
 import { ProcessGenerationStatus } from 'src/app/models/reference-generation-status-observer.model';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';

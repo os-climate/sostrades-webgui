@@ -10,9 +10,8 @@ import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model'
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { OntologyModelsInformationComponent } from './ontology-models-information/ontology-models-information.component';
-import { Routing } from 'src/app/models/routing.model';
 import { OntologyHttpService } from 'src/app/services/ontology-http/ontology-http.service';
 
 @Component({

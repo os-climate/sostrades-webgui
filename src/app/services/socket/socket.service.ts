@@ -11,7 +11,7 @@ import { StudyCaseDataService } from '../study-case/data/study-case-data.service
 import { LoggerService } from '../logger/logger.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from '../snackbar/snackbar.service';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';

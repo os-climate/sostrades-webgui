@@ -6,12 +6,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { ValidationDialogData, UserCreateDialogData, UserUpdateDialogData } from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, UserCreateDialogData, UserUpdateDialogData, EditionDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { CreateUserComponent } from '../user-creation/user-creation.component';
-import { UserUpdateComponent } from '../user-update/user-update.component';
 import { UserProfile } from 'src/app/models/user-profile';
 import { MatSort } from '@angular/material/sort';
+import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
+import { DialogEditionName } from 'src/app/models/enumeration.model';
+
+
+class UpdateUserResponse {
+  newProfile: boolean;
+  mailSend: boolean;
+}
 
 @Component({
   selector: 'app-user-management',
@@ -102,9 +109,6 @@ export class UserManagementComponent implements OnInit {
 
     const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
-
-      width: '500px',
-      height: '220px',
       data: validationDialogData
     });
 
@@ -145,9 +149,6 @@ export class UserManagementComponent implements OnInit {
 
     const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
-
-      width: '500px',
-      height: '220px',
       data: validationDialogData
     });
 
@@ -164,8 +165,6 @@ export class UserManagementComponent implements OnInit {
               validationDialogData.showCancelButton = false;
               this.dialog.open(ValidationDialogComponent, {
                 disableClose: true,
-                width: '500px',
-                height: '220px',
                 data: validationDialogData
               });
               this.loadingDialogService.closeLoading();
@@ -247,9 +246,6 @@ export class UserManagementComponent implements OnInit {
           validationDialogData.showCancelButton = false;
           this.dialog.open(ValidationDialogComponent, {
             disableClose: true,
-
-            width: '500px',
-            height: '220px',
             data: validationDialogData
           });
         }
@@ -258,35 +254,67 @@ export class UserManagementComponent implements OnInit {
   }
 
   updateUser(user: User) {
-    const updateDialogData = new UserUpdateDialogData();
-    updateDialogData.userUpdated = user;
+    const dialogData: EditionDialogData = new EditionDialogData();
+    dialogData.userUpdated = user;
+    dialogData.editionDialogName = DialogEditionName.EDITION_USER;
 
-    const dialogRef = this.dialog.open(UserUpdateComponent, {
+
+    const dialogRef = this.dialog.open(EditionFormDialogComponent, {
       disableClose: true,
       width: '350px',
       height: '450px',
-      data: updateDialogData
+      data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      const resultUpdateUser = result as UserUpdateDialogData;
-
+      
+      const resultUpdateUser = result as EditionDialogData;
       if ((resultUpdateUser !== null) && (resultUpdateUser !== undefined)) {
         if (resultUpdateUser.cancel === false && resultUpdateUser.userUpdated !== null && resultUpdateUser.userUpdated !== undefined) {
 
-          user.username = resultUpdateUser.userUpdated.username;
-          user.email = resultUpdateUser.userUpdated.email;
-          user.firstname = resultUpdateUser.userUpdated.firstname;
-          user.lastname = resultUpdateUser.userUpdated.lastname;
-          user.userprofile = resultUpdateUser.userUpdated.userprofile;
-
-          if (user.userprofile === null) {
-            user.userprofilename = 'No profile';
-          } else {
-            user.userprofilename = this.usersProfilesList.filter(x => x.id === user.userprofile)[0].name;
-          }
+          this.userService.updateUser(resultUpdateUser.userUpdated).subscribe({
+            
+            next: (res) => {
+              const resUpdate = res as UpdateUserResponse;
+              this.loadingDialogService.closeLoading();
+              if (user.userprofile === null) {
+                user.userprofilename = 'No profile';
+              } else {
+                user.userprofilename = this.usersProfilesList.filter(x => x.id === user.userprofile)[0].name;
+              }
+              if (resUpdate.newProfile) {
+                if (resUpdate.mailSend) {
+                  // eslint-disable-next-line max-len
+                  this.snackbarService.showInformation(`Update of user "${resultUpdateUser.userUpdated.username}" successfull, and notification mail successfully sent.`);
+                } else {
+                  // eslint-disable-next-line max-len
+                  this.snackbarService.showWarning(`Update of user "${resultUpdateUser.userUpdated.username}" successfull, but server was unable to notify user by mail.`);
+                }
+              } else {
+                this.snackbarService.showInformation(`Update of user "${resultUpdateUser.userUpdated.username}" successfull`);
+              }
+              user.username = resultUpdateUser.userUpdated.username;
+              user.email = resultUpdateUser.userUpdated.email;
+              user.firstname = resultUpdateUser.userUpdated.firstname;
+              user.lastname = resultUpdateUser.userUpdated.lastname;
+              user.userprofile = resultUpdateUser.userUpdated.userprofile;
+            
+            },
+            error: (errorReceived) => {
+              this.loadingDialogService.closeLoading();
+              const error = errorReceived as SoSTradesError;
+              if (error.redirect) {
+                this.snackbarService.showError(error.description);
+              } else {
+                this.snackbarService.showError(`Error updating user : ${error.description}`);
+              }
+            }
+          });
         }
       }
+    
+
+      
     });
   }
 }

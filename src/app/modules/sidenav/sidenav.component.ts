@@ -4,8 +4,7 @@ import { Subscription } from 'rxjs';
 import { LoadedStudy, LoadStatus} from 'src/app/models/study.model';
 import { Router } from '@angular/router';
 import { HeaderService } from 'src/app/services/hearder/header.service';
-import { NavigationTitle } from 'src/app/models/navigation-title.model';
-import { Routing } from 'src/app/models/routing.model';
+import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { StudyCaseModificationDialogData, ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
@@ -116,8 +115,6 @@ export class SidenavComponent implements OnInit, OnDestroy {
         validationDialogData.secondaryActionConfirmationNeeded = true;
         const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          width: '500px',
-          height: '220px',
           data: validationDialogData,
         });
 

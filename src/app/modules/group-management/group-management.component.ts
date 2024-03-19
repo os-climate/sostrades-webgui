@@ -4,7 +4,7 @@ import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Group, LoadedGroup } from 'src/app/models/group.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { EditGroupDialogData, FilterDialogData, UpdateEntityRightDialogData, ValidationDialogData } from 'src/app/models/dialog-data.model';
+import { EditionDialogData, FilterDialogData, UpdateEntityRightDialogData, ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
@@ -17,9 +17,10 @@ import { HostListener } from '@angular/core';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 import { UserService } from 'src/app/services/user/user.service';
 import { UserApplicationRight } from 'src/app/models/user.model';
-import { GroupEditComponent } from './group-edit/group-edit.component';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
+import { DialogEditionName } from 'src/app/models/enumeration.model';
+import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
 
 
 @Component({
@@ -186,19 +187,18 @@ export class GroupManagementComponent implements OnInit {
 
   updateGroup(event: MouseEvent, loadedGroup: LoadedGroup) {
 
-    const dialogData: EditGroupDialogData = new EditGroupDialogData();
+    const dialogData: EditionDialogData = new EditionDialogData();
+    dialogData.editionDialogName = DialogEditionName.EDITION_GROUP;
     dialogData.name = loadedGroup.group.name;
     dialogData.description = loadedGroup.group.description;
 
-    const dialogRef = this.dialog.open(GroupEditComponent, {
+    const dialogRef = this.dialog.open(EditionFormDialogComponent, {
       disableClose: false,
-      width: '400px',
-      height: '400px',
       data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      const editGroupData: EditGroupDialogData = result as EditGroupDialogData;
+      const editGroupData: EditionDialogData = result as EditionDialogData;
 
       if (editGroupData !== null && editGroupData !== undefined) {
         if (editGroupData.cancel === false) {
@@ -235,8 +235,6 @@ export class GroupManagementComponent implements OnInit {
 
     const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
-      width: '500px',
-      height: '220px',
       data: validationDialogData
     });
 

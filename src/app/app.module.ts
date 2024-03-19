@@ -51,7 +51,6 @@ import { AngularSplitModule } from 'angular-split';
 import { StudyCaseExecutionExceptionDialogComponent } from './modules/study-case/study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { CreateUserComponent } from './modules/user/user-creation/user-creation.component';
-import { UserUpdateComponent } from './modules/user/user-update/user-update.component';
 import { UserAppLoadingComponent } from './modules/user/user-app-loading/user-app-loading.component';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
 
@@ -104,8 +103,6 @@ import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/li
 import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
 import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
 import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
-import { GroupEditComponent } from './modules/group-management/group-edit/group-edit.component';
-import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
 import { StudyCaseLoggingComponent } from './modules/study-case/study-case-logging/study-case-logging.component';
 import { RepositoryTraceabilityDialogComponent } from './modules/ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
 import { FilterDialogComponent } from './shared/filter-dialog/filter-dialog.component';
@@ -119,6 +116,7 @@ import { ProcessBuilderComponent } from './shared/process-builder/process-builde
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NoServerComponent } from './modules/no-server/no-server.component';
 import { LoginInformationDialogComponent } from './modules/login/login-information-dialog/login-information-dialog.component';
+import { EditionFormDialogComponent } from './shared/edition-form-dialog/edition-form-dialog.component';
 
 registerLocaleData(fr);
 
@@ -157,7 +155,6 @@ registerLocaleData(fr);
         StudyCaseExecutionExceptionDialogComponent,
         UserManagementComponent,
         CreateUserComponent,
-        UserUpdateComponent,
         UserAppLoadingComponent,
         StudyCaseExecutionManagementComponent,
         UserRoomDialogComponent,
@@ -202,8 +199,6 @@ registerLocaleData(fr);
         WelcomPageComponent,
         ContactDialogComponent,
         DisciplineIconMappingConverterPipe,
-        GroupEditComponent,
-        StudyCaseEditComponent,
         StudyCaseLoggingComponent,
         RepositoryTraceabilityDialogComponent,
         FilterDialogComponent,
@@ -216,6 +211,7 @@ registerLocaleData(fr);
         ProcessBuilderComponent,
         NoServerComponent,
         LoginInformationDialogComponent,
+        EditionFormDialogComponent,
     ],
     imports: [
         BrowserModule,

@@ -7,8 +7,9 @@ import { NodeData } from './node-data.model';
 import { Process } from './process.model';
 import { OntologyParameter } from './ontology-parameter.model';
 import { OntologyModelStatus } from './ontology-model-status.model';
-import { ColumnName } from './column-name.model';
 import { TreeNode } from './tree-node.model';
+import { LoadedGroup } from './group.model';
+import { ColumnName } from './enumeration.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -377,6 +378,29 @@ export class EditGroupDialogData extends AbstractDialogData {
     this.name = '';
     this.description = '';
   }
+}
+
+export class EditionDialogData extends AbstractDialogData {
+
+  editionDialogName: string;
+  name: string;
+  groupId: number;
+  description: string;
+  groupList: LoadedGroup[];
+  userUpdated: User;
+
+
+  public constructor() {
+    super();
+
+    this.editionDialogName = '';
+    this.name = '';
+    this.description = '';
+    this.groupId = null;
+    this.groupList = [];
+    this.userUpdated = null;
+  }
+
 }
 
 

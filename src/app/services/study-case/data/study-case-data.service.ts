@@ -13,9 +13,8 @@ import { OntologyService } from '../../ontology/ontology.service';
 import { StudyFavorite } from 'src/app/models/study-case-favorite';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
-import { ColumnName } from 'src/app/models/column-name.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
-import { Routing } from 'src/app/models/routing.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
 
 @Injectable({

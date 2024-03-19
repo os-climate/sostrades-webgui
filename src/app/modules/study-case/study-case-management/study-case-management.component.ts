@@ -5,7 +5,7 @@ import { Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData,
-  EditStudyCaseDialogData, FilterDialogData, StudyCaseCreateDialogData} from 'src/app/models/dialog-data.model';
+  EditStudyCaseDialogData, FilterDialogData, StudyCaseCreateDialogData, EditionDialogData} from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -25,16 +25,16 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
-import { HeaderService } from 'src/app/services/hearder/header.service';
-import { StudyCaseEditComponent } from '../study-case-edit/study-case-edit.component';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName } from 'src/app/models/enumeration.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { Process } from 'src/app/models/process.model';
 import { StudyCaseCreationComponent } from '../study-case-creation/study-case-creation.component';
+import { DialogEditionName } from 'src/app/models/enumeration.model';
+import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
 
 
 @Component({
@@ -395,22 +395,19 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   updateStudy(study: Study) {
-
-
-    const dialogData: EditStudyCaseDialogData = new EditStudyCaseDialogData();
-
-    dialogData.studyName = study.name;
+    
+    const dialogData: EditionDialogData = new EditionDialogData();
+    dialogData.editionDialogName = DialogEditionName.EDITION_STUDY;
+    dialogData.name = study.name;
     dialogData.groupId = study.groupId;
 
-    const dialogRef = this.dialog.open(StudyCaseEditComponent, {
+    const dialogRef = this.dialog.open(EditionFormDialogComponent, {
       disableClose: false,
-      width: '400px',
-      height: '400px',
-      data: dialogData
+      data: dialogData,
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      const editStudyCaseData: EditStudyCaseDialogData = result as EditStudyCaseDialogData;
+      const editStudyCaseData: EditionDialogData = result as EditionDialogData;
       if (editStudyCaseData !== null && editStudyCaseData !== undefined) {
         if (editStudyCaseData.cancel === false) {
           // Close study if the loaded study is the same that the study edited
@@ -419,15 +416,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               this.studyCaseMainService.closeStudy(true);
             }
           }
-          this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.studyName}. Please wait`);
-          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe({
+          this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.name}. Please wait`);
+          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.name, editStudyCaseData.groupId).subscribe({
             next: (studyIsEdited) => {
               if (studyIsEdited) {
                 this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe({
                   next: () => {
                     this.socketService.updateStudy(study.id);
                     this.loadingDialogService.closeLoading();
-                    this.snackbarService.showInformation(`Study ${editStudyCaseData.studyName} has been succesfully updated`);
+                    this.snackbarService.showInformation(`Study ${editStudyCaseData.name} has been succesfully updated`);
                     this.loadStudyManagementData();
                   },
                   error: (errorReceived) => {
@@ -468,8 +465,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
         const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          width: '500px',
-          height: '220px',
           data: validationDialogData,
         });
 
@@ -509,8 +504,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
-      width: '550px',
-      height: '220px',
       data: validationDialogData,
     });
 
@@ -848,8 +841,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
       const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
-        width: '500px',
-        height: '220px',
         data: validationDialogData,
       });
 

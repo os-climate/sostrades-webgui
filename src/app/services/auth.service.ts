@@ -18,8 +18,7 @@ import { StudyCaseValidationService } from './study-case-validation/study-case-v
 import { SoSTradesError } from '../models/sos-trades-error.model';
 import { DataHttpService } from './http/data-http/data-http.service';
 import { Location } from '@angular/common';
-import { Routing } from '../models/routing.model';
-import { PostProcessingService } from './post-processing/post-processing.service';
+import { Routing } from '../models/enumeration.model';import { PostProcessingService } from './post-processing/post-processing.service';
 
 class LoginResponse {
   accessToken: string;

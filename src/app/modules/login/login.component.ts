@@ -10,7 +10,7 @@ import { SamlService } from 'src/app/services/saml/saml.service';
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { RoutingState } from 'src/app/services/routing-state/routing-state.service';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.service';
 import { environment } from 'src/environments/environment';
 import { LogoPath } from 'src/app/models/logo-path.model';

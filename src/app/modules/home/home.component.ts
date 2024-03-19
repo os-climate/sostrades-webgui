@@ -13,9 +13,8 @@ import { StudyUpdateParameter } from 'src/app/models/study-update.model';
 import { StudyCaseModificationDialogComponent} from '../study-case/study-case-modification-dialog/study-case-modification-dialog.component';
 import { Subscription } from 'rxjs';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
-import { Routing } from 'src/app/models/routing.model';
+import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
-import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 @Component({
@@ -72,8 +71,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          width: '500px',
-          height: '220px',
           data: validationDialogData
         });
 

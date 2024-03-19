@@ -23,6 +23,7 @@ export class ValidationDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dialogRef.updateSize('500px','220px');
     if (this.data.buttonSecondaryActionText !== null) {
       this.showSupButton = true;
     }
@@ -47,8 +48,6 @@ export class ValidationDialogComponent implements OnInit {
 
       const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
-        width: '500px',
-        height: '220px',
         data: validationDialogData
       });
 

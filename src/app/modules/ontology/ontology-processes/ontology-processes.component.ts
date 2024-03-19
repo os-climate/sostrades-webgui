@@ -25,12 +25,11 @@ import { EntityRightService } from 'src/app/services/entity-right/entity-right.s
 import { Observable, Subscription } from 'rxjs';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { OntologyProcessInformationComponent } from './ontology-process-information/ontology-process-information.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Routing } from 'src/app/models/routing.model';
 
 @Component({
   selector: 'app-ontology-processes',
@@ -351,8 +350,6 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
 
       const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
-        width: '500px',
-        height: '220px',
         data: validationDialogData
       });
 

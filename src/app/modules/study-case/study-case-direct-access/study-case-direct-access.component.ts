@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { SocketService } from 'src/app/services/socket/socket.service';

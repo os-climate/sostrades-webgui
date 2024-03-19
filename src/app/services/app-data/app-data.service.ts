@@ -21,10 +21,10 @@ import { StudyCaseAllocationStatus } from "src/app/models/study-case-allocation.
 import { StudyCaseLoadingService } from "../study-case-loading/study-case-loading.service";
 import { PostProcessingService } from "../post-processing/post-processing.service";
 import { Router } from "@angular/router";
-import { Routing } from "src/app/models/routing.model";
 import { StudyCaseLocalStorageService } from "../study-case-local-storage/study-case-local-storage.service";
 import { UserService } from "../user/user.service";
 import { map } from "rxjs/operators";
+import { Routing } from "src/app/models/enumeration.model";
 
 @Injectable({
   providedIn: "root",

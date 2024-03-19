@@ -101,8 +101,6 @@ export class LinkComponent implements OnInit {
 
     const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
-      width: '500px',
-      height: '220px',
       data: validationDialogData,
     });
 
