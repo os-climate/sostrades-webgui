@@ -109,7 +109,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tabNameSelected = 'Data management';
+    this.tabNameSelected = 'Documentation';
+    this.showDocumentationContent = true
     this.showSearch = false;
     this.setDiplayableItems();
 
@@ -271,11 +272,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         else {
         processIdentifier = process.processName;
         this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
-        } 
+        }
       } else {
         this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
       }
-      
+
     });
   }
 
