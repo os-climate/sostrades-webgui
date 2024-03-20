@@ -44,7 +44,7 @@
 
       <button
         mat-icon-button
-        color="accent"
+        color="primary"
         (click)="addRow()"
         [disabled]="inputFormControl.invalid"
       >
@@ -92,7 +92,7 @@
         <mat-cell *matCellDef="let row; let i = index">
           <button
             mat-icon-button
-            color="accent"
+            color="primary"
             (click)="deleteRow(i)"
             [disabled]="isReadOnlyWidget"
           >

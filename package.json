@@ -34,7 +34,7 @@
     "jsuites": "^5.0.30",
     "katex": "^0.16.9",
     "markdown-it": "^14.0.0",
-    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-footnote": "^3.0.3",
     "markdown-it-mermaid": "^0.2.0",
     "markdown-it-texmath": "^1.0.0",
     "material-icons": "^1.13.12",
@@ -44,7 +44,7 @@
     "rxjs": "^7.8.1",
     "socket.io-client": "~4.7.2",
     "tslib": "^2.6.2",
-    "zone.js": "^0.14.4"
+    "zone.js": "^0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.10",

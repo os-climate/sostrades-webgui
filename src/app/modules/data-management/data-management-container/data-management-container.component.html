@@ -43,7 +43,7 @@
     *ngIf="!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
     (click)="onClickDataValidation($event)"
     [id]="'validation-page'"
-    color="accent"
+    color="primary"
     style="height: 25px;line-height: 5px;"
      >
        Validate data
@@ -54,7 +54,7 @@
     *ngIf="treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
     (click)="onClickDataValidation($event)"
     [id]="'validation-page'"
-    color="accent"
+    color="primary"
     style="height: 25px;line-height: 5px;"
       >
       Invalidate data

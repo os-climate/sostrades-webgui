@@ -2,7 +2,7 @@
     <div class="page-header">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Refresh parameters"
         class="refresh-button"
         [disabled]="isLoading"
@@ -47,7 +47,7 @@
     <div class="btn-load-container" *ngIf="!isLoading&&!hasLoadedParameters">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Load Parameters"
         class="load-button"
         (click)="loadOntologyParametersList()">
@@ -126,7 +126,7 @@
           [id]="'btn-parameter-documentation-' + element.label"
           mat-icon-button
           class="button-in-cell"
-          color="accent"
+          color="primary"
           aria-label="Clic for more information on parameter"
           (click)="OpenParameterInfo(element)">
           <i class="fa-solid fa-book"></i>

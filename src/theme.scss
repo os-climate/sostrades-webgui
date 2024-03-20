@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import "@angular/material/theming";
+@import "../node_modules/@material/theme/_color-palette.scss";
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -20,7 +20,7 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 
-$sosTrades-primary: (
+$sostrades-primary: (
   50: #e0e4eb,
   100: #b3bcce,
   200: #8090ad,
@@ -50,7 +50,40 @@ $sosTrades-primary: (
     A400: #ffffff,
     A700: #ffffff)
 );
-$sosTrades-accent: (
+
+$sostrades-grey: (
+  50: #FAFAFA,
+  100: #F5F5F5,
+  200: #EEEEEE,
+  300: #E0E0E0,
+  400: #BDBDBD,
+  500: #9E9E9E,
+  600: #757575,
+  700: #616161,
+  800: #424242,
+  900: #212121,
+  A100: #FAFAFA,
+  A200: #EEEEEE,
+  A400: #BDBDBD,
+  A700: #616161,
+  contrast: (50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #000000,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #ffffff)
+);
+
+
+$sostrades-accent: (
   50: #e2eff6,
   100: #b6d7ea,
   200: #85bcdc,
@@ -81,14 +114,113 @@ $sosTrades-accent: (
     A700: #000000)
 );
 
+$sostrades-green: (
+  50: #e8f5e9,
+  100: #c8e6c9,
+  200: #a5d6a7,
+  300: #81c784,
+  400: #66bb6a,
+  500: #4caf50,
+  600: #43a047,
+  700: #388e3c,
+  750: #08875b,
+  800: #2e7d32,
+  900: #1b5e20,
+  A100: #b9f6ca,
+  A200: #69f0ae,
+  A400: #00e676,
+  A700: #00c853,
+  contrast: (50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000)
+);
 
-$sosTrades-app-primary: mat.define-palette($sosTrades-primary, 500, 50, 200);
-$sosTrades-app-accent: mat.define-palette($sosTrades-accent, 500, 50, 200);
+$sostrades-orange: (
+  50: #FFF3E0,
+  100: #FFE0B2,
+  200: #FFCC80,
+  300: #FFB74D,
+  400: #FFA726,
+  500: #FF9800,
+  600: #FB8C00,
+  700: #F57C00,
+  800: #EF6C00,
+  900: #E65100,
+  A100: #FFD180,
+  A200: #FFAB40,
+  A400: #FF9100,
+  A700: #FF6D00,
+  contrast: (50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000)
+);
+
+$sostrades-red: (
+  50: #FFEBEE,
+  100: #FFCDD2,
+  200: #EF9A9A,
+  300: #E57373,
+  400: #EF5350,
+  500: #F44336,
+  600: #E53935,
+  700: #D32F2F,
+  800: #C62828,
+  900: #B71C1C,
+  A100: #FF8A80,
+  A200: #FF5252,
+  A400: #FF1744,
+  A700: #D50000,
+  contrast: (50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff)
+);
+
+$sostrades-app-green: mat.define-palette($sostrades-green, 800, 400, 200);
+$sostrades-app-grey: mat.define-palette($sostrades-grey, 600, 50, 200);
+$sostrades-app-primary: mat.define-palette($sostrades-primary, 500, 50, 200);
+$sostrades-app-accent: mat.define-palette($sostrades-accent, 500, 50, 200);
+$sostrades-app-orange: mat.define-palette($sostrades-orange, 500, 50, 200);
+$sostrades-app-red: mat.define-palette($sostrades-red, 500, 50, 200);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$sosTrades-app-theme: mat.define-light-theme((color: (primary: $sosTrades-app-primary,
-        accent: $sosTrades-app-accent,
-      ),
+$sosTrades-app-theme: mat.define-light-theme((color: (primary: $sostrades-app-grey,
+        accent: $sostrades-app-accent,
+        success: $sostrades-app-green,
+        warning: $sostrades-orange,
+        danger: $sostrades-red),
       typography: mat.define-typography-config(),
       density: 0,
     ));

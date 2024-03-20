@@ -2,7 +2,7 @@
   <div class="study-header">
     <button
       mat-raised-button
-      color="accent"
+      color="primary"
       aria-label="Refresh study cases"
       class="refresh-button"
       [disabled]="isLoading"
@@ -56,7 +56,7 @@
     <button
     *ngIf="getCreateStudy"
     mat-raised-button
-    color="accent"
+    color="primary"
     aria-label="Create study cases"
     id="create-study"
     style="margin-left: 10px;"
@@ -72,7 +72,7 @@
       id='deletion'
       style="margin-left: 5px"
       mat-icon-button
-      color="accent"
+      color="primary"
       matTooltip="Delete Study case(s) selected"
       (click)="deleteStudiesValidation(selection.selected)"
     >
@@ -160,10 +160,12 @@
             <i *ngIf="getFilter" id="filter-name" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
-          <td mat-cell *matCellDef="let element" [matTooltip]="element.name">
+          <td mat-cell *matCellDef="let element">
             <a routerLink="/study/{{element.id}}"
               class="link-study-title"
-              [id]="'title-study-management-load-' + element.groupName +'-' + element.name">
+              [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
+              [matTooltip]="element.name"
+              >
               {{ element.name }}
             </a>
           </td>
@@ -178,9 +180,8 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.groupName"
           >
-            {{ element.groupName }}
+            <span [matTooltip]="element.groupName">{{ element.groupName }}</span>
           </td>
         </ng-container>
 
@@ -193,9 +194,9 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.repository"
+            
           >
-            {{ element.repositoryDisplayName }}
+            <span [matTooltip]="element.repository">{{ element.repositoryDisplayName }}</span>
           </td>
         </ng-container>
 
@@ -205,8 +206,8 @@
             <i *ngIf="getFilter" id="filter-process" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.PROCESS, $event)" ></i>
           </th>
-          <td mat-cell *matCellDef="let element" [matTooltip]="element.process">
-            {{ element.processDisplayName }}
+          <td mat-cell *matCellDef="let element" >
+            <span [matTooltip]="element.process">{{ element.processDisplayName }}</span>
           </td>
         </ng-container>
 
@@ -254,7 +255,7 @@
                 element.name
               "
               mat-icon-button
-              color="accent"
+              color="primary"
               matTooltip="Load study case"
               (click)="loadStudy($event, element)"
             >
@@ -275,7 +276,7 @@
             [id]="'btn-study-management-edit-' + element.groupName + '-' + element.name"
             style="margin-right: 5px"
             mat-icon-button
-            color="accent"
+            color="primary"
             *ngIf="element.isManager"
             (click)="updateStudy(element)"
             matTooltip="Edit study case"
@@ -287,7 +288,7 @@
             *ngIf="getCreateStudy"
             style="margin-right: 5px"
             mat-icon-button
-            color="accent"
+            color="primary"
             (click)="copyStudy(element)"
             matTooltip="Copy study case"
             >
@@ -298,7 +299,7 @@
               [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"
               style="margin-right: 5px"
               mat-icon-button
-              color="accent"
+              color="primary"
               *ngIf="element.isManager"
               matTooltip="Delete Study case"
               (click)="deleteStudiesValidation([element])"
@@ -309,7 +310,7 @@
               style="margin-right: 5px"
               *ngIf="element.isManager || element.isContributor"
               mat-icon-button
-              color="accent"
+              color="primary"
               matTooltip="Study case access link"
               (click)="accessLink(element)"
             >
@@ -324,7 +325,7 @@
                   element.isCommenter)
               "
               mat-icon-button
-              color="accent"
+              color="primary"
               matTooltip="Download study case data"
               (click)="downloadStudy($event, element)"
             >
@@ -334,7 +335,7 @@
               style="margin-right: 5px"
               mat-icon-button
               *ngIf="element.isManager"
-              color="accent"
+              color="primary"
               matTooltip="Share study case with users and groups"
               (click)="studyAccess(element)"
             >

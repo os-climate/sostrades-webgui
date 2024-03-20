@@ -4,7 +4,7 @@
       mat-button
       mat-raised-button
       style="margin-right: 5px;"
-      color="accent"
+      color="primary"
       class="toolbar-item-shadow"
       [ngClass]="{ 'mat-raised-button': bottomAnchorLog }"
       (click)="anchorToBottom()"
@@ -61,7 +61,7 @@
         <button
           *ngIf="element.exception !== null && element.exception !== ''"
           mat-icon-button
-          color="accent"
+          color="primary"
           (click)="showException(element.exception)"
         >
           <i class="fa fa-exclamation-circle" style="color: red;"> </i>

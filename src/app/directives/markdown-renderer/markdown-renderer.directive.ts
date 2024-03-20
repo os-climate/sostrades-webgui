@@ -1,5 +1,5 @@
 import { Directive, Input, ElementRef} from '@angular/core';
-import MarkdownIt from 'markdown-it';
+import markdownIt from 'markdown-it';
 import markdownItMermaid from 'markdown-it-mermaid'
 import * as MarkdownItFootnote from 'markdown-it-footnote';
 import * as MarkdownItTexmath from 'markdown-it-texmath';
@@ -23,7 +23,7 @@ export class MarkdownRendererDirective {
 
   constructor(private element: ElementRef) {
     this.node = element.nativeElement as HTMLElement;
-    this.markdownIt = MarkdownIt({
+    this.markdownIt = markdownIt({
       html:         false,        // Enable HTML tags in source
       xhtmlOut:     false,        // Use '/' to close single tags (<br />).
                                   // This is only for full CommonMark compatibility.

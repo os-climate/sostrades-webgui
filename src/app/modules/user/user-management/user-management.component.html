@@ -29,7 +29,7 @@
     </mat-form-field>
     <button
       mat-mini-fab
-      color="accent"
+      color="primary"
       style="margin-left: 10px"
       (click)="addUser()"
     >
@@ -81,7 +81,7 @@
         <button
           mat-icon-button
           style="margin: 0 5px"
-          color="accent"
+          color="primary"
           matTooltip="Update user"
           (click)="updateUser(element)"
         >
@@ -90,7 +90,7 @@
         <button
           mat-icon-button
           style="margin-right: 5px"
-          color="accent"
+          color="primary"
           matTooltip="Delete user"
           (click)="deleteUserAuthorizedList(element)"
         >
@@ -98,7 +98,7 @@
         </button>
         <button *ngIf="element.internalAccount"
           mat-icon-button
-          color="accent"
+          color="primary"
           matTooltip="Reset user password"
           (click)="resetPassword(element)"
         >

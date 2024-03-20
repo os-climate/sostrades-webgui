@@ -10,7 +10,7 @@
     <button
     class="button"
     mat-flat-button
-    color="accent"
+    color="primary"
     [matMenuTriggerFor]="menuFilters"
     aria-label="filters menu"
     *ngIf="hasAccessToStudy">
@@ -18,19 +18,19 @@
     </button>
     <mat-menu #menuFilters="matMenu">
       <div mat-menu-item>
-        <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showReadOnly">
+        <mat-checkbox color="primary" [(ngModel)]="filterService.filters.showReadOnly">
           Show not editable inputs data
         </mat-checkbox>
       </div>
       <div mat-menu-item>
-        <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showSimpleDisplay">
+        <mat-checkbox color="primary" [(ngModel)]="filterService.filters.showSimpleDisplay">
           Show simple display for data View
         </mat-checkbox>
       </div>
     </mat-menu>
     <button
     mat-flat-button
-    color="accent"
+    color="primary"
     [matMenuTriggerFor]="menuUserLevel"
     aria-label="user level menu"
     class="button"
@@ -54,7 +54,7 @@
     </mat-menu>
     <button
     mat-raised-button
-    color="accent"
+    color="primary"
     *ngIf="showView && !isFullScreenOn && !calculationService.logFullSizeViewActive"
     aria-label="fullscreen"
     class="fullscreen-button button"
@@ -68,7 +68,7 @@
     </button>
     <button
       mat-raised-button
-      color="accent"
+      color="primary"
       *ngIf="showView && isFullScreenOn"
       aria-label="Exit"
       class="fullscreen-button button"
@@ -86,7 +86,7 @@
   <div style="float: right;">
     <button
         mat-icon-button
-        color="accent"
+        color="primary"
         matTooltip="Close search panel"
         (click)="closeSearchPanel()"
       >

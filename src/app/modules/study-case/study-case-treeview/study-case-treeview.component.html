@@ -273,7 +273,7 @@
             *ngIf="showState && node.isValidated"
             [id]="'node-validated-' + node.name"
             class="iconValid"
-            style="color: #08875b;"
+            color="success"
             matTooltip="VALIDATED"
             >
             check_circle
@@ -382,12 +382,12 @@
 
               <span
                 *ngIf="node.isRoot && isTreeViewFiltered"
+                color="success"
                 style="
                   background-color: #f6f6f6;
                   padding: 3px;
                   margin-left: 10px;
                   border-radius: 7px;
-                  color: #08875b;
                 "
               >
                 <i

@@ -10,25 +10,14 @@ body {
   height: 100%;
   font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
 body {
   margin: 0 !important;
   font-family: Roboto, "Helvetica Neue", sans-serif, "Segoe UI", "Noto Sans", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-label.mat-checkbox-layout {
-  margin: 0 !important;
-}
 
-/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
-.mat-tab-body-wrapper {
-  flex-grow: 1 !important;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
-.mat-tab-body-content {
-  overflow: unset !important;
-}
 
 .mat-accordion {
   display: flex !important;
@@ -51,6 +40,76 @@ label.mat-checkbox-layout {
 .mat-mdc-button {
   min-width: 0px !important;
   outline: 0 !important;
+  $letter-spacing: 'normal' !important;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  margin: 0px;
+  min-width: 64px;
+  line-height: 36px;
+  padding: 0px;
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.mdc-text-field {
+  font-size: 14px !important;
+  padding: 0px !important;
+}
+
+.mat-badge-content {
+  top: 0px !important;
+  right: 0px !important;
+}
+
+.mdc-button {
+  letter-spacing: normal !important;
+}
+
+.mdc-data-table__row {
+  height: auto !important;
+
+}
+
+.mdc-data-table__row:last-child .mdc-data-table__cell {
+  border-bottom: rgba(0, 0, 0, .12) !important;
+  border-bottom-width: 1px !important;
+  border-bottom-style: solid !important;
+}
+
+.mat-mdc-cell {
+  padding: 3px !important;
+}
+
+.mat-mdc-header-cell {
+  color: rgba(0, 0, 0, 0.54) !important;
+  font-weight: 500;
+}
+
+.mat-mdc-form-field {
+  --mat-mdc-form-field-floating-label-scale: 0.75;
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+  height: 65px;
+}
+
+.mat-mdc-raised-button {
+  letter-spacing: normal;
+}
+
+
+.mat-mdc-form-field-infix {
+  padding-top: 16px !important;
+}
+
+.mdc-floating-label {
+  margin-top: -10px !important;
 }
 
 .mat-mdc-menu-item {
@@ -65,8 +124,14 @@ label.mat-checkbox-layout {
   outline: 0 !important;
 }
 
+
 .mat-mdc-icon-button {
   outline: 0 !important;
+}
+
+.mdc-icon-button {
+  font-size: 15px !important;
+  padding: 0 6px !important;
 }
 
 .mat-sort-header-button {
@@ -82,28 +147,34 @@ label.mat-checkbox-layout {
 }
 
 /* SnackBar custom styles*/
-.snackBarError {
-  background: #e4002b;
-  color: white;
-}
-.snackBarError .mat-mdc-snack-bar-action {
-  color: white;
+
+.mat-mdc-snack-bar-container {
+  &.snackBarError {
+    --mdc-snackbar-container-color: #e4002b;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
 }
 
-.snackBarInformation {
-  background: #08875b;
-  color: white;
-}
-.snackBarInformation .mat-mdc-snack-bar-action {
-  color: white;
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: transparent
 }
 
-.snackBarWarning {
-  background: #fbca32;
-  color: black;
+.mat-mdc-snack-bar-container {
+  &.snackBarInformation {
+    --mdc-snackbar-container-color: #08875b;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
 }
-.snackBarWarning .mat-mdc-snack-bar-action {
-  color: black;
+
+.mat-mdc-snack-bar-container {
+  &.snackBarWarning {
+    --mdc-snackbar-container-color: #fbca32;
+    --mat-mdc-snack-bar-button-color: black;
+    --mdc-snackbar-supporting-text-color: black;
+  }
 }
 
 /* D3 class style for d3-force-graph-directive */
@@ -142,23 +213,23 @@ div.tooltip {
 }
 
 .mat-danger {
-  background-color: #e4002b;
-  color: #ffffff;
+  background-color: #e4002b !important;
+  color: #ffffff !important;
 }
 
 .mat-warning {
-  background-color: #fbca32;
-  color: #000000;
+  background-color: #fbca32 !important;
+  color: #000000 !important;
 }
 
 .mat-success {
-  background-color: #08875b;
-  color: #ffffff;
+  background-color: #08875b !important;
+  color: #ffffff !important;
 }
 
 .mat-undetermined {
-  background-color: grey;
-  color: #ffffff;
+  background-color: grey !important;
+  color: #ffffff !important;
 }
 
 .mat-icon-danger {
@@ -205,23 +276,7 @@ div.tooltip {
   border-color: darkorange !important;
 }
 
-.csvDialog {
-  /* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version. */
-  mat-dialog-container {
-    padding: 0;
-  }
-}
 
-/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
-.mat-tab-label,
-.mat-tab-label-active {
-  min-width: 0 !important;
-  padding: 3px !important;
-  margin: 3px !important;
-  font-size: 12px !important;
-  min-height: 0px !important;
-  height: auto !important;
-}
 
 .mat-sort-header-button {
   border-bottom: none !important;
@@ -230,78 +285,103 @@ div.tooltip {
 .amethyst {
   background-color: #aa0dfe;
 }
+
 .blue {
   background-color: #3283fe;
 }
+
 .caramel {
   background-color: #85660d;
 }
+
 .damson {
   background-color: #782ab6;
 }
+
 .ebony {
   background-color: #565656;
 }
+
 .forest {
   background-color: #1c8356;
 }
+
 .green {
   background-color: #16ff32;
 }
+
 .honey {
   background-color: #f7e1a0;
 }
+
 .iron {
   background-color: #e2e2e2;
 }
+
 .jade {
   background-color: #1cbe4f;
 }
+
 .kingcrab {
   background-color: #c4451c;
 }
+
 .lavender {
   background-color: #dea0fd;
 }
+
 .magenta {
   background-color: #fe00fa;
 }
+
 .navy {
   background-color: #325a9b;
 }
+
 .orange {
   background-color: #feaf16;
 }
+
 .pink {
   background-color: #f8a19f;
 }
+
 .quagmire {
   background-color: #90ad1c;
 }
+
 .red {
   background-color: #f6222e;
 }
+
 .sea {
   background-color: #1cffce;
 }
+
 .turquoise {
   background-color: #2ed9ff;
 }
+
 .ultraviolet {
   background-color: #b10da1;
 }
+
 .violet {
   background-color: #c075a6;
 }
+
 .wine {
   background-color: #fc1cbf;
 }
+
 .xanthin {
   background-color: #b00068;
 }
+
 .yellow {
   background-color: #fbe426;
 }
+
 .zinnia {
   background-color: #fa0087;
 }
@@ -338,21 +418,21 @@ div.tooltip {
   width: 800px;
 }
 
-p > img {
+p>img {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-.markdown > p,
+.markdown>p,
 .markdown h1,
 .markdown h2,
 .markdown h3,
 .markdown h4,
 .markdown h5,
 .markdown h6,
-.markdown > ul,
-.markdown > ol,
+.markdown>ul,
+.markdown>ol,
 .markdown pre {
   margin-bottom: 10px;
 }
@@ -473,6 +553,7 @@ ul {
 }
 
 .custom-tooltip-class {
+  margin: 10px !important;
   max-width: unset !important;
   white-space: pre-line !important;
   text-align: center !important;
@@ -504,4 +585,5 @@ ul {
 // Html table
 .table thead th {
   border-bottom: 1px solid #dee2e6 !important;
+
 }

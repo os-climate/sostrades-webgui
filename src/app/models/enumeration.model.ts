@@ -1,8 +1,8 @@
 export enum DialogEditionName {
 
-    EDITION_STUDY = 'Edition Study',
-    EDITION_GROUP = 'Edition Group',
-    EDITION_USER = 'Edition User',
+    EDITION_STUDY = 'Study Edition',
+    EDITION_GROUP = 'Group Edition',
+    EDITION_USER = 'User Edition',
     ADD_USER = 'Add User',
 }
 

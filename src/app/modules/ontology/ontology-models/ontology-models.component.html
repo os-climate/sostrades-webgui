@@ -2,7 +2,7 @@
     <div class="model-header">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Refresh model status list"
         class="refresh-button"
         [disabled]="isLoading"
@@ -47,7 +47,7 @@
     <div class="btn-load-container" *ngIf="!isLoading && !hasLoadedModels">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Load Models"
         class="load-button"
         (click)="loadModelStatusData()">
@@ -126,7 +126,7 @@
               <button
                 [id]="'btn-model-documentation-' + element.label + '-' + element.codeRepository"
                 mat-icon-button
-                color="accent"
+                color="primary"
                 [matTooltip]="element.label + ' information'"
                 (click)="displayDocumentation(element)"
               >

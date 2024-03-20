@@ -2,7 +2,7 @@
   <div class="study-header">
     <button
       mat-raised-button
-      color="accent"
+      color="primary"
       aria-label="Refresh references"
       class="refresh-button"
       [disabled]="isLoading"
@@ -157,7 +157,7 @@
               [disabled]="
                 element.isRegeneratingReference || isAllReferencesRegenerating
               "
-              color="accent"
+              color="primary"
               matTooltip="Regenerate reference"
               (click)="regenerateReference(element)"
             >
@@ -165,7 +165,7 @@
             </button>
             <button
               mat-icon-button
-              color="accent"
+              color="primary"
               matTooltip="Download generation logs"
               (click)="downloadGenerationLogs(element)"
             >

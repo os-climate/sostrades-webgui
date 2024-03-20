@@ -2,7 +2,7 @@
     <div class="study-header">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Refresh processes"
         class="refresh-button"
         [disabled]="isLoading"
@@ -107,7 +107,7 @@
                   [id]="'btn-process-create-'+ element.processId"
                   mat-icon-button
                   *ngIf="!dashboard && (element.isManager || element.isContributor)"
-                  color="accent"
+                  color="primary"
                   matTooltip="Create study case"
                   [matBadge]="element.referenceList.length"
                   [matBadgeHidden]="element.referenceList.length < 1"
@@ -127,7 +127,7 @@
               <button
                 mat-icon-button
                 *ngIf="element.isManager"
-                color="accent"
+                color="primary"
                 matTooltip="Share process with users and groups"
                 (click)="processAccess(element)"
               >
@@ -143,7 +143,7 @@
               <button
                 [id]="'btn-process-documentation-'+element.processId + '-'+element.repositoryName"
                 mat-icon-button
-                color="accent"
+                color="primary"
                 [matTooltip]="element.processName + ' information'"
                 (click)="displayDocumentation(element)"
               >
