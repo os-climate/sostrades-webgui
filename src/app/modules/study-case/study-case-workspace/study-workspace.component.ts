@@ -114,7 +114,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
     this.showSearch = false;
     this.setDiplayableItems();
-
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
       this.setDiplayableItems();
     });
