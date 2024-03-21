@@ -88,7 +88,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    
+
     //Check if the user has the execution rights to generate a reference
     this.canGenerateReference = this.userService.hasExecutionRights();
 
@@ -173,7 +173,6 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   regenerateReference(study: Study) {
     study.isRegeneratingReference = true;
-
     this.referenceDataService
       .reGenerateReference(study.repository, study.process, study.name)
       .subscribe(
