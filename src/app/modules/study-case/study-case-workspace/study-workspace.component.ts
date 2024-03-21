@@ -109,9 +109,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tabNameSelected = 'Documentation';
-    this.showDocumentationContent = true
-
+    this.tabNameSelected = 'Data management';
     this.showSearch = false;
     this.setDiplayableItems();
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
