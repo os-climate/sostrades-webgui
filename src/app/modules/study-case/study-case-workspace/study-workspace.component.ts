@@ -58,7 +58,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
 
 
-
   @HostListener('document:fullscreenchange', ['$event'])
   @HostListener('document:webkitfullscreenchange', ['$event'])
   @HostListener('document:mozfullscreenchange', ['$event'])
@@ -109,11 +108,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tabNameSelected = 'Data management';
+    this.tabNameSelected = 'Documentation';
+    this.showDocumentationContent=true
     this.showSearch = false;
     this.setDiplayableItems();
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-      this.setDiplayableItems();
+    this.setDiplayableItems();
     });
 
     if (this.userService.hasAccessToStudy()) {
