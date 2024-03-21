@@ -8,7 +8,7 @@
       [disabled]="isLoading"
       (click)="loadReferenceManagementData()"
     >
-    <mat-icon
+    <mat-icon 
     class="refresh-icon"
     >
       refresh
@@ -63,7 +63,7 @@
         <!-- Status Column -->
         <ng-container [matColumnDef]="columnName.REGENERATION_STATUS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Status
-            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REGENERATION_STATUS)? 'icon-filter-values':'icon-filter-any-values'"
+            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REGENERATION_STATUS)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilter(columnName.REGENERATION_STATUS, $event)" ></i>
           </th>
           <td
@@ -85,7 +85,7 @@
         <!-- Name Column -->
         <ng-container [matColumnDef]="columnName.NAME">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name
-            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'"
+            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilter(columnName.NAME, $event)" ></i>
           </th>
           <td
@@ -101,7 +101,7 @@
         <!-- Repository Column -->
         <ng-container [matColumnDef]="columnName.REPOSITORY">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository
-            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'"
+            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilter(columnName.REPOSITORY, $event)" ></i>
           </th>
           <td
@@ -117,7 +117,7 @@
         <!-- Process Column -->
         <ng-container [matColumnDef]="columnName.PROCESS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Process
-            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'"
+            <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilter(columnName.PROCESS, $event)" ></i>
           </th>
           <td
@@ -144,7 +144,8 @@
         <ng-container [matColumnDef]="columnName.ACTION">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
-            <button
+            <button 
+              *ngIf="canGenerateReference"
               style="margin: 0 5px"
               [id]="
               'btn-generate-reference-' +
