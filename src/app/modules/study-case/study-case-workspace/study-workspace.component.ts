@@ -56,8 +56,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   public processIdentifier : string;
 
-
-
+  
 
   @HostListener('document:fullscreenchange', ['$event'])
   @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -109,17 +108,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-<<<<<<< HEAD
     this.tabNameSelected = 'Data management';
-=======
-    this.tabNameSelected = 'Documentation';
-    this.showDocumentationContent = true
-
->>>>>>> 1bbbaa0e8d25b766817885ed7c95f5a7e37dbfbb
+    this.showDocumentationContent=true
     this.showSearch = false;
     this.setDiplayableItems();
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-      this.setDiplayableItems();
+    this.setDiplayableItems();
     });
 
     if (this.userService.hasAccessToStudy()) {
@@ -248,7 +242,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.showPostProcessingContent = false;
       this.showVisualisationContent = false;
       this.showDocumentationContent = false;
-
+      
 
       if (event.tab.textLabel === 'Post processing') {
         this.showPostProcessingContent = true;
@@ -277,11 +271,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         else {
         processIdentifier = process.processName;
         this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
-        }
+        } 
       } else {
         this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
       }
-
+      
     });
   }
 
