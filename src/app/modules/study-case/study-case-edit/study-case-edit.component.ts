@@ -75,7 +75,7 @@ export class StudyCaseEditComponent implements OnInit {
           this.editForm.addControl("flavor", new FormControl(flavorList[0], [Validators.required]))
 
           this.editForm.value.flavor = flavorList[0];
-          if (this.data.flavor !== null && this.data.flavor !== undefined && this.data.flavor in flavorList) {
+          if (this.data.flavor !== null && this.data.flavor !== undefined && flavorList.includes(this.data.flavor)) {
             this.editForm.patchValue({
               flavor: this.data.flavor,
             });
