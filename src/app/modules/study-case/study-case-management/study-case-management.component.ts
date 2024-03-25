@@ -339,6 +339,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
             dialogData.process = selectedProcess;
             dialogData.studyId = study.id;
+            dialogData.selectedFlavor = study.studyPodFlavor;
 
             const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
               disableClose: true,
@@ -349,7 +350,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
                 if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
                   this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
-                  this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId)
+                  this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId, studyCaseData.selectedFlavor)
                   .subscribe(copyStudy => {
                     if (copyStudy !== null && copyStudy !== undefined) {
                     this.loadingDialogService.closeLoading();
@@ -394,6 +395,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
     dialogData.studyName = study.name;
     dialogData.groupId = study.groupId;
+    dialogData.flavor = study.studyPodFlavor;
 
     const dialogRef = this.dialog.open(StudyCaseEditComponent, {
       disableClose: false,
@@ -413,7 +415,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             }
           }
           this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.studyName}. Please wait`);
-          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId).subscribe(
+          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId, editStudyCaseData.flavor).subscribe(
             studyIsEdited => {
                 if (studyIsEdited) {
                 this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe(() => {
