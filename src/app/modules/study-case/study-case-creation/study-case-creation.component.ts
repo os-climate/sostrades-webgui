@@ -10,6 +10,7 @@ import { Process } from 'src/app/models/process.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CreationStatus, Study } from 'src/app/models/study.model';
 import { UserApplicationRight } from 'src/app/models/user.model';
+import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
@@ -47,7 +48,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   private emptyProcessRef: Study;
   private checkIfReferenceIsAlreadySelected: boolean;
   public title: string;
-
+  public flavorsList: string[];
+  public hasFlavors: boolean;
 
   @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
 
@@ -59,6 +61,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private processService: ProcessService,
     private userService: UserService,
+    private flavorsService: FlavorsService,
     public dialogRef: MatDialogRef<StudyCaseCreationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: StudyCaseCreateDialogData) {
     this.groupList = [];
@@ -77,12 +80,15 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.disabledReferenceList = false;
     this.checkIfReferenceIsAlreadySelected = false;
     this.title = 'Create new study';
+    this.flavorsList = [];
+    this.hasFlavors = false;
+
 
     /**
      * Create a placeholder reference to allow to choose nothing to initialize the study case
      */
     this.emptyProcessRef = new Study(null, this.EMPTY_STUDY_NAME, '', '', '', null, null, '',  '',
-     '', '', 0, false, '', '', false, null, null, false, false, false, false, false, false, null, '');
+     '', '', 0, false, '', '', false, null, null, false, false, false, false, false, false, null, '', null, null, null);
 
   }
 
@@ -98,7 +104,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     if (this.data.selectProcessOnly === true) {
       this.createStudyForm = new FormGroup({
         processId: new FormControl('', [Validators.required]),
-        selectedRef: new FormControl(this.emptyProcessRef)
+        selectedRef: new FormControl(this.emptyProcessRef),
+        flavor:new FormControl('')
       });
 
       /**
@@ -111,7 +118,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         studyName: new FormControl('', [Validators.required, Validators.pattern(TypeCheckingTools.TEXT_LETTER_NUMBER_REGEX)]),
         groupId: new FormControl('', [Validators.required]),
         processId: new FormControl('', [Validators.required]),
-        selectedRef: new FormControl(this.emptyProcessRef)
+        selectedRef: new FormControl(this.emptyProcessRef),
+        flavor:new FormControl('')
       });
     }
 
@@ -166,6 +174,29 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
       }
       this.isLoading = false;
     });
+
+    //get flavors in config api
+    this.flavorsService.getAllFlavors().subscribe(flavorsList =>
+      {
+        this.flavorsList = flavorsList;
+         //select flavor if it is already set for the study
+        if (this.data.selectedFlavor !== null && this.data.selectedFlavor !== undefined ) {
+          this.createStudyForm.patchValue({
+            flavor: this.data.selectedFlavor,
+          });
+          this.createStudyForm.value.flavor = this.data.selectedFlavor;
+        }
+        else if (flavorsList !== null && flavorsList !== undefined && flavorsList.length > 0){
+          this.hasFlavors = true;
+          this.createStudyForm.patchValue({
+            flavor: flavorsList[0],
+          });
+          this.createStudyForm.value.flavor = flavorsList[0];
+        }
+      
+      }
+    );
+
   }
 
   private setupProcesses() {
@@ -391,6 +422,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.data.studyName = this.createStudyForm.value.studyName;
     this.data.reference = refName;
     this.data.groupId = this.createStudyForm.value.groupId;
+    this.data.selectedFlavor = this.createStudyForm.value.flavor;
+
     this.data.process = this.process;
 
     this.dialogRef.close(this.data);

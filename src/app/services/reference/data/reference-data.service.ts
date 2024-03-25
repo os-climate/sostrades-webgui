@@ -94,13 +94,14 @@ export class ReferenceDataService extends DataHttpService {
     return this.http.post(url, data, options);
   }
 
-  reGenerateReference(repositoryName: string, processName: string, useCaseName: string): Observable<number> {
+  reGenerateReference(repositoryName: string, processName: string, useCaseName: string, generationPodSize:string): Observable<number> {
     const url = `${this.apiRoute}`;
 
     const request = {
       repository_name: repositoryName,
       process_name: processName,
-      usecase_name: useCaseName
+      usecase_name: useCaseName,
+      flavor:generationPodSize
     };
     return this.http.post<number>(url, request, this.options);
   }
