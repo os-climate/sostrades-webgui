@@ -109,7 +109,7 @@ export class UpdateEntityRightComponent implements OnInit {
   _setAvailableEntities() {
 
     // Refreshing user and group list in case new or removed groups
-    const loadedAllGroups = this.groupDataService.loadAllGroups();
+    const loadedAllGroups = this.groupDataService.getUserGroups(true);
     const loadedAllUsers = this.userService.loadAllUsers();
 
 

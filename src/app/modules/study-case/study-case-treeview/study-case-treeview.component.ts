@@ -18,7 +18,7 @@ import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-di
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { StudyCaseStatusInformationComponent } from '../study-case-status-information/study-case-status-information.component';
-import { ValidationDialogData, UsersRoomDialogData, StudyCaseModificationDialogData } from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, UsersRoomDialogData, StudyCaseModificationDialogData, PodSettingsDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { User } from 'src/app/models/user.model';
@@ -38,6 +38,8 @@ import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-executio
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
+import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
+import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 
 
 @Component({
@@ -51,6 +53,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private root: TreeView;
   public originTreeNode: TreeNode;
   public filteredTreeNode: TreeNode;
+  
 
   private onStudyCaseChangeSubscription: Subscription;
   private onTradeSpaceSelectionChangedSubscription: Subscription;
@@ -97,6 +100,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private dialogRefRoom: MatDialogRef<UserRoomDialogComponent>;
   private dialogRefModification: MatDialogRef<StudyCaseModificationDialogComponent>;
 
+  public hasFlavors:boolean;
+  private flavorsList: string[];
 
   @ViewChild('filter', { static: false }) private filterElement: ElementRef;
 
@@ -130,7 +135,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     private loadingDialogService: LoadingDialogService,
     private studyDialogService: StudyDialogService,
     private filterService: FilterService,
-    private studyCaseValidationService: StudyCaseValidationService
+    private studyCaseValidationService: StudyCaseValidationService,
+    private flavorsService: FlavorsService
   ) {
     this.onStudyCaseChangeSubscription = null;
     this.onTradeSpaceSelectionChangedSubscription = null;
@@ -163,6 +169,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     this.isTreeViewFiltered = false;
     this.isSearchOption = true;
+
+    this.hasFlavors = false;
+    this.flavorsList = [];
   }
 
 
@@ -267,6 +276,17 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.applyFilterToTreeview(this.filterTreeInput);
       }
     });
+
+    //get flavors in config api
+    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+      {
+        if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
+         this.hasFlavors = true;
+         this.flavorsList = flavorList;
+        
+        }
+      }
+    );
   }
 
   ngAfterViewInit(): void {
@@ -561,6 +581,51 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.studyExecutionUpdatedSubscription.unsubscribe();
       this.studyExecutionUpdatedSubscription = null;
     }
+  }
+
+  onOpenSettings(){
+    // get execution flavor from db in cas it was changed  y another user
+    this.studyCaseDataService.getExecutionFlavor(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(flavor=> {
+      const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
+      dialogData.flavorsList = this.flavorsList;
+      dialogData.type = "Execution";
+      dialogData.flavor = flavor;
+      
+      const dialogRef = this.dialog.open(PodSettingsComponent, {
+        disableClose: false,
+        data: dialogData
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        const podData: PodSettingsDialogData = result as PodSettingsDialogData;
+        if (podData !== null && podData !== undefined) {
+          if (podData.cancel === false) {
+            // Close study if the loaded study is the same that the study edited
+            if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+              let study_case = this.studyCaseDataService.loadedStudy.studyCase;
+              this.studyCaseDataService.updateExecutionFlavor(study_case.id, podData.flavor).subscribe(
+              studyIsEdited => {
+                  this.snackbarService.showInformation(`Study ${study_case.name} has been succesfully updated, changes will be taken into account at the next execution. `);
+                }, errorReceived => {
+                  this.snackbarService.showError('Error updating study\n' + errorReceived.description);
+                  this.loadingDialogService.closeLoading();
+                });
+              }
+            }
+          }
+        },
+          errorReceived => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError(error.description);
+            } else {
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError(`Error updating study-case: ${error.description}`);
+            }
+          }
+        );
+    });
   }
 
   onStartExecution() {

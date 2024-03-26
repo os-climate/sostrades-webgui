@@ -104,4 +104,21 @@ export class ReferenceDataService extends DataHttpService {
     };
     return this.http.post<number>(url, request, this.options);
   }
+
+  updateGenerateReferenceFlavor(refGenId, flavor: string): Observable<boolean> {
+    const url = `${this.apiRoute}/${refGenId}/update-flavor`;
+
+    const request = {
+      reference_id: refGenId,
+      flavor: flavor
+    };
+    return this.http.post<boolean>(url, request, this.options);
+  }
+
+  getGenerateReferenceFlavor(refGenId): Observable<string> {
+    const url = `${this.apiRoute}/${refGenId}/get-flavor`;
+
+
+    return this.http.get<string>(url, this.options);
+  }
 }

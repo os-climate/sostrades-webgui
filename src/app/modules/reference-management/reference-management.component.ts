@@ -4,12 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { ColumnName, Routing } from 'src/app/models/enumeration.model';
-import { FilterDialogData } from 'src/app/models/dialog-data.model';
+import { ColumnName } from 'src/app/models/enumeration.model';
+import { FilterDialogData, PodSettingsDialogData } from 'src/app/models/dialog-data.model';
 import { ProcessGenerationStatus } from 'src/app/models/reference-generation-status-observer.model';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { Study } from 'src/app/models/study.model';
+import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { ReferenceGenerationObserverService } from 'src/app/services/reference-generation-observer/reference-generation-observer.service';
 import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
@@ -17,6 +18,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
+import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 
 @Component({
   selector: 'app-reference-management',
@@ -52,6 +54,9 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   private referenceGenerationDoneSubscription: Subscription;
   private referenceGenerationUpdateSubscription: Subscription;
 
+  public hasFlavors:boolean;
+  private flavorsList: string[];
+
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
     this.dataSourceReferences.sort = v;
@@ -76,6 +81,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     public studyCaseDataService: StudyCaseDataService,
     public referenceDataService: ReferenceDataService,
     private snackbarService: SnackbarService,
+    private flavorsService: FlavorsService,
     private dialog: MatDialog,
     private referenceGenerationObserverService: ReferenceGenerationObserverService
   ) {
@@ -85,6 +91,8 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.referenceGenerationUpdateSubscription = null;
     this.referenceCount = 0;
     this.canGenerateReference = false;
+    this.hasFlavors = false;
+    this.flavorsList = [];
   }
 
   ngOnInit(): void {
@@ -111,6 +119,17 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       this.onFilterChange();
       this.isLoading = false;
     }
+
+    //get flavors in config api
+    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+      {
+        if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
+         this.hasFlavors = true;
+         this.flavorsList = flavorList;
+        
+        }
+      }
+    );
   }
 
   ngOnDestroy() {
@@ -176,19 +195,48 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
     this.referenceDataService
       .reGenerateReference(study.repository, study.process, study.name)
-      .subscribe(
-        (refGenId) => {
+      .subscribe({
+        next: (refGenId) => {
           this.snackbarService.showInformation(`Reference regeneration started for ${study.process}.${study.name}`);
           this.referenceGenerationObserverService.startStudyCaseExecutionObserver(refGenId);
           this.subscribeToRegeneration(refGenId, study);
-        }, (errorReceived) => {
+        }, error: (errorReceived) => {
           const error = errorReceived as SoSTradesError;
           // eslint-disable-next-line max-len
           this.snackbarService.showError(`Reference regeneration failed for ${study.process}.${study.name} with error ${error.description}`);
           study.isRegeneratingReference = false;
           study.regenerationStatus = 'FAILED';
           study.creationDate = null;
-        });
+        }
+      });
+  }
+
+  onOpenSettings(study: Study){
+    this.referenceDataService.getGenerateReferenceFlavor(study.regenerationId).subscribe(flavor =>{
+      const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
+      dialogData.flavorsList = this.flavorsList;
+      dialogData.type = "Generation reference";
+      dialogData.flavor = flavor;
+        
+      const dialogRef = this.dialog.open(PodSettingsComponent, {
+        disableClose: false,
+        data: dialogData
+      });
+
+        dialogRef.afterClosed().subscribe(result => {
+          const podData: PodSettingsDialogData = result as PodSettingsDialogData;
+          if (podData !== null && podData !== undefined) {
+            if (podData.cancel === false) {
+              this.referenceDataService.updateGenerateReferenceFlavor(study.regenerationId, podData.flavor).subscribe(
+                studyIsUpdated => {
+                    this.snackbarService.showInformation(`Reference ${study.name} has been succesfully updated.`);
+                  }, errorReceived => {
+                    this.snackbarService.showError('Error updating reference\n' + errorReceived.description);
+                  });
+                }
+              }
+            });
+    });
   }
 
   private subscribeToRegeneration(refGenId: number, study: Study) {

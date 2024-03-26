@@ -163,6 +163,22 @@
             >
               <i class="fa-solid fa-download fa-fw"> </i>
             </button>
+            <button
+              mat-icon-button
+              matTooltip="Generation pod size settings"
+              [id]="
+              'btn-settings-reference-' +
+              element.name +
+              '-' +
+              element.process
+              "
+              color="accent"
+              (click)="onOpenSettings(element)"
+              *ngIf="hasFlavors"
+            >
+                <i class="fa-solid fa-gear toolbar-icon"> </i>
+              
+            </button>
           </td>
         </ng-container>
 

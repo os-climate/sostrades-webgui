@@ -58,7 +58,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
 
 
-
   @HostListener('document:fullscreenchange', ['$event'])
   @HostListener('document:webkitfullscreenchange', ['$event'])
   @HostListener('document:mozfullscreenchange', ['$event'])
@@ -109,12 +108,13 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tabNameSelected = 'Data management';
+    this.tabNameSelected = 'Documentation';
+    this.showDocumentationContent=true
     this.showSearch = false;
     this.setDiplayableItems();
-
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-      this.setDiplayableItems();
+    this.setDiplayableItems();
+    
     });
 
     if (this.userService.hasAccessToStudy()) {
@@ -208,6 +208,14 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
           }
         });
         this.modelsFullPathList = modelsFullPathListWithoutDuplicate;
+
+        // if node is root node, add process documentation
+        if (treenode === this.studyCaseDataService.loadedStudy.treeview.rootNode){
+          //build process path with repo.process
+          let repo = this.studyCaseDataService.loadedStudy.studyCase.repository
+          let process = this.studyCaseDataService.loadedStudy.studyCase.process
+          this.modelsFullPathList.push(repo.concat('.',process ))
+        }
       }
     });
   }
@@ -236,6 +244,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.showVisualisationContent = false;
       this.showDocumentationContent = false;
 
+
       if (event.tab.textLabel === 'Post processing') {
         this.showPostProcessingContent = true;
       } else if (event.tab.textLabel === 'Visualisation') {
@@ -263,11 +272,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         else {
         processIdentifier = process.processName;
         this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
-        } 
+        }
       } else {
         this.router.navigate([Routing.ONTOLOGY, Routing.PROCESSES], {queryParams: {process: processIdentifier}});
       }
-      
+
     });
   }
 

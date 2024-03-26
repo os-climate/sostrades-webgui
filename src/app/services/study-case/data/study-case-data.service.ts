@@ -3,7 +3,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { BehaviorSubject, Observable, Subscriber, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Observer, Subscriber, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
@@ -16,6 +16,7 @@ import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
+import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 
 @Injectable({
   providedIn: 'root'
@@ -58,6 +59,7 @@ export class StudyCaseDataService extends DataHttpService {
     private http: HttpClient,
     private ontologyService: OntologyService,
     private location: Location,
+    private loadingDialogService: LoadingDialogService,
     private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
@@ -128,11 +130,33 @@ export class StudyCaseDataService extends DataHttpService {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
   }
 
-  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
+  updateExecutionFlavor(studyId: number, flavor: string): Observable<boolean> {
+    const payload = {
+      study_id : studyId,
+      flavor: flavor
+    };
+    const url = `${this.apiRoute}/${studyId}/update-execution-flavor`;
+    return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+  getExecutionFlavor(studyId: number): Observable<string> {
+
+    const url = `${this.apiRoute}/${studyId}/get-execution-flavor`;
+    return this.http.get<string>(url, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+  updateStudy(studyId: number, studyName: string, groupId: number, flavor: string): Observable<boolean> {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
-      group_id: groupId
+      group_id: groupId,
+      flavor: flavor
     };
     const url = `${this.apiRoute}/${studyId}/edit`;
     return this.http.post<boolean>(url, payload, this.options).pipe(map(
@@ -141,11 +165,12 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  copyStudy(studyId: number, studyName: string, groupId: number): Observable<Study> {
+  copyStudy(studyId: number, studyName: string, groupId: number, flavor:string): Observable<Study> {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
-      group_id: groupId
+      group_id: groupId,
+      flavor: flavor
     };
     const url = `${this.apiRoute}/${studyId}/copy`;
     return this.http.post<Study>(url, payload, this.options).pipe(map(
@@ -429,13 +454,7 @@ export class StudyCaseDataService extends DataHttpService {
     let query: Observable<StudyCaseAllocation>;
 
     const allocationObservable = new Observable<StudyCaseAllocation>((observer) => {
-
-      const studyCaseAllocationPayload = new  StudyCaseAllocationPayload(
-                                                          studyInformation.name,
-                                                          studyInformation.repository,
-                                                          studyInformation.process,
-                                                          studyInformation.group);
-      query = this.http.post<StudyCaseAllocation>(this.apiRoute, studyCaseAllocationPayload, this.options);
+      query = this.http.post<StudyCaseAllocation>(this.apiRoute, studyInformation, this.options);
       this.executeAllocationQuery(query, observer);
     });
 
@@ -474,7 +493,8 @@ export class StudyCaseDataService extends DataHttpService {
    createAllocationForCopyingStudyCase(
                           studyCaseIdentifier: number,
                           newStudyName: string,
-                          groupId: number): Observable<StudyCaseAllocation> {
+                          groupId: number,
+                          flavor: string): Observable<StudyCaseAllocation> {
 
     let query: Observable<StudyCaseAllocation>;
 
@@ -482,7 +502,8 @@ export class StudyCaseDataService extends DataHttpService {
 
       const payload = {
         new_name: newStudyName,
-        group_id: groupId
+        group_id: groupId,
+        flavor: flavor
       };
 
       query = this.http.post<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseIdentifier}/by/copy`, payload, this.options);
@@ -499,8 +520,9 @@ export class StudyCaseDataService extends DataHttpService {
         return StudyCaseAllocation.Create(response);
       })).subscribe(allocation => {
         if (allocation.status !== StudyCaseAllocationStatus.DONE){
+          let startWaitingDate = Date.now()
           setTimeout(() => {
-            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer);
+            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer, startWaitingDate);
           }, 2000);
         }
         else{
@@ -512,11 +534,30 @@ export class StudyCaseDataService extends DataHttpService {
     });
   }
 
-  private getStudyCaseAllocationStatusTimeout(studyCaseId: number, allocationObservable: Subscriber<StudyCaseAllocation>) {
+  private getStudyCaseAllocationStatusTimeout(studyCaseId: number, allocationObservable: Subscriber<StudyCaseAllocation>, startWaitingDate: number) {
     this.internalStudyCaseAllocationStatus(studyCaseId).subscribe(allocation => {
-      if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS) {
+      if (allocation.status !== StudyCaseAllocationStatus.DONE) {
+        // if the pod is still at pending after one minutes, show potential problem message
+        if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
+         if( Date.now() - startWaitingDate < 60000){
+            this.loadingDialogService.updateMessage("Study is half created, Study pod is loading ...")
+          }
+          else{
+            this.loadingDialogService.updateMessage("Study is half created, Study pod is still loading after a long time...\n \
+            you can wait a little longer or maybe try again later")
+            //TODO: add cancel button here
+
+          }
+        }
+        if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
+          this.loadingDialogService.updateMessage("Study pod is up...the study creation is in proress.")
+        }
+        if (allocation.status === StudyCaseAllocationStatus.ERROR){
+          throw("Error while loading study pod: " + allocation.message);
+        }
+        
         setTimeout(() => {
-          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable);
+          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
         }, 2000);
       } else {
         allocationObservable.next(allocation);

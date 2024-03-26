@@ -76,7 +76,7 @@
           aria-label="Refresh study cases"
           class="refresh-button"
           [disabled]="isLoading"
-          (click)="loadGroupManagementData()"
+          (click)="loadGroupManagementData(true)"
         >
           <mat-icon 
           class="refresh-icon"
@@ -158,9 +158,8 @@
                 <mat-radio-button
                 [id]="'default-group-' + element.group.name"
                 style="margin-left: 5px;"
-                *ngIf="setDefaultGroup"
                 (click)="changeDefaultGroup($event, element)"
-                [checked]="element.group.id === user.user.default_group_id"
+                [checked]="checkExistingDefaultGroup(element.group.id)"
                 >
                 </mat-radio-button>
               </td>

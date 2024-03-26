@@ -64,6 +64,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     ColumnName.PROCESS,
     ColumnName.CREATION_DATE,
     ColumnName.MODIFICATION_DATE,
+    ColumnName.CREATION_STATUS,
     ColumnName.STATUS,
     ColumnName.ACTION
   ];
@@ -352,7 +353,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 if ((studyCaseData !== null) && (studyCaseData !== undefined)) {
                   if (studyCaseData.cancel === false && studyCaseData.studyName !== '' && studyCaseData.groupId !== null) {
                     this.loadingDialogService.showLoading(`Creating copy of study case : "${studyCaseData.studyName}"`);
-                    this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId).subscribe({
+                    this.studyCaseDataService.copyStudy(study.id, studyCaseData.studyName, studyCaseData.groupId, studyCaseData.selectedFlavor).subscribe({
                       next: (copyStudy) => {
                         if (copyStudy !== null && copyStudy !== undefined) {
                           this.loadingDialogService.closeLoading();
@@ -400,6 +401,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     dialogData.editionDialogName = DialogEditionName.EDITION_STUDY;
     dialogData.name = study.name;
     dialogData.groupId = study.groupId;
+    dialogData.flavor = study.studyPodFlavor;
 
     const dialogRef = this.dialog.open(EditionFormDialogComponent, {
       disableClose: false,
@@ -417,7 +419,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             }
           }
           this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.name}. Please wait`);
-          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.name, editStudyCaseData.groupId).subscribe({
+          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.name, editStudyCaseData.groupId, editStudyCaseData.flavor).subscribe({
             next: (studyIsEdited) => {
               if (studyIsEdited) {
                 this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe({
@@ -713,6 +715,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               }
           });
         return possibleStringValues;
+        case ColumnName.CREATION_STATUS:
+        this.studyCaseDataService.studyManagementData.forEach(study => {
+          // Verify to not push duplicate status
+          if (!possibleStringValues.includes(study.creationStatus)) {
+            possibleStringValues.push(study.creationStatus);
+            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+              }
+          });
+        return possibleStringValues;
       default:
         return possibleStringValues;
       }
@@ -771,6 +782,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           case ColumnName.STATUS:
             isMatch = data.executionStatus.trim().toLowerCase().includes(filter);
             break;
+           case ColumnName.CREATION_STATUS:
+            isMatch = data.creationStatus.trim().toLowerCase().includes(filter);
+            break;
           default:
             isMatch = (
               data.name.trim().toLowerCase().includes(filter) ||
@@ -780,7 +794,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               data.processDisplayName.trim().toLowerCase().includes(filter) ||
               data.process.trim().toLowerCase().includes(filter) ||
               data.studyType.trim().toLowerCase().includes(filter) ||
-              data.executionStatus.trim().toLowerCase().includes(filter)
+              data.executionStatus.trim().toLowerCase().includes(filter) ||
+              data.creationStatus.trim().toLowerCase().includes(filter)
             );
         }
       }
@@ -804,6 +819,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 break;
               case ColumnName.STATUS:
                 isMatch = isMatch && values.includes(data.executionStatus);
+                break;
+              case ColumnName.CREATION_STATUS:
+                isMatch = isMatch && values.includes(data.creationStatus);
                 break;
             }
           }

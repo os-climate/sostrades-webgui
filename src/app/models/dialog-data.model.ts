@@ -170,6 +170,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
   studyId: number;
   process: Process;
   selectProcessOnly: boolean;
+  selectedFlavor:string;
 
   public constructor() {
     super();
@@ -179,6 +180,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
     this.studyId = null;
     this.process = null;
     this.selectProcessOnly = false;
+    this.selectedFlavor = null;
   }
 }
 
@@ -220,6 +222,19 @@ export class StudyLink extends AbstractDialogData {
     super();
     this.studyName = '';
     this.htmlLink = '';
+  }
+}
+
+export class PodSettingsDialogData extends AbstractDialogData {
+  flavor: string;
+  type:string;
+  flavorsList : string[];
+
+  public constructor() {
+    super();
+    this.flavor = '';
+    this.type = '';
+    this.flavorsList = [];
   }
 }
 
@@ -407,11 +422,13 @@ export class EditionDialogData extends AbstractDialogData {
 export class EditStudyCaseDialogData extends AbstractDialogData {
   studyName: string;
   groupId: number;
+  flavor: string
 
   public constructor() {
     super();
     this.studyName = '';
     this.groupId = null;
+    this.flavor = null;
   }
 }
 
