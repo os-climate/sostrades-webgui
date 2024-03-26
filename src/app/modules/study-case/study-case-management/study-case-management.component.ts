@@ -418,15 +418,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.studyName, editStudyCaseData.groupId, editStudyCaseData.flavor).subscribe(
             studyIsEdited => {
                 if (studyIsEdited) {
-                this.studyCasePostProcessingService.resetStudyFromCache(study.id).subscribe(() => {
                 this.socketService.updateStudy(study.id);
                 this.loadingDialogService.closeLoading();
                 this.snackbarService.showInformation(`Study ${editStudyCaseData.studyName} has been succesfully updated `);
                 this.loadStudyManagementData();
-              }, errorReceived => {
-                this.snackbarService.showError('Error updating study\n' + errorReceived.description);
-                this.loadingDialogService.closeLoading();
-              });
+              
             }
           },
             errorReceived => {
