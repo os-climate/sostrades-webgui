@@ -123,10 +123,9 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.process"
             style="word-wrap: break-word; max-width: 230px"
           >
-            {{ element.processDisplayName }}
+            <span [matTooltip]="element.process">{{ element.processDisplayName }}</span>
           </td>
         </ng-container>
 
@@ -147,16 +146,9 @@
             <button 
               *ngIf="canGenerateReference"
               style="margin: 0 5px"
-              [id]="
-              'btn-generate-reference-' +
-              element.name +
-              '-' +
-              element.process
-              "
+              [id]="'btn-generate-reference-' + element.name +'-' + element.process"
               mat-icon-button
-              [disabled]="
-                element.isRegeneratingReference || isAllReferencesRegenerating
-              "
+              [disabled]="element.isRegeneratingReference || isAllReferencesRegenerating"
               color="primary"
               matTooltip="Regenerate reference"
               (click)="regenerateReference(element)"

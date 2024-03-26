@@ -54,11 +54,11 @@
                 <td
                 mat-cell
                 *matCellDef="let element"
-                [matTooltip]="element.id"
                 matTooltipClass="custom-tooltip-class"
                 style="word-wrap: break-word;"
                 >
-                  <i [class]="element.icon"></i>  {{ element.label }}
+                  <i [class]="element.icon"></i>  
+                  <span [matTooltip]="element.id" matTooltipPosition="right"> {{ element.label }}</span>
                 </td>
               </ng-container>
   
@@ -68,15 +68,18 @@
                   id="column-go-to-model"
                   mat-cell
                   *matCellDef="let element"
-                  [matTooltip]="element.label + ' information\'s'"
                 >
-                  <i 
-                  [id]="'go-to-'+ element.label"
-                  (click)="goToModelsStatus(element.label)" 
-                  class="fa-solid fa-circle-arrow-right" 
-                  style="color: #0b78b8; cursor: pointer;"
+                  <button
+                    mat-button
+                    [id]="'go-to-'+ element.label"
+                    class="cursor-pointer"
+                    color="primary"
+                    [matTooltip]="element.label + ' information\'s'"
+                    matTooltipPosition="left"
+                    (click)="goToModelsStatus(element.label)"
                   >
-                  </i>
+                    <i class="fa-solid fa-circle-arrow-right"></i>
+                  </button>
                 </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="modelsUsingByProcessColumns; sticky: true"></tr>

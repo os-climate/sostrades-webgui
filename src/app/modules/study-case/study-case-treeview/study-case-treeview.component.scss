@@ -113,12 +113,6 @@ li ul {
   width: auto;
 }
 
-.mat-mdc-icon-button {
-  line-height: unset;
-  height: 24px;
-  width: 14px;
-  outline: 0;
-}
 
 .mat-mdc-button {
   line-height: unset;
@@ -190,8 +184,7 @@ li ul {
 }
 
 .toolbar-icon {
-  font-size: 20px;
-  margin-top: -4px;
+  height: 13px;
 }
 
 .toolbar-icon-font-aw {
@@ -203,17 +196,14 @@ li ul {
 .toolbar {
   height: 35px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
-.toolbar-spacer {
-  flex: 1 1 auto;
+#study-access-link {
+  font-size: 13px;
 }
 
-.toolbar-item-shadow {
-  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-}
 
 .waiting-refresh {
   position: absolute;

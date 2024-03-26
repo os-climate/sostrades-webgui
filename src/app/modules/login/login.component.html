@@ -40,8 +40,13 @@
           
             <div class="logos-information margin-bottom">
               <div class="login-logos">
-                <span class="margin-bottom">Github Account 
-                  <i class="fa-solid fa-circle-info information-icon" (click)="openLoginInfos(logoPath.GITHUB_LOGO_PATH)"></i>
+                <span class="margin-bottom">Github Account
+                  <button
+                    mat-button
+                    color="accent"
+                  >
+                  <i class="fa-solid fa-circle-info information-icon cursor-pointer" (click)="openLoginInfos(logoPath.GITHUB_LOGO_PATH)"></i>
+                  </button>
                 </span>
                 <button 
                   mat-raised-button 
@@ -79,7 +84,12 @@
             <div class="logos-information">
               <div class="login-logos">
                 <span class="margin-bottom" *ngIf="!loginWithCredential">SoSTrades Developer Account
-                  <i *ngIf="!isLocalPlatform" class="fa-solid fa-circle-info information-icon" (click)="openLoginInfos(logoPath.SOS_TRADES_LOGO_BLACK_PATH)"></i>
+                  <button
+                    mat-button
+                    color="accent"
+                  >
+                  <i *ngIf="!isLocalPlatform" class="fa-solid fa-circle-info information-icon cursor-pointer" (click)="openLoginInfos(logoPath.SOS_TRADES_LOGO_BLACK_PATH)"></i>
+                  </button>
                 </span>
                   <i 
                   *ngIf="loginWithCredential && showGitHubLogin"

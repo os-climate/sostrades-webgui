@@ -7,7 +7,6 @@
 }
 
 .table {
-  height: calc(100% - 1px);
   min-width: 100%;
   overflow-y: auto;
   border-collapse: separate;
@@ -28,25 +27,6 @@
   min-height: 0;
 }
 
-mat-cell:nth-child(1),
-mat-header-cell:nth-child(1) {
-  flex: 0 0 15%;
-}
-
-mat-cell:nth-child(2),
-mat-header-cell:nth-child(2) {
-  flex: 0 0 15%;
-}
-
-mat-cell:nth-child(3),
-mat-header-cell:nth-child(3) {
-  flex: 0 0 15%;
-}
-
-mat-cell:nth-child(5),
-mat-header-cell:nth-child(5) {
-  flex: 0 0 8%;
-}
 
 .mat-column-created {
   word-wrap: break-word !important;
@@ -58,6 +38,8 @@ mat-header-cell:nth-child(5) {
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+  flex: 0 0 15%;
+  width: 15%;
 }
 
 .mat-column-author {
@@ -70,6 +52,8 @@ mat-header-cell:nth-child(5) {
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+  flex: 0 0 15%;
+  width: 15%;
 }
 
 .mat-column-type {
@@ -82,6 +66,8 @@ mat-header-cell:nth-child(5) {
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+  flex: 0 0 15%;
+  width: 15%;
 }
 
 .mat-column-messsage {
@@ -95,11 +81,12 @@ mat-header-cell:nth-child(5) {
   -webkit-hyphens: auto;
   hyphens: auto;
 }
+
 .mat-column-changes {
   word-wrap: break-word !important;
   white-space: unset !important;
-  max-width: 50px !important;
-  min-width: 50px !important;
+  flex: 0 0 8% !important;
+  width: 8% !important;
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
@@ -107,6 +94,7 @@ mat-header-cell:nth-child(5) {
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+
 }
 
 .mat-mdc-icon-button {

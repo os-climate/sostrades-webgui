@@ -35,13 +35,7 @@
     aria-label="user level menu"
     class="button"
       *ngIf="hasAccessToStudy && !studyCaseDataService.loadedStudy.noData">
-      <mat-icon style="
-          float: left;
-          margin-left: 2px;
-          font-size: 16px;
-          height: 24px;
-          line-height: unset;
-        ">visibility</mat-icon>
+      <mat-icon>visibility</mat-icon>
       {{ selectedUserlevel }}
     </button>
     <mat-menu #menuUserLevel="matMenu">
@@ -53,18 +47,15 @@
       </mat-selection-list>
     </mat-menu>
     <button
-    mat-raised-button
-    color="primary"
-    *ngIf="showView && !isFullScreenOn && !calculationService.logFullSizeViewActive"
-    aria-label="fullscreen"
-    class="fullscreen-button button"
-    (click)="goFullScreen()"
-    >
+      mat-raised-button
+      color="primary"
+      *ngIf="showView && !isFullScreenOn && !calculationService.logFullSizeViewActive"
+      aria-label="fullscreen"
+      class="fullscreen-button button"
+      (click)="goFullScreen()"
+      >
     Fullscreen
-    <mat-icon
-      style="float: right; font-size: 16px; height: 26px; line-height: unset"
-      >fullscreen</mat-icon
-    >
+    <mat-icon>fullscreen</mat-icon>
     </button>
     <button
       mat-raised-button

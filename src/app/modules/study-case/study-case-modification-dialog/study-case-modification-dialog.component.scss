@@ -39,6 +39,11 @@
   flex: 1;
 }
 
+#save-synchronise {
+  background-color: var(--sostrades-app-success);
+  color: white;
+}
+
 th.mat-mdc-header-cell {
   text-align: center;
 }

@@ -201,7 +201,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             this.postProcessingService.resetPostProcessingQueue();
             this.startBackgroundLoadingPostProcessing();
           } else {
-            this.onShowStatus();
+            this.onShowHideStatus(true);
             this.studyIsDone = false;
             this.postProcessingService.resetPostProcessingQueue();
           }
@@ -484,12 +484,20 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     });
   }
 
-  onShowStatus() {
-    this.showStatus = true;
+  onShowHideStatus(showStatus: boolean) {
+    if (showStatus) {
+      this.showStatus = true;
+    } else {
+      this.showStatus = false;
+    } 
   }
 
-  onHideStatus() {
-    this.showStatus = false;
+  onShowHideState() {
+    if (this.showState) {
+      this.showState = false;
+    } else {
+      this.showState = true;
+    } 
   }
 
   onSetSearchOption(){
@@ -501,13 +509,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.isSearchOption = false;
     this.nodeClick(this.currentSelectedNode);
     this.applyFilterValue(this.filterTreeInput)
-  }
-  onShowState() {
-    this.showState = true;
-  }
-
-  onHideState() {
-    this.showState = false;
   }
 
   initExecution() {
@@ -745,7 +746,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.studyExecutionStartedSubscription = studyCaseObserver.
       executionStarted.subscribe(d => {
         this.executionStarted = true;
-        this.onShowStatus();
+        this.onShowHideStatus(true);
         // Resetting cpu and memory value before run
         const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
@@ -834,7 +835,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
             this.studyIsDone = true;
           } else {
-            this.onShowStatus();
+            this.onShowHideStatus(true);
             this.studyIsDone = false;
           }
           this.postProcessingService.clearPostProcessingDict();
@@ -1128,7 +1129,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.originTreeNode = this.root.rootNode;
       this.dataSource.data = [this.originTreeNode];
       this.setStatusOnRootNode((loadedStudy as LoadedStudy).studyCase.executionStatus);
-      this.onShowStatus();
+      this.onShowHideStatus(true);
       this.studyIsDone = false;
 
       this.treeControl.expand(this.originTreeNode);

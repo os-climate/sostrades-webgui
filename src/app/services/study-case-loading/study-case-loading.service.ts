@@ -17,6 +17,7 @@ import { CoeditionNotification } from "src/app/models/coedition-notification.mod
 export class StudyCaseLoadingService {
   public onLoadStudy: EventEmitter<LoadedStudy> = new EventEmitter();
   public onLoadreadOnlyStudy: EventEmitter<LoadedStudy> = new EventEmitter();
+  public onDisplayLogsNotifications: EventEmitter<boolean>;
 
   constructor(
     private studyCaseValidationService: StudyCaseValidationService,
@@ -27,6 +28,7 @@ export class StudyCaseLoadingService {
   ) {
     this.onLoadStudy = null;
     this.onLoadreadOnlyStudy = null;
+    this.onDisplayLogsNotifications = new EventEmitter<boolean>();
   }
 
   /**
@@ -119,6 +121,7 @@ export class StudyCaseLoadingService {
       
           // End loading
           this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
+          this.onDisplayLogsNotifications.emit(true);
         },
         error: (errorReceived) => {
           // Notify user

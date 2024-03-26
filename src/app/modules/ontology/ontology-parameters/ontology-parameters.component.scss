@@ -5,6 +5,7 @@
   max-width: unset !important;
   overflow-x: auto;
 }
+
 .page-header {
   display: flex;
   align-items: center;
@@ -12,6 +13,7 @@
   padding: 0 5px 0 5px;
   height: 58px;
 }
+
 .loading-zone {
   height: 100%;
   width: 100%;
@@ -23,9 +25,10 @@
   line-height: 28px;
   margin-right: 10px;
 }
+
 .refresh-icon {
   margin-left: -10px;
-  font-size: 19px; 
+  font-size: 19px;
   height: 22px;
 }
 
@@ -34,12 +37,12 @@
   padding: 5px 50px;
 }
 
-.btn-load-container{
+.btn-load-container {
   text-align: center;
   margin-top: 10%;
 }
 
-.label-load-container{
+.label-load-container {
   text-align: center;
 }
 
@@ -91,11 +94,13 @@
   line-height: unset !important;
 }
 
-.mat-mdc-icon-button:focus, button:active:focus, button.active:focus {
+.mat-mdc-icon-button:focus,
+button:active:focus,
+button.active:focus {
   outline: none !important;
   outline-style: none !important;
   background-color: transparent;
-  }
+}
 
 .button-process {
   width: 22px;
@@ -104,6 +109,7 @@
   font-size: 11px;
   align-self: center;
   padding: 0px !important;
+
   /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   &::ng-deep .mat-button-wrapper {
     padding: 0;
@@ -191,12 +197,4 @@ mat-footer-cell:last-of-type {
 
 tr.table-row:hover {
   background-color: #f9f9f9;
-}
-.icon-filter-any-values {
-  margin : 0 10px;
-  color: #bdbdbd;
-}
-.icon-filter-values {
-  margin : 0 10px;
-  color: #0b78b8;
 }

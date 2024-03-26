@@ -31,6 +31,7 @@ $sostrades-primary: (
   700: #001849,
   800: #001340,
   900: #000b2f,
+
   A100: #687bff,
   A200: #354eff,
   A400: #0221ff,
@@ -62,6 +63,7 @@ $sostrades-grey: (
   700: #616161,
   800: #424242,
   900: #212121,
+  950: #000000,
   A100: #FAFAFA,
   A200: #EEEEEE,
   A400: #BDBDBD,
@@ -151,6 +153,7 @@ $sostrades-orange: (
   100: #FFE0B2,
   200: #FFCC80,
   300: #FFB74D,
+  350: #fbca32,
   400: #FFA726,
   500: #FF9800,
   600: #FB8C00,
@@ -208,23 +211,31 @@ $sostrades-red: (
     A700: #ffffff)
 );
 
-$sostrades-app-green: mat.define-palette($sostrades-green, 800, 400, 200);
-$sostrades-app-grey: mat.define-palette($sostrades-grey, 600, 50, 200);
-$sostrades-app-primary: mat.define-palette($sostrades-primary, 500, 50, 200);
+$sostrades-app-green: mat.define-palette($sostrades-green, 750, 400, 200);
+$sostrades-app-primary: mat.define-palette($sostrades-grey, 600, 50, 200);
 $sostrades-app-accent: mat.define-palette($sostrades-accent, 500, 50, 200);
 $sostrades-app-orange: mat.define-palette($sostrades-orange, 500, 50, 200);
 $sostrades-app-red: mat.define-palette($sostrades-red, 500, 50, 200);
+$sostrades-app-black: mat.define-palette($sostrades-grey, 950, 50, 200);
+
 
 // Create the theme object (a Sass map containing all of the palettes).
-$sosTrades-app-theme: mat.define-light-theme((color: (primary: $sostrades-app-grey,
+$sosTrades-app-theme: mat.define-light-theme((color: (primary: $sostrades-app-primary,
         accent: $sostrades-app-accent,
         success: $sostrades-app-green,
-        warning: $sostrades-orange,
-        danger: $sostrades-red),
+        warning: $sostrades-app-orange,
+        danger: $sostrades-app-red,
+        darkness: $sostrades-app-black),
       typography: mat.define-typography-config(),
       density: 0,
     ));
 
+
+
+:root {
+  --sostrades-app-primary: #757575;
+  --sostrades-app-success: #08875b;
+}
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component

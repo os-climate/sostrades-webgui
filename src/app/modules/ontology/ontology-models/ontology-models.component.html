@@ -84,7 +84,6 @@
               mat-cell
               *matCellDef="let element"
               [matTooltip]="element.id"
-              matTooltipClass="custom-tooltip-class"
               style="word-wrap: break-word; max-width: 500px"
               [class.model-name-column-yes]="element.delivered === 'YES'"
               [class.model-name-column-no]="element.delivered === 'NO'"
@@ -128,6 +127,7 @@
                 mat-icon-button
                 color="primary"
                 [matTooltip]="element.label + ' information'"
+                matTooltipPosition="left"
                 (click)="displayDocumentation(element)"
               >
               <i class="fa-solid fa-book"></i>

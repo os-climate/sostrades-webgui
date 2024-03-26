@@ -1,78 +1,78 @@
 .flex-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-  }
-  .content-for-process-builder {
-    padding-top: 15px;
-    width: 600px;
-    height: 140px;
-  }
-  ::ng-deep .cdk-overlay-pane { 
-    transform: translateX(-16px) translateY(-20px) !important;  
-  }
-  .content-for-create-study {
-    margin-top: 1px !important; 
-    padding-top: 10px;
-  }
-  .container-dialog {
-    height: 100%;
-    width: 100%;
-  }
-  
-  .mat-mdc-select {
-    width: 100%;
-  }
-  
-  .mat-mdc-form-field {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  
-  .mat-mdc-dialog-title {
-    margin-bottom: 10px;
-  }
-  
-  .error-container {
-    height: 100%;
-    width: 100%;
-    margin-top: -20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .error-icon {
-    color: #e4002b;
-    font-size: 15px;
-    margin-right: 20px;
-  }
-  
-  .radio-group {
-    display: flex;
-    flex-direction: column;
-    padding: 15px 15px 7px 15px;
-    background-color: #f9f9f9;
-    border-radius: 7px;
-    margin-bottom: 17px;
-  }
-  
-  .radio-button {
-    margin: 5px;
-  }
-  
-  .mat-mdc-option {
-    height: unset;
-    line-height: unset;
-    min-height: 48px;
-  }
-  
-  .reference-option-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 40px;
-    padding: 5px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.content-for-process-builder {
+  padding-top: 15px;
+  width: 600px;
+  height: 140px;
+}
+
+.content-for-create-study {
+  margin-top: 1px !important;
+  padding-top: 10px;
+}
+
+.container-dialog {
+  height: 100%;
+  width: 100%;
+}
+
+.mat-mdc-select {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.mat-mdc-dialog-title {
+  margin-bottom: 10px;
+}
+
+.error-container {
+  height: 100%;
+  width: 100%;
+  margin-top: -20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error-icon {
+  color: #e4002b;
+  font-size: 15px;
+  margin-right: 20px;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 15px 7px 15px;
+  background-color: #f9f9f9;
+  border-radius: 7px;
+  margin-bottom: 17px;
+}
+
+.radio-button {
+  margin: 5px;
+}
+
+.mat-mdc-option {
+  height: unset;
+  line-height: unset;
+  min-height: 48px;
+}
+
+.reference-option-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 40px;
+  padding: 5px;
+}

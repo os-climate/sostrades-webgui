@@ -1,107 +1,71 @@
 .container-dialog {
-    width: 100%;
-    height: 100%;
-    vertical-align: middle;  
-  }
-  
-  .close-button{
-    cursor: pointer;
-    background: transparent;
-    border-color: transparent;
-    position: fixed;
-  }
-  .markdown-container {
-    display: flex;
-    flex-direction: column;
-  }
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+}
 
-.column-go-to-parameter{
-    text-align: center;
-  }   
-#column-go-to-process{
+.button {
+  cursor: pointer;
+}
+
+.markdown-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.column-go-to-parameter {
   text-align: center;
-}  
-  // table CSS
-.mat-accordion{
+}
+
+#column-go-to-process {
+  text-align: center;
+}
+
+// table CSS
+.mat-accordion {
   border-bottom: #d3d3d3 solid 1px;
 }
+
 .panel-open {
-  max-height: 250px; 
+  max-height: 250px;
   overflow-y: auto;
 }
+
 .number {
-  font-size: 12px; 
-  font-weight: initial; 
+  font-size: 12px;
+  font-weight: initial;
   margin-left: 10px;
 }
+
 .mat-expansion-panel {
   box-shadow: none;
-  }
+}
+
 ::ng-deep.mat-expansion-indicator {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .mat-expansion-panel-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 0px;
-    border-radius: inherit;
-    transition: height 225ms cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 500; 
-    font-size: 14px; 
-    font-family: Roboto, 'Helvetica Neue', sans-serif;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  border-radius: inherit;
+  transition: height 225ms cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  font-size: 14px;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
 .mat-column {
   flex: 1;
 }
 
-tr.mat-mdc-header-row {
-  height: 40px;
-}
-
-th.mat-mdc-header-cell {
-  text-align: left;
-}
-th.mat-mdc-header-cell:first-of-type, td.mat-mdc-cell:first-of-type, td.mat-mdc-footer-cell:first-of-type {
-  padding-left: 0px;
-}
-
-th.mat-sort-header-sorted {
-  color: black;
-  text-align: left;
-}
-
-td.mat-mdc-cell {
-  text-align: left;
-  padding: 5px;
-  vertical-align: middle;
-}
-
-
-.mat-mdc-cell {
-  min-height: 20px;
-  font-size: 12px;
-  color: unset;
-}
-
-tr.mat-mdc-row {
-  height: auto;
-}
-
-
-.mat-mdc-table {
-  border-collapse: separate;
+.table {
+  max-height: 100%;
   width: 100%;
-}
-
-th.mat-mdc-header-cell:last-of-type {
-  text-align: left !important;
-  padding-left: 3px;
-}
-
-th.mat-mdc-header-cell:last-of-type {
-  padding-right: 5px;
+  overflow-y: auto;
+  margin-bottom: 0 !important;
 }
 
 .mat-column-label {
@@ -109,11 +73,13 @@ th.mat-mdc-header-cell:last-of-type {
   word-wrap: break-word;
   word-break: break-word;
 }
+
 .mat-column-repository {
   width: 35% !important;
   word-wrap: break-word;
   word-break: break-word;
 }
+
 .mat-column-goToProcess {
   width: 2% !important;
   text-align: center;

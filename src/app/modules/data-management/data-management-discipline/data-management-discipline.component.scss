@@ -1,6 +1,7 @@
 .expansion-panel {
   margin-bottom: 10px;
 }
+
 .legend-header {
   flex-grow: 0;
   display: flex;
@@ -67,10 +68,6 @@
   opacity: 0.4;
 }
 
-.toolbar-item-shadow {
-  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-}
 
 .spacer {
   flex: 1 1 auto;
@@ -90,6 +87,7 @@ td:nth-child(1) {
   font-weight: 500;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
 td:nth-child(2) {
   width: calc(100% - 150px);
   font-size: 12px;

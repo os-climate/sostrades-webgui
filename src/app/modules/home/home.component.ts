@@ -16,6 +16,7 @@ import { CalculationService } from 'src/app/services/calculation/calculation.ser
 import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
 
 @Component({
   selector: 'app-home',
@@ -25,13 +26,15 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 export class HomeComponent implements OnInit, OnDestroy {
 
   public hasAccessToStudy: boolean;
-  authenticated: boolean;
-  username: string;
-  onCloseStudySubscription: Subscription;
-  onLoadedStudyForTreeviewSubscription: Subscription;
-  calculationChangeSubscription: Subscription;
-  isLoadedStudy: boolean;
-  sizes = {
+  public authenticated: boolean;
+  public username: string;
+  private onCloseStudySubscription: Subscription;
+  private onLoadedStudyForTreeviewSubscription: Subscription;
+  private calculationChangeSubscription: Subscription;
+  private displayLogsNotificationsSubscription: Subscription;
+  public isLoadedStudy: boolean;
+  public displayLogsNotif: boolean;
+  public sizes = {
     bottom: {
       area1: 85,
       area2: 15,
@@ -52,10 +55,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialog: MatDialog,
     private snackbarService: SnackbarService,
+    private studyCaseLoadingService: StudyCaseLoadingService,
     private headerService: HeaderService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService) {
     this.hasAccessToStudy = false;
     this.isLoadedStudy = false;
+    this.displayLogsNotif = false;
   }
 
   ngOnInit(): void {
@@ -146,6 +151,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.hasAccessToStudy = false;
     }
+
+    this.displayLogsNotificationsSubscription = this.studyCaseLoadingService.onDisplayLogsNotifications.subscribe(result => {
+      this.displayLogsNotif = result;
+    });
 
     this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(result => {
       if (result) {

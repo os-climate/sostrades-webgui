@@ -7,7 +7,6 @@ import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
-import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription } from 'rxjs';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -15,6 +14,7 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { environment } from 'src/environments/environment';
+import { ContactDialogComponent } from '../contact-dialog/contact-dialog.component';
 
 
 @Component({
@@ -42,7 +42,6 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private auth: AuthService,
     private headerService: HeaderService,
-    public contactDialogService: ContactDialogService,
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
     private socketService: SocketService,
@@ -270,7 +269,7 @@ export class HeaderComponent implements OnInit {
 
   // Contact
   onClickOnContact() {
-  this.contactDialogService.openContactDialog();
+    this.dialog.open(ContactDialogComponent);
   }
 
   logout() {

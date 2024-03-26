@@ -113,7 +113,6 @@ import { OntologyModelsInformationComponent } from './modules/ontology/ontology-
 import { OntologyProcessInformationComponent } from './modules/ontology/ontology-processes/ontology-process-information/ontology-process-information.component';
 import { StudyCaseCreationComponent } from './modules/study-case/study-case-creation/study-case-creation.component';
 import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { NoServerComponent } from './modules/no-server/no-server.component';
 import { LoginInformationDialogComponent } from './modules/login/login-information-dialog/login-information-dialog.component';
 import { EditionFormDialogComponent } from './shared/edition-form-dialog/edition-form-dialog.component';
@@ -226,7 +225,6 @@ registerLocaleData(fr);
         ScrollingModule,
         TableVirtualScrollModule,
         ClipboardModule,
-        MatTooltipModule,
         AngularSplitModule
     ],
     providers: [

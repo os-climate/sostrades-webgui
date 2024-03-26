@@ -9,7 +9,7 @@
         (dragEnd)="dragEnd('left', $event)"
       >
         <as-split-area
-          size="250"
+          size="280"
           minSize="250"
           #area1="asSplitArea"
           *ngIf="hasAccessToStudy && isLoadedStudy"
@@ -30,7 +30,7 @@
                   [minSize]="displayLogViewFullSize() ? 0 : 50"
                   #area1="asSplitArea"
                 >
-                  <div class="client-zone">
+                  <div>
                     <router-outlet class="height-inherit"></router-outlet>
                   </div>
                 </as-split-area>
@@ -42,6 +42,7 @@
                   *ngIf="displayLogs()"
                 >
                   <app-study-case-event-container
+                  *ngIf="displayLogsNotif"
                     class="log-zone"
                   ></app-study-case-event-container>
                 </as-split-area>

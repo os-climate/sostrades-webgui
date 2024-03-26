@@ -1,4 +1,5 @@
 <mat-chip-listbox
+  class="chip-list mat-chip-list-stacked"
   [multiple]="false"
   [selectable]="true"
 >
@@ -13,14 +14,14 @@
 <div class="flex-container">
   <app-visualisation-interface-diagram
     *ngIf="showInterfaceDiagramContent"
-    style="height: 100%; width: 100%"
+    style="margin-top: 100px; min-height: 500px; height: 100%; width: 100%"
   ></app-visualisation-interface-diagram>
   <app-visualisation-coupling-graph
     *ngIf="showCouplingGraphContent"
-    style="height: 100%; width: 100%"
+    style="margin-top: 100px; min-height: 500px; height: 100%; width: 100%"
   ></app-visualisation-coupling-graph>
   <app-visualisation-execution-sequence
     *ngIf="showExecutionSequenceContent"
-    style="height: 100%; width: 100%"
+    style="margin-top: 100px; min-height: 500px; height: 100%; width: 100%"
   ></app-visualisation-execution-sequence>
 </div>

@@ -10,20 +10,18 @@
   "
 >
   <div
-    [ngClass]="
-      nodeData.isHighlighted ? 'widget-header-animated' : 'widget-header'
-    "
+    [ngClass]=" nodeData.isHighlighted ? 'widget-header-animated' : 'widget-header'"
   >
     <div
       [id]="nodeData.displayName"
-      class="text-header"
+      class="text-header cursor-pointer"
       [matTooltip]="
         (nodeData.displayName) +
         '\nClick for more information'
       "
       matTooltipClass="custom-tooltip-class"
       (click)="showOntologyInformations()"
-      style="cursor: pointer"
+      
     >
       {{ nodeData.displayName }}
     </div>

@@ -31,9 +31,10 @@
   line-height: 28px;
   margin-right: 10px;
 }
+
 .refresh-icon {
   margin-left: -10px;
-  font-size: 19px; 
+  font-size: 19px;
   height: 22px;
 }
 
@@ -44,6 +45,7 @@
   background-color: #f9f9f9;
   border-radius: 7px;
 }
+
 .number-group {
   margin-right: 10px;
   font-size: 12px;
@@ -52,14 +54,6 @@
 
 .filter {
   width: calc(100% - 140px);
-}
-.icon-filter-any-values {
-  margin : 0 10px;
-  color: #bdbdbd;
-}
-.icon-filter-values {
-  margin : 0 10px;
-  color: #0b78b8;
 }
 
 .table-container {
@@ -77,6 +71,7 @@
 .mat-expansion-panel-header-title {
   font-size: 13px;
 }
+
 .expansion-panel {
   margin-bottom: 10px;
 }
@@ -183,5 +178,5 @@ table td {
 
 /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 ::ng-deep.mat-radio-label {
-    margin: auto;
-    }
+  margin: auto;
+}

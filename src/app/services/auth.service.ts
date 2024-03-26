@@ -181,7 +181,6 @@ export class AuthService extends DataHttpService {
       map(response => {
         localStorage.setItem('accessToken', response.accessToken);
 
-        this.socketService.updateAuthorization();
         return response.accessToken;
       })
     );

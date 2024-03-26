@@ -3,7 +3,7 @@
     <button
       mat-flat-button
       *ngIf="!isReadOnly"
-      color="primary"
+      color="accent"
       aria-label="Upload data file"
       matTooltip="Upload data file"
       (click)="onClickUpload()"
@@ -39,7 +39,7 @@
         (isListType && !isReadOnly)||
         (isArrayType && !isReadOnly)
       "
-      color="primary"
+      color="accent"
       aria-label="Edit data"
       matTooltip="Edit data"
       (click)="onClickEdit()"

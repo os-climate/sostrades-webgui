@@ -20,6 +20,7 @@
   justify-content: space-evenly;
   align-items: center;
   flex-direction: column;
+  margin-right: 25px;
 }
 
 .platform-text {
@@ -35,17 +36,23 @@
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.blue_color {
-  color: #0B78B8
-}
-
 ::ng-deep .mainMenu {
   width: 200px;
   margin-top: 20px;
 }
 
+.div-header {
+  display: flex;
+}
+
+.margin-right {
+  margin-right: 10px;
+}
+
 #toolbar {
   padding: 0;
+  display: flex;
+  justify-content: space-between;
 }
 
 #no-server {
@@ -69,10 +76,6 @@
 .warning-icon {
   color: red;
   font-size: 20px;
-}
-
-#logos {
-  cursor: pointer;
 }
 
 .logo {
