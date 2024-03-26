@@ -5,11 +5,12 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { ColumnName } from 'src/app/models/column-name.model';
-import { FilterDialogData } from 'src/app/models/dialog-data.model';
+import { FilterDialogData, PodSettingsDialogData } from 'src/app/models/dialog-data.model';
 import { ProcessGenerationStatus } from 'src/app/models/reference-generation-status-observer.model';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { Study } from 'src/app/models/study.model';
+import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { ProcessService } from 'src/app/services/process/process.service';
 import { ReferenceGenerationObserverService } from 'src/app/services/reference-generation-observer/reference-generation-observer.service';
 import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
@@ -17,6 +18,7 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
+import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 
 @Component({
   selector: 'app-reference-management',
@@ -76,6 +78,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     public studyCaseDataService: StudyCaseDataService,
     public referenceDataService: ReferenceDataService,
     private snackbarService: SnackbarService,
+    private flavorsService: FlavorsService,
     private dialog: MatDialog,
     private referenceGenerationObserverService: ReferenceGenerationObserverService
   ) {
@@ -172,10 +175,43 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   }
 
   regenerateReference(study: Study) {
+    //first open a dialog to select the pod size:
+    this.flavorsService.getAllFlavors().subscribe(allFlavors=> {
+      if (allFlavors !== null && allFlavors !== undefined && allFlavors.length > 0){
+        const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
+        dialogData.flavorsList = allFlavors;
+        dialogData.type = "Generation reference";
+        dialogData.flavor = "";
+          
+        const dialogRef = this.dialog.open(PodSettingsComponent, {
+          disableClose: false,
+          data: dialogData
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          const podData: PodSettingsDialogData = result as PodSettingsDialogData;
+          if (podData !== null && podData !== undefined) {
+            if (podData.cancel === false) {
+              study.generationPodFlavor = podData.flavor
+              this.launchRegeneration(study);
+            }
+            
+          }
+        });
+      }
+      else{
+        this.launchRegeneration(study);
+      }
+    });
+
+    
+  }
+
+  launchRegeneration(study){
     study.isRegeneratingReference = true;
 
     this.referenceDataService
-      .reGenerateReference(study.repository, study.process, study.name)
+      .reGenerateReference(study.repository, study.process, study.name, study.generationPodFlavor)
       .subscribe(
         (refGenId) => {
           this.snackbarService.showInformation(`Reference regeneration started for ${study.process}.${study.name}`);

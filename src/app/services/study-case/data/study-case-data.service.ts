@@ -131,11 +131,33 @@ export class StudyCaseDataService extends DataHttpService {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
   }
 
-  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
+  updateExecutionFlavor(studyId: number, flavor: string): Observable<boolean> {
+    const payload = {
+      study_id : studyId,
+      flavor: flavor
+    };
+    const url = `${this.apiRoute}/${studyId}/update-execution-flavor`;
+    return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+  getExecutionFlavor(studyId: number): Observable<string> {
+
+    const url = `${this.apiRoute}/${studyId}/get-execution-flavor`;
+    return this.http.get<string>(url, this.options).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+  updateStudy(studyId: number, studyName: string, groupId: number, flavor: string): Observable<boolean> {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
-      group_id: groupId
+      group_id: groupId,
+      flavor: flavor
     };
     const url = `${this.apiRoute}/${studyId}/edit`;
     return this.http.post<boolean>(url, payload, this.options).pipe(map(
@@ -144,11 +166,12 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  copyStudy(studyId: number, studyName: string, groupId: number): Observable<Study> {
+  copyStudy(studyId: number, studyName: string, groupId: number, flavor:string): Observable<Study> {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
-      group_id: groupId
+      group_id: groupId,
+      flavor: flavor
     };
     const url = `${this.apiRoute}/${studyId}/copy`;
     return this.http.post<Study>(url, payload, this.options).pipe(map(
@@ -471,7 +494,8 @@ export class StudyCaseDataService extends DataHttpService {
    createAllocationForCopyingStudyCase(
                           studyCaseIdentifier: number,
                           newStudyName: string,
-                          groupId: number): Observable<StudyCaseAllocation> {
+                          groupId: number,
+                          flavor: string): Observable<StudyCaseAllocation> {
 
     let query: Observable<StudyCaseAllocation>;
 
@@ -479,7 +503,8 @@ export class StudyCaseDataService extends DataHttpService {
 
       const payload = {
         new_name: newStudyName,
-        group_id: groupId
+        group_id: groupId,
+        flavor: flavor
       };
 
       query = this.http.post<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseIdentifier}/by/copy`, payload, this.options);

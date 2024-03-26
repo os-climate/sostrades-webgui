@@ -120,6 +120,7 @@ import { VisualisationInterfaceDiagramComponent } from './modules/visualisation/
 import { OntologyModelsInformationComponent } from './modules/ontology/ontology-models/ontology-models-information/ontology-models-information.component';
 import { OntologyProcessInformationComponent } from './modules/ontology/ontology-processes/ontology-process-information/ontology-process-information.component';
 import { StudyCaseCreationComponent } from './modules/study-case/study-case-creation/study-case-creation.component';
+import { PodSettingsComponent } from './shared/pod-settings/pod-settings.component';
 import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NoServerComponent } from './modules/no-server/no-server.component';
@@ -220,6 +221,7 @@ registerLocaleData(fr);
     OntologyModelsInformationComponent,
     OntologyProcessInformationComponent,
     StudyCaseCreationComponent,
+    PodSettingsComponent,
     ProcessBuilderComponent,
     NoServerComponent,
     LoginInformationDialogComponent,
