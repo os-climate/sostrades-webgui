@@ -137,7 +137,7 @@
       aria-hidden="false"
       aria-label="Study case access link"
       matTooltip="Study case access link"
-      color="accent"
+      color="primary"
       id="study-access-link"
     >
         <i class="fa-solid fa-up-right-from-square"></i>
@@ -161,7 +161,7 @@
       *ngIf="!(isStudyReadOnly || isStudyNoData)"
       [disabled]="!studyCanReload || executionStarted"
       (click)="onReloadStudy()"
-      [color]="studyCanReload && !executionStarted ? 'accent' : ''"
+      [color]="studyCanReload && !executionStarted ? 'primary' : ''"
       [matTooltip]="studyCanReload && !executionStarted ? 'Reload the study' : !studyCanReload || executionStarted ? 'No reload possible before first run or while running' : ''"
     >
         <i
