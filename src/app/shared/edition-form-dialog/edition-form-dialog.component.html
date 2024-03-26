@@ -75,6 +75,22 @@
                 Field is <strong>required</strong>
                 </mat-error>
             </mat-form-field>
+            <br>
+            <mat-form-field style="width: 100%;" *ngIf="hasFlavors">
+                <mat-select id='flavor' placeholder="study pod size" formControlName="flavor" (selectionChange)="onChange($event.value, data.editionDialogName)">
+                <mat-option
+                    *ngFor="let flavor of this.flavorList"
+                    [value]="flavor"
+                >
+                    {{ flavor }}
+                </mat-option>
+                </mat-select>
+        
+                <mat-error *ngIf="hasError('flavor', 'required')">
+                Field is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        <br>
         </div>
         <!-- User Edition -->
         <div id="username" *ngIf="data.editionDialogName == dialogEditionName.EDITION_USER">

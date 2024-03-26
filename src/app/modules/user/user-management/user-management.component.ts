@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { ValidationDialogData, UserCreateDialogData, UserUpdateDialogData, EditionDialogData } from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, UserCreateDialogData, EditionDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { CreateUserComponent } from '../user-creation/user-creation.component';
 import { UserProfile } from 'src/app/models/user-profile';

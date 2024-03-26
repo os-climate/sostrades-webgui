@@ -126,14 +126,6 @@ export class UserCreateDialogData extends AbstractDialogData {
   }
 }
 
-export class UserUpdateDialogData extends AbstractDialogData {
-  userUpdated: User;
-
-  public constructor() {
-    super();
-    this.userUpdated = null;
-  }
-}
 
 export class UsersRoomDialogData extends AbstractDialogData {
   users: User[];
@@ -384,16 +376,7 @@ export class LinkDialogData extends AbstractDialogData {
   }
 }
 
-export class EditGroupDialogData extends AbstractDialogData {
-  name: string;
-  description: string;
 
-  public constructor() {
-    super();
-    this.name = '';
-    this.description = '';
-  }
-}
 
 export class EditionDialogData extends AbstractDialogData {
 
@@ -403,7 +386,7 @@ export class EditionDialogData extends AbstractDialogData {
   description: string;
   groupList: LoadedGroup[];
   userUpdated: User;
-
+  flavor: string
 
   public constructor() {
     super();
@@ -414,23 +397,12 @@ export class EditionDialogData extends AbstractDialogData {
     this.groupId = null;
     this.groupList = [];
     this.userUpdated = null;
-  }
-
-}
-
-
-export class EditStudyCaseDialogData extends AbstractDialogData {
-  studyName: string;
-  groupId: number;
-  flavor: string
-
-  public constructor() {
-    super();
-    this.studyName = '';
-    this.groupId = null;
     this.flavor = null;
+
   }
+
 }
+
 
 export class RepositoryTraceabilityDialogData extends AbstractDialogData {
     codeSourceTraceability: any;

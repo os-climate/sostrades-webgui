@@ -193,8 +193,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   regenerateReference(study: Study) {
     study.isRegeneratingReference = true;
 
-    this.referenceDataService
-      .reGenerateReference(study.repository, study.process, study.name)
+    this.referenceDataService.reGenerateReference(study.repository, study.process, study.name)
       .subscribe({
         next: (refGenId) => {
           this.snackbarService.showInformation(`Reference regeneration started for ${study.process}.${study.name}`);

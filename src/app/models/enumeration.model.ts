@@ -78,7 +78,8 @@ export enum ColumnName {
     USERS = 'users',
     USERNAME = 'username',
     EDIT = 'edit',
-    DELETE = 'delete'
+    DELETE = 'delete',
+    CREATION_STATUS = 'creation status'
 }
 
 export enum LabelFormName {

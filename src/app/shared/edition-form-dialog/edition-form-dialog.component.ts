@@ -5,6 +5,7 @@ import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { DialogEditionName, LabelFormName } from 'src/app/models/enumeration.model';
 import { LoadedGroup } from 'src/app/models/group.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
+import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
@@ -26,6 +27,8 @@ export class EditionFormDialogComponent {
   public labelFormName = LabelFormName;
   public disableForm : boolean;
   public groupList: LoadedGroup[];
+  public flavorList: string[];
+  public hasFlavors: boolean;
   public isLoading: boolean;
   public idName: string;
   public labelName: string;
@@ -39,6 +42,7 @@ export class EditionFormDialogComponent {
     private loadingDialogService: LoadingDialogService,
     public groupDataService: GroupDataService,
     private snackbarService: SnackbarService,
+    private flavorsService: FlavorsService,
     private dialog: MatDialog,
 
     @Inject(MAT_DIALOG_DATA) public data) {
@@ -47,6 +51,8 @@ export class EditionFormDialogComponent {
     this.groupList = [];
     this.userProfileList = [];
     this.idName = "";
+    this.flavorList = [];
+    this.hasFlavors = false;
     this.labelName = "";
   }
 
@@ -54,6 +60,7 @@ export class EditionFormDialogComponent {
     this.setFormRules(this.data.editionDialogName);
     if(this.data.editionDialogName == DialogEditionName.EDITION_STUDY) {
       this.loadGroup();
+      this.loadFlavor();
     }
     if(this.data.editionDialogName == DialogEditionName.EDITION_USER) {
       this.loadUserProfiles();
@@ -105,7 +112,7 @@ export class EditionFormDialogComponent {
           }
           break;
           case DialogEditionName.EDITION_STUDY:
-            if (this.data.name === this.editForm.value.name && this.data.groupId === this.editForm.value.groupId){
+            if (this.data.name === this.editForm.value.name && this.data.groupId === this.editForm.value.groupId && (this.hasFlavors && this.data.flavor === this.editForm.value.flavor)){
               this.disableForm = true;
             }
             else {
@@ -151,9 +158,30 @@ export class EditionFormDialogComponent {
     });
   }
 
+  private loadFlavor() {
+    //get flavors in config api
+    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+      {
+        this.flavorList = flavorList;
+        this.onChange(null, this.data.editionDialogName);
+          //select flavor if it is already set for the study
+        
+        if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
+          this.hasFlavors = true;
+          this.editForm.addControl("flavor", new FormControl(flavorList[0], [Validators.required]));
+          this.editForm.value.flavor = flavorList[0];
+          if (this.data.flavor !== null && this.data.flavor !== undefined && flavorList.includes(this.data.flavor)) {
+            this.editForm.patchValue({flavor: this.data.flavor});
+            this.editForm.value.flavor = this.data.flavor;
+          }
+        }
+      }
+    );
+  }
+
   private loadGroup(){
     // Get group list 
-    this.groupDataService.getUserGroups().subscribe({
+    this.groupDataService.getUserGroups(true).subscribe({
       next: (response) => {
         const grpList: LoadedGroup[] = response;
         grpList.forEach(group => {
@@ -205,6 +233,7 @@ export class EditionFormDialogComponent {
                   this.data.cancel = false;
                   this.data.name = this.editForm.value.name;      
                   this.data.groupId = this.editForm.value.groupId;
+                  this.data.flavor = this.editForm.value.flavor;
                   this.dialogRef.close(this.data);
                 }
                 else{
@@ -216,6 +245,7 @@ export class EditionFormDialogComponent {
           else {
             this.data.name = this.editForm.value.name;    
             this.data.groupId = this.editForm.value.groupId;
+            this.data.flavor = this.editForm.value.flavor;
             this.dialogRef.close(this.data);
           }
           break;
