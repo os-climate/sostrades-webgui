@@ -54,6 +54,9 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   private referenceGenerationDoneSubscription: Subscription;
   private referenceGenerationUpdateSubscription: Subscription;
 
+  public hasFlavors:boolean;
+  private flavorsList: string[];
+
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
     this.dataSourceReferences.sort = v;
@@ -88,6 +91,8 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.referenceGenerationUpdateSubscription = null;
     this.referenceCount = 0;
     this.canGenerateReference = false;
+    this.hasFlavors = false;
+    this.flavorsList = [];
   }
 
   ngOnInit(): void {
@@ -114,6 +119,17 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       this.onFilterChange();
       this.isLoading = false;
     }
+
+    //get flavors in config api
+    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+      {
+        if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
+         this.hasFlavors = true;
+         this.flavorsList = flavorList;
+        
+        }
+      }
+    );
   }
 
   ngOnDestroy() {
@@ -175,43 +191,10 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   }
 
   regenerateReference(study: Study) {
-    //first open a dialog to select the pod size:
-    this.flavorsService.getAllFlavors().subscribe(allFlavors=> {
-      if (allFlavors !== null && allFlavors !== undefined && allFlavors.length > 0){
-        const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
-        dialogData.flavorsList = allFlavors;
-        dialogData.type = "Generation reference";
-        dialogData.flavor = "";
-          
-        const dialogRef = this.dialog.open(PodSettingsComponent, {
-          disableClose: false,
-          data: dialogData
-        });
-    
-        dialogRef.afterClosed().subscribe(result => {
-          const podData: PodSettingsDialogData = result as PodSettingsDialogData;
-          if (podData !== null && podData !== undefined) {
-            if (podData.cancel === false) {
-              study.generationPodFlavor = podData.flavor
-              this.launchRegeneration(study);
-            }
-            
-          }
-        });
-      }
-      else{
-        this.launchRegeneration(study);
-      }
-    });
-
-    
-  }
-
-  launchRegeneration(study){
     study.isRegeneratingReference = true;
 
     this.referenceDataService
-      .reGenerateReference(study.repository, study.process, study.name, study.generationPodFlavor)
+      .reGenerateReference(study.repository, study.process, study.name)
       .subscribe(
         (refGenId) => {
           this.snackbarService.showInformation(`Reference regeneration started for ${study.process}.${study.name}`);
@@ -225,6 +208,34 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
           study.regenerationStatus = 'FAILED';
           study.creationDate = null;
         });
+  }
+
+  onOpenSettings(study: Study){
+    this.referenceDataService.getGenerateReferenceFlavor(study.regenerationId).subscribe(flavor =>{
+      const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
+      dialogData.flavorsList = this.flavorsList;
+      dialogData.type = "Generation reference";
+      dialogData.flavor = flavor;
+        
+      const dialogRef = this.dialog.open(PodSettingsComponent, {
+        disableClose: false,
+        data: dialogData
+      });
+
+        dialogRef.afterClosed().subscribe(result => {
+          const podData: PodSettingsDialogData = result as PodSettingsDialogData;
+          if (podData !== null && podData !== undefined) {
+            if (podData.cancel === false) {
+              this.referenceDataService.updateGenerateReferenceFlavor(study.regenerationId, podData.flavor).subscribe(
+                studyIsUpdated => {
+                    this.snackbarService.showInformation(`Reference ${study.name} has been succesfully updated.`);
+                  }, errorReceived => {
+                    this.snackbarService.showError('Error updating reference\n' + errorReceived.description);
+                  });
+                }
+              }
+            });
+    });
   }
 
   private subscribeToRegeneration(refGenId: number, study: Study) {
