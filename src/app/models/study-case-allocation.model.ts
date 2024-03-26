@@ -25,13 +25,13 @@ export enum StudyCaseAllocationStatus {
   PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
   ERROR = 'IN_ERROR',
-  DONE = 'DONE'
+  DONE = 'RUNNING'
 }
 
 export enum StudyCaseExecutionLoggingAttributes {
   ID = 'id',
-  STUDY_CASE_ID = 'study_case_id',
-  STATUS = 'status',
+  STUDY_CASE_ID = 'identifier',
+  STATUS = 'pod_status',
   MESSAGE = 'message',
   CREATION_DATE = 'creation_date'
 }

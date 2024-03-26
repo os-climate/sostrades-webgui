@@ -50,7 +50,8 @@ export class StudyCaseCreationService {
             this.createStudyCaseByCopy(
               resultCreateStudyRef.studyId,
               resultCreateStudyRef.studyName,
-              resultCreateStudyRef.groupId);
+              resultCreateStudyRef.groupId,
+              resultCreateStudyRef.selectedFlavor);
           } else {
             /**
              * Create an empty study case or using a data source with a reference or a usecase data
@@ -61,15 +62,16 @@ export class StudyCaseCreationService {
               resultCreateStudyRef.studyName,
               resultCreateStudyRef.groupId,
               resultCreateStudyRef.reference,
-              resultCreateStudyRef.studyType);
+              resultCreateStudyRef.studyType,
+              resultCreateStudyRef.selectedFlavor);
           }
         }
       }
     });
   }
 
-  private createStudyCase(process: Process, name: string, group: number, reference: string, type: string) {
-    const study = new StudyCasePayload(name, process.repositoryId, process.processId, group, reference, type);
+  private createStudyCase(process: Process, name: string, group: number, reference: string, type: string, flavor:string) {
+    const study = new StudyCasePayload(name, process.repositoryId, process.processId, group, reference, type, flavor);
 
     // Check user was in an another study before this one and leave room
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
@@ -84,9 +86,9 @@ export class StudyCaseCreationService {
     });
   }
 
-  private createStudyCaseByCopy(studyId: number, studyName: string, groupId: number) {
+  private createStudyCaseByCopy(studyId: number, studyName: string, groupId: number, flavor: string) {
 
-    this.appDataService.copyCompleteStudy(studyId, studyName, groupId, isStudyCreated => {
+    this.appDataService.copyCompleteStudy(studyId, studyName, groupId, flavor, isStudyCreated => {
       if (isStudyCreated) {
         // Joining room
         this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
