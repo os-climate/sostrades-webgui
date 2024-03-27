@@ -1,0 +1,38 @@
+<div class="flex-container">
+  <div class="flex-container" [formGroup]="settingsForm" >
+    <div mat-dialog-title>
+      <h1 style="margin-bottom: 10px !important; text-align: center">
+        {{ data.type }} pod size
+      </h1>
+    </div>
+  
+    <div mat-dialog-content>
+      <mat-form-field>
+      <mat-select id="flavor" placeholder="select pod size" formControlName="flavor" >
+        <mat-option
+          *ngFor="let flavor of flavorsList"
+          [value]="flavor"
+        >
+          {{ flavor }}
+        </mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="hasError('flavor', 'required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions>
+    <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>
+    <button
+      id='submit'
+      mat-button
+      (click)="submitForm()"
+      [disabled]="!settingsForm.valid"
+    >
+      Ok
+    </button>
+  </div>
+</div>
+</div>
