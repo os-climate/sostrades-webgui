@@ -50,6 +50,22 @@
             </mat-error>
           </mat-form-field>
         <br>
+        <br>
+        <mat-form-field style="width: 100%;" *ngIf="hasFlavors">
+            <mat-select id='flavor' placeholder="study pod size" formControlName="flavor" (selectionChange)="onChange($event.value)">
+              <mat-option
+                *ngFor="let flavor of this.flavorList"
+                [value]="flavor"
+              >
+                {{ flavor }}
+              </mat-option>
+            </mat-select>
+      
+            <mat-error *ngIf="hasError('flavor', 'required')">
+              Field is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        <br>
         <div id="saveOrCancel" class="d-flex justify-content-around">
             <button
             id='cancel' 
@@ -61,7 +77,7 @@
             id='submit'
             mat-button
             (click)="submitForm()"
-            [disabled]="!editForm.valid || !editForm.dirty || this.disableForm"
+            [disabled]="!editForm.valid || this.disableForm"
             
             >
             Save

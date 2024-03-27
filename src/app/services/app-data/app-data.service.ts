@@ -137,6 +137,7 @@ export class AppDataService extends DataHttpService {
     studyId: number,
     newName: string,
     groupId: number,
+    flavor:string,
     isStudyCreated: any
   ) {
     this.loadingDialogService.showLoading(`Create study case ${newName}`);
@@ -151,7 +152,7 @@ export class AppDataService extends DataHttpService {
     messageObserver.next(`Creating copy of study case : "${newName}"`);
 
     this.studyCaseDataService
-      .createAllocationForCopyingStudyCase(studyId, newName, groupId)
+      .createAllocationForCopyingStudyCase(studyId, newName, groupId, flavor)
       .subscribe(
         (allocation) => {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {

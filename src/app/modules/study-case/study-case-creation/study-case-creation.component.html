@@ -124,6 +124,20 @@
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
+    <mat-form-field *ngIf="hasFlavors">
+      <mat-select id="flavor" placeholder="study pod size" formControlName="flavor" >
+        <mat-option
+          *ngFor="let flavor of flavorsList"
+          [value]="flavor"
+        >
+          {{ flavor }}
+        </mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="hasError('flavor', 'required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
   </div>
 
   <div mat-dialog-actions>
