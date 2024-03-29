@@ -109,14 +109,15 @@ export class UpdateEntityRightComponent implements OnInit {
   _setAvailableEntities() {
 
     // Refreshing user and group list in case new or removed groups
-    const loadedAllGroups = this.groupDataService.getUserGroups(true);
+    const loadedGroups = this.groupDataService.getUserGroups(true);
     const loadedAllUsers = this.userService.loadAllUsers();
 
 
-    combineLatest([loadedAllGroups, loadedAllUsers]).subscribe(res => {
-      this.groupDataService.allGroups.forEach(grp => {
-        if (this.entitiesSelected.filter(x => x.entityObject.id === grp.id && x.entityType === EntityType.GROUP).length === 0) {
-          this.entitiesAvailable.push(new EntityRight(-1, EntityType.GROUP, grp, null, false));
+    combineLatest([loadedGroups, loadedAllUsers]).subscribe(res => {
+      this.groupDataService.loadedGroups.forEach(grp => {
+        if (this.entitiesSelected.filter(x => x.entityObject.id === grp.group.id && x.entityType === EntityType.GROUP).length === 0) {
+          if(this.data.ressourceId !== grp.group.id)
+          this.entitiesAvailable.push(new EntityRight(-1, EntityType.GROUP, grp.group, null, false));
         }
       });
 
