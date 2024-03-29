@@ -518,53 +518,57 @@ export class StudyCaseDataService extends DataHttpService {
     query.pipe(map(
       response => {
         return StudyCaseAllocation.Create(response);
-      })).subscribe(allocation => {
-        if (allocation.status !== StudyCaseAllocationStatus.DONE){
-          let startWaitingDate = Date.now()
-          setTimeout(() => {
-            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer, startWaitingDate);
-          }, 2000);
-        }
-        else{
-          observer.next(allocation);
-        }
+      })).subscribe({ 
+        next: allocation => {
+          if (allocation.status !== StudyCaseAllocationStatus.DONE){
+            let startWaitingDate = Date.now()
+            setTimeout(() => {
+              this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer, startWaitingDate);
+            }, 2000);
+          }
+          else{
+            observer.next(allocation);
+          }
     },
-    error => {
+    error: error => {
       observer.error(error);
-    });
+    }}
+    );
   }
 
   private getStudyCaseAllocationStatusTimeout(studyCaseId: number, allocationObservable: Subscriber<StudyCaseAllocation>, startWaitingDate: number) {
-    this.internalStudyCaseAllocationStatus(studyCaseId).subscribe(allocation => {
-      if (allocation.status !== StudyCaseAllocationStatus.DONE) {
-        // if the pod is still at pending after one minutes, show potential problem message
-        if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
-         if( Date.now() - startWaitingDate < 60000){
-            this.loadingDialogService.updateMessage("Study is half created, Study pod is loading ...")
-          }
-          else{
-            this.loadingDialogService.updateMessage("Study is half created, Study pod is still loading after a long time...\n \
-            you can wait a little longer or maybe try again later")
-            //TODO: add cancel button here
+    this.internalStudyCaseAllocationStatus(studyCaseId).subscribe({
+      next: allocation => {
+        if (allocation.status !== StudyCaseAllocationStatus.DONE) {
+          // if the pod is still at pending after one minutes, show potential problem message
+          if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
+          if( Date.now() - startWaitingDate < 60000){
+              this.loadingDialogService.updateMessage("Study is half created, Study pod is loading ...")
+            }
+            else{
+              this.loadingDialogService.updateMessage("Study is half created, Study pod is still loading after a long time...\n \
+              you can wait a little longer or maybe try again later")
+              //TODO: add cancel button here
 
+            }
           }
+          if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
+            this.loadingDialogService.updateMessage("Study pod is up...the study creation is in proress.")
+          }
+          if (allocation.status === StudyCaseAllocationStatus.ERROR){
+            throw("Error while loading study pod: " + allocation.message);
+          }
+          
+          setTimeout(() => {
+            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
+          }, 2000);
+        } else {
+          allocationObservable.next(allocation);
         }
-        if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
-          this.loadingDialogService.updateMessage("Study pod is up...the study creation is in proress.")
-        }
-        if (allocation.status === StudyCaseAllocationStatus.ERROR){
-          throw("Error while loading study pod: " + allocation.message);
-        }
-        
-        setTimeout(() => {
-          this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
-        }, 2000);
-      } else {
-        allocationObservable.next(allocation);
+
+      }, error: error => {
+        throw(error);
       }
-
-    }, error => {
-      throw(error);
     });
   }
 

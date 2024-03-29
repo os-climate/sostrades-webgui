@@ -29,10 +29,9 @@
                   [size]="displayLogViewFullSize() ? 0 : 85"
                   [minSize]="displayLogViewFullSize() ? 0 : 50"
                   #area1="asSplitArea"
+                  style="overflow-y: hidden;"
                 >
-                  <div>
-                    <router-outlet class="height-inherit"></router-outlet>
-                  </div>
+                    <router-outlet class="height-inherit client-zone"></router-outlet>
                 </as-split-area>
                 <as-split-area
                   [size]="displayLogViewFullSize() ? 100 : 15"

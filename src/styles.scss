@@ -163,6 +163,12 @@ body {
   min-width: fit-content !important;
 }
 
+/* table */
+.table-container {
+  height: calc(100% - 58px);
+}
+
+
 /* SnackBar custom styles*/
 
 .mat-mdc-snack-bar-container {
