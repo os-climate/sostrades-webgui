@@ -299,8 +299,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   private setupGroup() {
     this.groupDataService.getUserGroups(true).subscribe({
       next: (response) => {
-        const grpList: LoadedGroup[] = response;
-        grpList.forEach(group => {
+        
+        response.forEach(group => {
           this.groupList.push(group);
     
           // Set the default group in the dropdown

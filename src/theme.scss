@@ -214,7 +214,7 @@ $sostrades-red: (
 $sostrades-app-green: mat.define-palette($sostrades-green, 750, 400, 200);
 $sostrades-app-primary: mat.define-palette($sostrades-grey, 800, 50, 200);
 $sostrades-app-accent: mat.define-palette($sostrades-accent, 500, 50, 200);
-$sostrades-app-orange: mat.define-palette($sostrades-orange, 500, 50, 200);
+$sostrades-app-warning: mat.define-palette($sostrades-orange, 700, 50, 200);
 $sostrades-app-red: mat.define-palette($sostrades-red, 500, 50, 200);
 $sostrades-app-black: mat.define-palette($sostrades-grey, 950, 50, 200);
 
@@ -222,10 +222,7 @@ $sostrades-app-black: mat.define-palette($sostrades-grey, 950, 50, 200);
 // Create the theme object (a Sass map containing all of the palettes).
 $sosTrades-app-theme: mat.define-light-theme((color: (primary: $sostrades-app-primary,
         accent: $sostrades-app-accent,
-        success: $sostrades-app-green,
-        warning: $sostrades-app-orange,
-        danger: $sostrades-app-red,
-        darkness: $sostrades-app-black),
+      ),
       typography: mat.define-typography-config(),
       density: 0,
     ));
@@ -235,6 +232,7 @@ $sosTrades-app-theme: mat.define-light-theme((color: (primary: $sostrades-app-pr
 :root {
   --sostrades-app-primary: #424242;
   --sostrades-app-success: #08875b;
+  --sostrades-app-warning: #F57C00;
 }
 
 // Include theme styles for core and each component used in your app.

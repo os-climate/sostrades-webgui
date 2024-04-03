@@ -96,20 +96,19 @@
       >
     </button>
     <button
-      [id]="showStatus ? 'btn-treeview-show-status' : 'btn-treeview-hide-status'"
+      [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
       mat-button
       (click)="onShowHideStatus(!showStatus)"
-      [matTooltip]="showStatus ? 'Show status' : 'Hide status'"
+      [matTooltip]="showStatus ? 'Hide status' : 'Show status'"
     >
     <i [class]="showStatus ? 'fa-solid fa-eye-slash' : 'fa-sharp fa-solid fa-eye'"></i>
 
     </button>
     <button
       mat-button
-      [id]="showState ? 'show-validation-state': 'hide-validation-state'"
+      [id]="showState ? 'hide-validation-state': 'show-validation-state'"
       [matTooltip]=" showState ? 'Hide validation state' : 'show-validation-state'"
       (click)="onShowHideState()"
-      color="darkness"
     >
     <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
     </button>
@@ -118,6 +117,7 @@
       mat-button 
       matTooltip="Users working on same study case" 
       (click)="onShowRoomUser()"
+      id="btn-treeview-show-working-users"
       >
       <mat-icon
         [matBadge]="'+' + (numberOfUserRoom - 1)"
@@ -138,25 +138,14 @@
       aria-label="Study case access link"
       matTooltip="Study case access link"
       color="primary"
-      id="study-access-link"
+      id="btn-treeview-study-access-link"
     >
         <i class="fa-solid fa-up-right-from-square"></i>
     </button>
+   
     <button
       mat-button
-      aria-hidden="false"
-      aria-label="Information about calculation status and validation state"
-      matTooltip="Information about calculation status and validation state"
-      (click)="onShowStatusInformation()"
-      color="accent"
-    >
-        <i
-          class="fa-solid fa-circle-info"
-        >
-        </i>
-    </button>
-    <button
-      mat-button
+      id="btn-treeview-reload-study"
       aria-hidden="false"
       *ngIf="!(isStudyReadOnly || isStudyNoData)"
       [disabled]="!studyCanReload || executionStarted"
@@ -181,20 +170,30 @@
       id="btn-treeview-study-settings"
       (click)="onOpenSettings()"
       *ngIf="hasFlavors && !(isStudyReadOnly || isStudyNoData) && canExecute"
-      class="toolbar-item-shadow"
       [disabled]="!studyIsLoaded"
     >
-      <div style="width: 24px; height: 24px; line-height: 24px">
-        <i
-          class="fa-solid fa-gear toolbar-icon"
-          aria-hidden="false"
-          style="font-size: 16px; vertical-align: text-bottom"
-          aria-label="Execution pod settings"
-          matTooltip="Execution pod settings"
-        >
-        </i>
-      </div>
+      <i
+        class="fa-solid fa-gear"
+        aria-hidden="false"
+        aria-label="Execution pod settings"
+        matTooltip="Execution pod settings"
+      >
+      </i>
     </button>
+    <button
+    id="btn-treeview-information"
+    mat-button
+    aria-hidden="false"
+    aria-label="Information about calculation status and validation state"
+    matTooltip="Information about calculation status and validation state"
+    (click)="onShowStatusInformation()"
+    color="accent"
+  >
+      <i
+        class="fa-solid fa-circle-info"
+      >
+      </i>
+  </button>
   </mat-toolbar>
   <mat-divider width="100%" *ngIf="originTreeNode"></mat-divider>
 
@@ -250,7 +249,7 @@
                 [ngClass]="node | disciplineIconMappingConverter"
               >
               </i>
-              {{ node.name }}
+              <span> {{ node.name }}</span>
 
               <mat-icon
                 *ngIf="!node.isConfigured"
@@ -330,9 +329,7 @@
                 [ngClass]="node | disciplineIconMappingConverter"
               >
               </i>
-             {{ node.name }}
-
-
+              <span> {{ node.name }}</span>
               <span
                 *ngIf="node.isRoot && isTreeViewFiltered"
                 color="success"

@@ -182,8 +182,8 @@
             </button>
             <button
             id="save"
-            [color]="!editForm.valid || !editForm.dirty || this.disableForm ? '' : 'success'"
             mat-raised-button
+            [color]="!editForm.valid || !editForm.dirty || this.disableForm ? '' : 'success'"
             (click)="submitForm(data.editionDialogName)"
             [disabled]="!editForm.valid || !editForm.dirty || this.disableForm"
             >

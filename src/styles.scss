@@ -232,23 +232,31 @@ div.tooltip {
   color: var(--sostrades-app-success);
 }
 
-// .mat-success {
-//   background-color: var(--sostrades-app-success);
-//   color: #ffffff !important;
-// }
+.color-warning {
+  color: var(--sostrades-app-warning);
+}
 
+.mat-success {
+  background-color: var(--sostrades-app-success) !important;
+  color: #ffffff !important;
+}
 
-// .mat-undetermined {
-//   background-color: grey !important;
-//   color: #ffffff !important;
-// }
+.mat-warning {
+  background-color: var(--sostrades-app-warning) !important;
+  color: #ffffff !important;
+}
+
+.mat-danger {
+  background-color: #e4002b !important;
+  color: #ffffff !important;
+}
 
 .mat-icon-danger {
   color: #e4002b;
 }
 
 .mat-icon-warning {
-  color: #fbca32;
+  color: #FF9800;
 }
 
 .mat-icon-success {
