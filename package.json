@@ -35,7 +35,7 @@
     "katex": "^0.16.9",
     "markdown-it": "^14.0.0",
     "markdown-it-footnote": "^3.0.3",
-    "markdown-it-mermaid": "^0.2.0",
+    "markdown-it-mermaid": "0.2.0",
     "markdown-it-texmath": "^1.0.0",
     "material-icons": "^1.13.12",
     "ng-table-virtual-scroll": "^1.6.0",
