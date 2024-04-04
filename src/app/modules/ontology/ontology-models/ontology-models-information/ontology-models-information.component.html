@@ -1,29 +1,17 @@
-<div >
-    <h2 mat-dialog-title style="text-align: center;">
-        <h2>
-          <b>{{ data.modelStatus.label }}</b>
-        </h2>
+<div style="margin:5px">
+  <br>
+      <h2 style="text-align: center; font-weight: bold;">
+          {{ data.modelStatus.label }}
       </h2>
     <div>
-        <table style="width: 100%; background-color: white">
+        <table>
             <ng-container *ngFor="let attr of modelsStatusDatas">
               <tr style="border-bottom: 1px solid lightgray">
-                <td
-                  style="
-                    width: 200px;
-                    font-weight: 500;
-                    font-family: Roboto, 'Helvetica Neue', sans-serif;
-                    vertical-align: top;
-                  "
-                >
+                <td style="font-weight: 500; width:16%">
                   {{ attr[0] }} :
                 </td>
                 <td
-                  style="
-                    width: calc(100% - 150px);
-                    font-size: 12px;
-                    overflow-wrap: anywhere;
-                  "
+                  style="font-size: 12px; overflow-wrap: anywhere;"
                 >
                   {{ attr[1] }}
                     <span
@@ -42,8 +30,7 @@
     <div *ngIf=" data.modelStatus.classInheritance !== null && data.modelStatus.classInheritance !== undefined && data.modelStatus.classInheritance.length > 0">
       <mat-accordion  [ngClass]="!panelClassInheritanceOpenState ? 'mat-accordion' : ''">
         <mat-expansion-panel (opened)="panelClassInheritanceOpenState = true" (closed)="panelClassInheritanceOpenState = false">
-          <mat-expansion-panel-header 
-          style="font-weight: 500;  font-size: 14px; font-family: Roboto, 'Helvetica Neue', sans-serif;">
+          <mat-expansion-panel-header>
             <span>
               Class Inheritance :  
               <span class="number">
@@ -52,7 +39,7 @@
             </span>
           </mat-expansion-panel-header>
           <div class="panel-open">
-            <table class="table table-sm table-borderless">     
+            <table class="table table-sm">     
               <ng-container *ngFor="let classInheritance of data.modelStatus.classInheritance">
                 <tr style="border-bottom: 1px solid lightgray">
                   <td
@@ -85,16 +72,15 @@
             </span>
           </mat-expansion-panel-header>
           <div class="panel-open">
-              <table mat-table [dataSource]="dataSourceProcessUsed" matSort class="table table-sm table-borderless">
+              <table mat-table [dataSource]="dataSourceProcessUsed" matSort class="table table-sm">
               <ng-container  matColumnDef='label'>
                 <th mat-header-cell *matHeaderCellDef>Name</th>
                 <td
                 mat-cell
                 *matCellDef="let element"
-                [matTooltip]="element.process_id"
                 matTooltipClass="custom-tooltip-class"
                 >
-                  {{ element.process_label }}
+                  <span [matTooltip]="element.process_id">{{ element.process_label }}</span>
                 </td>
               </ng-container>
               <ng-container  matColumnDef='repository'>
@@ -102,10 +88,10 @@
                 <td
                 mat-cell
                 *matCellDef="let element"
-                [matTooltip]="element.repository_id"
+                
                 matTooltipClass="custom-tooltip-class"
                 >
-                  {{ element.repository_label }}
+                  <span [matTooltip]="element.repository_id">{{ element.repository_label }}</span>
                 </td>
               </ng-container>
               <ng-container  matColumnDef='goToProcess'>
@@ -114,15 +100,18 @@
                   id="column-go-to-model"
                   mat-cell
                   *matCellDef="let element"
-                  [matTooltip]="element.process_label + ' information\'s'"
+                  
                 >
-                  <i 
+                 <button 
+                  mat-button
                   [id]="'go-to-process-'+ element.process_id"
-                  (click)="goToProcess(element.process_label)" 
-                  class="fa-solid fa-circle-arrow-right" 
-                  style="color: #0b78b8; cursor: pointer;"
+                  (click)="goToProcess(element.process_label)"  
+                  [matTooltip]="element.process_label + ' information\'s'"
+                  color="primary"
+                  class="button"
                   >
-                  </i>
+                    <i class="fa-solid fa-circle-arrow-right"></i>
+                </button> 
                 </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="processColumns; sticky: true"></tr>
@@ -181,13 +170,16 @@
                   *matCellDef="let element"
                   [matTooltip]="element.parameter_label + ' information\'s'"
                 >
-                  <i
+                <button 
+                  mat-icon-button
                   [id]="'go-to-input-parameter-'+ element.parameter_id"
-                  (click)="goToParameter(element.parameter_label)" 
-                  class="fa-solid fa-circle-arrow-right" 
-                  style="color: #0b78b8; cursor: pointer;"
+                  (click)="goToParameter(element.parameter_label)"
+                  class="button"
+                  color="primary"
                   >
-                  </i>
+                 <i class="fa-solid fa-circle-arrow-right" ></i>
+                </button>
+                 
                 </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="parameterColumns; sticky: true"></tr>
@@ -250,13 +242,16 @@
                   *matCellDef="let element"
                   [matTooltip]="element.parameter_label + ' information\'s'"
                 >
-                  <i
+                <button 
+                  mat-icon-button
                   [id]="'go-to-output-parameter-'+ element.parameter_id"
-                  (click)="goToParameter(element.parameter_label)" 
-                  class="fa-solid fa-circle-arrow-right" 
-                  style="color: #0b78b8; cursor: pointer;"
-                  >
-                  </i>
+                  (click)="goToParameter(element.parameter_label)"
+                  class="button"
+                  color="primary"
+                >
+                  <i class="fa-solid fa-circle-arrow-right"></i>
+              </button>
+                 
                 </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="parameterColumns; sticky: true"></tr>

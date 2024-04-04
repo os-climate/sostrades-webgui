@@ -56,7 +56,7 @@ export class SelectComponent implements OnInit {
       } else if (this.nodeData.type.includes('int')) {
         const newDataArray = [];
         this.nodeData.value.forEach(element => {
-          // tslint:disable-next-line: radix
+          // eslint-disable-next-line radix
           newDataArray.push(parseInt(element));
         });
         this.valueChanged.emit(newDataArray);
@@ -67,7 +67,7 @@ export class SelectComponent implements OnInit {
       if (this.nodeData.type.includes('float')) {
         this.valueChanged.emit(parseFloat(this.nodeData.value));
       } else if (this.nodeData.type.includes('int')) {
-        // tslint:disable-next-line: radix
+        // eslint-disable-next-line radix
         this.valueChanged.emit(parseInt(this.nodeData.value));
       } else {
         this.valueChanged.emit(this.nodeData.value);

@@ -14,7 +14,7 @@ import { DataStorage } from 'src/app/models/data-storage.model';
 import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
 import { NodeData } from 'src/app/models/node-data.model';
 
-// tslint:disable: max-line-length
+/* eslint-disable max-len */
 
 @Injectable({
   providedIn: 'root'
@@ -176,7 +176,7 @@ export class StudyCaseLocalStorageService {
       studiesContainer = this.getStudiesParametersFromLocalStorage();
       Object.keys(studiesContainer.studies).forEach(key => {
         if (Object.keys(studiesContainer.studies[key]).length > 0) {
-          // tslint:disable-next-line: radix
+          // eslint-disable-next-line radix
           studyId = parseInt(key);
           this.unsavedChanges.emit(true);
         }
@@ -188,10 +188,28 @@ export class StudyCaseLocalStorageService {
   saveStudyChanges(studyId: string, studyParameters: StudyUpdateParameter[], withReloading: boolean, isStudySaved: any) {
     this.loadingDialogService.showLoading('Saving changes, please wait a moment');
 
-    this.studyCaseMainService.updateStudyParameters(
-      studyParameters,
-      studyId).subscribe(loadedStudy => {
-
+    this.studyCaseMainService.updateStudyParameters(studyParameters, studyId).subscribe({
+      next: (loadedStudy) => {
+        const onSuccess = () => {
+          this.removeStudyParametersFromLocalStorage(studyId);
+          this.loadingDialogService.closeLoading();
+          this.snackbarService.showInformation('All changes have been saved');
+          isStudySaved(true);
+        };
+    
+        const onError = (errorMessage: string) => {
+          // Reset ontology (make sure nothing was loaded)
+          this.ontologyService.resetOntology();
+    
+          // Notify user
+          this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorMessage}`);
+          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+          this.removeStudyParametersFromLocalStorage(studyId);
+          this.loadingDialogService.closeLoading();
+          this.snackbarService.showInformation('All changes have been saved');
+          isStudySaved(true);
+        };
+    
         if (withReloading) {
           this.loadingDialogService.updateMessage(`Loading ontology`);
           // Prepare Ontology request inputs
@@ -201,47 +219,33 @@ export class StudyCaseLocalStorageService {
               parameter_usages: []
             }
           };
-
+    
           // Extract ontology input data from study
           const root = (loadedStudy as LoadedStudy).treeview.rootNode;
           TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
-
+    
           // Call ontology service
-          this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe(() => {
-
-            //update ontology parameters in study
-            this.studyCaseDataService.updateParameterOntology(loadedStudy);
-
-            // Notify components observing study case status
-            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-            this.removeStudyParametersFromLocalStorage(studyId);
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation('All changes have been saved');
-            isStudySaved(true);
-
-          }, errorReceived => {
-            // Reset ontology (make sure nothing was loaded)
-            this.ontologyService.resetOntology();
-
-            // Notify user
-            this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorReceived.description}`);
-            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-            this.removeStudyParametersFromLocalStorage(studyId);
-            this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation('All changes have been saved');
-            isStudySaved(true);
+          this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe({
+            next: () => {
+              // Update ontology parameters in study
+              this.studyCaseDataService.updateParameterOntology(loadedStudy);
+              // Notify components observing study case status
+              this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+              onSuccess();
+            },
+            error: (errorReceived) => {
+              onError(errorReceived.description);
+            }
           });
         } else {
-          this.removeStudyParametersFromLocalStorage(studyId);
-          this.loadingDialogService.closeLoading();
-          // tslint:disable-next-line: radix
+          // eslint-disable-next-line radix
           this.socketService.saveStudy(parseInt(studyId), studyParameters);
           this.socketService.leaveRoom(parseInt(studyId));
           this.studyCaseDataService.onStudyCaseChange.emit(null);
-          this.snackbarService.showInformation('All changes have been saved');
-          isStudySaved(true);
+          onSuccess();
         }
-      }, errorReceived => {
+      },
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         this.loadingDialogService.closeLoading();
         if (error.redirect) {
@@ -250,7 +254,8 @@ export class StudyCaseLocalStorageService {
           this.snackbarService.showError('Error saving study case changes : ' + error.description);
         }
         isStudySaved(false);
-      });
+      }
+    });
   }
 
   // Region study link management when login is requiered

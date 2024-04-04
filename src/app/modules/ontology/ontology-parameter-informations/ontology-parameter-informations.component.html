@@ -1,8 +1,6 @@
 <div class="flex-container">
   <h2 mat-dialog-title *ngIf="isInDialog">
-    <h2>
       <b>{{ data.parameter.label }}</b>
-    </h2>
   </h2>
   <div class="informations">
     <table class="table table-sm table-borderless" style="width: 100%; background-color: white">
@@ -150,15 +148,18 @@
                     *matCellDef="let element"
                     
                   >
-                    <i 
-                    *ngIf="element.model_label !== null && element.model_label !== undefined"
+                  <button 
+                  *ngIf="element.model_label !== null && element.model_label !== undefined"
+                    mat-button
                     [id]="'go-to-'+ element.model_label"
                     [matTooltip]="element.model_label + ' information\'s'"
-                    (click)="goToModelsStatus(element.model_label)" 
-                    class="fa-solid fa-circle-arrow-right" 
-                    style="color: #0b78b8; cursor: pointer;"
-                    >
-                    </i>
+                    (click)="goToModelsStatus(element.model_label)"
+                    class="cursor-pointer"
+                    color="primary"
+                  >
+                    <i class="fa-solid fa-circle-arrow-right"></i>
+                  </button>
+                    
                   </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>

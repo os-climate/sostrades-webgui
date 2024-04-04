@@ -8,7 +8,7 @@
   padding: 10px 10px 0 10px;
 }
 
-.mat-dialog-title {
+.mat-mdc-dialog-title {
   padding-bottom: 10px;
   margin: 0;
   height: 52px;
@@ -38,6 +38,7 @@ td {
   padding: 0 10px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .mat-input-element:disabled,
 .mat-form-field-type-mat-native-select.mat-form-field-disabled
   .mat-form-field-infix::after {

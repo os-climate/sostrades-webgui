@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { Process } from 'src/app/models/process.model';
 import { DataHttpService } from '../http/data-http/data-http.service';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 
 @Injectable({
   providedIn: 'root'

@@ -53,7 +53,7 @@
         <button
           id="create-group"
           mat-flat-button
-          color="accent"
+          color="primary"
           aria-label="Create Group"
           (click)="createGroup()"
           style="margin-bottom: 20px"
@@ -72,7 +72,7 @@
       <div class="group-header">
         <button
           mat-raised-button
-          color="accent"
+          color="primary"
           aria-label="Refresh study cases"
           class="refresh-button"
           [disabled]="isLoading"
@@ -171,7 +171,7 @@
               Confidential
             </th>
             <td mat-cell *matCellDef="let element">
-              <button mat-icon-button color="accent" disabled>
+              <button mat-icon-button color="primary" disabled>
                 <i
                   class="fa-solid fa-check fa-fw"
                   [id]="'is-confidential-' + element.group.name"
@@ -189,7 +189,7 @@
               <button
                 [id]="'group-acces-' + element.group.name"
                 mat-icon-button
-                color="accent"
+                color="primary"
                 (click)="groupAccess(element)"
                 *ngIf="element.isOwner === true || element.isManager === true"
               >
@@ -205,7 +205,7 @@
                 <button
                   [id]="'edit-group-' + element.group.name"
                   mat-icon-button
-                  color="accent"
+                  color="primary"
                   *ngIf="element.isOwner === true || element.isManager === true"
                   (click)="updateGroup($event, element)"
                 >
@@ -221,7 +221,7 @@
               <button
                 [id]="'delete-group-' + element.group.name"
                 mat-icon-button
-                color="accent"
+                color="primary"
                 (click)="deleteGroup(element.group)"
                 *ngIf="element.isOwner === true"
               >

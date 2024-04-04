@@ -10,7 +10,7 @@
     <button
     class="button"
     mat-flat-button
-    color="accent"
+    color="primary"
     [matMenuTriggerFor]="menuFilters"
     aria-label="filters menu"
     *ngIf="hasAccessToStudy">
@@ -18,30 +18,24 @@
     </button>
     <mat-menu #menuFilters="matMenu">
       <div mat-menu-item>
-        <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showReadOnly">
+        <mat-checkbox color="primary" [(ngModel)]="filterService.filters.showReadOnly">
           Show not editable inputs data
         </mat-checkbox>
       </div>
       <div mat-menu-item>
-        <mat-checkbox color="accent" [(ngModel)]="filterService.filters.showSimpleDisplay">
+        <mat-checkbox color="primary" [(ngModel)]="filterService.filters.showSimpleDisplay">
           Show simple display for data View
         </mat-checkbox>
       </div>
     </mat-menu>
     <button
     mat-flat-button
-    color="accent"
+    color="primary"
     [matMenuTriggerFor]="menuUserLevel"
     aria-label="user level menu"
     class="button"
       *ngIf="hasAccessToStudy && !studyCaseDataService.loadedStudy.noData">
-      <mat-icon style="
-          float: left;
-          margin-left: 2px;
-          font-size: 16px;
-          height: 24px;
-          line-height: unset;
-        ">visibility</mat-icon>
+      <mat-icon>visibility</mat-icon>
       {{ selectedUserlevel }}
     </button>
     <mat-menu #menuUserLevel="matMenu">
@@ -53,22 +47,19 @@
       </mat-selection-list>
     </mat-menu>
     <button
-    mat-raised-button
-    color="accent"
-    *ngIf="showView && !isFullScreenOn && !calculationService.logFullSizeViewActive"
-    aria-label="fullscreen"
-    class="fullscreen-button button"
-    (click)="goFullScreen()"
-    >
+      mat-raised-button
+      color="primary"
+      *ngIf="showView && !isFullScreenOn && !calculationService.logFullSizeViewActive"
+      aria-label="fullscreen"
+      class="fullscreen-button button"
+      (click)="goFullScreen()"
+      >
     Fullscreen
-    <mat-icon
-      style="float: right; font-size: 16px; height: 26px; line-height: unset"
-      >fullscreen</mat-icon
-    >
+    <mat-icon>fullscreen</mat-icon>
     </button>
     <button
       mat-raised-button
-      color="accent"
+      color="primary"
       *ngIf="showView && isFullScreenOn"
       aria-label="Exit"
       class="fullscreen-button button"
@@ -86,7 +77,7 @@
   <div style="float: right;">
     <button
         mat-icon-button
-        color="accent"
+        color="primary"
         matTooltip="Close search panel"
         (click)="closeSearchPanel()"
       >

@@ -8,9 +8,7 @@ import { map, finalize } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { UserApplicationRight } from '../models/user.model';
 import { StudyCaseLocalStorageService } from './study-case-local-storage/study-case-local-storage.service';
-import { Routing } from '../models/routing.model';
-
-
+import { Routing } from '../models/enumeration.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -70,7 +68,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         this.studyCaseLocalStorage.setStudyUrlRequestedInLocalStorage(this.location.path());
       }
       this.router.navigate([Routing.LOGIN], { queryParams: { autologon: '' } });
-      // tslint:disable-next-line: max-line-length
+      // eslint-disable-next-line max-len
       this.snackbarService.showError('Authentication needed : Your access token has expired or you are not authenticated, please login again');
     }
   }
@@ -83,7 +81,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       return true;
     } else {
       this.router.navigate([Routing.LOGIN]);
-      // tslint:disable-next-line: max-line-length
+      // eslint-disable-next-line max-len
       this.snackbarService.showError('Authentication needed : Your access token has expired or you are not authenticated, please login again');
     }
   }

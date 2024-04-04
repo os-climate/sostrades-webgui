@@ -7,8 +7,9 @@ import { NodeData } from './node-data.model';
 import { Process } from './process.model';
 import { OntologyParameter } from './ontology-parameter.model';
 import { OntologyModelStatus } from './ontology-model-status.model';
-import { ColumnName } from './column-name.model';
 import { TreeNode } from './tree-node.model';
+import { LoadedGroup } from './group.model';
+import { ColumnName } from './enumeration.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -125,14 +126,6 @@ export class UserCreateDialogData extends AbstractDialogData {
   }
 }
 
-export class UserUpdateDialogData extends AbstractDialogData {
-  userUpdated: User;
-
-  public constructor() {
-    super();
-    this.userUpdated = null;
-  }
-}
 
 export class UsersRoomDialogData extends AbstractDialogData {
   users: User[];
@@ -383,30 +376,33 @@ export class LinkDialogData extends AbstractDialogData {
   }
 }
 
-export class EditGroupDialogData extends AbstractDialogData {
+
+
+export class EditionDialogData extends AbstractDialogData {
+
+  editionDialogName: string;
   name: string;
-  description: string;
-
-  public constructor() {
-    super();
-    this.name = '';
-    this.description = '';
-  }
-}
-
-
-export class EditStudyCaseDialogData extends AbstractDialogData {
-  studyName: string;
   groupId: number;
+  description: string;
+  groupList: LoadedGroup[];
+  userUpdated: User;
   flavor: string
 
   public constructor() {
     super();
-    this.studyName = '';
+
+    this.editionDialogName = '';
+    this.name = '';
+    this.description = '';
     this.groupId = null;
+    this.groupList = [];
+    this.userUpdated = null;
     this.flavor = null;
+
   }
+
 }
+
 
 export class RepositoryTraceabilityDialogData extends AbstractDialogData {
     codeSourceTraceability: any;

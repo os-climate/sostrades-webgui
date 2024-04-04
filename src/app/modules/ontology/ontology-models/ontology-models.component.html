@@ -2,7 +2,7 @@
     <div class="model-header">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Refresh model status list"
         class="refresh-button"
         [disabled]="isLoading"
@@ -47,7 +47,7 @@
     <div class="btn-load-container" *ngIf="!isLoading && !hasLoadedModels">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Load Models"
         class="load-button"
         (click)="loadModelStatusData()">
@@ -84,7 +84,6 @@
               mat-cell
               *matCellDef="let element"
               [matTooltip]="element.id"
-              matTooltipClass="custom-tooltip-class"
               style="word-wrap: break-word; max-width: 500px"
               [class.model-name-column-yes]="element.delivered === 'YES'"
               [class.model-name-column-no]="element.delivered === 'NO'"
@@ -126,8 +125,9 @@
               <button
                 [id]="'btn-model-documentation-' + element.label + '-' + element.codeRepository"
                 mat-icon-button
-                color="accent"
+                color="primary"
                 [matTooltip]="element.label + ' information'"
+                matTooltipPosition="left"
                 (click)="displayDocumentation(element)"
               >
               <i class="fa-solid fa-book"></i>

@@ -25,12 +25,11 @@ import { EntityRightService } from 'src/app/services/entity-right/entity-right.s
 import { Observable, Subscription } from 'rxjs';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { OntologyProcessInformationComponent } from './ontology-process-information/ontology-process-information.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Routing } from 'src/app/models/routing.model';
 
 @Component({
   selector: 'app-ontology-processes',
@@ -132,36 +131,38 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
        processCallback = this.processService.getUserProcesses(refreshProcess);
     }
 
-    processCallback.subscribe(processes => {
-      this.dataSourceProcess = new MatTableDataSource<Process>(processes);
-      this.dataSourceProcess.sortingDataAccessor = (item, property) => {
-        return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-      };
-      this.dataSourceProcess.sort = this.sort;
-      this.onFilterChange();
-      this.isLoading = false;
-
-      if ((this.fromModelInformation === true) && (this.fromModelInformation !== null)) {
-        const searchProcess = this.processService.processManagemenentData.find(
-          process => process.processName === this.processToShowAtStartup);
-        if (searchProcess !== null && searchProcess !== undefined) {
-          this.processToShowAtStartup = null;
-          this.fromModelInformation = false;
-          this.processService.processManagementFilter = searchProcess.processName;
-          this.onFilterChange();
-          this.displayDocumentation(searchProcess);
-        }
-      }
-
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.processCount = 0;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
+    processCallback.subscribe({
+      next: (processes) => {
+        this.dataSourceProcess = new MatTableDataSource<Process>(processes);
+        this.dataSourceProcess.sortingDataAccessor = (item, property) => {
+          return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+        };
+        this.dataSourceProcess.sort = this.sort;
         this.onFilterChange();
         this.isLoading = false;
-        this.snackbarService.showError('Error loading processes : ' + error.description);
+    
+        if ((this.fromModelInformation === true) && (this.fromModelInformation !== null)) {
+          const searchProcess = this.processService.processManagemenentData.find(
+            process => process.processName === this.processToShowAtStartup);
+          if (searchProcess !== null && searchProcess !== undefined) {
+            this.processToShowAtStartup = null;
+            this.fromModelInformation = false;
+            this.processService.processManagementFilter = searchProcess.processName;
+            this.onFilterChange();
+            this.displayDocumentation(searchProcess);
+          }
+        }
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.processCount = 0;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.onFilterChange();
+          this.isLoading = false;
+          this.snackbarService.showError('Error loading processes : ' + error.description);
+        }
       }
     });
   }
@@ -349,8 +350,6 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
 
       const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
-        width: '500px',
-        height: '220px',
         data: validationDialogData
       });
 
@@ -388,7 +387,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
                       isSaveDone => {
                         if (isSaveDone) {
                           // Send socket notifications
-                          // tslint:disable-next-line: max-line-length
+                          // eslint-disable-next-line max-len
                           this.socketService.saveStudy(this.studyCaseLocalStorageService.getStudyIdWithUnsavedChanges(), resultData.changes);
                           changeHandled(true);
                         } else {

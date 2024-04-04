@@ -2,7 +2,7 @@
   <div class="study-header">
     <button
       mat-raised-button
-      color="accent"
+      color="primary"
       aria-label="Refresh study cases"
       class="refresh-button"
       [disabled]="isLoading"
@@ -16,13 +16,16 @@
       Refresh list
     </button>   
     <h2 *ngIf="getTitle" id="favorite-studies-title">Last opened and favorite studies 
-        <i
-        class="fa-solid fa-circle-info"
-        matTooltip="This studies list contains, first, studies tagged as favorite and then the five last study opened unless the study is already among favorites."
-        style="font-size: 19px; color: #0b78b8;"
-        matTooltipPosition="right"
+        <button
+          id="button-info"
+          mat-button
+          matTooltip="This studies list contains, first, studies tagged as favorite and then the five last study opened unless the study is already among favorites."
+          matTooltipPosition="right"
+          color="accent"
         >
-        </i>
+          <i class="fa-solid fa-circle-info"></i>
+        </button>
+        
     </h2>
       
     <mat-label *ngIf="getFilter" class="number-studies">
@@ -56,7 +59,7 @@
     <button
     *ngIf="getCreateStudy"
     mat-raised-button
-    color="accent"
+    color="primary"
     aria-label="Create study cases"
     id="create-study"
     style="margin-left: 10px;"
@@ -72,7 +75,7 @@
       id='deletion'
       style="margin-left: 5px"
       mat-icon-button
-      color="accent"
+      color="primary"
       matTooltip="Delete Study case(s) selected"
       (click)="deleteStudiesValidation(selection.selected)"
     >
@@ -80,13 +83,7 @@
     </button>
   </div>
 
-  <div
-    [ngStyle]="
-      selection.hasValue()
-        ? { height: 'calc(100% - 98px)' }
-        : { height: 'calc(100% - 63px)' }
-    "
-  >
+  <div>
     <div class="loading-zone" *ngIf="isLoading">
       <app-progress-bar
         progressMode="indeterminate"
@@ -160,10 +157,13 @@
             <i *ngIf="getFilter" id="filter-name" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
-          <td mat-cell *matCellDef="let element" [matTooltip]="element.name">
+          <td mat-cell *matCellDef="let element">
             <a routerLink="/study/{{element.id}}"
               class="link-study-title"
-              [id]="'title-study-management-load-' + element.groupName +'-' + element.name">
+              [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
+              [matTooltip]="element.name"
+              matTooltipPosition="right"
+              >
               {{ element.name }}
             </a>
           </td>
@@ -178,9 +178,8 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.groupName"
           >
-            {{ element.groupName }}
+              {{ element.groupName }}
           </td>
         </ng-container>
 
@@ -193,9 +192,14 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.repository"
+            
           >
+            <span 
+              [matTooltip]="element.repository" 
+              matTooltipPosition="right"
+            >
             {{ element.repositoryDisplayName }}
+            </span>
           </td>
         </ng-container>
 
@@ -205,8 +209,13 @@
             <i *ngIf="getFilter" id="filter-process" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.PROCESS, $event)" ></i>
           </th>
-          <td mat-cell *matCellDef="let element" [matTooltip]="element.process">
-            {{ element.processDisplayName }}
+          <td mat-cell *matCellDef="let element" >
+            <span 
+              [matTooltip]="element.process"
+              matTooltipPosition="right"
+              >
+              {{ element.processDisplayName }}
+            </span>
           </td>
         </ng-container>
 
@@ -247,7 +256,7 @@
             <i *ngIf="getFilter" id="filter-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.STATUS, $event)" ></i>
           </th>
-          <td mat-cell *matCellDef="let element" [matTooltip]="element.executionStatus">
+          <td mat-cell *matCellDef="let element" >
             {{ element.executionStatus }}
           </td>
         </ng-container>
@@ -258,18 +267,13 @@
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
             <button
               style="margin: 0 5px"
-              [id]="
-                'btn-study-management-load-' +
-                element.groupName +
-                '-' +
-                element.name
-              "
+              [id]="'btn-study-management-load-' + element.groupName +'-' +element.name"
               mat-icon-button
-              color="accent"
-              matTooltip="Load study case"
+              color="primary"
+              [matTooltip]="'Load ' + element.name"
               (click)="loadStudy($event, element)"
             >
-              <i class="fa-regular fa-folder-open fa-fw"> </i>
+                <i class="fa-regular fa-folder-open fa-fw"></i>
             </button>
             <input
                 type="file"
@@ -286,10 +290,10 @@
             [id]="'btn-study-management-edit-' + element.groupName + '-' + element.name"
             style="margin-right: 5px"
             mat-icon-button
-            color="accent"
+            color="primary"
             *ngIf="element.isManager"
             (click)="updateStudy(element)"
-            matTooltip="Edit study case"
+            [matTooltip]="'Edit ' + element.name"
             >
             <i class="fa-solid fa-pen-to-square"></i>
             </button>
@@ -298,9 +302,9 @@
             *ngIf="getCreateStudy"
             style="margin-right: 5px"
             mat-icon-button
-            color="accent"
+            color="primary"
             (click)="copyStudy(element)"
-            matTooltip="Copy study case"
+            [matTooltip]="'Copy ' + element.name"
             >
             <i class="fa-solid fa-copy"></i>
             </button>
@@ -309,9 +313,9 @@
               [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"
               style="margin-right: 5px"
               mat-icon-button
-              color="accent"
+              color="primary"
               *ngIf="element.isManager"
-              matTooltip="Delete Study case"
+              [matTooltip]="'Delete ' + element.name"
               (click)="deleteStudiesValidation([element])"
             >
               <i class="fa-regular fa-trash-can fa-fw"> </i>
@@ -320,8 +324,8 @@
               style="margin-right: 5px"
               *ngIf="element.isManager || element.isContributor"
               mat-icon-button
-              color="accent"
-              matTooltip="Study case access link"
+              color="primary"
+              [matTooltip]="element.name + ' access link'"
               (click)="accessLink(element)"
             >
               <i class="fa-solid fa-up-right-from-square fa-fw"> </i>
@@ -335,8 +339,8 @@
                   element.isCommenter)
               "
               mat-icon-button
-              color="accent"
-              matTooltip="Download study case data"
+              color="primary"
+              [matTooltip]="'Download ' + element.name + ' data'"
               (click)="downloadStudy($event, element)"
             >
               <i class="fa-solid fa-download fa-fw"> </i>
@@ -345,8 +349,8 @@
               style="margin-right: 5px"
               mat-icon-button
               *ngIf="element.isManager"
-              color="accent"
-              matTooltip="Share study case with users and groups"
+              color="primary"
+              [matTooltip]="'Share ' + element.name"
               (click)="studyAccess(element)"
             >
               <i class="fa-solid fa-user-plus fa-fw"> </i>

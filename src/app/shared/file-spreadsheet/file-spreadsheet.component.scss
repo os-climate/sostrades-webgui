@@ -7,6 +7,7 @@
 .icon-size {
   font-size: 16px;
   line-height: 24px;
+  margin-left: 3px;
 }
 
 .custom-button-container {
@@ -38,7 +39,7 @@
   margin-left: -6px;
 }
 
-.box > * {
+.box>* {
   margin-top: 10px;
   margin-left: 5px;
 }
@@ -47,10 +48,10 @@
   margin-top: 3px;
 }
 
-.mat-flat-button {
+.mat-mdc-unelevated-button {
   min-width: 0 !important;
 }
 
-.mat-raised-button {
+.mat-mdc-raised-button {
   min-width: 0 !important;
 }

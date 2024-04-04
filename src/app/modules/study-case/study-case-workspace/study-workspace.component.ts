@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { ProcessService } from 'src/app/services/process/process.service';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 

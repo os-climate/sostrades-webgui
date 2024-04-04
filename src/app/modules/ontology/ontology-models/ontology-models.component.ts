@@ -10,9 +10,8 @@ import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model'
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { OntologyModelsInformationComponent } from './ontology-models-information/ontology-models-information.component';
-import { Routing } from 'src/app/models/routing.model';
 import { OntologyHttpService } from 'src/app/services/ontology-http/ontology-http.service';
 
 @Component({
@@ -127,13 +126,13 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
     this.ontologyService.modelStatusData = [];
     this.dataSourceModelStatus = new MatTableDataSource<OntologyModelStatus>(null);
     // Retrieving study case list
-    this.ontologyService.getOntologyModelsStatus().subscribe(
-      (models) => {
+    this.ontologyService.getOntologyModelsStatus().subscribe({
+      next: (models) => {
         this.ontologyService.modelStatusData = models;
         this.initDataSource();
         this.hasLoadedModels = true;
       },
-      (errorReceived) => {
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         this.modelCount = 0;
         this.hasLoadedModels = false;
@@ -146,7 +145,7 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
           );
         }
       }
-    );
+    });
   }
   displayFilter(columnName: ColumnName, event) {
     event.stopPropagation();

@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { OntologyModelsStatusInformationDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyModelStatus } from 'src/app/models/ontology-model-status.model';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';

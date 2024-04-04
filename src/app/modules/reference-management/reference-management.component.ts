@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName } from 'src/app/models/enumeration.model';
 import { FilterDialogData, PodSettingsDialogData } from 'src/app/models/dialog-data.model';
 import { ProcessGenerationStatus } from 'src/app/models/reference-generation-status-observer.model';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
@@ -32,7 +32,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   public isLoading: boolean;
   public columnName = ColumnName;
 
-  // tslint:disable-next-line: max-line-length
+  // eslint-disable-next-line max-len
   public displayedColumns = [
     ColumnName.REGENERATION_STATUS,
     ColumnName.NAME,
@@ -154,8 +154,8 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.referenceDataService.referenceManagementData = [];
     this.dataSourceReferences = new MatTableDataSource<Study>(null);
 
-    this.referenceDataService.getReferences().subscribe(
-      (refs) => {
+    this.referenceDataService.getReferences().subscribe({
+      next: (refs) => {
         refs.forEach((ref) => {
           this.referenceDataService.referenceManagementData.push(ref);
           if (ref.isRegeneratingReference) {
@@ -174,7 +174,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
         this.onFilterChange();
         this.isLoading = false;
       },
-      (errorReceived) => {
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         this.referenceCount = 0;
         if (error.redirect) {
@@ -187,27 +187,27 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
           );
         }
       }
-    );
+    });
   }
 
   regenerateReference(study: Study) {
     study.isRegeneratingReference = true;
 
-    this.referenceDataService
-      .reGenerateReference(study.repository, study.process, study.name)
-      .subscribe(
-        (refGenId) => {
+    this.referenceDataService.reGenerateReference(study.repository, study.process, study.name)
+      .subscribe({
+        next: (refGenId) => {
           this.snackbarService.showInformation(`Reference regeneration started for ${study.process}.${study.name}`);
           this.referenceGenerationObserverService.startStudyCaseExecutionObserver(refGenId);
           this.subscribeToRegeneration(refGenId, study);
-        }, (errorReceived) => {
+        }, error: (errorReceived) => {
           const error = errorReceived as SoSTradesError;
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           this.snackbarService.showError(`Reference regeneration failed for ${study.process}.${study.name} with error ${error.description}`);
           study.isRegeneratingReference = false;
           study.regenerationStatus = 'FAILED';
           study.creationDate = null;
-        });
+        }
+      });
   }
 
   onOpenSettings(study: Study){
@@ -459,19 +459,21 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
 
   downloadGenerationLogs(study: Study) {
     const refPath = study.repository + '.' + study.process + '.' + study.name;
-    this.referenceDataService.getLogs(refPath).subscribe(file => {
-
-      const downloadLink = document.createElement('a');
-      downloadLink.href = window.URL.createObjectURL(file);
-      downloadLink.setAttribute('download', refPath + '.log');
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error downloading log file : No logs found for ' + refPath + '. You should generate it first.');
+    this.referenceDataService.getLogs(refPath).subscribe({
+      next: (file) => {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(file);
+        downloadLink.setAttribute('download', refPath + '.log');
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error downloading log file: No logs found for ' + refPath + '. You should generate it first.');
+        }
       }
     });
   }

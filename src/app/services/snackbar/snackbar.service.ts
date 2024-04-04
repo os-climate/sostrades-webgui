@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent } from '../../shared/snackbar/snackbar.component';
-import { timeThursdays } from 'd3';
 
 @Injectable({
   providedIn: 'root'

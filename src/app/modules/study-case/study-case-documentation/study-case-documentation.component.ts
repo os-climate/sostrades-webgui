@@ -34,28 +34,31 @@ export class DocumentationComponent implements OnChanges {
     this.loading = true;
     let documentationRetrieved = 0;
     this.identifiers.forEach(identifier => {
-      this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe( response => {
-        if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
-          response.name = identifier;
-          this.documentation.push(response);
-          this.hasDocumentation = true;
-        } else if (this.documentation.length == 0) {
-          this.hasDocumentation = false;
+      this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe({
+        next: (response) => {
+          if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
+            response.name = identifier;
+            this.documentation.push(response);
+            this.hasDocumentation = true;
+          } else if (this.documentation.length == 0) {
+            this.hasDocumentation = false;
+          }
+          documentationRetrieved = documentationRetrieved + 1;
+          if (documentationRetrieved === this.identifiers.length) {
+            this.loading = false;
+            this.showBookmarks = this.documentation.length > 1;
+          }
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.loading = false;
+            this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
+          }
         }
-        documentationRetrieved = documentationRetrieved + 1;
-        if (documentationRetrieved === this.identifiers.length) {
-          this.loading = false;
-          this.showBookmarks = this.documentation.length > 1;
-        }
-      }, errorReceived => {
-            const error = errorReceived as SoSTradesError;
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.loading = false;
-              this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
-            }
-          });
+      });
     });
   }
 

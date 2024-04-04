@@ -105,35 +105,40 @@ export class StudyCaseCreationService {
 
     const observableResult = new Observable<StudyCaseCreateDialogData>((observer) => {
 
-      this.processService.getUserProcesses(false).subscribe( processes => {
-        const foundProcess = processes.find(p =>  p.processId === processBuilderData.processIdentifier &&
-                                                  p.repositoryId === processBuilderData.processRepositoryIdentifier);
-
-        const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
-        dialogData.selectProcessOnly = true;
-        dialogData.process = foundProcess;
-        dialogData.reference = processBuilderData.usecaseInfoName;
-        dialogData.studyType = processBuilderData.usecaseInfoType;
-        dialogData.studyId = processBuilderData.usecaseInfoIdentifier;
-
-        this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
-          disableClose: true,
-          data: dialogData
-        });
-
-        this.dialogRef.afterClosed().subscribe(result => {
-          const studyCaseData = result as StudyCaseCreateDialogData;
-          observer.next(studyCaseData);
-        });
-      }, errorReceived => {
-        const error = errorReceived as SoSTradesError;
-
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          const errorMessage = `Error loading process list for form : ${error.description}`;
-          this.snackbarService.showError(errorMessage);
-          observer.error(errorMessage);
+      this.processService.getUserProcesses(false).subscribe({
+        next: (processes) => {
+          const foundProcess = processes.find(p =>
+            p.processId === processBuilderData.processIdentifier &&
+            p.repositoryId === processBuilderData.processRepositoryIdentifier
+          );
+      
+          const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
+          dialogData.selectProcessOnly = true;
+          dialogData.process = foundProcess;
+          dialogData.reference = processBuilderData.usecaseInfoName;
+          dialogData.studyType = processBuilderData.usecaseInfoType;
+          dialogData.studyId = processBuilderData.usecaseInfoIdentifier;
+      
+          this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
+            disableClose: true,
+            data: dialogData
+          });
+      
+          this.dialogRef.afterClosed().subscribe(result => {
+            const studyCaseData = result as StudyCaseCreateDialogData;
+            observer.next(studyCaseData);
+          });
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+      
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            const errorMessage = `Error loading process list for form : ${error.description}`;
+            this.snackbarService.showError(errorMessage);
+            observer.error(errorMessage);
+          }
         }
       });
     });

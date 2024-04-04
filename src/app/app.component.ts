@@ -39,12 +39,11 @@ export class AppComponent implements OnInit {
       if (isAuth) {
 
         this.socketService.openConnection('');
-        const calls = [];
 
-        calls.push(this.groupDataService.getUserGroups(true));
-        calls.push(this.userService.loadAllUsers());
+        const loadedAllGroups = this.groupDataService.getUserGroups(true);
+        const loadedAllUsers = this.userService.loadAllUsers();
 
-        combineLatest(calls).subscribe();
+        combineLatest([loadedAllGroups, loadedAllUsers]).subscribe();
 
         this.appDataService.startConnectionStatusTimer();
 
