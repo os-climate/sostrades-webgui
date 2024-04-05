@@ -69,7 +69,7 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.regenerationStatus"
+            [matTooltip]="element.error?element.regenerationStatus + ' ' + element.error:element.regenerationStatus"
           >
             <div
               [className]="'execution-bullet ' + element.regenerationStatus"
@@ -144,16 +144,34 @@
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
             <button 
-              *ngIf="canGenerateReference"
+              *ngIf="canGenerateReference && (!element.isRegeneratingReference && !isAllReferencesRegenerating)"
               style="margin: 0 5px"
               [id]="'btn-generate-reference-' + element.name +'-' + element.process"
               mat-icon-button
-              [disabled]="element.isRegeneratingReference || isAllReferencesRegenerating"
+              
               color="primary"
               matTooltip="Regenerate reference"
               (click)="regenerateReference(element)"
             >
               <i class="fa-solid fa-rotate fa-fw"> </i>
+            </button>
+            <button 
+              *ngIf="canGenerateReference && (element.isRegeneratingReference || isAllReferencesRegenerating)"
+              style="margin: 0 5px"
+              [id]="
+              'btn-stop-generate-reference-' +
+              element.name +
+              '-' +
+              element.process
+              "
+              mat-icon-button
+              
+              color="accent"
+              matTooltip="Stop reference generation"
+              (click)="stopReference(element)"
+              [disabled]="!element.isRegeneratingReference && isAllReferencesRegenerating"
+            >
+              <i class="fa-solid fa-stop fa-fw"> </i>
             </button>
             <button
               mat-icon-button

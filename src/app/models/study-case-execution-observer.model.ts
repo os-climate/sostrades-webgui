@@ -18,6 +18,8 @@ export enum DisciplineStatus {
 }
 
 export enum StudyCalculationStatus {
+  STATUS_PENDING = 'PENDING',
+  STATUS_POD_PENDING = 'POD_PENDING',
   STATUS_RUNNING = 'RUNNING',
   STATUS_FINISHED = 'FINISHED',
   STATUS_FAILED = 'FAILED',

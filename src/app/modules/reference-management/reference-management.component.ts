@@ -210,6 +210,23 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       });
   }
 
+  stopReference(study:Study){
+    this.referenceDataService
+      .stopReferenceGeneration(study.regenerationId)
+      .subscribe(
+        (result) => {
+          this.snackbarService.showInformation(`Reference regeneration stopped for ${study.process}.${study.name}`);
+          this.referenceGenerationObserverService.removeReferenceGenerationObserver(study.regenerationId);
+          study.isRegeneratingReference = false;
+          study.regenerationStatus = 'STOPPED'
+        }, (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          // tslint:disable-next-line: max-line-length
+          this.snackbarService.showError(`Reference stopped generation failed for ${study.process}.${study.name} with error ${error.description}`);
+          study.creationDate = null;
+        });
+  }
+
   onOpenSettings(study: Study){
     this.referenceDataService.getGenerateReferenceFlavor(study.regenerationId).subscribe(flavor =>{
       const dialogData: PodSettingsDialogData = new PodSettingsDialogData();

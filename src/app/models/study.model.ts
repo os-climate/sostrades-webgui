@@ -200,6 +200,6 @@ export enum LoadStatus {
 }
 
 export enum CreationStatus {
-  DONE = 'DONE',
+  CREATION_DONE = 'CREATION_DONE',
   
 }
