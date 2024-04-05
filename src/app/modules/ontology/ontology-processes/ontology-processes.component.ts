@@ -50,6 +50,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
   public fromModelInformation: boolean;
   private routerSubscription: Subscription;
   private processToShowAtStartup: string;
+  public processesForFilter: Process [];
 
   @Input() dashboard = true;
 
@@ -91,6 +92,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
     this.fromModelInformation = false;
     this.routerSubscription = null;
     this.processToShowAtStartup = null;
+    this.processesForFilter = [];
   }
 
   ngOnInit(): void {
@@ -133,6 +135,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
 
     processCallback.subscribe({
       next: (processes) => {
+        this.processesForFilter = processes;
         this.dataSourceProcess = new MatTableDataSource<Process>(processes);
         this.dataSourceProcess.sortingDataAccessor = (item, property) => {
           return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
@@ -264,12 +267,12 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
     const possibleStringValues = [];
     switch (column) {
       case ColumnName.PROCESS:
-        this.processService.processManagemenentData.forEach(process => {
+        this.processesForFilter.forEach(process => {
         possibleStringValues.push(process.processName);
           });
         return possibleStringValues;
       case ColumnName.REPOSITORY:
-        this.processService.processManagemenentData.forEach(process => {
+        this.processesForFilter.forEach(process => {
           if (!possibleStringValues.includes(process.repositoryName)) {
 
             possibleStringValues.push(process.repositoryName);

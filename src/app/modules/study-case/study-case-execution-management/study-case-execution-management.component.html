@@ -9,22 +9,24 @@
 
 <div class="container" *ngIf="!isLoading">
   <div class="filterSection">
-    <mat-form-field style="margin-right: 10px; width: 120px">
+    <mat-form-field class="filter-form-field">
+      <mat-label class="filter-label-size">Filtered by</mat-label>
       <mat-select
         placeholder="Column(s) filtered"
+        class="filter-label-size"
         (selectionChange)="onFilterChange()"
         style="text-align: left"
         [(ngModel)]="columnsFilterSelected"
         [matTooltip]="columnsFilterSelected"
         #selectionModel="ngModel"
       >
-        <mat-option *ngFor="let item of colummnsFilter" [value]="item">
+        <mat-option *ngFor="let item of colummnsFilter" [value]="item" style="text-transform: capitalize;">
           {{ item }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field class="filter">
-      <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
+    <mat-form-field class="filter-bar">
+      <input id="filter" matInput (keyup)="applyFilter($event)" placeholder="Filter" />
     </mat-form-field>
   </div>
 

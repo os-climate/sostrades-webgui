@@ -1,9 +1,10 @@
 .container {
   height: 100%;
-  min-width: 100%;
+  width: 100%;
   padding: 5px;
+  max-width: unset !important;
+  overflow-x: auto;
 }
-
 
 h3 {
   font-weight: 410;
