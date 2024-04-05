@@ -155,7 +155,13 @@ mat-footer-cell:last-of-type {
 .execution-bullet {
   height: 18px;
   width: 18px;
+  display: inline-block;
   border-radius: 10px;
+}
+.execution-status {
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: super;
 }
 
 .table-row {

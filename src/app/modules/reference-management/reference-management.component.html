@@ -69,8 +69,8 @@
           <td
             mat-cell
             *matCellDef="let element"
-            [matTooltip]="element.error?element.regenerationStatus + ' ' + element.error:element.regenerationStatus"
           >
+          <div>
             <div
               [className]="'execution-bullet ' + element.regenerationStatus"
               [id]="'execution-bullet-'  +
@@ -78,7 +78,14 @@
               '-' +
               element.process +
               '-' + element.regenerationStatus"
-            ></div>
+            >
+              
+          </div>
+          <div class="execution-status">
+            <span>{{ element.regenerationStatus }}</span>
+            <i style="color: red; margin-left: 5px;" class="fa-solid fa-circle-info" *ngIf="element.error"  [matTooltip]="element.error"></i>
+          </div>
+          </div>
           </td>
         </ng-container>
 
@@ -190,7 +197,7 @@
               '-' +
               element.process
               "
-              color="accent"
+              color="primary"
               (click)="onOpenSettings(element)"
               *ngIf="hasFlavors"
             >

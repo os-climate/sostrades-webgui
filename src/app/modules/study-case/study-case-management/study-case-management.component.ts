@@ -61,9 +61,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     ColumnName.GROUP,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
+    ColumnName.STATUS,
     ColumnName.CREATION_DATE,
     ColumnName.MODIFICATION_DATE,
-    ColumnName.STATUS,
     ColumnName.ACTION
   ];
   public colummnsFilter = [
