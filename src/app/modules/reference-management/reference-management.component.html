@@ -83,7 +83,10 @@
           </div>
           <div class="execution-status">
             <span>{{ element.regenerationStatus }}</span>
-            <i style="color: red; margin-left: 5px;" class="fa-solid fa-circle-info" *ngIf="element.error"  [matTooltip]="element.error"></i>
+            <i style="color: red; margin-left: 5px;" class="fa-solid fa-circle-info" 
+              *ngIf="element.error && element.regenerationStatus != 'FINISHED' && element.regenerationStatus != 'NOT GENERATED'"  
+              [matTooltip]="element.error">
+            </i>
           </div>
           </div>
           </td>
