@@ -40,8 +40,13 @@
     </button>
     <mat-menu #menuUserLevel="matMenu">
       <mat-selection-list multiple="false" #userLevelSelectionList
-        (selectionChange)="changeUserLevel($event.option.value)">
-        <mat-list-option class="user-level-item" *ngFor="let userLevelName of userLevelList; let i = index" [value]="i">
+        (selectionChange)="changeUserLevel($event.options)">
+        <mat-list-option 
+          class="user-level-item" 
+          *ngFor="let userLevelName of userLevelList; let i = index" 
+          [value]="i"
+          [selected]="newUserLevelValue === i"
+          >
           {{ userLevelName }}
         </mat-list-option>
       </mat-selection-list>
