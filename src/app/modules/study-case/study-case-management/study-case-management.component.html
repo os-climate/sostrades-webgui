@@ -32,11 +32,13 @@
       Number of Studies <b>{{ studyCount }}</b>
     </mat-label>
     <div class="filterSection" *ngIf="getFilter">
-      <mat-form-field style="margin-right: 10px; width: 120px">
+      <mat-form-field class="filter-form-field">
+        <mat-label class="filter-bar">Filtered by</mat-label>
         <mat-select
           placeholder="Column(s) filtered"
+          class="filter-label-size"
           (selectionChange)="onFilterChange()"
-          style="text-align: left"
+          style="text-align: left;"
           [(ngModel)]="studyCaseDataService.studyManagementColumnFiltered"
           [matTooltip]="studyCaseDataService.studyManagementColumnFiltered"
         >
@@ -45,7 +47,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="filter">
+      <mat-form-field class="filter-bar">
         <input
           matInput
           #filter

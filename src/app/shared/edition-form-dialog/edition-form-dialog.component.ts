@@ -79,7 +79,7 @@ export class EditionFormDialogComponent {
         });
         break;
         case DialogEditionName.EDITION_STUDY:
-          this.dialogRef.updateSize("400px", "350px");
+          this.dialogRef.updateSize("400px", "400px");
           this.idName = "study-name";
           this.labelName = LabelFormName.STUDY_NAME;
           this.editForm = new FormGroup({
@@ -183,8 +183,7 @@ export class EditionFormDialogComponent {
     // Get group list 
     this.groupDataService.getUserGroups(true).subscribe({
       next: (response) => {
-        const grpList: LoadedGroup[] = response;
-        grpList.forEach(group => {
+        response.forEach(group => {
           this.groupList.push(group);
         });
         this.isLoading = false;

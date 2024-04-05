@@ -418,6 +418,28 @@ div.tooltip {
   color: var(--sostrades-app-success);
 }
 
+.filter-bar {
+  width: calc(100% - 140px);
+  font-size: 14px;
+}
+
+.filter-label-size {
+  font-size: 14px;
+}
+
+.filterSection {
+  flex: 1;
+  padding-top: 15px;
+  padding-left: 10px;
+  background-color: #f9f9f9;
+  border-radius: 7px;
+}
+
+.filter-form-field {
+  margin-right: 10px;
+  width: 120px;
+}
+
 /* Markdown */
 .markdown-body {
   background-color: rgb(82, 86, 89);
