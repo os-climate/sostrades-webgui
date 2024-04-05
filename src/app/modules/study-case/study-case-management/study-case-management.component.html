@@ -218,6 +218,19 @@
             </span>
           </td>
         </ng-container>
+        <!-- Calculation Status Column -->
+        <ng-container [matColumnDef]="columnName.STATUS">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status
+            <i *ngIf="getFilter" id="filter-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.STATUS, $event)" ></i>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <!-- Show creation status if creation is in progress or in error -->
+            <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="element.creationStatus == 'IN ERROR' || element.creationStatus == 'CREATION IN ERROR'"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus !='CREATION DONE' && element.creationStatus !='DONE'"> {{ element.creationStatus }} </span>
+            <!-- Show execution status if creation is done -->
+            <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="element.executionStatus == 'IN ERROR' || element.executionStatus == 'POD ERROR' || element.executionStatus == 'POD PENDING'"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus =='CREATION DONE' || element.creationStatus =='DONE'"> {{ element.executionStatus }} </span>
+          </td>
+        </ng-container>
 
         <!-- CreationDate Column -->
         <ng-container [matColumnDef]="columnName.CREATION_DATE">
@@ -239,27 +252,8 @@
           </td>
         </ng-container>
 
-         <!-- Creation Status Column -->
-         <ng-container [matColumnDef]="columnName.CREATION_STATUS">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Creation Status
-            <i *ngIf="getFilter" id="filter-creation-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.CREATION_STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
-            (click)="displayFilterDialog(columnName.CREATION_STATUS, $event)" ></i>
-          </th>
-          <td mat-cell *matCellDef="let element">
-            <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="element.creationStatus == 'IN_ERROR'"  [matTooltip]="element.error"></i> <span> {{ element.creationStatus }} </span>
-          </td>
-        </ng-container>
 
-        <!-- Calculation Status Column -->
-        <ng-container [matColumnDef]="columnName.STATUS">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status
-            <i *ngIf="getFilter" id="filter-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
-            (click)="displayFilterDialog(columnName.STATUS, $event)" ></i>
-          </th>
-          <td mat-cell *matCellDef="let element" >
-            {{ element.executionStatus }}
-          </td>
-        </ng-container>
+        
 
         <!-- Action Column -->
         <ng-container [matColumnDef]="columnName.ACTION">

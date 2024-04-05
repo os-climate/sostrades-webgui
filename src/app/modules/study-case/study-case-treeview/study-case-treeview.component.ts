@@ -184,6 +184,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       if (loadedStudy !== null) {
 
         const currentLoadedStudy = (loadedStudy as LoadedStudy);
+
         // Applying no data and read only values
         this.isStudyNoData = currentLoadedStudy.noData;
         this.isStudyReadOnly = currentLoadedStudy.readOnly;
@@ -538,28 +539,51 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     this.calculationService.getStatus(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
       next: (t) => {
-        const studyCaseStatusList = t as StudyCaseExecutionStatus;
-    
-        if (studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_RUNNING) {
-          this.setStatusOnRootNode(StudyCalculationStatus.STATUS_RUNNING);
-          if (Object.keys(studyCaseStatusList.disciplinesStatus).length > 0) { // Execution running or finished
-            // Emit calculation started
-            this.calculationService.onCalculationChange.emit(true);
-            this.subscribeToExecution();
-            this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(this.studyCaseDataService.loadedStudy.studyCase.id);
-          }
-        }
-      },
-      error: (errorReceived) => {
-        const error = errorReceived as SoSTradesError;
-        this.calculationService.onCalculationChange.emit(false);
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.snackbarService.showError('Error getting study execution status : ' + error.description);
-        }
+      const studyCaseStatusList = t as StudyCaseExecutionStatus;
+
+      if (studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_RUNNING) {
+        this.setStatusOnRootNode(StudyCalculationStatus.STATUS_RUNNING);
+        
+        // if there are not status yet, set all to pending
+        if (Object.keys(studyCaseStatusList.disciplinesStatus).length == 0) {
+          this.setStatusOnRootNode(StudyCalculationStatus.STATUS_PENDING);
+          Object.keys(this.root.rootDict).forEach(key => {
+            if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
+              this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
+            }
+          });
+         } 
+        // Emit calculation started
+        this.calculationService.onCalculationChange.emit(true);
+        this.subscribeToExecution();
+        this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(this.studyCaseDataService.loadedStudy.studyCase.id);
+        
       }
-    });
+      // in case we are waiting for pod to lunch the execution: set all to pending
+      else if (studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_PENDING 
+        || studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_POD_PENDING) {
+          this.setStatusOnRootNode(StudyCalculationStatus.STATUS_PENDING);
+          Object.keys(this.root.rootDict).forEach(key => {
+            if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
+              this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
+            }
+          });
+          // Emit calculation started
+          this.calculationService.onCalculationChange.emit(true);
+          this.subscribeToExecution();
+          this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(this.studyCaseDataService.loadedStudy.studyCase.id);
+        
+      }
+    }, error: (errorReceived) => {
+      const error = errorReceived as SoSTradesError;
+      this.calculationService.onCalculationChange.emit(false);
+      if (error.redirect) {
+        this.snackbarService.showError(error.description);
+      } else {
+        this.snackbarService.showError('Error getting study execution status : ' + error.description);
+      }
+    }
+  });
 
   }
 
@@ -935,6 +959,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.root.rootNode.status = DisciplineStatus.STATUS_FAILED;
         break;
       case StudyCalculationStatus.STATUS_STOPPED:
+        this.root.rootNode.status = DisciplineStatus.STATUS_PENDING;
+        break;
+      case StudyCalculationStatus.STATUS_PENDING:
         this.root.rootNode.status = DisciplineStatus.STATUS_PENDING;
         break;
       default:

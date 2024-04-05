@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { Study } from 'src/app/models/study.model';
+import { CreationStatus, Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData, FilterDialogData, StudyCaseCreateDialogData, EditionDialogData} from 'src/app/models/dialog-data.model';
@@ -61,10 +61,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     ColumnName.GROUP,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
+    ColumnName.STATUS,
     ColumnName.CREATION_DATE,
     ColumnName.MODIFICATION_DATE,
-    ColumnName.CREATION_STATUS,
-    ColumnName.STATUS,
     ColumnName.ACTION
   ];
   public colummnsFilter = [
@@ -707,20 +706,23 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         return possibleStringValues;
         case ColumnName.STATUS:
         this.studyCaseDataService.studyManagementData.forEach(study => {
-          // Verify to not push duplicate status
-          if (!possibleStringValues.includes(study.executionStatus)) {
-            possibleStringValues.push(study.executionStatus);
-            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
-              }
-          });
-        return possibleStringValues;
-        case ColumnName.CREATION_STATUS:
-        this.studyCaseDataService.studyManagementData.forEach(study => {
-          // Verify to not push duplicate status
-          if (!possibleStringValues.includes(study.creationStatus)) {
-            possibleStringValues.push(study.creationStatus);
-            possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
-              }
+          
+          if (study.creationStatus !== CreationStatus.CREATION_DONE &&
+            study.creationStatus !== 'DONE'){
+            // Verify to not push duplicate status
+            if (!possibleStringValues.includes(study.creationStatus)) {
+              possibleStringValues.push(study.creationStatus);
+              possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+            }
+          }
+          else{
+              // Verify to not push duplicate status
+            if (!possibleStringValues.includes(study.executionStatus)) {
+              possibleStringValues.push(study.executionStatus);
+              possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+            }
+          }
+
           });
         return possibleStringValues;
       default:

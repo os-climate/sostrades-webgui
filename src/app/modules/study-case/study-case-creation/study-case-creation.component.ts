@@ -266,7 +266,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
       this.studyCaseDataService.getAuthorizedStudiesForProcess(this.process.processId, this.process.repositoryId).subscribe({
         next: (studies) => {
           studies.forEach(study => {
-            if (study.creationStatus === CreationStatus.DONE){
+            if (study.creationStatus === CreationStatus.CREATION_DONE || study.creationStatus === 'DONE'){
               studyList.push(study);
             }
           });
