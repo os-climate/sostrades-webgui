@@ -28,6 +28,7 @@ export class LoginInformationDialogComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.logoPath == this.logoPath.GITHUB_LOGO_PATH) {
       this.githubInfos = true;
+      this.dialogRef.updateSize("530px", "450px");
     }
     else if (this.data.logoPath == this.logoPath.SOS_TRADES_LOGO_BLACK_PATH) {
       this.sostradesInfos = true;

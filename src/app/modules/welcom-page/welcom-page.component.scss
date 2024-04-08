@@ -1,7 +1,16 @@
-.welcome-title{
+.container {
+  height: 100%;
+  width: 100%;
+  padding: 5px;
+  max-width: unset !important;
+  overflow-x: auto;
+}
+
+.welcome-title {
   font-size: 32px;
 }
-#purpose{
+
+#purpose {
   width: 450px;
   margin: auto 0;
   text-align: justify;
@@ -15,14 +24,16 @@
 #logo {
   text-align: center
 }
+
 #news {
   width: 50%;
   margin: 0 auto;
 }
-#link{
+
+#link {
   width: 100%;
 }
 
-#favorite-studies{
+#favorite-studies {
   margin-bottom: 20px;
 }

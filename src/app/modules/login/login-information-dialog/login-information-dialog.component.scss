@@ -1,6 +1,13 @@
-.body {
-    height: 500px;
-    width: 450px;
+.container {
+    height: 100%;
+    width: 100%;
+    padding: 5px;
+    max-width: unset !important;
+    overflow-x: auto;
+}
+
+.container-sostrades-infos {
+    height: 80px;
 }
 
 .warning-icon {
