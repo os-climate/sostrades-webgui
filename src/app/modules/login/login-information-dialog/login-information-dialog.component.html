@@ -1,4 +1,4 @@
-<div [ngClass]="githubInfos ? 'body' : ''">
+<div [ngClass]="githubInfos ? 'container' : sostradesInfos ? 'container-sostrades-infos': ''">
     <div *ngIf="githubInfos">
         <h3 style="text-align: center;">For you first connection on <span style="text-decoration: underline;">{{data.platform}}</span> platform</h3>
         <p>After clicking on the GitHub icon for the first time, you will be redirected to an authorization page like the image below.</p>
