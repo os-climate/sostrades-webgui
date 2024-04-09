@@ -345,25 +345,24 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         this.checkIfReferenceIsAlreadySelected = false;
 
         // check if a pre selected usecase is existing
-        if ((this.data.reference !== null) &&
-            (this.data.reference !== undefined) &&
-            (this.data.reference !== '')) {
-          selectedReferecence = this.referenceList.find(dataSource =>  dataSource.name === this.data.reference &&
-                                                                dataSource.studyType === this.data.studyType &&
-                                                                dataSource.id === this.data.studyId);
-
+        if (this.data.reference) {
+          selectedReferecence = this.referenceList.find(dataSource => dataSource.id === this.data.studyId);
         }
       }
 
       // if 'studyId' attribute instance is set, then it has to be pre selected on reference
       if ((this.data.studyId !== null && this.data.studyId !== undefined) && this.data.studyId > 0 && !this.data.selectProcessOnly) {
-        const selectedStudy = this.referenceList.find(study =>
-          study.id === this.data.studyId
-        );
-        this.createStudyForm.get('selectedRef').disable();
-        this.createStudyForm.get('processId').disable();
-        this.title = `Copy study "${selectedStudy.name}"`;
-        this.disabledReferenceList = true;
+        const selectedStudy = this.referenceList.find(study =>study.id === this.data.studyId);
+        if (selectedStudy) {
+          this.createStudyForm.patchValue({selectedRef: selectedStudy});
+          this.createStudyForm.get('selectedRef').disable();
+          this.createStudyForm.get('processId').disable();
+          this.title = `Copy study "${selectedStudy.name}"`;
+          this.disabledReferenceList = true;
+        } else {
+          this.isLoading = false;
+          this.snackbarService.showError(`Error loading reference list from ${this.process.processName}` );
+        }
       } else {
         if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
           selectedReferecence = this.emptyProcessRef;
@@ -374,9 +373,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
           this.title = 'Select process & source data';
         }
       }
-
       this.isLoading = false;
-
       this.focusOnHtlmElement();
     }
   }
