@@ -86,7 +86,7 @@
           <div class="execution-status">
             <span>{{ element.regenerationStatus }}</span>
             <i style="color: red; margin-left: 5px;" class="fa-solid fa-circle-info" 
-              *ngIf="element.error && (element.regenerationStatus == 'POD_ERROR' || element.regenerationStatus == 'FAILED')"  
+              *ngIf="element.error && (element.regenerationStatus == 'POD ERROR' || element.regenerationStatus == 'FAILED')"  
               [matTooltip]="element.error">
             </i>
           </div>
