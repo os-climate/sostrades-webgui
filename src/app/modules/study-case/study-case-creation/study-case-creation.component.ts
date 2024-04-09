@@ -362,6 +362,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         } else {
           this.isLoading = false;
           this.snackbarService.showError(`Error loading reference list from ${this.process.processName}` );
+          this.dialogRef.close(this.data);
         }
       } else {
         if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
