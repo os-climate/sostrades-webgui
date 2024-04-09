@@ -54,11 +54,14 @@ export class ReferenceGenerationObserverService {
     const queryList = this.registeredGeneration.filter(sco => sco.getStatus() === GenerationStatus.STARTED);
 
     queryList.forEach(sco => {
-      this.referenceDataService.getRefGenStatus(sco.refGenId).subscribe(sceo => {
-        this.getReferenceGenerationObserver(sceo.refGenId).setStatus(sceo);
-        this.startTimeOut();
-      }, error => {
-        this.loggerService.log(error);
+      this.referenceDataService.getRefGenStatus(sco.refGenId).subscribe({
+        next: (sceo) => {
+          this.getReferenceGenerationObserver(sceo.refGenId).setStatus(sceo);
+          this.startTimeOut();
+        },
+        error: (error) => {
+          this.loggerService.log(error);
+        }
       });
     });
   }

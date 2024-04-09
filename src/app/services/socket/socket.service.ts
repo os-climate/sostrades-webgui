@@ -11,7 +11,7 @@ import { StudyCaseDataService } from '../study-case/data/study-case-data.service
 import { LoggerService } from '../logger/logger.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from '../snackbar/snackbar.service';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -64,14 +64,6 @@ export class SocketService {
     }
   }
 
-  updateAuthorization() {
-    /*if (this.socket !== null && this.socket !== undefined) {
-      this.loggerService.log(`old value: ${this.socket.io.opts.transportOptions.polling.extraHeaders.Authorization}`);
-      this.loggerService.log(`new value: ${localStorage.getItem('accessToken')}`)
-      this.socket.io.opts.transportOptions.polling.extraHeaders.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
-      this.loggerService.log(`set value: ${this.socket.io.opts.transportOptions.polling.extraHeaders.Authorization}`);
-    }*/
-  }
 
   openConnection(path: string) {
 
@@ -182,9 +174,7 @@ export class SocketService {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
       this.addNewNotificationOnList(notification)
       this.addNotificationToQueue(notification);
-      if (this.userService.getFullUsername() !== data.author) {
-        this.onNodeValidatationChange.emit(data.study_case_validation);
-      }
+      this.onNodeValidatationChange.emit(data.study_case_validation);
     });
 
     this.socket.on('study-edited', (data) => {

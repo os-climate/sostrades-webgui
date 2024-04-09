@@ -31,40 +31,20 @@
   line-height: 28px;
   margin-right: 10px;
 }
+
 .refresh-icon {
   margin-left: -10px;
-  font-size: 19px; 
+  font-size: 19px;
   height: 22px;
 }
 
-.filterSection {
-  flex: 1;
-  padding-top: 15px;
-  padding-left: 10px;
-  background-color: #f9f9f9;
-  border-radius: 7px;
-}
+
 .number-group {
   margin-right: 10px;
   font-size: 12px;
   border-radius: 7px;
 }
 
-.filter {
-  width: calc(100% - 140px);
-}
-.icon-filter-any-values {
-  margin : 0 10px;
-  color: #bdbdbd;
-}
-.icon-filter-values {
-  margin : 0 10px;
-  color: #0b78b8;
-}
-
-.table-container {
-  height: calc(100% - 58px);
-}
 
 .table {
   height: 100%;
@@ -77,6 +57,7 @@
 .mat-expansion-panel-header-title {
   font-size: 13px;
 }
+
 .expansion-panel {
   margin-bottom: 10px;
 }
@@ -88,7 +69,7 @@
   color: grey;
 }
 
-.mat-icon-button {
+.mat-mdc-icon-button {
   min-height: 0 !important;
   height: auto;
   width: auto;
@@ -104,12 +85,12 @@
   background-color: #f9f9f9;
 }
 
-th.mat-header-cell:last-of-type {
+th.mat-mdc-header-cell:last-of-type {
   text-align: left !important;
   padding-left: 3px;
 }
 
-th.mat-header-cell:last-of-type {
+th.mat-mdc-header-cell:last-of-type {
   padding-right: 5px;
 }
 
@@ -121,7 +102,7 @@ td:first-of-type {
   flex: 1;
 }
 
-th.mat-header-cell {
+th.mat-mdc-header-cell {
   text-align: center;
 }
 
@@ -129,7 +110,7 @@ th.mat-sort-header-sorted {
   color: black;
 }
 
-td.mat-cell {
+td.mat-mdc-cell {
   text-align: left;
   padding: 3px;
 }
@@ -139,12 +120,12 @@ td.mat-cell {
   vertical-align: middle;
 }
 
-.mat-cell {
+.mat-mdc-cell {
   font-size: 12px;
   color: unset;
 }
 
-tr.mat-row {
+tr.mat-mdc-row {
   height: auto;
   min-height: 0;
 }
@@ -154,20 +135,20 @@ table td {
   border-top: 0;
 }
 
-.mat-table {
+.mat-mdc-table {
   border-collapse: separate;
   width: 100%;
   margin-bottom: 0 !important;
 }
 
-td.mat-cell:first-of-type,
-th.mat-header-cell:first-of-type,
+td.mat-mdc-cell:first-of-type,
+th.mat-mdc-header-cell:first-of-type,
 mat-footer-cell:first-of-type {
   padding-left: 10px;
 }
 
-td.mat-cell:last-of-type,
-th.mat-header-cell:last-of-type,
+td.mat-mdc-cell:last-of-type,
+th.mat-mdc-header-cell:last-of-type,
 mat-footer-cell:last-of-type {
   padding-right: 4px;
 }
@@ -181,6 +162,7 @@ table td {
   border-top: 0;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 ::ng-deep.mat-radio-label {
-    margin: auto;
-    }
+  margin: auto;
+}

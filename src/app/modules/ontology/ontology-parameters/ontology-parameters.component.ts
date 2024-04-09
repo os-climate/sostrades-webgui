@@ -4,10 +4,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { FilterDialogData, OntologyParameterInformationsDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
-import { Routing } from 'src/app/models/routing.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -115,8 +114,8 @@ export class OntologyParametersComponent implements OnInit, OnDestroy {
     this.dataSourceParameters = new MatTableDataSource<OntologyParameter>(null);
 
     // Retrieving study case list
-    this.ontologyService.getParametersList().subscribe(
-      (params) => {
+    this.ontologyService.getParametersList().subscribe({
+      next: (params) => {
         this.ontologyService.parametersData = params;
         // Retrieving parameters list
         this.dataSourceParameters = new MatTableDataSource<OntologyParameter>(
@@ -137,13 +136,13 @@ export class OntologyParametersComponent implements OnInit, OnDestroy {
           } else {
               return 0;
           }
-      });
+        });
         this.onFilterChange();
         this.isLoading = false;
         this.hasLoadedParameters = true;
         this.checkUrlToShowInformation();
       },
-      (errorReceived) => {
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         this.parameterCount = 0;
         this.hasLoadedParameters = false;
@@ -156,7 +155,7 @@ export class OntologyParametersComponent implements OnInit, OnDestroy {
           );
         }
       }
-    );
+    });
 
 
   }

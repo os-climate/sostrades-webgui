@@ -220,72 +220,78 @@ export class OntologyInformationsComponent implements OnInit {
   revertCsvType(parameter: StudyUpdateParameter) {
 
     this.loadingDialogService.showLoading(`Retrieving parameter data : ${parameter.variableId}`);
-    this.studyCaseDataService.getChangeFile(parameter.variableId, parameter.id).subscribe(arrayBufferFile => {
-
-      const blobData = new Blob([arrayBufferFile]);
-
-      const reader = new FileReader();
-      reader.readAsDataURL(blobData);
-      reader.onloadend = (ev) => {
-        const base64String = reader.result;
-
-        const newUpdateParameter = new StudyUpdateParameter(
-          parameter.variableId,
-          parameter.variableType,
-          UpdateParameterType.CSV,
-          null,
-          this.data.namespace,
-          this.data.discipline,
-          base64String,
-          null,
-          null,
-          new Date());
-
-        this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
-          newUpdateParameter,
-          this.data.nodeData,
-          this.studyCaseDataService.loadedStudy.studyCase.id.toString());
-
-        this.data.nodeData.value = newUpdateParameter.newValue;
+    this.studyCaseDataService.getChangeFile(parameter.variableId, parameter.id).subscribe({
+      next: (arrayBufferFile) => {
+        const blobData = new Blob([arrayBufferFile]);
+    
+        const reader = new FileReader();
+        reader.readAsDataURL(blobData);
+        reader.onloadend = (ev) => {
+          const base64String = reader.result as string;
+    
+          const newUpdateParameter = new StudyUpdateParameter(
+            parameter.variableId,
+            parameter.variableType,
+            UpdateParameterType.CSV,
+            null,
+            this.data.namespace,
+            this.data.discipline,
+            base64String,
+            null,
+            null,
+            new Date()
+          );
+    
+          this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
+            newUpdateParameter,
+            this.data.nodeData,
+            this.studyCaseDataService.loadedStudy.studyCase.id.toString()
+          );
+    
+          this.data.nodeData.value = newUpdateParameter.newValue;
+          this.loadingDialogService.closeLoading();
+          this.dialogRef.close();
+          this.snackbarService.showInformation(`${this.data.nodeData.displayName} data reverted to date : ${parameter.lastModified}`);
+        };
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
         this.loadingDialogService.closeLoading();
-        this.dialogRef.close();
-        this.snackbarService.showInformation(`${this.data.nodeData.displayName} data reverted to date : ${parameter.lastModified}`);
-      };
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.loadingDialogService.closeLoading();
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error reverting csv file : ' + error.description);
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error reverting csv file : ' + error.description);
+        }
       }
     });
   }
 
   onShowCsvChange(parameter: StudyUpdateParameter) {
     this.loadingDialogService.showLoading(`Loading csv file : ${parameter.variableId}.csv`);
-    this.studyCaseDataService.getChangeFile(parameter.variableId, parameter.id).subscribe(arrayBufferFile => {
-
-      const spreadsheetDialogData: SpreadsheetDialogData = new SpreadsheetDialogData();
-      spreadsheetDialogData.title = parameter.variableId;
-      spreadsheetDialogData.file = new Blob([arrayBufferFile]);
-      spreadsheetDialogData.nodeData = this.data.nodeData;
-      spreadsheetDialogData.readOnly = true;
-
-      const dialogRef = this.dialog.open(SpreadsheetComponent, {
-        disableClose: true,
-        data: spreadsheetDialogData
-      });
-      this.loadingDialogService.closeLoading();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.loadingDialogService.closeLoading();
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error retrieving csv file : ' + error.description);
+    this.studyCaseDataService.getChangeFile(parameter.variableId, parameter.id).subscribe({
+      next: (arrayBufferFile) => {
+        const spreadsheetDialogData: SpreadsheetDialogData = new SpreadsheetDialogData();
+        spreadsheetDialogData.title = parameter.variableId;
+        spreadsheetDialogData.file = new Blob([arrayBufferFile]);
+        spreadsheetDialogData.nodeData = this.data.nodeData;
+        spreadsheetDialogData.readOnly = true;
+    
+        const dialogRef = this.dialog.open(SpreadsheetComponent, {
+          disableClose: true,
+          data: spreadsheetDialogData
+        });
+        this.loadingDialogService.closeLoading();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.loadingDialogService.closeLoading();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error retrieving csv file : ' + error.description);
+        }
       }
-    })
+    });
   }
 
   onShowCsvCurrentValue() {
@@ -336,20 +342,25 @@ export class OntologyInformationsComponent implements OnInit {
         });
         this.loadingDialogService.closeLoading();
       } else { // File in distant server
-        this.studyCaseMainService.getFile(this.data.nodeData.identifier).subscribe(file => {
-          spreadsheetDialogData.file = new Blob([file]);;
-          const dialogRef = this.dialog.open(SpreadsheetComponent, {
-            disableClose: true,
-            data: spreadsheetDialogData
-          });
-          this.loadingDialogService.closeLoading();
-        }, errorReceived => {
-          const error = errorReceived as SoSTradesError;
-          this.loadingDialogService.closeLoading();
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError('Error loading csv file : ' + error.description);
+        this.studyCaseMainService.getFile(this.data.nodeData.identifier).subscribe({
+          next: (file) => {
+            const spreadsheetDialogData: SpreadsheetDialogData = new SpreadsheetDialogData();
+            spreadsheetDialogData.file = new Blob([file]);
+        
+            const dialogRef = this.dialog.open(SpreadsheetComponent, {
+              disableClose: true,
+              data: spreadsheetDialogData
+            });
+            this.loadingDialogService.closeLoading();
+          },
+          error: (errorReceived) => {
+            const error = errorReceived as SoSTradesError;
+            this.loadingDialogService.closeLoading();
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              this.snackbarService.showError('Error loading csv file : ' + error.description);
+            }
           }
         });
       }

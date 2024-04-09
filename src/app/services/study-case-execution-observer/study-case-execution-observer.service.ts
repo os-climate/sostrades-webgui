@@ -54,11 +54,14 @@ export class StudyCaseExecutionObserverService {
     const queryList = this.registeredStudyCase.filter(sco => sco.getStatus() === StudyCaseStatus.STARTED);
 
     queryList.forEach(sco => {
-      this.calculationService.getStatus(sco.studyCaseId).subscribe(sceo => {
-        this.getStudyCaseObserver(sceo.studyCaseId).setStatus(sceo);
-        this.startTimeOut();
-      }, error => {
-        this.loggerService.log(error);
+      this.calculationService.getStatus(sco.studyCaseId).subscribe({
+        next: (sceo) => {
+          this.getStudyCaseObserver(sceo.studyCaseId).setStatus(sceo);
+          this.startTimeOut();
+        },
+        error: (error) => {
+          this.loggerService.log(error);
+        }
       });
     });
   }

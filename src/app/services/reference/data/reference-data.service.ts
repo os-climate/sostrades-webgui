@@ -6,13 +6,14 @@ import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { DataHttpService } from '../../http/data-http/data-http.service';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReferenceDataService extends DataHttpService {
+  
 
   public referenceManagementData: Study[];
   public referenceManagementFilter: string;
@@ -56,24 +57,7 @@ export class ReferenceDataService extends DataHttpService {
       .pipe(map(response => ReferenceGenerationStatus.Create(response)));
   }
 
-  getReferencesGenStatusByName(studies: Study[]): Observable<ReferenceGenerationStatus[]> {
-    const url = `${this.apiRoute}/status`;
-
-    const request = {
-      references_list: studies,
-    };
-
-    return this.http.post<ReferenceGenerationStatus[]>(url, request, this.options)
-      .pipe(map(refStatusList => {
-        const refStatuses: ReferenceGenerationStatus[] = [];
-        refStatusList.forEach(ref => {
-          const newRefStatus = ReferenceGenerationStatus.Create(ref);
-          refStatuses.push(newRefStatus);
-        });
-        return refStatuses;
-      }
-      ));
-  }
+  
 
   getLogs(referencePath): Observable<Blob> {
 
@@ -103,6 +87,15 @@ export class ReferenceDataService extends DataHttpService {
       usecase_name: useCaseName
     };
     return this.http.post<number>(url, request, this.options);
+  }
+
+  stopReferenceGeneration(refGenId: number): Observable<string> {
+    const url = `${this.apiRoute}/stop/${refGenId}`;
+
+    const request = {
+      refGenId: refGenId
+    };
+    return this.http.post<string>(url, request, this.options);
   }
 
   updateGenerateReferenceFlavor(refGenId, flavor: string): Observable<boolean> {

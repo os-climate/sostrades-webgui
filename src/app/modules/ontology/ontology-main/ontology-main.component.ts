@@ -60,20 +60,21 @@ export class OntologyMainComponent implements OnInit {
   public loadOntologyGeneralInformation() {
     this.isLoading = true;
      // Retrieving study case list
-    this.ontologyService.getOntologyGeneralInformation().subscribe(
-      (informations) => {
+     this.ontologyService.getOntologyGeneralInformation().subscribe({
+      next: (informations) => {
         // Check ontology's server
         let oneValueNotUndefined = false;
         Object.values(informations).forEach(value => {
           if (value !== undefined) {
-            oneValueNotUndefined = true;          }
+            oneValueNotUndefined = true;
+          }
         });
         this.ontologyisUp = oneValueNotUndefined;
-
+    
         this.generalInformation = informations;
         this.isLoading = false;
       },
-      (errorReceived) => {
+      error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
         if (error.redirect) {
           this.snackbarService.showError(error.description);
@@ -84,7 +85,7 @@ export class OntologyMainComponent implements OnInit {
           );
         }
       }
-    );
+    });
   }
 
   openTraceability(codeReposity: any) {

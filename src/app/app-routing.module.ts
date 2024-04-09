@@ -8,7 +8,6 @@ import { StudyCaseManagementContainerComponent } from './modules/study-case/stud
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { StudyGuard } from './services/study.guard';
 import { StudyManagerGuard } from './services/study-manager.guard';
-import { NoAccessGuard } from './services/no-access.guard';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
 import { SamlComponent } from './modules/saml/saml.component';
 import { StudyCaseDirectAccessComponent } from './modules/study-case/study-case-direct-access/study-case-direct-access.component';
@@ -17,13 +16,13 @@ import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component
 import { GroupManagementComponent } from './modules/group-management/group-management.component';
 import { ReferenceManagementComponent } from './modules/reference-management/reference-management.component';
 import { StudyCaseManagementComponent } from './modules/study-case/study-case-management/study-case-management.component';
-import { Routing } from './models/routing.model';
 import { OntologyParametersComponent } from './modules/ontology/ontology-parameters/ontology-parameters.component';
 import { OntologyProcessesComponent } from './modules/ontology/ontology-processes/ontology-processes.component';
 import { OntologyMainComponent } from './modules/ontology/ontology-main/ontology-main.component';
 import { OntologyContainerComponent } from './modules/ontology/ontology-container/ontology-container.component';
 import { OntologyModelsComponent } from './modules/ontology/ontology-models/ontology-models.component';
 import { NoServerComponent } from './modules/no-server/no-server.component';
+import { Routing } from './models/enumeration.model';
 
 
 const routes: Routes = [

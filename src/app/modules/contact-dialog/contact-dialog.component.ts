@@ -19,6 +19,7 @@ export class ContactDialogComponent implements OnInit {
     { }
 
   ngOnInit(): void {
+    this.dialogRef.updateSize("380px", "200px")
     this.appDataService.getAppSupport().subscribe(
       result=>{
          this.mail = result['support']

@@ -12,10 +12,6 @@ import { MaterialModule } from './material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 
-import { AngularResizedEventModule } from 'angular-resize-event';
-
-import { D3ForceGraphDirective } from './directives/d3-force-graph/d3-force-graph.directive';
-
 import { HeaderComponent } from './modules/header/header.component';
 import { SidenavComponent } from './modules/sidenav/sidenav.component';
 import { HomeComponent } from './modules/home/home.component';
@@ -43,7 +39,6 @@ import { ValidationDialogComponent } from './shared/validation-dialog/validation
 import { StudyCaseTreeviewComponent } from './modules/study-case/study-case-treeview/study-case-treeview.component';
 import { CustomTooltipComponent } from './shared/custom-tooltip/custom-tooltip.component';
 import { StudyWorkspaceComponent } from './modules/study-case/study-case-workspace/study-workspace.component';
-import { ButtonSpinnerDirective } from './directives/button-spinner/button-spinner.directive';
 import { StudyCaseManagementComponent } from './modules/study-case/study-case-management/study-case-management.component';
 import { GroupManagementComponent } from './modules/group-management/group-management.component';
 import { StudyCaseManagementContainerComponent } from './modules/study-case/study-case-management-container/study-case-management-container.component';
@@ -56,7 +51,6 @@ import { AngularSplitModule } from 'angular-split';
 import { StudyCaseExecutionExceptionDialogComponent } from './modules/study-case/study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 import { UserManagementComponent } from './modules/user/user-management/user-management.component';
 import { CreateUserComponent } from './modules/user/user-creation/user-creation.component';
-import { UserUpdateComponent } from './modules/user/user-update/user-update.component';
 import { UserAppLoadingComponent } from './modules/user/user-app-loading/user-app-loading.component';
 import { StudyCaseExecutionManagementComponent } from './modules/study-case/study-case-execution-management/study-case-execution-management.component';
 
@@ -71,7 +65,7 @@ import { StudyCaseModificationDialogComponent } from './modules/study-case/study
 import { SamlComponent } from './modules/saml/saml.component';
 import { DataManagementInformationComponent } from './modules/data-management/data-management-information/data-management-information.component';
 import { PostProcessingPlotlyComponent } from './shared/post-processing/post-processing-plotly/post-processing-plotly.component';
-import { MarkdownRendererDirective } from './markdown-renderer/markdown-renderer.directive';
+import { MarkdownRendererDirective } from './directives/markdown-renderer/markdown-renderer.directive';
 import { UpdateEntityRightComponent } from './modules/entity-right/update-entity-right/update-entity-right.component';
 import { UpdateEntityRightAddPeopleComponent } from './modules/entity-right/update-entity-right-add-people/update-entity-right-add-people.component';
 import { ReferenceManagementComponent } from './modules/reference-management/reference-management.component';
@@ -109,8 +103,6 @@ import { LinkCreateOrEditComponent } from './modules/link/link-create-or-edit/li
 import { WelcomPageComponent } from './modules/welcom-page/welcom-page.component';
 import { ContactDialogComponent } from './modules/contact-dialog/contact-dialog.component';
 import { DisciplineIconMappingConverterPipe } from './pipes/discipline-icon-mapping-converter/discipline-icon-mapping-converter.pipe';
-import { GroupEditComponent } from './modules/group-management/group-edit/group-edit.component';
-import { StudyCaseEditComponent } from './modules/study-case/study-case-edit/study-case-edit.component';
 import { StudyCaseLoggingComponent } from './modules/study-case/study-case-logging/study-case-logging.component';
 import { RepositoryTraceabilityDialogComponent } from './modules/ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
 import { FilterDialogComponent } from './shared/filter-dialog/filter-dialog.component';
@@ -122,136 +114,129 @@ import { OntologyProcessInformationComponent } from './modules/ontology/ontology
 import { StudyCaseCreationComponent } from './modules/study-case/study-case-creation/study-case-creation.component';
 import { PodSettingsComponent } from './shared/pod-settings/pod-settings.component';
 import { ProcessBuilderComponent } from './shared/process-builder/process-builder.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { NoServerComponent } from './modules/no-server/no-server.component';
 import { LoginInformationDialogComponent } from './modules/login/login-information-dialog/login-information-dialog.component';
+import { EditionFormDialogComponent } from './shared/edition-form-dialog/edition-form-dialog.component';
 
 registerLocaleData(fr);
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    SidenavComponent,
-    HomeComponent,
-    LoginComponent,
-    SelectComponent,
-    InputComponent,
-    WidgetContainerComponent,
-    D3ForceGraphDirective,
-    CouplingGraphComponent,
-    ProgressBarComponent,
-    WidgetComponent,
-    LabelComponent,
-    SnackbarComponent,
-    TableComponent,
-    PostProcessingComponent,
-    LoadingDialogComponent,
-    StudyCaseExecutionLoggingComponent,
-    FileSpreadsheetComponent,
-    ValidationDialogComponent,
-    StudyCaseTreeviewComponent,
-    CustomTooltipComponent,
-    StudyWorkspaceComponent,
-    ButtonSpinnerDirective,
-    StudyCaseManagementComponent,
-    GroupManagementComponent,
-    StudyCaseManagementContainerComponent,
-    OntologyInformationsComponent,
-    OntologyParameterInformationsComponent,
-    StudyCaseStatusInformationComponent,
-    SelectAllOptionComponent,
-    StudyCaseExecutionExceptionDialogComponent,
-    UserManagementComponent,
-    CreateUserComponent,
-    UserUpdateComponent,
-    UserAppLoadingComponent,
-    StudyCaseExecutionManagementComponent,
-    UserRoomDialogComponent,
-    StudyCaseEventContainerComponent,
-    StudyCaseNotificationsComponent,
-    StudyCaseNotificationsChangesDialogComponent,
-    StudyCaseExecutionDialogComponent,
-    StudyCaseModificationDialogComponent,
-    SamlComponent,
-    DataManagementInformationComponent,
-    PostProcessingPlotlyComponent,
-    MarkdownRendererDirective,
-    UpdateEntityRightComponent,
-    UpdateEntityRightAddPeopleComponent,
-    ReferenceManagementComponent,
-    DataManagementContainerComponent,
-    DataManagementDisciplineComponent,
-    SearchPanelComponent,
-    DocumentationComponent,
-    DashboardComponent,
-    OntologyParameterConverterPipe,
-    OntologyDisciplineConverterPipe,
-    PostProcessingBundleComponent,
-    StudyCaseDirectAccessComponent,
-    StudyCaseLinkInformationComponent,
-    SlideToggleComponent,
-    PostProcessingParetoFrontComponent,
-    VisualisationContainerComponent,
-    ExecutionSequenceComponent,
-    OntologyContainerComponent,
-    OntologyMainComponent,
-    OntologyParametersComponent,
-    OntologyProcessesComponent,
-    OntologyModelsComponent,
-    StudyCaseValidationDialogComponent,
-    SpreadsheetComponent,
-    ResetPasswordComponent,
-    ScientificNotationPipe,
-    ConnectorDataComponent,
-    LinkComponent,
-    LinkCreateOrEditComponent,
-    WelcomPageComponent,
-    ContactDialogComponent,
-    DisciplineIconMappingConverterPipe,
-    GroupEditComponent,
-    StudyCaseEditComponent,
-    StudyCaseLoggingComponent,
-    RepositoryTraceabilityDialogComponent,
-    FilterDialogComponent,
-    NewsComponent,
-    NewsCreateOrEditComponent,
-    VisualisationInterfaceDiagramComponent,
-    OntologyModelsInformationComponent,
-    OntologyProcessInformationComponent,
-    StudyCaseCreationComponent,
-    PodSettingsComponent,
-    ProcessBuilderComponent,
-    NoServerComponent,
-    LoginInformationDialogComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    AngularResizedEventModule,
-    BrowserAnimationsModule,
-    MaterialModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    FormsModule,
-    DragDropModule,
-    OverlayModule,
-    ScrollingModule,
-    TableVirtualScrollModule,
-    ClipboardModule,
-    MatTooltipModule,
-    AngularSplitModule.forRoot()
-  ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: LOCALE_ID, useValue: 'fr-FR' },
-    { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
-    TreeNodeDataService,
-    OntologyService,
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  bootstrap: [AppComponent],
-  entryComponents: [SnackbarComponent, CustomTooltipComponent],
+    declarations: [
+        AppComponent,
+        HeaderComponent,
+        SidenavComponent,
+        HomeComponent,
+        LoginComponent,
+        SelectComponent,
+        InputComponent,
+        WidgetContainerComponent,
+        CouplingGraphComponent,
+        ProgressBarComponent,
+        WidgetComponent,
+        LabelComponent,
+        SnackbarComponent,
+        TableComponent,
+        PostProcessingComponent,
+        LoadingDialogComponent,
+        StudyCaseExecutionLoggingComponent,
+        FileSpreadsheetComponent,
+        ValidationDialogComponent,
+        StudyCaseTreeviewComponent,
+        CustomTooltipComponent,
+        StudyWorkspaceComponent,
+        StudyCaseManagementComponent,
+        GroupManagementComponent,
+        StudyCaseManagementContainerComponent,
+        OntologyInformationsComponent,
+        OntologyParameterInformationsComponent,
+        StudyCaseStatusInformationComponent,
+        SelectAllOptionComponent,
+        StudyCaseExecutionExceptionDialogComponent,
+        UserManagementComponent,
+        CreateUserComponent,
+        UserAppLoadingComponent,
+        StudyCaseExecutionManagementComponent,
+        UserRoomDialogComponent,
+        StudyCaseEventContainerComponent,
+        StudyCaseNotificationsComponent,
+        StudyCaseNotificationsChangesDialogComponent,
+        StudyCaseExecutionDialogComponent,
+        StudyCaseModificationDialogComponent,
+        SamlComponent,
+        DataManagementInformationComponent,
+        PostProcessingPlotlyComponent,
+        MarkdownRendererDirective,
+        UpdateEntityRightComponent,
+        UpdateEntityRightAddPeopleComponent,
+        ReferenceManagementComponent,
+        DataManagementContainerComponent,
+        DataManagementDisciplineComponent,
+        SearchPanelComponent,
+        DocumentationComponent,
+        DashboardComponent,
+        OntologyParameterConverterPipe,
+        OntologyDisciplineConverterPipe,
+        PostProcessingBundleComponent,
+        StudyCaseDirectAccessComponent,
+        StudyCaseLinkInformationComponent,
+        SlideToggleComponent,
+        PostProcessingParetoFrontComponent,
+        VisualisationContainerComponent,
+        ExecutionSequenceComponent,
+        OntologyContainerComponent,
+        OntologyMainComponent,
+        OntologyParametersComponent,
+        OntologyProcessesComponent,
+        OntologyModelsComponent,
+        StudyCaseValidationDialogComponent,
+        SpreadsheetComponent,
+        ResetPasswordComponent,
+        ScientificNotationPipe,
+        ConnectorDataComponent,
+        LinkComponent,
+        LinkCreateOrEditComponent,
+        WelcomPageComponent,
+        ContactDialogComponent,
+        DisciplineIconMappingConverterPipe,
+        StudyCaseLoggingComponent,
+        RepositoryTraceabilityDialogComponent,
+        FilterDialogComponent,
+        NewsComponent,
+        NewsCreateOrEditComponent,
+        VisualisationInterfaceDiagramComponent,
+        OntologyModelsInformationComponent,
+        OntologyProcessInformationComponent,
+        StudyCaseCreationComponent,
+        PodSettingsComponent,
+        ProcessBuilderComponent,
+        NoServerComponent,
+        LoginInformationDialogComponent,
+        EditionFormDialogComponent,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MaterialModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        FormsModule,
+        DragDropModule,
+        OverlayModule,
+        ScrollingModule,
+        TableVirtualScrollModule,
+        ClipboardModule,
+        AngularSplitModule
+    ],
+    providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        { provide: LOCALE_ID, useValue: 'fr-FR' },
+        { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
+        TreeNodeDataService,
+        OntologyService,
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

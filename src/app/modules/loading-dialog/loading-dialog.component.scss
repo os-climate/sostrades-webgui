@@ -12,12 +12,11 @@
   width: 100%;
 }
 
-.mat-dialog-title {
+.mat-mdc-dialog-title {
   margin-bottom: 30px;
 }
 
 .disable-cancel-button-message {
-  font-weight: bold;
-  color: darkblue;
   text-align: center;
+  font-weight: 500;
 }

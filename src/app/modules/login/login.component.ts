@@ -10,7 +10,7 @@ import { SamlService } from 'src/app/services/saml/saml.service';
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { RoutingState } from 'src/app/services/routing-state/routing-state.service';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.service';
 import { environment } from 'src/environments/environment';
 import { LogoPath } from 'src/app/models/logo-path.model';
@@ -171,18 +171,20 @@ export class LoginComponent implements OnInit {
 
   loginWithGithub() {
     this.loadingLogin = true;
-    this.githubOauthService.getGithubOAuthUrl().subscribe(githubOauthUrl => {
-      this.snackbarService.closeSnackbarIfOpened();
-      document.location.href = githubOauthUrl;
-      this.loadingLogin = false;
-    }, (error) => {     
-      if (error.statusCode == 502) {
-        this.router.navigate([Routing.NO_SERVER]);        
-      } else {
-        this.snackbarService.showError('Error at GitHub login : ' + error.name);
+    this.githubOauthService.getGithubOAuthUrl().subscribe({
+      next: (githubOauthUrl) => {
+        this.snackbarService.closeSnackbarIfOpened();
+        document.location.href = githubOauthUrl;
+        this.loadingLogin = false;
+      },
+      error: (error) => {
+        if (error.statusCode == 502) {
+          this.router.navigate([Routing.NO_SERVER]);        
+        } else {
+          this.snackbarService.showError('Error at GitHub login : ' + error.name);
+        }
+        this.loadingLogin = false;
       }
-      this.loadingLogin = false; 
-        
     });
   }
 }

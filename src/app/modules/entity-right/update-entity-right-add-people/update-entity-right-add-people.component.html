@@ -6,8 +6,8 @@
   <div mat-dialog-content class="container-dialog">
     <div>
       <mat-form-field class="chips-container">
-        <mat-chip-list #chipList aria-label="User selection">
-          <mat-chip
+        <mat-chip-grid #chipList aria-label="User selection">
+          <mat-chip-row
             *ngFor="let entity of data.selectedEntities"
             [selectable]="selectable"
             [removable]="removable"
@@ -48,7 +48,7 @@
             </div>
 
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-          </mat-chip>
+          </mat-chip-row>
           <input
             textarea
             placeholder="Add people..."
@@ -58,7 +58,7 @@
             [matChipInputFor]="chipList"
             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           />
-        </mat-chip-list>
+        </mat-chip-grid>
         <mat-autocomplete
           #auto="matAutocomplete"
           (optionSelected)="selected($event)"
@@ -135,7 +135,7 @@
     <button mat-button (click)="onCancelClick()">Cancel</button>
     <button
       mat-raised-button
-      color="accent"
+      color="success"
       [disabled]="!hasChangesToSave"
       (click)="submitForm()"
     >

@@ -11,7 +11,7 @@
   height: 100%;
   padding-top: 12px;
   overflow-x: hidden;
-  overflow-y: hidden;  
+  overflow-y: hidden;
   border-radius: 0 0 5px 5px;
 }
 
@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   padding: 4px;
-  margin:4px;
+  margin: 4px;
   background-color: white;
   border: solid;
   border-width: 1px;
@@ -35,10 +35,10 @@
 }
 
 .filter-icon {
-  margin:2px;
+  margin: 2px;
 }
 
-.radio-label{
+.radio-label {
   margin-left: 5px;
   vertical-align: middle;
 }
@@ -113,14 +113,8 @@ li ul {
   width: auto;
 }
 
-.mat-icon-button {
-  line-height: unset;
-  height: 24px;
-  width: 14px;
-  outline: 0;
-}
 
-.mat-button {
+.mat-mdc-button {
   line-height: unset;
   height: 24px;
   padding-left: 2px;
@@ -190,8 +184,7 @@ li ul {
 }
 
 .toolbar-icon {
-  font-size: 20px;
-  margin-top: -4px;
+  height: 13px;
 }
 
 .toolbar-icon-font-aw {
@@ -202,16 +195,15 @@ li ul {
 
 .toolbar {
   height: 35px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
-.toolbar-spacer {
-  flex: 1 1 auto;
+#study-access-link {
+  font-size: 13px;
 }
 
-.toolbar-item-shadow {
-  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-}
 
 .waiting-refresh {
   position: absolute;
@@ -235,13 +227,13 @@ li ul {
   padding-top: 10px;
 }
 
-.mat-progress-spinner,
-.mat-spinner {
+.mat-mdc-progress-spinner,
+.mat-mdc-progress-spinner {
   stroke: #3fb53f !important;
 }
 
 .iconValid {
-  margin-left: 4%; 
+  margin-left: 4%;
   cursor: default;
   font-size: 22px;
   height: 23px;

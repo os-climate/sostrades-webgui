@@ -5,6 +5,7 @@
   max-width: unset !important;
   overflow-x: auto;
 }
+
 .page-header {
   display: flex;
   align-items: center;
@@ -12,6 +13,7 @@
   padding: 0 5px 0 5px;
   height: 58px;
 }
+
 .loading-zone {
   height: 100%;
   width: 100%;
@@ -23,9 +25,10 @@
   line-height: 28px;
   margin-right: 10px;
 }
+
 .refresh-icon {
   margin-left: -10px;
-  font-size: 19px; 
+  font-size: 19px;
   height: 22px;
 }
 
@@ -34,12 +37,12 @@
   padding: 5px 50px;
 }
 
-.btn-load-container{
+.btn-load-container {
   text-align: center;
   margin-top: 10%;
 }
 
-.label-load-container{
+.label-load-container {
   text-align: center;
 }
 
@@ -49,27 +52,12 @@
   border-radius: 7px;
 }
 
-.filterSection {
-  flex: 1;
-  padding-top: 15px;
-  padding-left: 10px;
-  background-color: #f9f9f9;
-  border-radius: 7px;
-}
-
-.filter {
-  width: calc(100% - 140px);
-}
-
-.mat-form-field {
+.mat-mdc-form-field {
   display: inline-block;
   position: relative;
   text-align: left;
 }
 
-.table-container {
-  height: calc(100% - 58px);
-}
 
 .implemented-no {
   color: #e4002b !important;
@@ -84,18 +72,20 @@
   max-width: 300px !important;
 }
 
-.mat-icon-button {
+.mat-mdc-icon-button {
   min-height: 0 !important;
   height: auto;
   width: auto;
   line-height: unset !important;
 }
 
-.mat-icon-button:focus, button:active:focus, button.active:focus {
+.mat-mdc-icon-button:focus,
+button:active:focus,
+button.active:focus {
   outline: none !important;
   outline-style: none !important;
   background-color: transparent;
-  }
+}
 
 .button-process {
   width: 22px;
@@ -105,6 +95,7 @@
   align-self: center;
   padding: 0px !important;
 
+  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   &::ng-deep .mat-button-wrapper {
     padding: 0;
   }
@@ -117,12 +108,12 @@
   margin-bottom: 0 !important;
 }
 
-th.mat-header-cell:last-of-type {
+th.mat-mdc-header-cell:last-of-type {
   text-align: left !important;
   padding-left: 3px;
 }
 
-th.mat-header-cell:last-of-type {
+th.mat-mdc-header-cell:last-of-type {
   padding-right: 5px;
 }
 
@@ -134,7 +125,7 @@ td:first-of-type {
   flex: 1;
 }
 
-th.mat-header-cell {
+th.mat-mdc-header-cell {
   text-align: center;
 }
 
@@ -142,7 +133,7 @@ th.mat-sort-header-sorted {
   color: black;
 }
 
-td.mat-cell {
+td.mat-mdc-cell {
   text-align: left;
   padding: 3px;
 }
@@ -152,12 +143,12 @@ td.mat-cell {
   vertical-align: middle;
 }
 
-tr.mat-row {
+tr.mat-mdc-row {
   height: auto;
   min-height: 0;
 }
 
-.mat-cell {
+.mat-mdc-cell {
   font-size: 12px;
   color: unset;
 }
@@ -167,20 +158,20 @@ table td {
   border-top: 0;
 }
 
-.mat-table {
+.mat-mdc-table {
   border-collapse: separate;
   width: 100%;
   margin-bottom: 0 !important;
 }
 
-td.mat-cell:first-of-type,
-th.mat-header-cell:first-of-type,
+td.mat-mdc-cell:first-of-type,
+th.mat-mdc-header-cell:first-of-type,
 mat-footer-cell:first-of-type {
   padding-left: 4px;
 }
 
-td.mat-cell:last-of-type,
-th.mat-header-cell:last-of-type,
+td.mat-mdc-cell:last-of-type,
+th.mat-mdc-header-cell:last-of-type,
 mat-footer-cell:last-of-type {
   padding-right: 4px;
 }
@@ -191,12 +182,4 @@ mat-footer-cell:last-of-type {
 
 tr.table-row:hover {
   background-color: #f9f9f9;
-}
-.icon-filter-any-values {
-  margin : 0 10px;
-  color: #bdbdbd;
-}
-.icon-filter-values {
-  margin : 0 10px;
-  color: #0b78b8;
 }

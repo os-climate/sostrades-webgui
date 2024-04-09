@@ -41,21 +41,24 @@ export class CreateUserComponent implements OnInit {
       profile: new FormControl(0)
     });
 
-    this.userService.getUserProfiles().subscribe(res => {
-      this.userProfileList = res;
-      const nullProfile = new UserProfile();
-      nullProfile.id = 0;
-      nullProfile.name = 'No profile';
-      nullProfile.description = 'User without profile';
-      this.userProfileList.unshift(nullProfile);
-      this.isLoading = false;
-    }, errorReceived => {
-      this.isLoading = false;
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError(`Error retrieving user profile list : ${error.description}`);
+    this.userService.getUserProfiles().subscribe({
+      next: (res) => {
+        this.userProfileList = res;
+        const nullProfile = new UserProfile();
+        nullProfile.id = 0;
+        nullProfile.name = 'No profile';
+        nullProfile.description = 'User without profile';
+        this.userProfileList.unshift(nullProfile);
+        this.isLoading = false;
+      },
+      error: (errorReceived) => {
+        this.isLoading = false;
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError(`Error retrieving user profile list : ${error.description}`);
+        }
       }
     });
   }
@@ -87,22 +90,25 @@ export class CreateUserComponent implements OnInit {
       true
     );
 
-    this.userService.createUser(this.data.userCreated).subscribe(creationResult => {
-      const user = User.Create(creationResult['user']);
-      const passwordLink = creationResult['password_link'];
-
-      this.loadingDialogService.closeLoading();
-      this.data.userCreated = user;
-      this.data.passwordLink = passwordLink;
-      this.dialogRef.close(this.data);
-      this.snackbarService.showInformation(`Creation of user "${this.createUserForm.value.username}" successful`);
-    }, errorReceived => {
-      this.loadingDialogService.closeLoading();
-      const error = errorReceived as SoSTradesError;
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError(`Error creating user : ${error.description}`);
+    this.userService.createUser(this.data.userCreated).subscribe({
+      next: (creationResult) => {
+        const user = User.Create(creationResult['user']);
+        const passwordLink = creationResult['password_link'];
+    
+        this.loadingDialogService.closeLoading();
+        this.data.userCreated = user;
+        this.data.passwordLink = passwordLink;
+        this.dialogRef.close(this.data);
+        this.snackbarService.showInformation(`Creation of user "${this.createUserForm.value.username}" successful`);
+      },
+      error: (errorReceived) => {
+        this.loadingDialogService.closeLoading();
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError(`Error creating user : ${error.description}`);
+        }
       }
     });
   }
