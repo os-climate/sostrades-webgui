@@ -37,14 +37,14 @@ export class PostProcessingPlotlyComponent implements OnInit {
       const downloadIcon = {
         width: 24,
         height: 24,
-        // tslint:disable-next-line: max-line-length
+        // eslint-disable-next-line max-len
         path: 'M19,21.8H5c-1.5,0-2.8-1.2-2.8-2.8v-6c0-1,0.8-1.8,1.8-1.8S5.8,12,5.8,13v5c0,0.1,0.1,0.3,0.3,0.3h12c0.1,0,0.3-0.1,0.3-0.3v-5c0-1,0.8-1.8,1.8-1.8s1.8,0.8,1.8,1.8v6C21.8,20.5,20.5,21.8,19,21.8z M12,16.8c-0.4,0-0.9-0.2-1.2-0.5l-3.6-3.6c-0.7-0.7-0.7-1.8,0-2.5c0.7-0.7,1.8-0.7,2.5,0l0.6,0.6V4c0-1,0.8-1.8,1.8-1.8S13.8,3,13.8,4v6.9l0.6-0.6c0.7-0.7,1.8-0.7,2.5,0c0.7,0.7,0.7,1.8,0,2.5l-3.6,3.6C12.9,16.7,12.4,16.8,12,16.8z',
       };
 
       const legendIcon = {
         width: 24,
         height: 24,
-        // tslint:disable-next-line: max-line-length
+        // eslint-disable-next-line max-len
         path: 'M 3 2 A 2 2 0 0 0 1 4 A 2 2 0 0 0 3 6 A 2 2 0 0 0 5 4 A 2 2 0 0 0 3 2 z M 7 3 L 7 5 L 19 5 L 19 3 L 7 3 z M 3 8 A 2 2 0 0 0 1 10 A 2 2 0 0 0 3 12 A 2 2 0 0 0 5 10 A 2 2 0 0 0 3 8 z M 7 9 L 7 11 L 19 11 L 19 9 L 7 9 z M 3 14 A 2 2 0 0 0 1 16 A 2 2 0 0 0 3 18 A 2 2 0 0 0 5 16 A 2 2 0 0 0 3 14 z M 7 15 L 7 17 L 19 17 L 19 15 L 7 15 z',
       };
 
@@ -131,7 +131,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
             }
           },
           // Set standard plotly toolbar icons
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           'toImage', 'zoom2d', 'pan2d', 'select2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian']];
       } else {
         modeBarButtons = [[
@@ -151,7 +151,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
             }
           },
           // Restore standard plotly toolbar icons
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           'toImage', 'zoom2d', 'pan2d', 'select2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian']];
       }
 

@@ -8,7 +8,7 @@
         <div style="display: flex;">
             <button 
                 mat-icon-button 
-                color="accent"
+                color="primary"
                 style="margin-top: -7px; margin-right: 10px;"  
                 matTooltip="Add a news" 
                 *ngIf="hasAccessToStudyManager"
@@ -36,7 +36,7 @@
                 <td *ngIf="hasAccessToStudyManager" class="icon-edit-delete">
                     <button 
                         mat-icon-button 
-                        color="accent" 
+                        color="primary" 
                         matTooltip="edit message" 
                         *ngIf="hasAccessToStudyManager"
                         (click)="onEdit(news)"  >

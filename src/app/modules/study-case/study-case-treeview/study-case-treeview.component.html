@@ -1,6 +1,6 @@
 <div class="configure-container">
   <div class="filter-zone" *ngIf="originTreeNode">
-    <button mat-icon-button class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></button>
+    <i class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></i>
     <input
       class="filter-input"
       matInput
@@ -10,9 +10,7 @@
       [placeholder]="isSearchOption?'Search variable':'Filter treeview'"
       (click)="applyFilter($event)"
     />
-    <button mat-icon-button [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h">
-
-    </button>
+    <i  [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h"></i>
     <mat-menu #searchoption="matMenu">
       <mat-button-toggle-group ngDefaultControl [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
         <mat-button-toggle mat-menu-item value="false"
@@ -29,7 +27,6 @@
     </mat-menu>
   </div>
   <mat-toolbar class="toolbar" *ngIf="originTreeNode">
-    <div class="toolbar-spacer"></div>
 
     <button
       mat-button
@@ -37,7 +34,6 @@
       (click)="saveAndSynchronise()"
       [disabled]="!showChangesButtons || executionStarted"
       *ngIf="!(isStudyReadOnly || isStudyNoData)"
-      class="toolbar-item-shadow"
     >
       <img
         src="/assets/save_sync.svg"
@@ -46,14 +42,6 @@
         aria-label="Save changes"
         matTooltip="Save changes"
         *ngIf="showChangesButtons && !executionStarted"
-        style="
-          height: 24px;
-          width: 24px;
-          padding-top: 2px;
-          padding-left: 3px;
-          padding-right: 3px;
-          padding-bottom: 6px;
-        "
       />
       <img
         src="/assets/save_sync_disabled.svg"
@@ -62,14 +50,6 @@
         aria-label="Save changes"
         matTooltip="Save changes"
         *ngIf="!showChangesButtons || executionStarted"
-        style="
-          height: 24px;
-          width: 24px;
-          padding-top: 2px;
-          padding-left: 3px;
-          padding-right: 3px;
-          padding-bottom: 6px;
-        "
       />
     </button>
 
@@ -78,16 +58,15 @@
       id="btn-treeview-start-calculation"
       (click)="onStartExecution()"
       *ngIf="!executionStarted && !(isStudyReadOnly || isStudyNoData) && canExecute"
-      class="toolbar-item-shadow"
       [disabled]="!studyIsLoaded || executionStarted"
     >
       <i
-        class="fa-regular fa-circle-play toolbar-icon-font-aw execution"
+        class="fa-regular fa-circle-play execution"
         [ngClass]="
           studyCaseDataService.loadedStudy.userIdExecutionAuthorized ===
           userService.getCurrentUserId()
-            ? 'fa-regular fa-circle-play toolbar-icon-font-aw execution'
-            : 'fa-regular fa-circle-play toolbar-icon-font-aw status-off'
+            ? 'fa-regular fa-circle-play execution'
+            : 'fa-regular fa-circle-play status-off'
         "
         aria-hidden="false"
         aria-label="Start execution"
@@ -100,15 +79,14 @@
       id="btn-treeview-stop-calculation"
       (click)="onStopExecution()"
       *ngIf="executionStarted && !(isStudyReadOnly || isStudyNoData)"
-      class="toolbar-item-shadow"
       [disabled]="!studyIsLoaded && !canExecute"
     >
       <mat-icon
         [ngClass]="
           studyCaseDataService.loadedStudy.userIdExecutionAuthorized ===
           userService.getCurrentUserId()
-            ? 'toolbar-icon stop'
-            : 'toolbar-icon status-off'
+            ? ' stop'
+            : ' status-off'
         "
         aria-hidden="false"
         aria-label="Stop execution"
@@ -117,80 +95,39 @@
         stop</mat-icon
       >
     </button>
-
     <button
-      id="btn-treeview-hide-status"
+      [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
       mat-button
-      (click)="onHideStatus()"
-      *ngIf="showStatus"
-      class="toolbar-item-shadow"
+      (click)="onShowHideStatus(!showStatus)"
+      [matTooltip]="showStatus ? 'Hide status' : 'Show status'"
     >
-      <mat-icon
-        class="toolbar-icon-font-aw status-off"
-        aria-hidden="false"
-        aria-label="Hide status"
-        matTooltip="Hide status"
-      >
-        visibility</mat-icon
-      >
+    <i [class]="showStatus ? 'fa-solid fa-eye-slash' : 'fa-sharp fa-solid fa-eye'"></i>
+
     </button>
     <button
-      id="btn-treeview-show-status"
       mat-button
-      (click)="onShowStatus()"
-      *ngIf="!showStatus"
-      class="toolbar-item-shadow"
+      [id]="showState ? 'hide-validation-state': 'show-validation-state'"
+      [matTooltip]=" showState ? 'Hide validation state' : 'show-validation-state'"
+      (click)="onShowHideState()"
     >
-      <mat-icon
-        class="toolbar-icon-font-aw"
-        aria-hidden="false"
-        aria-label="Show status"
-        matTooltip="Show status"
-      >
-      visibility_off
-     </mat-icon
-      >
+    <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
     </button>
-    <button
-    mat-button
-    (click)="onHideState()"
-    *ngIf="showState"
-    class="toolbar-item-shadow"
-  >
-  <i
-  class="fa-solid fa-square-check toolbar-icon-font-aw status-off"
-  aria-hidden="false"
-  aria-label="Hide validation state"
-  matTooltip="Hide validation state"
-  >
-
-  </i>
-  </button>
-  <button
-    mat-button
-    (click)="onShowState()"
-    *ngIf="!showState"
-    [id]="'show-validation-state'"
-    class="toolbar-item-shadow"
-  >
-  <i
-  class="fa-regular fa-square-check toolbar-icon-font-aw status-on"
-
-  aria-hidden="false"
-  aria-label="Show validation state"
-  matTooltip="Show validation state">
-  </i>
-  </button>
-    <button mat-button (click)="onShowRoomUser()" class="toolbar-item-shadow">
+    
+    <button 
+      mat-button 
+      matTooltip="Users working on same study case" 
+      (click)="onShowRoomUser()"
+      id="btn-treeview-show-working-users"
+      >
       <mat-icon
         [matBadge]="'+' + (numberOfUserRoom - 1)"
         [matBadgeHidden]="numberOfUserRoom <= 1"
         matBadgeColor="warn"
         matBadgeSize="small"
-        class="toolbar-icon status-on"
         aria-hidden="false"
         aria-label="Users working on same study case"
-        matTooltip="Users working on same study case"
+        
+        style="margin-right: 0px;"
         >people</mat-icon
       >
     </button>
@@ -200,57 +137,63 @@
       aria-hidden="false"
       aria-label="Study case access link"
       matTooltip="Study case access link"
-      class="toolbar-item-shadow"
+      color="primary"
+      id="btn-treeview-study-access-link"
     >
-      <div style="width: 24px; height: 24px; line-height: 24px">
-        <i
-          class="fa-solid fa-up-right-from-square"
-          style="font-size: 15px; color: #0b78b8; vertical-align: middle"
-        >
-        </i>
-      </div>
+        <i class="fa-solid fa-up-right-from-square"></i>
     </button>
+   
     <button
       mat-button
+      id="btn-treeview-reload-study"
       aria-hidden="false"
-      aria-label="Information about calculation status and validation state"
-      matTooltip="Information about calculation status and validation state"
-      class="toolbar-item-shadow"
-      (click)="onShowStatusInformation()"
-    >
-      <div style="width: 24px; height: 24px; line-height: 24px">
-        <i
-          class="fa-solid fa-circle-info"
-          style="font-size: 19px; color: #0b78b8; vertical-align: middle"
-        >
-        </i>
-      </div>
-    </button>
-    <button
-      mat-button
-      aria-hidden="false"
-      class="toolbar-item-shadow"
       *ngIf="!(isStudyReadOnly || isStudyNoData)"
       [disabled]="!studyCanReload || executionStarted"
       (click)="onReloadStudy()"
+      [color]="studyCanReload && !executionStarted ? 'primary' : ''"
+      [matTooltip]="studyCanReload && !executionStarted ? 'Reload the study' : !studyCanReload || executionStarted ? 'No reload possible before first run or while running' : ''"
     >
-      <div style="width: 24px; height: 24px; line-height: 24px">
         <i
           *ngIf="studyCanReload && !executionStarted"
-          class="fa-solid fa-rotate fa-fw toolbar-icon"
-          style="font-size: 16px; color: #0b78b8; vertical-align: text-bottom"
+          class="fa-solid fa-rotate fa-fw"
           matTooltip="Reload the study"
         >
         </i>
         <i
           *ngIf="!studyCanReload || executionStarted"
-          class="fa-solid fa-rotate fa-fw toolbar-icon status-off-grey"
-          style="font-size: 16px; vertical-align: text-bottom"
-          matTooltip="No reload possible before first run or while running"
+          class="fa-solid fa-rotate fa-fw status-off-grey"
         >
         </i>
-      </div>
     </button>
+    <button
+      mat-button
+      id="btn-treeview-study-settings"
+      (click)="onOpenSettings()"
+      *ngIf="hasFlavors && !(isStudyReadOnly || isStudyNoData) && canExecute"
+      [disabled]="!studyIsLoaded"
+    >
+      <i
+        class="fa-solid fa-gear"
+        aria-hidden="false"
+        aria-label="Execution pod settings"
+        matTooltip="Execution pod settings"
+      >
+      </i>
+    </button>
+    <button
+    id="btn-treeview-information"
+    mat-button
+    aria-hidden="false"
+    aria-label="Information about calculation status and validation state"
+    matTooltip="Information about calculation status and validation state"
+    (click)="onShowStatusInformation()"
+    color="accent"
+  >
+      <i
+        class="fa-solid fa-circle-info"
+      >
+      </i>
+  </button>
   </mat-toolbar>
   <mat-divider width="100%" *ngIf="originTreeNode"></mat-divider>
 
@@ -286,8 +229,7 @@
             <mat-icon
             *ngIf="showState && node.isValidated"
             [id]="'node-validated-' + node.name"
-            class="iconValid"
-            style="color: #08875b;"
+            class="iconValid color-success"
             matTooltip="VALIDATED"
             >
             check_circle
@@ -307,7 +249,7 @@
                 [ngClass]="node | disciplineIconMappingConverter"
               >
               </i>
-              {{ node.name }}
+              <span> {{ node.name }}</span>
 
               <mat-icon
                 *ngIf="!node.isConfigured"
@@ -330,7 +272,7 @@
       >
         <li class="tree-container">
           <div class="mat-tree-node">
-            <button
+            <span
               [id]="'btn-treeview-expand-' + node.fullNamespace"
               mat-icon-button
               matTreeNodeToggle
@@ -341,15 +283,11 @@
               [id]="treeControl.isExpanded(node)
               ? 'chevron-down-' + node.fullNamespace
               : 'chevron-right-'+ node.fullNamespace"
-                [ngClass]="
-                  treeControl.isExpanded(node)
-                    ? 'fas fa-chevron-down fa-fw'
-                    : 'fas fa-chevron-right fa-fw'
-                "
-                style="margin-left: 1px"
+                [ngClass]="treeControl.isExpanded(node) ? 'fas fa-chevron-down fa-fw' : 'fas fa-chevron-right fa-fw'"
+                style="margin-left: 1px; cursor:pointer"
               >
               </i>
-            </button>
+            </span>
             <div
               [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
               *ngIf="node.status.length > 0 && showStatus"
@@ -373,8 +311,7 @@
             *ngIf="showState && node.isValidated"
             mat-button
             [id]="'node-validated-' + node.name"
-            class="iconValid"
-            style="color: #08875b;"
+            class="iconValid color-success"
             matTooltip="VALIDATED"
             >
             check_circle
@@ -383,10 +320,8 @@
               [id]="'btn-treeview-node-' + node.fullNamespace"
               (click)="nodeClick(node)"
               mat-button
-              [matTooltip]="
-                node.modelsFullPathList | ontologyDisciplineConverter
-              "
-              matTooltipClass="custom-tooltip-class"
+              [matTooltip]="node.modelsFullPathList | ontologyDisciplineConverter"
+              matTooltipPosition="right"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
               style="margin-left: 4px !important; font-size: 13px"
             >
@@ -394,17 +329,15 @@
                 [ngClass]="node | disciplineIconMappingConverter"
               >
               </i>
-             {{ node.name }}
-
-
+              <span> {{ node.name }}</span>
               <span
                 *ngIf="node.isRoot && isTreeViewFiltered"
+                color="success"
                 style="
                   background-color: #f6f6f6;
                   padding: 3px;
                   margin-left: 10px;
                   border-radius: 7px;
-                  color: #08875b;
                 "
               >
                 <i

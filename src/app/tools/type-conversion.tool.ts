@@ -1,7 +1,5 @@
 export class TypeConversionTools {
 
-  constructor() { }
-
   public static b64StringToBlob(b64StringData): Blob {
     const byteString = atob(b64StringData.split(',')[1]);
     const ab = new ArrayBuffer(byteString.length);

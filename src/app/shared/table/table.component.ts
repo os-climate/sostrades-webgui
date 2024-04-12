@@ -154,7 +154,7 @@ export class TableComponent implements OnInit, OnDestroy {
     } else if (this.nodeData.type.includes('int')) {
       const newDataArray = [];
       this.dataArray.forEach(element => {
-        // tslint:disable-next-line: radix
+        // eslint-disable-next-line radix
         newDataArray.push(parseInt(element));
       });
       this.valueChanged.emit(newDataArray);

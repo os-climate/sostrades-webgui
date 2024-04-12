@@ -40,7 +40,6 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dataSourceNotifications = new MatTableDataSource<CoeditionNotification>(this.studyCaseDataService.studyCoeditionNotifications);
-
     this.onNewNotificationSubscription = this.socketService.onNewNotification.subscribe(notification => {
       this.onNotificationAction(notification);
     });

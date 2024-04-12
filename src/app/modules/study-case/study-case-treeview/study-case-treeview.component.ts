@@ -18,7 +18,7 @@ import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-di
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { StudyCaseStatusInformationComponent } from '../study-case-status-information/study-case-status-information.component';
-import { ValidationDialogData, UsersRoomDialogData, StudyCaseModificationDialogData } from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, UsersRoomDialogData, StudyCaseModificationDialogData, PodSettingsDialogData } from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { User } from 'src/app/models/user.model';
@@ -38,6 +38,8 @@ import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-executio
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
+import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
+import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 
 
 @Component({
@@ -51,6 +53,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private root: TreeView;
   public originTreeNode: TreeNode;
   public filteredTreeNode: TreeNode;
+  
 
   private onStudyCaseChangeSubscription: Subscription;
   private onTradeSpaceSelectionChangedSubscription: Subscription;
@@ -97,6 +100,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private dialogRefRoom: MatDialogRef<UserRoomDialogComponent>;
   private dialogRefModification: MatDialogRef<StudyCaseModificationDialogComponent>;
 
+  public hasFlavors:boolean;
+  private flavorsList: string[];
 
   @ViewChild('filter', { static: false }) private filterElement: ElementRef;
 
@@ -130,7 +135,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     private loadingDialogService: LoadingDialogService,
     private studyDialogService: StudyDialogService,
     private filterService: FilterService,
-    private studyCaseValidationService: StudyCaseValidationService
+    private studyCaseValidationService: StudyCaseValidationService,
+    private flavorsService: FlavorsService
   ) {
     this.onStudyCaseChangeSubscription = null;
     this.onTradeSpaceSelectionChangedSubscription = null;
@@ -163,6 +169,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     this.isTreeViewFiltered = false;
     this.isSearchOption = true;
+
+    this.hasFlavors = false;
+    this.flavorsList = [];
   }
 
 
@@ -175,6 +184,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       if (loadedStudy !== null) {
 
         const currentLoadedStudy = (loadedStudy as LoadedStudy);
+
         // Applying no data and read only values
         this.isStudyNoData = currentLoadedStudy.noData;
         this.isStudyReadOnly = currentLoadedStudy.readOnly;
@@ -201,7 +211,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             this.postProcessingService.resetPostProcessingQueue();
             this.startBackgroundLoadingPostProcessing();
           } else {
-            this.onShowStatus();
+            this.onShowHideStatus(true);
             this.studyIsDone = false;
             this.postProcessingService.resetPostProcessingQueue();
           }
@@ -267,6 +277,17 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.applyFilterToTreeview(this.filterTreeInput);
       }
     });
+
+    //get flavors in config api
+    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+      {
+        if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
+         this.hasFlavors = true;
+         this.flavorsList = flavorList;
+        
+        }
+      }
+    );
   }
 
   ngAfterViewInit(): void {
@@ -455,11 +476,12 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   setExpandForDisciplinePanel(TreeNodeOrPanelId: string) {
     this.studyCaseDataService.loadedStudy.userStudyPreferences.treeNodeExpandedData[TreeNodeOrPanelId] = true;
 
-    this.studyCaseDataService.SetUserStudyPreference(TreeNodeOrPanelId, true).subscribe(
-      _ => { },
-      error => {
+    this.studyCaseDataService.SetUserStudyPreference(TreeNodeOrPanelId, true).subscribe({
+      next: (_) => {},
+      error: (error) => {
         this.snackbarService.showError(error);
-      });
+      }
+    });
   }
 
   setExpandTreeNodeAndParent(treenode: TreeNode) {
@@ -475,19 +497,28 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
   saveTreeViewPreferences(node: TreeNode) {
     var isExpanded = this.treeControl.isExpanded(node);
-    this.studyCaseDataService.SetUserStudyPreference(node.fullNamespace, isExpanded).subscribe(
-      _ => { },
-      error => {
+    this.studyCaseDataService.SetUserStudyPreference(node.fullNamespace, isExpanded).subscribe({
+      next: (_) => {},
+      error: (error) => {
         this.snackbarService.showError(error);
-      });
+      }
+    });
   }
 
-  onShowStatus() {
-    this.showStatus = true;
+  onShowHideStatus(showStatus: boolean) {
+    if (showStatus) {
+      this.showStatus = true;
+    } else {
+      this.showStatus = false;
+    } 
   }
 
-  onHideStatus() {
-    this.showStatus = false;
+  onShowHideState() {
+    if (this.showState) {
+      this.showState = false;
+    } else {
+      this.showState = true;
+    } 
   }
 
   onSetSearchOption(){
@@ -500,32 +531,50 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.nodeClick(this.currentSelectedNode);
     this.applyFilterValue(this.filterTreeInput)
   }
-  onShowState() {
-    this.showState = true;
-  }
-
-  onHideState() {
-    this.showState = false;
-  }
 
   initExecution() {
 
     // Cleaning old subscriptions
     this.cleanExecutionSubscriptions();
 
-    this.calculationService.getStatus(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(t => {
+    this.calculationService.getStatus(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
+      next: (t) => {
       const studyCaseStatusList = t as StudyCaseExecutionStatus;
 
       if (studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_RUNNING) {
         this.setStatusOnRootNode(StudyCalculationStatus.STATUS_RUNNING);
-        if (Object.keys(studyCaseStatusList.disciplinesStatus).length > 0) { // Execution running or finished
+        
+        // if there are not status yet, set all to pending
+        if (Object.keys(studyCaseStatusList.disciplinesStatus).length == 0) {
+          this.setStatusOnRootNode(StudyCalculationStatus.STATUS_PENDING);
+          Object.keys(this.root.rootDict).forEach(key => {
+            if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
+              this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
+            }
+          });
+         } 
+        // Emit calculation started
+        this.calculationService.onCalculationChange.emit(true);
+        this.subscribeToExecution();
+        this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(this.studyCaseDataService.loadedStudy.studyCase.id);
+        
+      }
+      // in case we are waiting for pod to lunch the execution: set all to pending
+      else if (studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_PENDING 
+        || studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_POD_PENDING) {
+          this.setStatusOnRootNode(StudyCalculationStatus.STATUS_PENDING);
+          Object.keys(this.root.rootDict).forEach(key => {
+            if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
+              this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
+            }
+          });
           // Emit calculation started
           this.calculationService.onCalculationChange.emit(true);
           this.subscribeToExecution();
           this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(this.studyCaseDataService.loadedStudy.studyCase.id);
-        }
+        
       }
-    }, errorReceived => {
+    }, error: (errorReceived) => {
       const error = errorReceived as SoSTradesError;
       this.calculationService.onCalculationChange.emit(false);
       if (error.redirect) {
@@ -533,7 +582,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       } else {
         this.snackbarService.showError('Error getting study execution status : ' + error.description);
       }
-    });
+    }
+  });
 
   }
 
@@ -557,6 +607,51 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
+  onOpenSettings(){
+    // get execution flavor from db in cas it was changed  y another user
+    this.studyCaseDataService.getExecutionFlavor(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(flavor=> {
+      const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
+      dialogData.flavorsList = this.flavorsList;
+      dialogData.type = "Execution";
+      dialogData.flavor = flavor;
+      
+      const dialogRef = this.dialog.open(PodSettingsComponent, {
+        disableClose: false,
+        data: dialogData
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        const podData: PodSettingsDialogData = result as PodSettingsDialogData;
+        if (podData !== null && podData !== undefined) {
+          if (podData.cancel === false) {
+            // Close study if the loaded study is the same that the study edited
+            if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+              let study_case = this.studyCaseDataService.loadedStudy.studyCase;
+              this.studyCaseDataService.updateExecutionFlavor(study_case.id, podData.flavor).subscribe(
+              studyIsEdited => {
+                  this.snackbarService.showInformation(`Study ${study_case.name} has been succesfully updated, changes will be taken into account at the next execution. `);
+                }, errorReceived => {
+                  this.snackbarService.showError('Error updating study\n' + errorReceived.description);
+                  this.loadingDialogService.closeLoading();
+                });
+              }
+            }
+          }
+        },
+          errorReceived => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError(error.description);
+            } else {
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError(`Error updating study-case: ${error.description}`);
+            }
+          }
+        );
+    });
+  }
+
   onStartExecution() {
 
     if (!this.executionStarted) {
@@ -575,8 +670,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
         this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          width: '500px',
-          height: '220px',
           data: validationDialogData,
         });
 
@@ -589,19 +682,22 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
                 this.loadingDialogService.showLoading(`Claiming study case execution right`);
 
-                this.studyCaseDataService.claimStudyExecutionRight().subscribe(res => {
-                  this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized = this.userService.getCurrentUserId();
-                  this.socketService.claimStudyExecution(this.studyCaseDataService.loadedStudy.studyCase.id);
-                  this.loadingDialogService.closeLoading();
-                  this.snackbarService.showInformation(res);
-                  this.checkChangesAndStartExecution();
-                }, errorReceived => {
-                  this.loadingDialogService.closeLoading();
-                  const error = errorReceived as SoSTradesError;
-                  if (error.redirect) {
-                    this.snackbarService.showError(error.description);
-                  } else {
-                    this.snackbarService.showError('Error claiming study case execution : ' + error.description);
+                this.studyCaseDataService.claimStudyExecutionRight().subscribe({
+                  next: (res) => {
+                    this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized = this.userService.getCurrentUserId();
+                    this.socketService.claimStudyExecution(this.studyCaseDataService.loadedStudy.studyCase.id);
+                    this.loadingDialogService.closeLoading();
+                    this.snackbarService.showInformation(res);
+                    this.checkChangesAndStartExecution();
+                  },
+                  error: (errorReceived) => {
+                    this.loadingDialogService.closeLoading();
+                    const error = errorReceived as SoSTradesError;
+                    if (error.redirect) {
+                      this.snackbarService.showError(error.description);
+                    } else {
+                      this.snackbarService.showError('Error claiming study case execution : ' + error.description);
+                    }
                   }
                 });
               }
@@ -624,43 +720,43 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           this.socketService.submitStudy(this.studyCaseDataService.loadedStudy.studyCase.id);
 
           const studyCase = this.studyCaseDataService.loadedStudy.studyCase;
-          this.calculationService.execute(this.studyCaseDataService.loadedStudy).subscribe(response => {
-            
-            // Send socket notification
-            this.socketService.executeStudy(studyCase.id, true);
-
-            this.subscribeToExecution();
-            this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(studyCase.id);
-            this.postProcessingService.clearPostProcessingDict();
-
-
-            this.snackbarService.showInformation('Study case successfully submitted');
-
-            // Setting root node at status_stopped corresponding to discipline pending
-            this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
-
-            Object.keys(this.root.rootDict).forEach(key => {
-              if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
-                this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
+          this.calculationService.execute(this.studyCaseDataService.loadedStudy).subscribe({
+            next: (response) => {
+              // Send socket notification
+              this.socketService.executeStudy(studyCase.id, true);
+          
+              this.subscribeToExecution();
+              this.studyCaseExecutionObserverService.startStudyCaseExecutionObserver(studyCase.id);
+              this.postProcessingService.clearPostProcessingDict();
+          
+              this.snackbarService.showInformation('Study case successfully submitted');
+          
+              // Setting root node at status_stopped corresponding to discipline pending
+              this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
+          
+              Object.keys(this.root.rootDict).forEach(key => {
+                if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
+                  this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
+                }
+              });
+              this.loadingDialogService.closeLoading();
+            },
+            error: (errorReceived) => {
+              // Send socket notification
+              this.socketService.executeStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false);
+              this.calculationService.onCalculationChange.emit(false);
+              this.executionStarted = false;
+              const error = errorReceived as SoSTradesError;
+              this.loadingDialogService.closeLoading();
+              if (error.redirect) {
+                this.snackbarService.showError(error.description);
+              } else {
+                this.snackbarService.showError('Study case submission failed : ' + error.description);
               }
-            });
-            this.loadingDialogService.closeLoading();
-          }, errorReceived => {
-
-            // Send socket notification
-            this.socketService.executeStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false);
-            this.calculationService.onCalculationChange.emit(false);
-            this.executionStarted = false;
-            const error = errorReceived as SoSTradesError;
-            this.loadingDialogService.closeLoading();
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.snackbarService.showError('Study case submission failed : ' + error.description);
             }
           });
         } else {
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           this.snackbarService.showWarning('Missing mandatory data before being able to execute study case (Node => ' + dataMissing[0] + ', ...)');
         }
       }
@@ -685,8 +781,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
         this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          width: '500px',
-          height: '220px',
           data: validationDialogData,
         });
 
@@ -712,20 +806,23 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     const studyCaseObserver = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseDataService.loadedStudy.studyCase.id);
 
-    this.calculationService.stop(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(response => {
-      this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
-      this.snackbarService.showInformation('Study case successfully terminated');
-      studyCaseObserver.stop();
-
-      this.loadingDialogService.updateMessage(`Refreshing study case ${this.studyCaseDataService.loadedStudy.studyCase.name}.`)
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.loadingDialogService.closeLoading();
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Study case termination failed : ' + error.description);
+    this.calculationService.stop(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
+      next: (response) => {
+        this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
+        this.snackbarService.showInformation('Study case successfully terminated');
         studyCaseObserver.stop();
+    
+        this.loadingDialogService.updateMessage(`Refreshing study case ${this.studyCaseDataService.loadedStudy.studyCase.name}.`);
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.loadingDialogService.closeLoading();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Study case termination failed : ' + error.description);
+          studyCaseObserver.stop();
+        }
       }
     });
   }
@@ -738,7 +835,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.studyExecutionStartedSubscription = studyCaseObserver.
       executionStarted.subscribe(d => {
         this.executionStarted = true;
-        this.onShowStatus();
+        this.onShowHideStatus(true);
         // Resetting cpu and memory value before run
         const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
@@ -757,7 +854,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
         if (statusList.length > 0) {
           statusList.forEach(key => {
-            // tslint:disable-next-line: max-line-length
+            // eslint-disable-next-line max-len
             if (studyCaseStatusList.disciplinesStatus[key] === DisciplineStatus.STATUS_CONFIGURE || studyCaseStatusList.disciplinesStatus[key] === DisciplineStatus.STATUS_VIRTUAL || studyCaseStatusList.disciplinesStatus[key] === DisciplineStatus.STATUS_NONE) {
               this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
             } else {
@@ -784,26 +881,29 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
         // Reload the study in order to get all post postprocessing data
-        const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(resultLoadedStudy => {
-        let loadedstudyCase = resultLoadedStudy as LoadedStudy;
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, (isStudyLoaded)=>{
-              studySubscription.unsubscribe();
-              // Cleaning old subscriptions
-              this.cleanExecutionSubscriptions();
-              this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
-              this.calculationService.onCalculationChange.emit(false);
-              this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
-            }, false, true).subscribe();
-          }, errorReceived => {
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError('Error refreshing study data after execution : ' + error.description);
+        const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe({
+          next: (resultLoadedStudy) => {
+            let loadedstudyCase = resultLoadedStudy as LoadedStudy;
+            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, (isStudyLoaded)=>{
+                  studySubscription.unsubscribe();
+                  // Cleaning old subscriptions
+                  this.cleanExecutionSubscriptions();
+                  this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
+                  this.calculationService.onCalculationChange.emit(false);
+                  this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
+                }, false, true).subscribe();
+              },
+          error: (errorReceived) => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              this.snackbarService.showError('Error refreshing study data after execution : ' + error.description);
+            }
+            // Cleaning old subscriptions
+            this.cleanExecutionSubscriptions();
+            this.calculationService.onCalculationChange.emit(false);
           }
-          // Cleaning old subscriptions
-          this.cleanExecutionSubscriptions();
-          this.calculationService.onCalculationChange.emit(false);
         });
       });
   }
@@ -816,31 +916,32 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.studyCaseLoadingService.updateStudyCaseDataService(loadedStudy);
       this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
       //reload study for post processing
-      this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe(response => {
-
-        //send coedition reload
-        this.socketService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id);
-
-        if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
-          this.studyIsDone = true;
-        } else {
-          this.onShowStatus();
-          this.studyIsDone = false;
-        }
-        this.postProcessingService.clearPostProcessingDict();
-        this.postProcessingService.resetPostProcessingQueue();
-        this.startBackgroundLoadingPostProcessing();
-        
-
-        this.snackbarService.showInformation('Study case successfully reloaded');
-        this.loadingDialogService.closeLoading();
-      }, errorReceived => {
-        const error = errorReceived as SoSTradesError;
-        this.loadingDialogService.closeLoading();
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.snackbarService.showError('Study case reloading failed : ' + error.description);
+      this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe({
+        next: (response) => {
+          //send coedition reload
+          this.socketService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id);
+      
+          if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
+            this.studyIsDone = true;
+          } else {
+            this.onShowHideStatus(true);
+            this.studyIsDone = false;
+          }
+          this.postProcessingService.clearPostProcessingDict();
+          this.postProcessingService.resetPostProcessingQueue();
+          this.startBackgroundLoadingPostProcessing();
+      
+          this.snackbarService.showInformation('Study case successfully reloaded');
+          this.loadingDialogService.closeLoading();
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError('Study case reloading failed : ' + error.description);
+          }
         }
       });
     });
@@ -858,6 +959,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.root.rootNode.status = DisciplineStatus.STATUS_FAILED;
         break;
       case StudyCalculationStatus.STATUS_STOPPED:
+        this.root.rootNode.status = DisciplineStatus.STATUS_PENDING;
+        break;
+      case StudyCalculationStatus.STATUS_PENDING:
         this.root.rootNode.status = DisciplineStatus.STATUS_PENDING;
         break;
       default:
@@ -909,8 +1013,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
       disableClose: true,
-      width: '500px',
-      height: '220px',
       data: validationDialogData
     });
     this.dialogRefValidate.afterClosed().subscribe((result) => {
@@ -1119,7 +1221,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.originTreeNode = this.root.rootNode;
       this.dataSource.data = [this.originTreeNode];
       this.setStatusOnRootNode((loadedStudy as LoadedStudy).studyCase.executionStatus);
-      this.onShowStatus();
+      this.onShowHideStatus(true);
       this.studyIsDone = false;
 
       this.treeControl.expand(this.originTreeNode);
@@ -1166,14 +1268,12 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     if (this.studyCaseLocalStorageService.studiesHaveUnsavedChanges()) {
       const validationDialogData = new ValidationDialogData();
-      // tslint:disable-next-line: max-line-length
+      // eslint-disable-next-line max-len
       validationDialogData.message = `You have made unsaved changes in your study save & synchronise your changes before launching calculation ?`;
       validationDialogData.buttonOkText = 'Save & Run';
 
       this.dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
-        width: '500px',
-        height: '220px',
         data: validationDialogData
       });
 

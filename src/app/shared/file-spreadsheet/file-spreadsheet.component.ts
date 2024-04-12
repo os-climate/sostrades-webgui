@@ -285,25 +285,28 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
           });
           this.loadingDialogService.closeLoading();
         } else { // File in distant server
-          this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe(file => {
-            spreadsheetDialogData.file = new Blob([file]);
-            this.dialogRef = this.dialog.open(SpreadsheetComponent, {
-              disableClose: true,
-              data: spreadsheetDialogData
-            });
-            this.dialogRef.afterClosed().subscribe((result) => {
-              if (result.cancel === false) {
-                this.stateUpdate.emit();
+          this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe({
+            next: (file) => {
+              spreadsheetDialogData.file = new Blob([file]);
+              this.dialogRef = this.dialog.open(SpreadsheetComponent, {
+                disableClose: true,
+                data: spreadsheetDialogData
+              });
+              this.dialogRef.afterClosed().subscribe((result) => {
+                if (result.cancel === false) {
+                  this.stateUpdate.emit();
+                }
+              });
+              this.loadingDialogService.closeLoading();
+            },
+            error: (errorReceived) => {
+              const error = errorReceived as SoSTradesError;
+              this.loadingDialogService.closeLoading();
+              if (error.redirect) {
+                this.snackbarService.showError(error.description);
+              } else {
+                this.snackbarService.showError('Error loading csv file : ' + error.description);
               }
-            });
-            this.loadingDialogService.closeLoading();
-          }, errorReceived => {
-            const error = errorReceived as SoSTradesError;
-            this.loadingDialogService.closeLoading();
-            if (error.redirect) {
-              this.snackbarService.showError(error.description);
-            } else {
-              this.snackbarService.showError('Error loading csv file : ' + error.description);
             }
           });
         }
@@ -352,25 +355,26 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
   }
 
   createDownloadLinkFileFromServer(fileName: string) {
-    this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe(file => {
-
-      const fileToDownload = new Blob([file], { type: 'text/csv' });
-
-      const downloadLink = document.createElement('a');
-      downloadLink.href = window.URL.createObjectURL(fileToDownload);
-      downloadLink.setAttribute('download', fileName + '.csv');
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      downloadLink.parentNode.removeChild(downloadLink);
-      this.loadingDialogService.closeLoading();
-
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.loadingDialogService.closeLoading();
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error loading csv file : ' + error.description);
+    this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe({
+      next: (file) => {
+        const fileToDownload = new Blob([file], { type: 'text/csv' });
+    
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(fileToDownload);
+        downloadLink.setAttribute('download', fileName + '.csv');
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.parentNode.removeChild(downloadLink);
+        this.loadingDialogService.closeLoading();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.loadingDialogService.closeLoading();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error loading csv file : ' + error.description);
+        }
       }
     });
   }

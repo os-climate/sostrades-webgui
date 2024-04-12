@@ -1,20 +1,21 @@
 
-<mat-toolbar id="toolbar"color="primary" class="d-flex justify-content-between"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
-  <div id="mainMenu-img" style="display: flex;">
-      <button
-      id="main-menu-button"
-      mat-button
-      [matMenuTriggerFor]="mainMenu"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
-      <mat-menu #mainMenu="matMenu" class="mainMenu">
+<mat-toolbar id="toolbar" [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX } ">
+  <div id="mainMenu-img" class="div-header">
+    <div>
+        <button
+        id="main-menu-button"
+        mat-button
+        [matMenuTriggerFor]="mainMenu"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+        <mat-menu #mainMenu="matMenu" class="mainMenu">
 
         <button
         id="home-menu-button"
         mat-menu-item
         (click)="onClickWelcomePage()">
-        <mat-icon class="blue_color">home</mat-icon>
+        <mat-icon color="primary">home</mat-icon>
         Home
         </button>
         <button
@@ -22,7 +23,7 @@
         mat-menu-item 
         [matMenuTriggerFor]="StudyManagement"
         (click)="onClickStudyCase()">
-        <mat-icon class="blue_color">subject</mat-icon>
+        <mat-icon color="primary">subject</mat-icon>
         Study
         </button>
         <button
@@ -30,14 +31,14 @@
         mat-menu-item
         [matMenuTriggerFor]="Ontology"
         (click)="onClickOntology()">
-        <mat-icon class="blue_color">library_books</mat-icon>
+        <mat-icon color="primary">library_books</mat-icon>
         Ontology
         </button>
         <button 
         id="group-management-menu-button"
         mat-menu-item  
         (click)="onClickGroupManagement()">
-        <mat-icon class="blue_color">group</mat-icon>
+        <mat-icon color="primary">group</mat-icon>
         Group Management</button>
       </mat-menu>
 
@@ -51,7 +52,8 @@
         <button mat-menu-item id="processes-menu-button" (click)="onClickOntologyProcesses()">Processes</button>
         <button mat-menu-item id="parameters-menu-button"(click)="onClickOntologyParameters()">Parameters</button>
      </mat-menu>
-     <div
+    </div>
+    <div
       (click)="onClickWelcomePage()"
       id="logos"
       >
@@ -59,25 +61,25 @@
        <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
        [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
-       class="logo"
+       class="logo cursor-pointer"
       >
  
        <img *ngIf="environment.SOS_TRADES_LOGO_SECOND.PATH !== ''"
        [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
-       class="logo"
+      class="logo cursor-pointer"
       >   
  
        <img *ngIf="environment.SOS_TRADES_LOGO_THIRD.PATH !== ''"
        [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
-       class="logo"
+      class="logo cursor-pointer"
       >
  
        <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH.PATH !== ''"
        [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
-       class="logo"
+      class="logo cursor-pointer"
        >  
      </div>
   </div>
@@ -85,9 +87,9 @@
     <div id="title">
       <h1 value="Home"> {{title}}</h1>
     </div>   
-    <div id="username-second-menu" style="display: flex;">
+    <div id="username-second-menu" class="div-header">
  
-      <div class="version-container" style="margin-right: 50px;">
+      <div class="version-container">
         <div class="platform-text">
             {{ platform }}
         </div>
@@ -95,14 +97,17 @@
             {{ versionDate }}
         </div>  
       </div> 
-      <div id="secondMenu">
+      <div id="secondMenu" class="margin-right">
         <button
-        mat-button
-        [matMenuTriggerFor]="menuUser"
-        aria-label="user menu">
-        <span style="font-size: 13px;margin-right: 20px;">{{ username }}</span>
+          *ngIf="hasAccessToStudyManager"
+          mat-button
+          [matMenuTriggerFor]="menuUser"
+          aria-label="user menu"
+          >
+          <span style="font-size: 13px;margin-right: 20px;">{{ username }}</span>
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
+        <span *ngIf="!hasAccessToStudyManager" style="font-size: 13px;margin-right: 20px;">{{ username }}</span>
 
         <mat-menu #menuUser="matMenu">
           <button mat-menu-item (click)="onClickUserManagement()" *ngIf="hasAccessToStudyManager">
@@ -119,17 +124,26 @@
             <i class="fa-solid fa-server" style="padding-right: 10px;" aria-hidden="true">
             </i>
             <span>Execution Dashboard</span>
-          </button>
-          <button mat-menu-item  (click)="onClickOnContact()">
-            <i class="fa-solid fa-envelope" style="padding-right: 10px;"></i>
-            <span>Contact us</span>
-          </button>
-          <button mat-menu-item (click)="logout()">
-            <i class="fa-solid fa-right-from-bracket" style="padding-right: 10px;"aria-hidden="true">
-            </i>
-            <span>Logout</span>
-          </button>        
+          </button>      
         </mat-menu>
+      </div>
+      <div>
+        <button 
+          mat-button  
+          (click)="onClickOnContact()"
+          matTooltip="Contact us"
+          class="margin-right"
+          >
+          <i class="fa-solid fa-envelope"></i>
+        </button>
+        <button 
+          mat-button 
+          (click)="logout()"
+          matTooltip="Logout"
+          class="margin-right"
+          >
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>  
       </div>
   </div>
 </mat-toolbar>

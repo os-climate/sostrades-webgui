@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { ProcessService } from 'src/app/services/process/process.service';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 
@@ -55,7 +55,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public selectedUserlevel: string;
   private routerSubscription: Subscription;
   public processIdentifier : string;
-
+  public newUserLevelValue: number;
 
 
 
@@ -106,6 +106,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.userLevelList = this.userLevel.userLevelList;
     this.routerSubscription = null;
     this.processIdentifier = '';
+    this.newUserLevelValue = 0;
   }
 
   ngOnInit() {
@@ -115,7 +116,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.setDiplayableItems();
 
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-      this.setDiplayableItems();
+    this.setDiplayableItems();
+    
     });
 
     if (this.userService.hasAccessToStudy()) {
@@ -296,9 +298,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
 
-  changeUserLevel(newUserLevelValue: number) {
-    this.selectedUserlevel = this.userLevelList[newUserLevelValue];
-    this.filterService.filters.userLevel = newUserLevelValue + 1; // Userlevel starting at 1
+  changeUserLevel(event) {
+    this.newUserLevelValue = event[0]._value;
+    this.selectedUserlevel = this.userLevelList[this.newUserLevelValue];
+    this.filterService.filters.userLevel = this.newUserLevelValue + 1; // Userlevel starting at 1
   }
 
   closeSearchPanel() {

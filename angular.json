@@ -1,8 +1,5 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "cli": {
-    "analytics": false
-  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -25,7 +22,6 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": true,
             "assets": [
               "src/favicon.ico",
               "src/assets"
@@ -34,9 +30,9 @@
               "src/theme.scss",
               "src/styles.scss",
               "node_modules/jsuites/dist/jsuites.css",
-              "node_modules/jspreadsheet-ce/dist/jexcel.css",
+              "node_modules/jspreadsheet-ce/dist/jspreadsheet.css",
               "src/assets/bootstrap-4.4.1-dist/css/bootstrap.min.css",
-              "node_modules/material-design-icons/iconfont/material-icons.css",
+              "node_modules/material-icons/iconfont/material-icons.css",
               "src/assets/google/css/fonts-googleapis.css",
               "src/assets/github/css/github-markdown.min.css",
               "src/assets/texmath/css/texmath.css",
@@ -45,7 +41,13 @@
             ],
             "scripts": [
               "src/assets/plotly-latest.min.js"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -58,7 +60,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -76,7 +77,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -114,20 +116,21 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         }
       }
     }
   },
-  "defaultProject": "sos-trades-gui"
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics",
+      "@angular-eslint/schematics"
+    ]
+  }
 }

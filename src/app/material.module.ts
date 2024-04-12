@@ -61,7 +61,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     MatChipsModule,
     MatRadioModule,
     MatAutocompleteModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     MatSliderModule,

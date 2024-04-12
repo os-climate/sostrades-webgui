@@ -1,5 +1,5 @@
-// tslint:disable: no-string-literal
-// tslint:disable: object-literal-key-quotes
+/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable quote-props */
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import * as d3 from 'd3';

@@ -31,6 +31,10 @@ export class Study {
     public isLastStudyOpened: boolean,
     public openingDate: Date,
     public error: string,
+    public studyPodFlavor:string,
+    public executionPodFlavor:string,
+    public generationPodFlavor:string,
+
   ) {
   }
 
@@ -62,6 +66,9 @@ export class Study {
       jsonData[StudyAttributes.IS_LAST_STUDY_OPENED],
       jsonData[StudyAttributes.OPENING_DATE],
       jsonData[StudyAttributes.ERROR],
+      jsonData[StudyAttributes.STUDY_POD_FLAVOR],
+      jsonData[StudyAttributes.EXECUTION_POD_FLAVOR],
+      jsonData[StudyAttributes.GENERATION_POD_FLAVOR],
       );
     return result;
   }
@@ -112,7 +119,8 @@ export class StudyCasePayload {
               public process: string,
               public group: number,
               public reference: string,
-              public type: string) { }
+              public type: string,
+              public flavor: string) { }
 }
 
 /**
@@ -162,7 +170,10 @@ export enum StudyAttributes {
   ISFAVORITE = 'is_favorite',
   IS_LAST_STUDY_OPENED = 'is_last_study_opened',
   OPENING_DATE = 'opening_date',
-  ERROR = 'error'
+  ERROR = 'error',
+  STUDY_POD_FLAVOR = 'study_pod_flavor',
+  EXECUTION_POD_FLAVOR = 'execution_pod_flavor',
+  GENERATION_POD_FLAVOR = 'generation_pod_flavor',
 }
 
 export enum LoadedStudyAttributes {
@@ -189,6 +200,6 @@ export enum LoadStatus {
 }
 
 export enum CreationStatus {
-  DONE = 'DONE',
+  CREATION_DONE = 'CREATION DONE',
   
 }
