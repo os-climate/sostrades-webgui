@@ -168,7 +168,7 @@
               <i class="fa-solid fa-rotate fa-fw"> </i>
             </button>
             <button 
-              *ngIf="canGenerateReference && (element.isRegeneratingReference || isAllReferencesRegenerating)"
+              *ngIf="element.isRegeneratingReference"
               style="margin: 0 5px"
               [id]="
               'btn-stop-generate-reference-' +
