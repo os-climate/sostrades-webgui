@@ -103,7 +103,6 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
 
     this.validationChangeSubcription = this.socketService.onNodeValidatationChange.subscribe(validationChange => {
       const newValidationChange = StudyCaseValidation.Create(validationChange);
-      this.studyCaseValidationService.addValidationToLocalList(newValidationChange, true);
       Object.values(this.studyCaseDataService.loadedStudy.treeview.rootDict).forEach((element) => {
         if (element.fullNamespace == newValidationChange.namespace) {
           element.isValidated = newValidationChange.validationState === ValidationTreeNodeState.VALIDATED;
@@ -121,6 +120,9 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if ((this.treeNodeDataSubscription !== null) && (this.treeNodeDataSubscription !== undefined)) {
       this.treeNodeDataSubscription.unsubscribe();
+    }
+    if ((this.validationChangeSubcription !== null) && (this.validationChangeSubcription !== undefined)) {
+      this.validationChangeSubcription.unsubscribe();
     }
     if (this.dialogRef !== null && this.dialogRef !== undefined) {
       this.dialogRef.close();
@@ -152,7 +154,11 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     this.dialogRefValidate.afterClosed().subscribe((result) => {
        const validation: TreeNodeDialogData = result as  TreeNodeDialogData;
        if (validation.cancel !== true) {
-        this.treeNodeData.isValidated = !validation.node.isValidated
+         if (this.studyCaseValidationService.studyValidationDict[`${ this.treeNodeData.fullNamespace}`][0].validationState == ValidationTreeNodeState.VALIDATED) {
+          this.treeNodeData.isValidated = true;
+        } else {
+          this.treeNodeData.isValidated = false;
+        }
        }
     });
   }

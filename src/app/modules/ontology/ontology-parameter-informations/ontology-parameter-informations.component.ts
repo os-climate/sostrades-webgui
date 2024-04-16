@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { OntologyParameterInformationsDialogData } from 'src/app/models/dialog-data.model';
 import { OntologyParameterUsage } from 'src/app/models/ontology-parameter-usage.model';
 import { OntologyParameter, OntologyParameterAttributes } from 'src/app/models/ontology-parameter.model';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 
 

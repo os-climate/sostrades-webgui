@@ -26,7 +26,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
   downloadIcon = {
     width: 24,
     height: 24,
-    // tslint:disable-next-line: max-line-length
+    // eslint-disable-next-line max-len
     path: 'M19,21.8H5c-1.5,0-2.8-1.2-2.8-2.8v-6c0-1,0.8-1.8,1.8-1.8S5.8,12,5.8,13v5c0,0.1,0.1,0.3,0.3,0.3h12c0.1,0,0.3-0.1,0.3-0.3v-5c0-1,0.8-1.8,1.8-1.8s1.8,0.8,1.8,1.8v6C21.8,20.5,20.5,21.8,19,21.8z M12,16.8c-0.4,0-0.9-0.2-1.2-0.5l-3.6-3.6c-0.7-0.7-0.7-1.8,0-2.5c0.7-0.7,1.8-0.7,2.5,0l0.6,0.6V4c0-1,0.8-1.8,1.8-1.8S13.8,3,13.8,4v6.9l0.6-0.6c0.7-0.7,1.8-0.7,2.5,0c0.7,0.7,0.7,1.8,0,2.5l-3.6,3.6C12.9,16.7,12.4,16.8,12,16.8z',
   };
 
@@ -43,7 +43,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
       const downloadIcon = {
         width: 24,
         height: 24,
-        // tslint:disable-next-line: max-line-length
+        // eslint-disable-next-line max-len
         path: 'M19,21.8H5c-1.5,0-2.8-1.2-2.8-2.8v-6c0-1,0.8-1.8,1.8-1.8S5.8,12,5.8,13v5c0,0.1,0.1,0.3,0.3,0.3h12c0.1,0,0.3-0.1,0.3-0.3v-5c0-1,0.8-1.8,1.8-1.8s1.8,0.8,1.8,1.8v6C21.8,20.5,20.5,21.8,19,21.8z M12,16.8c-0.4,0-0.9-0.2-1.2-0.5l-3.6-3.6c-0.7-0.7-0.7-1.8,0-2.5c0.7-0.7,1.8-0.7,2.5,0l0.6,0.6V4c0-1,0.8-1.8,1.8-1.8S13.8,3,13.8,4v6.9l0.6-0.6c0.7-0.7,1.8-0.7,2.5,0c0.7,0.7,0.7,1.8,0,2.5l-3.6,3.6C12.9,16.7,12.4,16.8,12,16.8z',
       };
 
@@ -52,7 +52,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
       if (this.plotData.csv_data === null || this.plotData.csv_data === undefined || this.plotData.csv_data.length === 0) {
         modeBarButtons = [[
           // Set standard plotly toolbar icons
-          // tslint:disable-next-line: max-line-length
+          // eslint-disable-next-line max-len
           'toImage', 'zoom2d', 'pan2d', 'select2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian']];
       } else {
         modeBarButtons = [[
@@ -63,7 +63,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
               this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
             }
             // Restore standard plotly toolbar icons
-            // tslint:disable-next-line: max-line-length
+            // eslint-disable-next-line max-len
           }, 'toImage', 'zoom2d', 'pan2d', 'select2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian']];
       }
 

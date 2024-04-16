@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Graphviz, graphviz } from 'd3-graphviz';
 import * as d3 from 'd3';
-import { wasmFolder } from '@hpcc-js/wasm';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 
@@ -29,7 +28,6 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
   ) { this.isLoading = true; }
 
   ngOnInit(): void {
-    wasmFolder('assets/graphviz/');
     this.visualisationService.getInterfaceDiagramData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
       next: (res: any) => {
         this.dotString = res['dotString'];

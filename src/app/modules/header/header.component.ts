@@ -5,10 +5,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { NavigationTitle } from 'src/app/models/navigation-title.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
-import { Routing } from 'src/app/models/routing.model';
-import { ContactDialogService } from 'src/app/services/contact-dialog/contact-dialog.service';
+import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription } from 'rxjs';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -16,6 +14,7 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { environment } from 'src/environments/environment';
+import { ContactDialogComponent } from '../contact-dialog/contact-dialog.component';
 
 
 @Component({
@@ -43,7 +42,6 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private auth: AuthService,
     private headerService: HeaderService,
-    public contactDialogService: ContactDialogService,
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
     private socketService: SocketService,
@@ -271,19 +269,21 @@ export class HeaderComponent implements OnInit {
 
   // Contact
   onClickOnContact() {
-  this.contactDialogService.openContactDialog();
+    this.dialog.open(ContactDialogComponent);
   }
 
   logout() {
-    this.auth.deauthenticate().subscribe(() => {
-      this.router.navigate([Routing.LOGIN]);
-    }, error => {
+    this.auth.deauthenticate().subscribe({
+      next: () => {
+        this.router.navigate([Routing.LOGIN]);
+      },
+      error: (error) => {
         if (error.statusCode == 502 || error.statusCode == 0) {
           this.snackbarService.showError('No response from server');
         } else {
           this.snackbarService.showError('Error at logout : ' + error.statusText);
         }
-    }
-    );
+      }
+    });
   }
 }

@@ -1,7 +1,6 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSelect } from '@angular/material/select';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
@@ -13,7 +12,6 @@ import { UserApplicationRight } from 'src/app/models/user.model';
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { ProcessService } from 'src/app/services/process/process.service';
-import { ReferenceDataService } from 'src/app/services/reference/data/reference-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -35,7 +33,6 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public processList: Process[];
   public filteredProcesses: ReplaySubject<Process[]> = new ReplaySubject<Process[]>(1);
   public disabledReference: boolean;
-  public disabledProcess: boolean;
   public disabledReferenceList: boolean;
   protected onDestroy = new Subject<void>();
   public processFiltered: FormControl;
@@ -51,7 +48,6 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public flavorsList: string[];
   public hasFlavors: boolean;
 
-  @ViewChild('singleSelect', { static: true }) singleSelect: MatSelect;
 
   readonly EMPTY_STUDY_NAME = 'Empty Study';
 
@@ -76,7 +72,6 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.processReferenceReady = false;
     this.studyCaseReferenceReady = false;
     this.groupReady = false;
-    this.disabledProcess = false;
     this.disabledReferenceList = false;
     this.checkIfReferenceIsAlreadySelected = false;
     this.title = 'Create new study';
@@ -126,7 +121,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     /**
      * Process, Study case to display are depending of the user
      */
-    this.userService.getCurrentUser().subscribe(currentUser => {
+    this.userService.getCurrentUser().subscribe({
+      next: (currentUser) => {
       this.user = currentUser;
 
       this.checkIfReferenceIsAlreadySelected = true;
@@ -164,7 +160,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         this.setupGroup();
       }
 
-    }, errorReceived => {
+    }, error: (errorReceived) => {
       const error = errorReceived as SoSTradesError;
       this.onCancelClick();
       if (error.redirect) {
@@ -173,6 +169,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         this.snackbarService.showError('Error loading user for form : ' + error.description);
       }
       this.isLoading = false;
+      }
     });
 
     //get flavors in config api
@@ -201,40 +198,43 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
 
   private setupProcesses() {
 
-    this.processService.getUserProcesses(false).subscribe( processes => {
-      // Filter processes to only use those where the user can access
-      this.processList = processes.filter(p => p.isManager || p.isContributor);
-
-      // load the initial process list
-      this.filteredProcesses.next(this.processList.slice());
-
-      /**
-       * If a process is already selected then update its associated reference list
-       */
-      if ((this.process !== null ) && (this.process !== undefined)) {
-        this.createStudyForm.patchValue({processId: this.process.id});
-        this.getProcessReferences();
-      } else {
-        this.processReferenceReady = true;
+    this.processService.getUserProcesses(false).subscribe({
+      next: (processes) => {
+        // Filter processes to only use those where the user can access
+        this.processList = processes.filter(p => p.isManager || p.isContributor);
+      
+        // Load the initial process list
+        this.filteredProcesses.next(this.processList.slice());
+      
+        /**
+         * If a process is already selected then update its associated reference list
+         */
+        if ((this.process !== null) && (this.process !== undefined)) {
+          this.createStudyForm.patchValue({ processId: this.process.id });
+          this.getProcessReferences();
+        } else {
+          this.processReferenceReady = true;
+        }
+      
+        // Listen for search field value changes
+        this.processFiltered.valueChanges.pipe(takeUntil(this.onDestroy))
+          .subscribe(() => {
+            this._filter();
+          });
+      
+        this.processReady = true;
+        this.terminateSetup();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.onCancelClick();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error loading process list for form : ' + error.description);
+        }
+        this.isLoading = false;
       }
-
-      // listen for search field value changes
-      this.processFiltered.valueChanges.pipe(takeUntil(this.onDestroy))
-        .subscribe(() => {
-          this._filter();
-        });
-
-      this.processReady = true;
-      this.terminateSetup();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.onCancelClick();
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error loading process list for form : ' + error.description);
-      }
-      this.isLoading = false;
     });
   }
 
@@ -263,29 +263,32 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     const studyList: Study[] = [];
 
     if ((this.process !== null) && (this.process !== undefined)) {
-      this.studyCaseDataService.getAuthorizedStudiesForProcess(this.process.processId, this.process.repositoryId).subscribe(studies => {
-        studies.forEach(study => {
-          if (study.creationStatus === CreationStatus.DONE){
-            studyList.push(study);
+      this.studyCaseDataService.getAuthorizedStudiesForProcess(this.process.processId, this.process.repositoryId).subscribe({
+        next: (studies) => {
+          studies.forEach(study => {
+            if (study.creationStatus === CreationStatus.CREATION_DONE || study.creationStatus === 'DONE'){
+              studyList.push(study);
+            }
+          });
+          // Sort list of study by creation date
+          studyList.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+      
+          // Concat refenceList with studyList to display in first empty study and usecase and then the studyList sorted by creation date.
+          this.processUserStudyCaseList = studyList;
+      
+          this.studyCaseReferenceReady = true;
+          this.terminateSetup();
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.onCancelClick();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError('Error loading studies list for form : ' + error.description);
           }
-        });
-        // Sort list of study by creation date
-        studyList.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
-
-        // Concat refenceList with studyList to display in first empty study and usecase and then the studyList sorted by creation date.
-        this.processUserStudyCaseList = studyList;
-
-        this.studyCaseReferenceReady = true;
-        this.terminateSetup();
-      }, errorReceived => {
-        const error = errorReceived as SoSTradesError;
-        this.onCancelClick();
-        if (error.redirect) {
-          this.snackbarService.showError(error.description);
-        } else {
-          this.snackbarService.showError('Error loading studies list for form : ' + error.description);
+          this.isLoading = false;
         }
-        this.isLoading = false;
       });
     } else {
       this.studyCaseReferenceReady = true;
@@ -294,33 +297,36 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   }
 
   private setupGroup() {
-    this.groupDataService.getUserGroups(true).subscribe(response => {
-      const grpList: LoadedGroup[] = response;
-      grpList.forEach(group => {
-        this.groupList.push(group);
-
-        // Set the default group in the dropdown
-        const defaultGroupId = this.user.user.default_group_id;
-        if (defaultGroupId !== null || defaultGroupId !== undefined) {
-          if (group.group.id === defaultGroupId) {
-            this.loadedGroup = group;
-            this.createStudyForm.patchValue({
-              groupId: this.loadedGroup.group.id,
-            });
+    this.groupDataService.getUserGroups(true).subscribe({
+      next: (response) => {
+        
+        response.forEach(group => {
+          this.groupList.push(group);
+    
+          // Set the default group in the dropdown
+          const defaultGroupId = this.user.user.default_group_id;
+          if (defaultGroupId !== null || defaultGroupId !== undefined) {
+            if (group.group.id === defaultGroupId) {
+              this.loadedGroup = group;
+              this.createStudyForm.patchValue({
+                groupId: this.loadedGroup.group.id,
+              });
+            }
           }
+        });
+        this.groupReady = true;
+        this.terminateSetup();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.onCancelClick();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Error loading group list for form : ' + error.description);
         }
-      });
-      this.groupReady = true;
-      this.terminateSetup();
-    }, errorReceived => {
-      const error = errorReceived as SoSTradesError;
-      this.onCancelClick();
-      if (error.redirect) {
-        this.snackbarService.showError(error.description);
-      } else {
-        this.snackbarService.showError('Error loading group list for form : ' + error.description);
+        this.isLoading = false;
       }
-      this.isLoading = false;
     });
   }
 
@@ -339,25 +345,25 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         this.checkIfReferenceIsAlreadySelected = false;
 
         // check if a pre selected usecase is existing
-        if ((this.data.reference !== null) &&
-            (this.data.reference !== undefined) &&
-            (this.data.reference !== '')) {
-          selectedReferecence = this.referenceList.find(dataSource =>  dataSource.name === this.data.reference &&
-                                                                dataSource.studyType === this.data.studyType &&
-                                                                dataSource.id === this.data.studyId);
-
+        if (this.data.reference) {
+          selectedReferecence = this.referenceList.find(dataSource => dataSource.id === this.data.studyId);
         }
       }
 
       // if 'studyId' attribute instance is set, then it has to be pre selected on reference
       if ((this.data.studyId !== null && this.data.studyId !== undefined) && this.data.studyId > 0 && !this.data.selectProcessOnly) {
-        const selectedStudy = this.referenceList.find(study =>
-          study.id === this.data.studyId
-        );
-        this.createStudyForm.patchValue({selectedRef: selectedStudy});
-        this.title = `Copy study "${selectedStudy.name}"`;
-        this.disabledReferenceList = true;
-        this.disabledProcess = true;
+        const selectedStudy = this.referenceList.find(study =>study.id === this.data.studyId);
+        if (selectedStudy) {
+          this.createStudyForm.patchValue({selectedRef: selectedStudy});
+          this.createStudyForm.get('selectedRef').disable();
+          this.createStudyForm.get('processId').disable();
+          this.title = `Copy study "${selectedStudy.name}"`;
+          this.disabledReferenceList = true;
+        } else {
+          this.isLoading = false;
+          this.snackbarService.showError(`Error loading reference list from ${this.process.processName}` );
+          this.dialogRef.close(this.data);
+        }
       } else {
         if ((selectedReferecence === null) || (selectedReferecence === undefined)) {
           selectedReferecence = this.emptyProcessRef;
@@ -368,9 +374,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
           this.title = 'Select process & source data';
         }
       }
-
       this.isLoading = false;
-
       this.focusOnHtlmElement();
     }
   }
@@ -413,12 +417,18 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.data.cancel = false;
 
     let refName = null;
-    if (this.createStudyForm.value.selectedRef.name !== this.EMPTY_STUDY_NAME) {
-      refName = this.createStudyForm.value.selectedRef.name;
+    let selectedRef = this.createStudyForm.value.selectedRef
+
+    if (selectedRef === null || selectedRef === undefined) {
+      selectedRef = this.referenceList.find(study => study.id === this.data.studyId);
     }
 
-    this.data.studyType = this.createStudyForm.value.selectedRef.studyType;
-    this.data.studyId = this.createStudyForm.value.selectedRef.id;
+    if(selectedRef.name !== this.EMPTY_STUDY_NAME) {
+      refName = selectedRef.name;
+    }
+
+    this.data.studyType = selectedRef.studyType;
+    this.data.studyId = selectedRef.id;
     this.data.studyName = this.createStudyForm.value.studyName;
     this.data.reference = refName;
     this.data.groupId = this.createStudyForm.value.groupId;

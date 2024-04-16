@@ -18,7 +18,7 @@
       <button
         mat-raised-button
         style="line-height: 24px"
-        color="accent"
+        color="primary"
         aria-label="Show data"
         matTooltip="Show data"
         [disabled]="data.nodeData.value === null"
@@ -42,7 +42,7 @@
       <button
         mat-raised-button
         style="line-height: 24px"
-        color="accent"
+        color="primary"
         aria-label="Edit connector data"
         matTooltip="Edit connector data"
         (click)="onShowConnectorData()"
@@ -64,7 +64,7 @@
         <button
           mat-raised-button
           style="line-height: 24px"
-          color="accent"
+          color="primary"
           aria-label="Go to edition widget"
           matTooltip="Go to edition widget"
           [disabled]="!isEditableOnAnotherNode"
@@ -179,7 +179,7 @@
                   *ngIf="element.oldValueBlob === true"
                   mat-raised-button
                   style="line-height: 24px"
-                  color="accent"
+                  color="primary"
                   aria-label="Show data"
                   matTooltip="Show data"
                   (click)="onShowCsvChange(element)"
@@ -200,7 +200,7 @@
                 <button
                   mat-raised-button
                   style="line-height: 24px"
-                  color="accent"
+                  color="primary"
                   aria-label="Show data"
                   matTooltip="Show data"
                   (click)="onShowConnectorChange(element)"
@@ -235,7 +235,7 @@
             <td mat-cell *matCellDef="let element">
               <button
                 mat-icon-button
-                color="accent"
+                color="primary"
                 matTooltip="Revert to old value"
                 (click)="revertChanges(element)"
                 [disabled]="

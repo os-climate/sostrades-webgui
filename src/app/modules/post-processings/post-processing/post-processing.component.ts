@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { TreeNode } from 'src/app/models/tree-node.model';
 import { Subscription } from 'rxjs';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
-import { ResizedEvent } from 'angular-resize-event';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { TreeNodeDialogData } from 'src/app/models/dialog-data.model';
 import { StudyCaseValidationDialogComponent } from '../../study-case/study-case-validation-dialog/study-case-validation-dialog.component';
@@ -65,7 +64,7 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
     }
   }
 
-  onResizePlotZone(event: ResizedEvent) {
+  onResizePlotZone(event) {
 
     if (this.Plots.nativeElement.scrollHeight > this.PlotContainer.nativeElement.clientHeight) {
       this.isMoreContentAvailable = true;

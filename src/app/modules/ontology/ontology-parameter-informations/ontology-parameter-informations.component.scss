@@ -13,7 +13,7 @@
   flex-direction: column;
 }
 
-.mat-dialog-title {
+.mat-mdc-dialog-title {
   padding-bottom: 10px;
   margin: 0;
   height: 52px;
@@ -51,7 +51,7 @@
   flex: 1;
 }
 
-th.mat-header-cell {
+th.mat-mdc-header-cell {
   text-align: left;
 }
 
@@ -60,32 +60,32 @@ th.mat-sort-header-sorted {
   text-align: left;
 }
 
-td.mat-cell {
+td.mat-mdc-cell {
   text-align: left;
   padding: 3px;
   vertical-align: top;
 }
 
 
-.mat-cell {
+.mat-mdc-cell {
   min-height: 20px;
   font-size: 12px;
   color: unset;
 }
 
-tr.mat-row {
+tr.mat-mdc-row {
   height: auto;
 }
 
 .table {
   margin-bottom: initial;
 }
-.mat-table {
+.mat-mdc-table {
   border-collapse: separate;
   width: 100%;
 }
 
-th.mat-header-cell:first-of-type {
+th.mat-mdc-header-cell:first-of-type {
   padding-left: initial;
 }
 

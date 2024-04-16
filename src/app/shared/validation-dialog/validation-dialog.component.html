@@ -1,17 +1,19 @@
 <div class="flex-container">
+  <br>
   <div class="warning-title">
-    <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
-    <h1 mat-dialog-title>{{ validationTitle }}</h1>
+    <mat-icon class="color-warning">warning</mat-icon>
+    <h1 style="margin: 0;"> {{ validationTitle }} </h1>
   </div>
   <br>
   <div class="message-container">
     <div class="message emoji-font">{{ data.message }}</div>
   </div>
-  <div mat-dialog-actions>
-    <button id="cancel" *ngIf="showCancelButton" mat-button (click)="onCancelClick()">
+  <br>
+  <div id="save-cancel" class="save-or-cancel">
+    <button id="cancel" *ngIf="showCancelButton"  mat-raised-button (click)="onCancelClick()">
       Cancel
     </button>
-    <button *ngIf="showSupButton" mat-button (click)="onSupClick()">
+    <button *ngIf="showSupButton"  mat-raised-button (click)="onSupClick()">
       {{ data.buttonSecondaryActionText }}
     </button>
     <button id="buttonOk" mat-raised-button color="danger" (click)="onOkClick()">

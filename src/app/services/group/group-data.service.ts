@@ -5,7 +5,7 @@ import { Group, LoadedGroup } from 'src/app/models/group.model';
 import { Observable, of } from 'rxjs';
 import { Location } from '@angular/common';
 import { DataHttpService } from '../http/data-http/data-http.service';
-import { ColumnName } from 'src/app/models/column-name.model';
+import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 
 
 @Injectable({

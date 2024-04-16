@@ -18,8 +18,7 @@ import { StudyCaseValidationService } from './study-case-validation/study-case-v
 import { SoSTradesError } from '../models/sos-trades-error.model';
 import { DataHttpService } from './http/data-http/data-http.service';
 import { Location } from '@angular/common';
-import { Routing } from '../models/routing.model';
-import { PostProcessingService } from './post-processing/post-processing.service';
+import { Routing } from '../models/enumeration.model';import { PostProcessingService } from './post-processing/post-processing.service';
 
 class LoginResponse {
   accessToken: string;
@@ -104,7 +103,7 @@ export class AuthService extends DataHttpService {
           // now get user info
           const opts = {
             headers: new HttpHeaders({
-              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // tslint:disable-line:object-literal-key-quotes
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // eslint-disable-line quote-props
             })
           };
 
@@ -129,7 +128,7 @@ export class AuthService extends DataHttpService {
     // now get user info
     const opts = {
       headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // tslint:disable-line:object-literal-key-quotes
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // eslint-disable-line quote-props
       })
     };
 
@@ -147,7 +146,7 @@ export class AuthService extends DataHttpService {
   deauthenticate() {
     const opts = {
       headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + localStorage.getItem('refreshToken')  // tslint:disable-line:object-literal-key-quotes
+        'Authorization': 'Bearer ' + localStorage.getItem('refreshToken')  // eslint-disable-line quote-props
       })
     };
 
@@ -182,7 +181,6 @@ export class AuthService extends DataHttpService {
       map(response => {
         localStorage.setItem('accessToken', response.accessToken);
 
-        this.socketService.updateAuthorization();
         return response.accessToken;
       })
     );

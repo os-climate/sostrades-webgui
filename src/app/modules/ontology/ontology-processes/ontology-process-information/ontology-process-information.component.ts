@@ -3,14 +3,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { OntologyProcessInformationDialogData } from 'src/app/models/dialog-data.model';
 import { Process } from 'src/app/models/process.model';
-import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { ProcessService } from 'src/app/services/process/process.service';
-import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { Router } from '@angular/router';
-import { Routing } from 'src/app/models/routing.model';
+import { Routing } from 'src/app/models/enumeration.model';
 @Component({
   selector: 'app-ontology-process-information',
   templateUrl: './ontology-process-information.component.html',
@@ -30,7 +27,6 @@ export class OntologyProcessInformationComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<OntologyProcessInformationComponent>,
     public processService: ProcessService,
-    private snackbarService: SnackbarService,
     private headerService: HeaderService,
     public ontologyService: OntologyService,
     private router: Router,

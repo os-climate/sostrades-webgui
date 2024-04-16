@@ -43,7 +43,7 @@
     *ngIf="!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
     (click)="onClickDataValidation($event)"
     [id]="'validation-page'"
-    color="accent"
+    color="primary"
     style="height: 25px;line-height: 5px;"
      >
        Validate data
@@ -54,7 +54,7 @@
     *ngIf="treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
     (click)="onClickDataValidation($event)"
     [id]="'validation-page'"
-    color="accent"
+    color="primary"
     style="height: 25px;line-height: 5px;"
       >
       Invalidate data
@@ -64,17 +64,15 @@
       aria-hidden="false"
       aria-label="Information about configuration"
       matTooltip="Information about configuration"
-      class="toolbar-item-shadow"
+      color='accent'
       style="margin-right: 5px; margin-left: 2%"
       (click)="onShowConfigureInformation()"
-    >
-      <div style="width: 24px; height: 24px; line-height: 24px">
+    >      
         <i
+          id="icon-info"
           class="fa-solid fa-circle-info"
-          style="font-size: 19px; color: #0b78b8; vertical-align: middle"
         >
         </i>
-      </div>
     </button>
   </div>
 

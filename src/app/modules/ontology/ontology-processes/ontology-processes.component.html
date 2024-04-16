@@ -2,7 +2,7 @@
     <div class="study-header">
       <button
         mat-raised-button
-        color="accent"
+        color="primary"
         aria-label="Refresh processes"
         class="refresh-button"
         [disabled]="isLoading"
@@ -19,9 +19,11 @@
         Number of Processes <b>{{ processCount }}</b>
       </mat-label>
       <div class="filterSection">
-        <mat-form-field style="margin-right: 10px; width: 120px">
+        <mat-form-field class="filter-form-field">
+          <mat-label class="filter-label-size">Filtered by</mat-label>
           <mat-select
             placeholder="Column(s) filtered"
+            class="filter-label-size"
             (selectionChange)="onFilterChange()"
             style="text-align: left"
             [(ngModel)]="processService.processManagementColumnFiltered"
@@ -33,7 +35,7 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field class="filter">
+        <mat-form-field class="filter-bar">
           <input
             id="filter"
             matInput
@@ -107,7 +109,7 @@
                   [id]="'btn-process-create-'+ element.processId"
                   mat-icon-button
                   *ngIf="!dashboard && (element.isManager || element.isContributor)"
-                  color="accent"
+                  color="primary"
                   matTooltip="Create study case"
                   [matBadge]="element.referenceList.length"
                   [matBadgeHidden]="element.referenceList.length < 1"
@@ -115,7 +117,7 @@
                   matBadgeSize="small"
                   (click)="createStudy(element)"
                 >
-                  <i class="fa-solid fa-square-plus fa-fw"> </i>
+                  <i style="margin-right:10px" class="fa-solid fa-square-plus fa-fw"> </i>
                 </button>
               </td>
             </ng-container>
@@ -127,7 +129,7 @@
               <button
                 mat-icon-button
                 *ngIf="element.isManager"
-                color="accent"
+                color="primary"
                 matTooltip="Share process with users and groups"
                 (click)="processAccess(element)"
               >
@@ -143,7 +145,7 @@
               <button
                 [id]="'btn-process-documentation-'+element.processId + '-'+element.repositoryName"
                 mat-icon-button
-                color="accent"
+                color="primary"
                 [matTooltip]="element.processName + ' information'"
                 (click)="displayDocumentation(element)"
               >

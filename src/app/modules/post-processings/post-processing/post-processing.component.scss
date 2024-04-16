@@ -127,7 +127,6 @@
 
 .progress-container {
   position: absolute;
-  background-color: #0b78b8;
   z-index: 10;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 14px;
@@ -184,7 +183,8 @@
 .expansion-panel {
   margin-bottom: 10px;
 }
-.stateButton{
+
+.stateButton {
   cursor: default;
   margin-left: 4px;
   line-height: unset;
@@ -193,7 +193,8 @@
   padding-right: 2px;
   font-size: 13px;
 }
-.validationButton{
+
+.validationButton {
   height: 25px;
   line-height: 5px;
   margin-top: -3px;

@@ -1,4 +1,3 @@
-import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ValidationDialogData } from 'src/app/models/dialog-data.model';
@@ -24,6 +23,7 @@ export class ValidationDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dialogRef.updateSize('500px','250px');
     if (this.data.buttonSecondaryActionText !== null) {
       this.showSupButton = true;
     }
@@ -48,8 +48,6 @@ export class ValidationDialogComponent implements OnInit {
 
       const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
         disableClose: true,
-        width: '500px',
-        height: '220px',
         data: validationDialogData
       });
 

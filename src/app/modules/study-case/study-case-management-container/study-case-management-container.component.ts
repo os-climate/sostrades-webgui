@@ -3,8 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NavigationTitle } from 'src/app/models/navigation-title.model';
-import { Routing } from 'src/app/models/routing.model';
+import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 
 @Component({

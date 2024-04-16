@@ -1,13 +1,3 @@
-// .log-zone-container {
-//   height: 100%;
-//   width: 100%;
-//   padding-left: 7px;
-//   background-color: #f9f9f9;
-//   border-top: 2px solid #00205b;
-//   overflow: auto;
-//   white-space: pre-line;
-// }
-
 .download-logs {
   height: 40px;
   line-height: 40px;
@@ -17,7 +7,6 @@
 }
 
 .container {
-  height: calc(100% - 40px);
   min-width: 100%;
   overflow-y: auto;
   padding: 3px !important;
@@ -25,7 +14,6 @@
 }
 
 .table {
-  height: calc(100% - 1px);
   min-width: 100%;
   overflow-y: auto;
   border-collapse: separate;
@@ -108,7 +96,7 @@
   font-size: 12px;
 }
 
-.mat-row {
+.mat-mdc-row {
   min-height: 0;
 }
 
@@ -138,12 +126,8 @@
   flex: 1 1 auto;
 }
 
-.toolbar-item-shadow {
-  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-}
 
-.mat-button {
+.mat-mdc-button {
   line-height: unset;
   height: 24px;
   padding-left: 2px;

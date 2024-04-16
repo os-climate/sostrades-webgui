@@ -10,6 +10,10 @@
   border-color: lightgray;
 }
 
+.mat-mdc-form-field {
+  height: auto !important;
+}
+
 .chip-box {
   display: flex;
   align-items: center;
@@ -36,7 +40,7 @@
   width: 100%;
 }
 
-.mat-dialog-title {
+.mat-mdc-dialog-title {
   margin-bottom: 15px;
 }
 
@@ -65,7 +69,7 @@ mat-form-field {
   font: 22px Arial, sans-serif;
 }
 
-.mat-option {
+.mat-mdc-option {
   height: unset;
 }
 
@@ -101,7 +105,7 @@ mat-form-field {
   height: 40px !important;
 }
 
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   padding: 0;
   width: 100%;
   margin: unset;
