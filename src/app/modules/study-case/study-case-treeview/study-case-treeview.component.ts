@@ -104,6 +104,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private flavorsList: string[];
 
   @ViewChild('filter', { static: false }) private filterElement: ElementRef;
+  @ViewChild('fileInput') fileInput: ElementRef;
 
   @HostListener('document:keydown.control.f', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     // Check group component is visible
@@ -1031,6 +1032,33 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   saveAndSynchronise() {
     this.saveData(saveDone => {
     });
+  }
+
+  onImportDatasetFromJsonFile(event) {
+    const inputElement = event.target as HTMLInputElement;
+    const file = inputElement.files?.[0];
+    
+    if (file) {
+      {
+        // Create formData object and send the file
+        const formData = new FormData();
+        formData.append('datasets_mapping_file', file);
+        const currentStudyId = this.studyCaseDataService.loadedStudy.studyCase.id;
+        this.loadingDialogService.showLoading('Update parameter from dataset mapping');
+        this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData).subscribe({
+          next: (loadedStudy) => {
+           this.studyCaseLocalStorageService.finalizeUpdateParameter(loadedStudy);
+          },
+          error: (error) => {
+            this.snackbarService.showError(`Error uploading file: ${error.description}`);
+            this.loadingDialogService.closeLoading();
+          }
+        });
+      }
+    } else {
+      this.snackbarService.showError('Any file selected');
+    }
+    this.fileInput.nativeElement.value = null;
   }
 
   saveData(saveDone: any) {

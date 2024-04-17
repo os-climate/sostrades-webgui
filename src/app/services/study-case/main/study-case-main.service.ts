@@ -237,6 +237,14 @@ export class StudyCaseMainService extends MainHttpService {
       }));
   }
 
+  importDatasetFromJsonFile(studyId: number, formData: any) {
+    const url = `${this.apiRoute}/${studyId}/import-datasets-mapping`;
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.updateStudyParametersTimeout(+studyId, url, formData, observer);
+    });
+    return loaderObservable;
+  }
+
   //#region update study
   // eslint-disable-next-line max-len
   updateStudyParameters(parametersList: StudyUpdateParameter[], studyId: string): Observable<LoadedStudy> {
