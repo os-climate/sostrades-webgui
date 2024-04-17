@@ -113,23 +113,20 @@
     <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
     </button>
     
-    <button 
-      mat-button 
-      matTooltip="Users working on same study case" 
+    <button
+      mat-button
+      matTooltip="Users working on same study case"
       (click)="onShowRoomUser()"
       id="btn-treeview-show-working-users"
+      [matBadge]="'+' + (numberOfUserRoom - 1)"
+      [matBadgeHidden]="numberOfUserRoom <= 1"
+      matBadgeColor="warn"
+      matBadgeSize="small"
+      matBadgePosition="after"
+      aria-hidden="false"
+      aria-label="Users working on same study case"
       >
-      <mat-icon
-        [matBadge]="'+' + (numberOfUserRoom - 1)"
-        [matBadgeHidden]="numberOfUserRoom <= 1"
-        matBadgeColor="warn"
-        matBadgeSize="small"
-        aria-hidden="false"
-        aria-label="Users working on same study case"
-        
-        style="margin-right: 0px;"
-        >people</mat-icon
-      >
+      <mat-icon>people</mat-icon>
     </button>
     <button
       mat-button
