@@ -74,7 +74,7 @@ export class Study {
   }
 
   get executionStatusLabel():string {
-    return 'EXECUTION' + this.executionStatus;
+    return 'EXECUTION ' + this.executionStatus;
   }
 }
 

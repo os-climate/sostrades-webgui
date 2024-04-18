@@ -708,8 +708,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           }
           else{
               // Verify to not push duplicate status
-            if (!possibleStringValues.includes(study.executionStatus)) {
-              possibleStringValues.push(study.executionStatus);
+            if (!possibleStringValues.includes(study.executionStatusLabel)) {
+              possibleStringValues.push(study.executionStatusLabel);
               possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
             }
           }
