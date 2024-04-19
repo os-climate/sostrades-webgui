@@ -708,8 +708,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           }
           else{
               // Verify to not push duplicate status
-            if (!possibleStringValues.includes(study.executionStatus)) {
-              possibleStringValues.push(study.executionStatus);
+            if (!possibleStringValues.includes(study.executionStatusLabel)) {
+              possibleStringValues.push(study.executionStatusLabel);
               possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
             }
           }
@@ -772,10 +772,14 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             isMatch = data.studyType.trim().toLowerCase().includes(filter);
             break;
           case ColumnName.STATUS:
-            isMatch = data.executionStatus.trim().toLowerCase().includes(filter);
-            break;
-           case ColumnName.CREATION_STATUS:
-            isMatch = data.creationStatus.trim().toLowerCase().includes(filter);
+            if (data.creationStatus !== CreationStatus.CREATION_DONE)
+            {
+              isMatch = data.creationStatus.trim().toLowerCase().includes(filter);
+            }
+            else{
+              isMatch = data.executionStatusLabel.trim().toLowerCase().includes(filter);
+            }
+            
             break;
           default:
             isMatch = (
@@ -786,8 +790,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               data.processDisplayName.trim().toLowerCase().includes(filter) ||
               data.process.trim().toLowerCase().includes(filter) ||
               data.studyType.trim().toLowerCase().includes(filter) ||
-              data.executionStatus.trim().toLowerCase().includes(filter) ||
-              data.creationStatus.trim().toLowerCase().includes(filter)
+              (data.creationStatus !== CreationStatus.CREATION_DONE && data.creationStatus.trim().toLowerCase().includes(filter)) ||
+              (data.creationStatus === CreationStatus.CREATION_DONE && data.executionStatusLabel.trim().toLowerCase().includes(filter))
             );
         }
       }
@@ -810,10 +814,13 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 || values.includes(data.process));
                 break;
               case ColumnName.STATUS:
-                isMatch = isMatch && values.includes(data.executionStatus);
-                break;
-              case ColumnName.CREATION_STATUS:
-                isMatch = isMatch && values.includes(data.creationStatus);
+                if (data.creationStatus !== CreationStatus.CREATION_DONE){
+                  isMatch = isMatch && values.includes(data.creationStatus);
+                }
+                else{
+                  isMatch = isMatch && values.includes(data.executionStatusLabel);
+                }
+                
                 break;
             }
           }

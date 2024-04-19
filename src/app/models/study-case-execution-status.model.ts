@@ -5,7 +5,8 @@ export class StudyCaseExecutionStatus {
     public disciplinesStatus: { [id: string]: string } = {},
     public studyCalculationStatus: string,
     public studyCalculationCpu: string,
-    public studyCalculationMemory: string
+    public studyCalculationMemory: string,
+    public studyCalculationErrorMessage: string
   ) {  }
 
   public static Create(jsonData: any): StudyCaseExecutionStatus {
@@ -14,7 +15,8 @@ export class StudyCaseExecutionStatus {
       jsonData[StudyCaseExecutionStatusAttributes.DISCIPLINE_STATUS],
       jsonData[StudyCaseExecutionStatusAttributes.STUDY_CALCULATION_STATUS],
       jsonData[StudyCaseExecutionStatusAttributes.STUDY_CALCULATION_CPU],
-      jsonData[StudyCaseExecutionStatusAttributes.STUDY_CALCULATION_MEMORY]);
+      jsonData[StudyCaseExecutionStatusAttributes.STUDY_CALCULATION_MEMORY],
+      jsonData[StudyCaseExecutionStatusAttributes.STUDY_CALCULATION_ERROR_MESSAGE]);
 
     return result;
   }
@@ -26,6 +28,7 @@ export class StudyCaseExecutionStatus {
     strings.push(`study case execution status : ${this.studyCalculationStatus}`);+
     strings.push(`study case execution cpu : ${this.studyCalculationCpu}`);
     strings.push(`study case execution memory : ${this.studyCalculationMemory}`);
+    strings.push(`study case execution error message : ${this.studyCalculationMemory}`);
     return strings.join('\n');
   }
 }
@@ -36,6 +39,7 @@ export enum StudyCaseExecutionStatusAttributes {
   STUDY_CALCULATION_STATUS = 'study_case_execution_status',
   STUDY_CALCULATION_CPU = 'study_case_execution_cpu',
   STUDY_CALCULATION_MEMORY = 'study_case_execution_memory',
+  STUDY_CALCULATION_ERROR_MESSAGE ='study_case_execution_error_message'
 }
 
 
