@@ -230,7 +230,7 @@
             <!-- Show creation status if creation is in progress or in error -->
             <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="(element.creationStatus == 'IN ERROR' || element.creationStatus == 'CREATION IN ERROR') && element.error"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus !='CREATION DONE' && element.creationStatus !='DONE'"> {{ element.creationStatus }} </span>
             <!-- Show execution status if creation is done -->
-            <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="(element.executionStatus == 'IN ERROR' || element.executionStatus == 'POD ERROR' || element.executionStatus == 'FAILED' || element.executionStatus == 'POD PENDING') && element.error"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus =='CREATION DONE' || element.creationStatus =='DONE'"> {{ element.executionStatus }} </span>
+            <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="(element.executionStatus == 'IN ERROR' || element.executionStatus == 'POD ERROR' || element.executionStatus == 'FAILED' || element.executionStatus == 'POD PENDING') && element.error"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus =='CREATION DONE' || element.creationStatus =='DONE'"> {{ element.executionStatusLabel }} </span>
           </td>
         </ng-container>
 

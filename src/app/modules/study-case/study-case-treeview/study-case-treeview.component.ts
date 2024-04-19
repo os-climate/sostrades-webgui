@@ -540,13 +540,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.calculationService.getStatus(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
       next: (t) => {
       const studyCaseStatusList = t as StudyCaseExecutionStatus;
-
+      this.setStatusOnRootNode(studyCaseStatusList.studyCalculationStatus);
       if (studyCaseStatusList.studyCalculationStatus == StudyCalculationStatus.STATUS_RUNNING) {
         this.setStatusOnRootNode(StudyCalculationStatus.STATUS_RUNNING);
         
         // if there are not status yet, set all to pending
         if (Object.keys(studyCaseStatusList.disciplinesStatus).length == 0) {
-          this.setStatusOnRootNode(StudyCalculationStatus.STATUS_PENDING);
+          this.setStatusOnRootNode(StudyCalculationStatus.STATUS_RUNNING);
           Object.keys(this.root.rootDict).forEach(key => {
             if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
               this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
@@ -731,14 +731,15 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           
               this.snackbarService.showInformation('Study case successfully submitted');
           
-              // Setting root node at status_stopped corresponding to discipline pending
-              this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
-          
+              
               Object.keys(this.root.rootDict).forEach(key => {
                 if ((key !== this.root.rootNode.fullNamespace) && (!key.includes('references'))) {
                   this.setStatusOnTreeDict(key, DisciplineStatus.STATUS_PENDING);
                 }
               });
+              // Setting root node at status_stopped corresponding to discipline pending
+              this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
+          
               this.loadingDialogService.closeLoading();
             },
             error: (errorReceived) => {
@@ -850,8 +851,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
         const statusList = Object.keys(studyCaseStatusList.disciplinesStatus);
 
-        this.setStatusOnRootNode(studyCaseStatusList.studyCalculationStatus);
-
         if (statusList.length > 0) {
           statusList.forEach(key => {
             // eslint-disable-next-line max-len
@@ -862,6 +861,10 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             }
           });
         }
+        this.setStatusOnRootNode(studyCaseStatusList.studyCalculationStatus);
+
+        //if execution is in error
+
       });
 
     // When execution is over
@@ -869,7 +872,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       executionStopped.subscribe(s => {
 
         const studyCaseStatusList = s as StudyCaseExecutionStatus;
-        this.setStatusOnRootNode(studyCaseStatusList.studyCalculationStatus);
+        
         if (studyCaseStatusList !== null && studyCaseStatusList !== undefined) {
           if (Object.keys(studyCaseStatusList.disciplinesStatus).length > 0) {
             Object.keys(studyCaseStatusList.disciplinesStatus).forEach(key => {
@@ -877,9 +880,15 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             });
           }
         }
+        this.setStatusOnRootNode(studyCaseStatusList.studyCalculationStatus);
 
         const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
         this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
+        if ((studyCaseStatusList.studyCalculationStatus ===  StudyCalculationStatus.STATUS_FAILED ||
+          studyCaseStatusList.studyCalculationStatus ===  StudyCalculationStatus.STATUS_POD_ERROR)  && 
+          studyCaseStatusList.studyCalculationErrorMessage) {
+          this.snackbarService.showError(studyCaseStatusList.studyCalculationErrorMessage);
+        }
         // Reload the study in order to get all post postprocessing data
         const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe({
           next: (resultLoadedStudy) => {
@@ -963,6 +972,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         break;
       case StudyCalculationStatus.STATUS_PENDING:
         this.root.rootNode.status = DisciplineStatus.STATUS_PENDING;
+        break;
+      case StudyCalculationStatus.STATUS_POD_ERROR:
+        this.root.rootNode.status = DisciplineStatus.STATUS_FAILED;
         break;
       default:
         break;
