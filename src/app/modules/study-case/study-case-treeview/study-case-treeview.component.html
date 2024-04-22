@@ -235,12 +235,10 @@
               [id]="'btn-treeview-node-' + node.fullNamespace"
               (click)="nodeClick(node)"
               mat-button
-              [matTooltip]="
-                node.modelsFullPathList  | ontologyDisciplineConverter
-              "
+              [matTooltip]=" node.modelsFullPathList  | ontologyDisciplineConverter"
               matTooltipClass="custom-tooltip-class"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
-              style="margin-left: 5px !important; font-size: 13px"
+              class="node-fullnamespace"
             >
               <i
                 [ngClass]="node | disciplineIconMappingConverter"
@@ -303,7 +301,6 @@
             >
             highlight_off
            </mat-icon>
-
             <mat-icon
             *ngIf="showState && node.isValidated"
             mat-button
@@ -320,7 +317,7 @@
               [matTooltip]="node.modelsFullPathList | ontologyDisciplineConverter"
               matTooltipPosition="right"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
-              style="margin-left: 4px !important; font-size: 13px"
+              class="node-fullnamespace"
             >
               <i
                 [ngClass]="node | disciplineIconMappingConverter"
