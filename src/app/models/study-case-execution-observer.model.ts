@@ -71,7 +71,8 @@ export class StudyCaseExecutionObserver {
 
     if ((this.currentStatus.studyCalculationStatus === StudyCalculationStatus.STATUS_FINISHED) ||
       (this.currentStatus.studyCalculationStatus === StudyCalculationStatus.STATUS_FAILED) ||
-      (this.currentStatus.studyCalculationStatus === StudyCalculationStatus.STATUS_STOPPED)) {
+      (this.currentStatus.studyCalculationStatus === StudyCalculationStatus.STATUS_STOPPED)  ||
+      (this.currentStatus.studyCalculationStatus === StudyCalculationStatus.STATUS_POD_ERROR)) {
       this.stop();
     } else {
       this.executionUpdate.emit(this.currentStatus);
