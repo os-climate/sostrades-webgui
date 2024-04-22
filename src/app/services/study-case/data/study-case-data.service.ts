@@ -531,7 +531,7 @@ export class StudyCaseDataService extends DataHttpService {
           }
     },
     error: error => {
-      observer.error(error);
+      throw(error);
     }}
     );
   }
@@ -543,26 +543,26 @@ export class StudyCaseDataService extends DataHttpService {
           // if the pod is still at pending after one minutes, show potential problem message
           if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
           if( Date.now() - startWaitingDate < 60000){
-              this.loadingDialogService.updateMessage("Study is half created, Study pod is loading ...")
+              this.loadingDialogService.updateMessage("Study pod is loading ...")
             }
             else{
-              this.loadingDialogService.updateMessage("Study is half created, Study pod is still loading after a long time...\n \
+              this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
               you can wait a little longer or maybe try again later")
               //TODO: add cancel button here
 
             }
           }
-          if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
-            this.loadingDialogService.updateMessage("Study pod is up...the study creation is in proress.")
+          if (allocation.status === StudyCaseAllocationStatus.ERROR || allocation.status === StudyCaseAllocationStatus.OOMKILLED){
+            allocationObservable.next(allocation);
           }
-          if (allocation.status === StudyCaseAllocationStatus.ERROR){
-            throw("Error while loading study pod: " + allocation.message);
+          else{
+            setTimeout(() => {
+              this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
+            }, 2000);
           }
           
-          setTimeout(() => {
-            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
-          }, 2000);
         } else {
+          this.loadingDialogService.updateMessage("Study pod is up...the study loading is in proress.")
           allocationObservable.next(allocation);
         }
 
@@ -570,6 +570,18 @@ export class StudyCaseDataService extends DataHttpService {
         throw(error);
       }
     });
+  }
+
+  public getStudyCaseAllocationStatus(studyCaseId: number): Observable<StudyCaseAllocation> {
+    let query: Observable<StudyCaseAllocation>;
+
+    const allocationObservable = new Observable<StudyCaseAllocation>((observer) => {
+
+      query = this.http.get<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseId}/status`);
+      this.executeAllocationQuery(query, observer);
+    });
+
+    return allocationObservable;
   }
 
   /**

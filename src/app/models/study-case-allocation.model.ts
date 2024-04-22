@@ -18,6 +18,8 @@ export class StudyCaseAllocation {
       jsonData[StudyCaseExecutionLoggingAttributes.CREATION_DATE]);
     return result;
   }
+
+  public static OOMKILLEDLABEL:string = 'Pod has been OOMKilled (had not enought resources), \nyou may try to choose a bigger pod size before restart.'
 }
 
 export enum StudyCaseAllocationStatus {
@@ -25,8 +27,11 @@ export enum StudyCaseAllocationStatus {
   PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
   ERROR = 'IN_ERROR',
+  OOMKILLED = 'OOMKILLED',
   DONE = 'RUNNING'
 }
+
+
 
 export enum StudyCaseExecutionLoggingAttributes {
   ID = 'id',

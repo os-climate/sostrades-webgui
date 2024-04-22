@@ -17,7 +17,7 @@ import { StudyCaseMainService } from "../study-case/main/study-case-main.service
 import { StudyCasePostProcessingService } from "../study-case/post-processing/study-case-post-processing.service";
 import { Observable, of } from "rxjs";
 import { combineLatest } from "rxjs";
-import { StudyCaseAllocationStatus } from "src/app/models/study-case-allocation.model";
+import { StudyCaseAllocation, StudyCaseAllocationStatus } from "src/app/models/study-case-allocation.model";
 import { StudyCaseLoadingService } from "../study-case-loading/study-case-loading.service";
 import { PostProcessingService } from "../post-processing/post-processing.service";
 import { Router } from "@angular/router";
@@ -103,7 +103,7 @@ export class AppDataService extends DataHttpService {
             }
           });
         } else {
-          this.snackbarService.showError("Study case allocation failed");
+          this.showAllocationError(allocation);
           isStudyCreated(false);
           messageObserver.complete();
         }
@@ -162,7 +162,7 @@ export class AppDataService extends DataHttpService {
             }
           });
         } else {
-          this.snackbarService.showError("Study case allocation failed");
+          this.showAllocationError(allocation);
           isStudyCreated(false);
           this.loadingDialogService.closeLoading();
         }
@@ -234,7 +234,7 @@ export class AppDataService extends DataHttpService {
             });
           }
         } else {
-          this.snackbarService.showError("Study case allocation failed");
+          this.showAllocationError(allocation);
           isStudyLoaded(false);
           this.loadingDialogService.closeLoading();
         }
@@ -276,7 +276,7 @@ export class AppDataService extends DataHttpService {
             }
           });
         } else {
-          this.snackbarService.showError("Study case allocation failed");
+          this.showAllocationError(allocation);
           this.loadingDialogService.closeLoading();
         }
       },
@@ -287,6 +287,17 @@ export class AppDataService extends DataHttpService {
     });
   }    
 
+  private showAllocationError(allocation: StudyCaseAllocation){
+    if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
+      this.snackbarService.showError(StudyCaseAllocation.OOMKILLEDLABEL);
+    }
+    else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
+      this.snackbarService.showError("Study case loading failed due to pod error: " +allocation.message);
+    }
+    else {
+      this.snackbarService.showError("Study case loading failed");
+    }
+  }
   /**
    * launch the Loading of the study if needed, and in parallel launch the loading of post processings then
    * finalize the loading with logs, ontology, validation...

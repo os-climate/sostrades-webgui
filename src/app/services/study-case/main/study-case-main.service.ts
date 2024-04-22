@@ -12,6 +12,7 @@ import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
 import { Routing } from 'src/app/models/enumeration.model';
+import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 
 
 @Injectable({
@@ -51,7 +52,8 @@ export class StudyCaseMainService extends MainHttpService {
     return this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
       response => {
         return LoadedStudy.Create(response);
-      })).subscribe(loadedStudy => {
+      })).subscribe({
+        next:(loadedStudy) => {
 
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
@@ -63,9 +65,10 @@ export class StudyCaseMainService extends MainHttpService {
           loaderObservable.next(loadedStudy);
         }
       },
-      error => {
+      error:(error) => {
         loaderObservable.error(error);
-      });
+      }
+    });
   }
 
   //#endregion create study
@@ -88,15 +91,17 @@ export class StudyCaseMainService extends MainHttpService {
     return this.http.post(`${this.apiRoute}/${targetStudyCaseIdentifier}/copy`, request, this.options).pipe(map(
       response => {
         return Study.Create(response);
-      })).subscribe(study => {
+      })).subscribe({
+        next:(study) => {
 
         setTimeout(() => {
           this.loadStudyInReadOnlyModeIfNeededTimeout(study.id, false, loaderObservable, true);
         }, 2000);
       },
-        error => {
+        error:(error) => {
           loaderObservable.error(error);
-        });
+        }
+      });
   }
   //#endregion copy study
 
@@ -117,24 +122,39 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
+    // check the pod status befor sending the request on the pod to intercept last state oomkilled pod
+    this.studyCaseDataService.getStudyCaseAllocationStatus(studyId).subscribe({
+      next: allocation => {
+        if (allocation.status == StudyCaseAllocationStatus.DONE){
+          this.internalLoadStudy(studyId).subscribe(
+            {next:(loadedStudy) => {
+              if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+                setTimeout(() => {
+                  this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+                }, 2000);
+              } else {
+                if(withEmit){
+                  this.updateStudyCaseDataService(loadedStudy);
+                  this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+                }
 
-    this.internalLoadStudy(studyId).subscribe(loadedStudy => {
-      if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-        setTimeout(() => {
-          this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
-        }, 2000);
-      } else {
-        if(withEmit){
-          this.updateStudyCaseDataService(loadedStudy);
-          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+                loaderObservable.next(loadedStudy);
+              }
+            },
+            error:(error) => {
+                loaderObservable.error(error);
+            }
+          });
+        } else if (allocation.status == StudyCaseAllocationStatus.OOMKILLED){
+          loaderObservable.error(new Error(StudyCaseAllocation.OOMKILLEDLABEL));
+        }
+        else {
+          loaderObservable.error(new Error('Pod in error - ' + allocation.message));
         }
 
-        loaderObservable.next(loadedStudy);
-      }
-    },
-      error => {
+      }, error:(error) => {
         loaderObservable.error(error);
-    });
+      }});
   }
 
   private internalLoadStudy(studyId: number): Observable<LoadedStudy> {
@@ -145,24 +165,39 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
+    // check the pod status befor sending the request on the pod to intercept last state oomkilled pod
+    this.studyCaseDataService.getStudyCaseAllocationStatus(studyId).subscribe({
+      next: allocation => {
+        if (allocation.status == StudyCaseAllocationStatus.DONE){
+          this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
+            {next: (loadedStudy) => {
+              if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+                setTimeout(() => {
+                  this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+                }, 2000);
+              } else {
+                if(withEmit){
+                  this.updateStudyCaseDataService(loadedStudy);
+                  this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+                }
 
-    this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(loadedStudy => {
-      if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-        setTimeout(() => {
-          this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
-        }, 2000);
-      } else {
-        if(withEmit){
-          this.updateStudyCaseDataService(loadedStudy);
-          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+                loaderObservable.next(loadedStudy);
+              }
+            },
+              error:(error) => {
+                loaderObservable.error(error);
+            }
+          });
+        } else if (allocation.status == StudyCaseAllocationStatus.OOMKILLED){
+          throw(StudyCaseAllocation.OOMKILLEDLABEL);
+        }
+        else {
+          throw('Pod in error - ' + allocation.message);
         }
 
-        loaderObservable.next(loadedStudy);
-      }
-    },
-      error => {
+      }, error:(error) => {
         loaderObservable.error(error);
-    });
+      }});
   }
 
   public loadtudyInReadOnlyModeIfNeeded(studyId: number): Observable<LoadedStudy> {
@@ -190,7 +225,8 @@ export class StudyCaseMainService extends MainHttpService {
     return this.http.get(`${this.apiRoute}/${studyid}/reload`, this.options).pipe(map(
       response => {
         return LoadedStudy.Create(response);
-      })).subscribe(loadedStudy => {
+      })).subscribe(
+        { next:(loadedStudy) => {
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);
@@ -201,9 +237,10 @@ export class StudyCaseMainService extends MainHttpService {
           loaderObservable.next(loadedStudy);
         }
       },
-      error => {
+      error:(error) => {
         loaderObservable.error(error);
-      });
+      }
+    });
   }
 
   closeStudy(close: boolean) {
@@ -278,7 +315,8 @@ export class StudyCaseMainService extends MainHttpService {
   private updateStudyParametersTimeout(studyId: number, requestUrl: string, formData: FormData,  loaderObservable: Subscriber<LoadedStudy>) {
     this.http.post(requestUrl, formData).pipe(map(response => {
       return LoadedStudy.Create(response);
-    })).subscribe(loadedStudy => {
+    })).subscribe({
+      next:(loadedStudy) => {
       if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
         setTimeout(() => {
           this.loadStudyTimeout(studyId, false, loaderObservable, false);
@@ -288,9 +326,10 @@ export class StudyCaseMainService extends MainHttpService {
         loaderObservable.next(loadedStudy);
       }
     },
-      error => {
+      error:(error) => {
         loaderObservable.error(error);
-      });
+      }
+    });
   }
   //#endregion update study
 
@@ -377,7 +416,8 @@ export class StudyCaseMainService extends MainHttpService {
 
   checkStudyIsUpAndLoaded(){
     //Check if the study pod server is up and if the study is loaded
-    const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-up-and-loaded`;
+    const study_id = this.studyCaseDataService.loadedStudy.studyCase.id;
+    const url = `${this.apiRoute}/${study_id}/is-up-and-loaded`;
     return this.http.get<boolean>(url).subscribe({
       next: (isLoaded) => {
       this.setNoStudyHeader(isLoaded);
