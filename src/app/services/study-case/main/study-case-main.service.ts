@@ -123,39 +123,26 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
-    // check the pod status befor sending the request on the pod to intercept last state oomkilled pod
-    this.studyCaseDataService.getStudyCaseAllocationStatus(studyId).subscribe({
-      next: allocation => {
-        if (allocation.status == StudyCaseAllocationStatus.DONE){
-          this.internalLoadStudy(studyId).subscribe(
-            {next:(loadedStudy) => {
-              if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-                setTimeout(() => {
-                  this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
-                }, 2000);
-              } else {
-                if(withEmit){
-                  this.updateStudyCaseDataService(loadedStudy);
-                  this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-                }
+    this.internalLoadStudy(studyId).subscribe(
+      {next:(loadedStudy) => {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+          setTimeout(() => {
+            this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+          }, 2000);
+        } else {
+          if(withEmit){
+            this.updateStudyCaseDataService(loadedStudy);
+            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+          }
 
-                loaderObservable.next(loadedStudy);
-              }
-            },
-            error:(error) => {
-                loaderObservable.error(error);
-            }
-          });
-        } else if (allocation.status == StudyCaseAllocationStatus.OOMKILLED){
-          loaderObservable.error(new SoSTradesError(503,StudyCaseAllocationStatus.OOMKILLED,StudyCaseAllocation.OOMKILLEDLABEL));
+          loaderObservable.next(loadedStudy);
         }
-        else {
-          loaderObservable.error(new SoSTradesError(503, allocation.status, 'Pod in error - ' + allocation.message));
-        }
-
-      }, error:(error) => {
-        loaderObservable.error(error);
-      }});
+      },
+      error:(error) => {
+          loaderObservable.error(error);
+      }
+    });
+        
   }
 
   private internalLoadStudy(studyId: number): Observable<LoadedStudy> {
@@ -166,39 +153,26 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
-    // check the pod status befor sending the request on the pod to intercept last state oomkilled pod
-    this.studyCaseDataService.getStudyCaseAllocationStatus(studyId).subscribe({
-      next: allocation => {
-        if (allocation.status == StudyCaseAllocationStatus.DONE){
-          this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
-            {next: (loadedStudy) => {
-              if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-                setTimeout(() => {
-                  this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
-                }, 2000);
-              } else {
-                if(withEmit){
-                  this.updateStudyCaseDataService(loadedStudy);
-                  this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-                }
+    this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
+      {next: (loadedStudy) => {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+          setTimeout(() => {
+            this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+          }, 2000);
+        } else {
+          if(withEmit){
+            this.updateStudyCaseDataService(loadedStudy);
+            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+          }
 
-                loaderObservable.next(loadedStudy);
-              }
-            },
-              error:(error) => {
-                loaderObservable.error(error);
-            }
-          });
-        } else if (allocation.status == StudyCaseAllocationStatus.OOMKILLED){
-          loaderObservable.error(new SoSTradesError(503, allocation.status, StudyCaseAllocation.OOMKILLEDLABEL));
+          loaderObservable.next(loadedStudy);
         }
-        else {
-          loaderObservable.error(new SoSTradesError(503, allocation.status, 'Pod in error - ' + allocation.message));
-        }
-
-      }, error:(error) => {
-        loaderObservable.error(error);
-      }});
+      },
+        error:(error) => {
+          loaderObservable.error(error);
+      }
+    });
+        
   }
 
   public loadtudyInReadOnlyModeIfNeeded(studyId: number): Observable<LoadedStudy> {
