@@ -37,8 +37,7 @@ export class User implements AccessRightItem {
 
   search(itemSearched: string): boolean {
     return this.firstname.toUpperCase().includes(itemSearched.toUpperCase())
-      || this.lastname.toUpperCase().includes(itemSearched.toUpperCase())
-      || this.email.toUpperCase().includes(itemSearched.toUpperCase());
+      || this.lastname.toUpperCase().includes(itemSearched.toUpperCase());
   }
 }
 

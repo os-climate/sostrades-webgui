@@ -13,13 +13,8 @@
   <h3 style="text-align: center; margin-top: 5px; word-wrap: break-word">
     Share <strong>{{ data.ressourceName }}</strong> with people and groups
   </h3>
-  <form style="height: 67px; width: 100%">
-    <mat-form-field
-      style="
-        background-color: #f8f9fa;
-        border-radius: 7px;
-      "
-    >
+  <form style="height: 67px; width: 100%; text-align: center; ">
+    <mat-form-field style=" background-color: #f8f9fa; border-radius: 7px;width:90%">
       <input
         type="text"
         placeholder="Add people and groups"
@@ -46,12 +41,9 @@
             >
               {{ entity.entityObject.title[0] }}
             </div>
-            <div class="entity">
-              <div class="entity-first-line">
+            <div>
+              <div>
                 {{ entity.entityObject.title }}
-              </div>
-              <div class="entity-second-line">
-                {{ entity.entityObject.information }}
               </div>
             </div>
           </div>
@@ -67,12 +59,9 @@
                 >people</mat-icon
               >
             </div>
-            <div class="entity">
-              <div class="entity-first-line">
+            <div>
+              <div>
                 {{ entity.entityObject.title }}
-              </div>
-              <div class="entity-second-line">
-                {{ entity.entityObject.information }}
               </div>
             </div>
           </div>
@@ -96,12 +85,9 @@
                 >
                   {{ entity.entityObject.title[0] }}
                 </div>
-                <div class="entity">
-                  <div class="entity-first-line">
+                <div>
+                  <div>
                     {{ entity.entityObject.title }}
-                  </div>
-                  <div class="entity-second-line">
-                    {{ entity.entityObject.information }}
                   </div>
                 </div>
               </div>
@@ -117,12 +103,9 @@
                     >people</mat-icon
                   >
                 </div>
-                <div class="entity">
-                  <div class="entity-first-line">
+                <div>
+                  <div>
                     {{ entity.entityObject.title }}
-                  </div>
-                  <div class="entity-second-line">
-                    {{ entity.entityObject.information }}
                   </div>
                 </div>
               </div>
