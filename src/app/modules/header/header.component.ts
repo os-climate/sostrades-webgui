@@ -153,13 +153,19 @@ export class HeaderComponent implements OnInit {
           },
           error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
       }  
-      this.displayMessageNoStudyServer = !isLoaded;
+      else{
+        this.displayMessageNoStudyServer = !isLoaded;
+      }
+      
         
     });
     //if the study is closed, the header should not be visible
     this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(closed=>{
       if(this.displayMessageNoStudyServer){
         this.displayMessageNoStudyServer = false;
+      }
+      if(this.displayOOMKilledMessage){
+        this.displayOOMKilledMessage = false;
       }
     })
   }

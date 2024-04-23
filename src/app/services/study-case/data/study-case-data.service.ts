@@ -218,7 +218,7 @@ export class StudyCaseDataService extends DataHttpService {
             this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
           }
           else if (errorReceived !== undefined){
-              this.snackbarService.showError(errorMessage +"\n" + errorReceived.description);
+              this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a too small flavor or a network issue.");
             }
             this.loadingDialogService.closeLoading();
         },
@@ -594,8 +594,7 @@ export class StudyCaseDataService extends DataHttpService {
             else{
               this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
               you can wait a little longer or maybe try again later")
-              //TODO: add cancel button here
-
+             
             }
           }
           if (allocation.status === StudyCaseAllocationStatus.ERROR || allocation.status === StudyCaseAllocationStatus.OOMKILLED){
