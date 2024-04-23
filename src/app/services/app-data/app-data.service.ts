@@ -90,28 +90,20 @@ export class AppDataService extends DataHttpService {
                   this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
                 },
                 error: (errorReceived) => {
-                  this.snackbarService.showError("Error creating study\n" + errorReceived.description);
                   isStudyCreated(false);
-                  this.loadingDialogService.closeLoading();
+                  this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study")
                 }
               });
             },
             error: (errorReceived) => {
-              this.snackbarService.showError("Error creating study\n" + errorReceived.description);
               isStudyCreated(false);
-              this.loadingDialogService.closeLoading();
+              this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study")
+              
             }
           });
         } else {
-          if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
-            this.snackbarService.showError(StudyCaseAllocation.OOMKILLEDLABEL);
-          }
-          else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
-            this.snackbarService.showError("Error creating study due to pod error: " + allocation.message);
-          }
-          else{
-            this.snackbarService.showError("Error creating study due to pod status: " + allocation.status);
-          }
+          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study")
+
           isStudyCreated(false);
           messageObserver.complete();
         }
