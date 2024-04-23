@@ -189,10 +189,10 @@ export class StudyCaseMainService extends MainHttpService {
             }
           });
         } else if (allocation.status == StudyCaseAllocationStatus.OOMKILLED){
-          throw(StudyCaseAllocation.OOMKILLEDLABEL);
+          loaderObservable.error(new Error(StudyCaseAllocation.OOMKILLEDLABEL));
         }
         else {
-          throw('Pod in error - ' + allocation.message);
+          loaderObservable.error(new Error('Pod in error - ' + allocation.message));
         }
 
       }, error:(error) => {

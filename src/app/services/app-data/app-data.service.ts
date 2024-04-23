@@ -103,7 +103,15 @@ export class AppDataService extends DataHttpService {
             }
           });
         } else {
-          this.showAllocationError(allocation);
+          if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
+            this.snackbarService.showError(StudyCaseAllocation.OOMKILLEDLABEL);
+          }
+          else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
+            this.snackbarService.showError("Error creating study due to pod error: " + allocation.message);
+          }
+          else{
+            this.snackbarService.showError("Error creating study due to pod status: " + allocation.status);
+          }
           isStudyCreated(false);
           messageObserver.complete();
         }
@@ -149,28 +157,26 @@ export class AppDataService extends DataHttpService {
                   this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
                 },
                 error: (errorReceived) => {
-                  this.snackbarService.showError("Error copying study\n" + errorReceived.description);
                   isStudyCreated(false);
-                  this.loadingDialogService.closeLoading();
+                  this.dealWithRequestError(studyId, errorReceived , "Error copying study case");
                 }
               });
             },
             error: (errorReceived) => {
-              this.snackbarService.showError("Error copying study\n" + errorReceived.description);
+              
               isStudyCreated(false);
-              this.loadingDialogService.closeLoading();
+              this.dealWithRequestError(studyId, errorReceived, "Error copying study case");
             }
           });
         } else {
-          this.showAllocationError(allocation);
+          
           isStudyCreated(false);
-          this.loadingDialogService.closeLoading();
+          this.dealWithRequestError(studyId, undefined, "Error copying study case" );
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error copying study\n" + errorReceived.description);
         isStudyCreated(false);
-        this.loadingDialogService.closeLoading();
+        this.dealWithRequestError(studyId, errorReceived, "Error copying study case" );
       }
     });
   }
@@ -226,23 +232,20 @@ export class AppDataService extends DataHttpService {
                 }
               },
               error: (errorReceived) => {
-                this.loggerService.log(errorReceived);
-                this.snackbarService.showError("Error loading study\n" + errorReceived.description);
-                const studyNeedsLoading = true;
-                this.launchLoadStudy(studyNeedsLoading, studyId, null, isStudyLoaded, true, false);
+                isStudyLoaded(false);
+                this.dealWithRequestError(studyId, errorReceived );
               }
             });
           }
         } else {
-          this.showAllocationError(allocation);
+          
           isStudyLoaded(false);
-          this.loadingDialogService.closeLoading();
+          this.dealWithRequestError(studyId, undefined);
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error loading study\n" + errorReceived.description);
         isStudyLoaded(false);
-        this.loadingDialogService.closeLoading();
+        this.dealWithRequestError(studyId, errorReceived );
       }
     });
   }    
@@ -270,33 +273,58 @@ export class AppDataService extends DataHttpService {
               this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
             },
             error: (errorReceived) => {
-              this.loggerService.log(errorReceived);
-              this.snackbarService.showError("Error loading study\n" + errorReceived.description);
-              this.loadingDialogService.closeLoading();
+              this.dealWithRequestError(studyId, errorReceived );
             }
           });
         } else {
-          this.showAllocationError(allocation);
-          this.loadingDialogService.closeLoading();
+          this.dealWithRequestError(studyId, undefined );
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error loading study\n" + errorReceived.description);
-        this.loadingDialogService.closeLoading();
+        this.dealWithRequestError(studyId, errorReceived );
       }
     });
   }    
 
-  private showAllocationError(allocation: StudyCaseAllocation){
-    if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
-      this.snackbarService.showError(StudyCaseAllocation.OOMKILLEDLABEL);
+  private dealWithRequestError(studyId:number, errorReceived: any, errorMessage:string="Error loading study"){
+    ///Show error message and Close the loading. In case of error 502 the allocation pod status is checked
+    ///param studyId = the ID of the study
+    ///param errorReceived = the error that have been raised
+    ///param errorMessage = The message to show at the begining of the error (Error Loading study or error creating study...)
+    if (errorReceived !== undefined){
+      this.loggerService.log(errorReceived);
     }
-    else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
-      this.snackbarService.showError("Study case loading failed due to pod error: " +allocation.message);
+    if (errorReceived === undefined || (errorReceived !== undefined && (errorReceived.statusCode == 502 || errorReceived.statusCode == 0))) {
+      //if the error server is not available, get the pod status
+      this.studyCaseDataService.getStudyCaseAllocationStatus(studyId).subscribe(
+        {next: (allocation) => {
+          //show pod oomkilled message
+          if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
+            this.snackbarService.showError(StudyCaseAllocation.OOMKILLEDLABEL);
+          }
+          else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
+            this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
+          }
+          else if (errorReceived !== undefined){
+              this.snackbarService.showError(errorMessage +"\n" + errorReceived.description);
+            }
+            this.loadingDialogService.closeLoading();
+        },
+        error:(error)=> {
+          this.snackbarService.showError(errorMessage+"\n" + error.description);
+          this.loadingDialogService.closeLoading();}}
+      );
+      
     }
     else {
-      this.snackbarService.showError("Study case loading failed");
+      if (errorReceived !== undefined){
+        this.snackbarService.showError(errorMessage + "\n" + errorReceived.description);
+      }
+      
+      this.loadingDialogService.closeLoading();
     }
+    
+    
   }
   /**
    * launch the Loading of the study if needed, and in parallel launch the loading of post processings then
@@ -344,10 +372,9 @@ export class AppDataService extends DataHttpService {
         }
       },
       error: (errorReceived) => {
-        this.loggerService.log(errorReceived);
-        this.snackbarService.showError("Error loading study\n" + errorReceived.description);
+       
         isStudyLoaded(false);
-        this.loadingDialogService.closeLoading();
+        this.dealWithRequestError(studyId, errorReceived );
       }
     });
 }
