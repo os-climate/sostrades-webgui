@@ -17,6 +17,8 @@ import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/s
 import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
 import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
+import { LoggerService } from '../../logger/logger.service';
+import { SnackbarService } from '../../snackbar/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +62,8 @@ export class StudyCaseDataService extends DataHttpService {
     private ontologyService: OntologyService,
     private location: Location,
     private loadingDialogService: LoadingDialogService,
+    private loggerService: LoggerService,
+    private snackbarService:SnackbarService,
     private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
@@ -179,6 +183,7 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -191,6 +196,47 @@ export class StudyCaseDataService extends DataHttpService {
         this.studyCoeditionNotifications = notifications
         return notifications;
       }));
+  }
+
+  public checkPodStatusAndShowError(studyId:number, errorReceived: any, errorMessage:string="Error loading study"){
+    ///Show error message and Close the loading. In case of error 502 the allocation pod status is checked
+    ///param studyId = the ID of the study
+    ///param errorReceived = the error that have been raised
+    ///param errorMessage = The message to show at the begining of the error (Error Loading study or error creating study...)
+    if (errorReceived !== undefined){
+      this.loggerService.log(errorReceived);
+    }
+    if (errorReceived === undefined || (errorReceived !== undefined && (errorReceived.statusCode == 502 || errorReceived.statusCode == 0))) {
+      //if the error server is not available, get the pod status
+      this.getStudyCaseAllocationStatus(studyId).subscribe(
+        {next: (allocation) => {
+          //show pod oomkilled message
+          if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
+            this.snackbarService.showError(StudyCaseAllocation.OOMKILLEDLABEL);
+          }
+          else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
+            this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
+          }
+          else if (errorReceived !== undefined){
+              this.snackbarService.showError(errorMessage +"\n" + errorReceived.description);
+            }
+            this.loadingDialogService.closeLoading();
+        },
+        error:(error)=> {
+          this.snackbarService.showError(errorMessage+"\n" + error.description);
+          this.loadingDialogService.closeLoading();}}
+      );
+      
+    }
+    else {
+      if (errorReceived !== undefined){
+        this.snackbarService.showError(errorMessage + "\n" + errorReceived.description);
+      }
+      
+      this.loadingDialogService.closeLoading();
+    }
+    
+    
   }
 
   getAuthorizedStudiesForProcess(process, repository): Observable<Study[]> {

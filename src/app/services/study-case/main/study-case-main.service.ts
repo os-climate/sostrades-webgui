@@ -13,6 +13,7 @@ import { StudyCaseDataService } from '../data/study-case-data.service';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
 import { Routing } from 'src/app/models/enumeration.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
+import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 
 
 @Injectable({
@@ -146,10 +147,10 @@ export class StudyCaseMainService extends MainHttpService {
             }
           });
         } else if (allocation.status == StudyCaseAllocationStatus.OOMKILLED){
-          loaderObservable.error(new Error(StudyCaseAllocation.OOMKILLEDLABEL));
+          loaderObservable.error(new SoSTradesError(503,StudyCaseAllocationStatus.OOMKILLED,StudyCaseAllocation.OOMKILLEDLABEL));
         }
         else {
-          loaderObservable.error(new Error('Pod in error - ' + allocation.message));
+          loaderObservable.error(new SoSTradesError(503, allocation.status, 'Pod in error - ' + allocation.message));
         }
 
       }, error:(error) => {
@@ -189,10 +190,10 @@ export class StudyCaseMainService extends MainHttpService {
             }
           });
         } else if (allocation.status == StudyCaseAllocationStatus.OOMKILLED){
-          loaderObservable.error(new Error(StudyCaseAllocation.OOMKILLEDLABEL));
+          loaderObservable.error(new SoSTradesError(503, allocation.status, StudyCaseAllocation.OOMKILLEDLABEL));
         }
         else {
-          loaderObservable.error(new Error('Pod in error - ' + allocation.message));
+          loaderObservable.error(new SoSTradesError(503, allocation.status, 'Pod in error - ' + allocation.message));
         }
 
       }, error:(error) => {

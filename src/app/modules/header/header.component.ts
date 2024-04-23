@@ -148,7 +148,7 @@ export class HeaderComponent implements OnInit {
         this.studyCaseDataService.getStudyCaseAllocationStatus(study_id).subscribe({
           next: allocation => {
             this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
-            this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL + " \nYou may close the study.";
+            this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL;
             this.displayMessageNoStudyServer = !isLoaded;
           },
           error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
