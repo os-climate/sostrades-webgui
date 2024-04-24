@@ -233,8 +233,15 @@ li ul {
 }
 
 .iconValid {
-  margin-left: 4%;
+  margin-left: 5px;
   cursor: default;
   font-size: 22px;
   height: 23px;
+  min-width: 20px;
+}
+
+.node-fullnamespace {
+  margin-left: 5px !important;
+  font-size: 13px;
+  display: block;
 }
