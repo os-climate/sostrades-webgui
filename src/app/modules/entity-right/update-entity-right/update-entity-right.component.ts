@@ -110,7 +110,7 @@ export class UpdateEntityRightComponent implements OnInit {
 
     // Refreshing user and group list in case new or removed groups
     const loadedGroups = this.groupDataService.getUserGroups(true);
-    const loadedAllUsers = this.userService.loadAllUsers();
+    const loadedAllUsers = this.userService.getUserListForSharing();
 
 
     combineLatest([loadedGroups, loadedAllUsers]).subscribe(res => {

@@ -44,20 +44,20 @@ export class UserService extends DataHttpService {
           const newUser = User.Create(user);
           userList.push(newUser);
         });
-        this.allUsers = userList;
         return userList;
       }));
   }
 
-  getUserList(): Observable<User[]> {
+  getUserListForSharing(): Observable<User[]> {
     const userList: User[] = [];
 
-    return this.http.get<User[]>(`${this.apiRoute}`).pipe(map(
+    return this.http.get<User[]>(`${this.apiRoute}/share`).pipe(map(
       usList => {
         usList.forEach(user => {
           const newUser = User.Create(user);
           userList.push(newUser);
         });
+        this.allUsers = userList;
         return userList;
       }));
   }
