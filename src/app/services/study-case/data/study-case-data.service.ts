@@ -577,7 +577,7 @@ export class StudyCaseDataService extends DataHttpService {
           }
     },
     error: error => {
-      throw(error);
+      observer.error(error);
     }}
     );
   }
@@ -612,7 +612,7 @@ export class StudyCaseDataService extends DataHttpService {
         }
 
       }, error: error => {
-        throw(error);
+        allocationObservable.error(error);
       }
     });
   }
