@@ -218,7 +218,7 @@ export class StudyCaseDataService extends DataHttpService {
             this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
           }
           else if (errorReceived !== undefined){
-              this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a too small pod size or a network issue.");
+              this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.");
             }
             this.loadingDialogService.closeLoading();
         },
