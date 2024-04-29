@@ -164,12 +164,19 @@
     </button>
   </div>
     
-  <div *ngIf="displayOOMKilledMessage" >
-    <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
-    Be careful, the study server is currently down. 
-     You may close the study. 
-    {{OOMKilledMessage}}
-    <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+  <div  *ngIf="displayOOMKilledMessage">
+    
+    <div>
+      <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+      Be careful, the study server is currently down. 
+      <i class="fa-solid fa-triangle-exclamation warning-icon"></i></div>
+    <div> You may close the study. </div>
+    <div>
+      <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+      {{OOMKilledMessage}}
+      <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+    </div>
+    
   </div>
    
 </div>
