@@ -26,12 +26,12 @@ import { SnackbarService } from '../../snackbar/snackbar.service';
 export class StudyCaseDataService extends DataHttpService {
 
 
-  onStudyCompleted: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview: EventEmitter<LoadedStudy> = new EventEmitter();
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
   onTreeNodeNavigation: EventEmitter<NodeData> = new EventEmitter<NodeData>();
+
 
   public tradeScenarioList: Scenario[];
 
@@ -118,6 +118,15 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  getStudy(studyId: number): Observable<Study> {
+    return this.http.get<Study>(`${this.apiRoute}/${studyId}`).pipe(map(
+      response => {
+        const study = Study.Create(response)
+        this.studyManagementData.splice(0,0, study)
+        return study;
+      }));
+  }
+
 
   addFavoriteStudy(studyId: number, userId: number): Observable<StudyFavorite> {
     const payload = {
@@ -198,7 +207,7 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  public checkPodStatusAndShowError(studyId:number, errorReceived: any, errorMessage:string="Error loading study"){
+  public checkPodStatusAndShowError(studyId:number, errorReceived: any, errorMessage:string="Error loading study", afterShowError=undefined){
     ///Show error message and Close the loading. In case of error 502 the allocation pod status is checked
     ///param studyId = the ID of the study
     ///param errorReceived = the error that have been raised
@@ -212,7 +221,7 @@ export class StudyCaseDataService extends DataHttpService {
         {next: (allocation) => {
           //show pod oomkilled message
           if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
-            this.snackbarService.showError(StudyCaseAllocation.OOMKILLEDLABEL);
+            this.snackbarService.showError(errorMessage + "\n" + StudyCaseAllocation.OOMKILLEDLABEL);
           }
           else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
             this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
@@ -221,10 +230,22 @@ export class StudyCaseDataService extends DataHttpService {
               this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.");
             }
             this.loadingDialogService.closeLoading();
+
+            //do process after retreiving the status
+            if (afterShowError !== undefined){
+              afterShowError();
+            }
+            
         },
         error:(error)=> {
           this.snackbarService.showError(errorMessage+"\n" + error.description);
-          this.loadingDialogService.closeLoading();}}
+          this.loadingDialogService.closeLoading();
+          //do process after retreiving the status
+          if (afterShowError !== undefined){
+            afterShowError();
+          }
+        }
+        }
       );
       
     }

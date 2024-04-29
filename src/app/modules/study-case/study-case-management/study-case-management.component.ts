@@ -88,6 +88,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   public onCurrentStudyEditedSubscription: Subscription;
   public onCurrentStudyDeletedSubscription: Subscription;
+  onUpdateStudyManagement: Subscription;
 
   @ViewChild('filter', { static: true }) private filterElement: ElementRef;
 
@@ -162,7 +163,17 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.loadStudyManagementData();
     }
     });
-
+    this.onUpdateStudyManagement = this.appDataService.onStudyCreated.subscribe(studyId => {
+        this.isLoading = true;
+        // retreive the new study
+        this.studyCaseDataService.getStudy(studyId).subscribe({
+        next:(study)=>{
+          this.isLoading = false;
+        },
+        error:(error)=>{
+          this.isLoading = false;
+        }
+    })});
     this.socketService.onCurrentStudyEdited.subscribe(refreshList => {
       if (refreshList) {
         this.loadStudyManagementData();
@@ -179,6 +190,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.onCurrentStudyEditedSubscription.unsubscribe();
       this.onCurrentStudyEditedSubscription = null;
     }
+    if (this.onUpdateStudyManagement !== null) {
+      this.onUpdateStudyManagement.unsubscribe();
+      this.onUpdateStudyManagement = null;
+    }
+    
   }
 
   isAllSelected() {
@@ -224,6 +240,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 }
+
+
 
   loadStudyManagementData() {
     this.isLoading = true;

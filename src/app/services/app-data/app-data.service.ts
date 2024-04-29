@@ -32,6 +32,7 @@ import { Routing } from "src/app/models/enumeration.model";
 export class AppDataService extends DataHttpService {
   // Timer use to check connection status server side
   private connectionStatusTimer;
+  public onStudyCreated: EventEmitter<number> = new EventEmitter();
   public onNoServerResponse: EventEmitter<boolean>;
   public platformInfo : any;
   public hasNoServerAvailable: boolean;
@@ -90,28 +91,36 @@ export class AppDataService extends DataHttpService {
                   this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
                 },
                 error: (errorReceived) => {
-                  isStudyCreated(false);
-                  this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study")
-                }
+                  
+                  this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study",()=> {
+                    this.onStudyCreated.emit(allocation.studyCaseId);
+                    messageObserver.complete();
+                    isStudyCreated(false);
+                  });
+              }
               });
             },
             error: (errorReceived) => {
-              isStudyCreated(false);
-              this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study")
               
+              this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study",()=> {
+                this.onStudyCreated.emit(allocation.studyCaseId);
+                messageObserver.complete();
+                isStudyCreated(false);
+              });
             }
           });
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study")
-
-          isStudyCreated(false);
-          messageObserver.complete();
+          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study",()=> {
+            this.onStudyCreated.emit(allocation.studyCaseId);
+            messageObserver.complete();
+            isStudyCreated(false);
+          });
         }
       },
       error: (errorReceived) => {
         this.snackbarService.showError("Error creating study\n" + errorReceived.description);
-        isStudyCreated(false);
         messageObserver.complete();
+        isStudyCreated(false);
       }
     });
   }    
@@ -149,26 +158,21 @@ export class AppDataService extends DataHttpService {
                   this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
                 },
                 error: (errorReceived) => {
-                  isStudyCreated(false);
-                  this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case");
+                  this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case",()=> isStudyCreated(false));
                 }
               });
             },
             error: (errorReceived) => {
-              
-              isStudyCreated(false);
-              this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case");
+              this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
             }
           });
         } else {
-          
-          isStudyCreated(false);
-          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case" );
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case" ,()=> isStudyCreated(false));
         }
       },
       error: (errorReceived) => {
-        isStudyCreated(false);
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case" );
+        
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
       }
     });
   }
