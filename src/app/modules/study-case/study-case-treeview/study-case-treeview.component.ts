@@ -1047,7 +1047,19 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.loadingDialogService.showLoading('Update parameter from dataset mapping');
         this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData).subscribe({
           next: (loadedStudy) => {
-           this.studyCaseLocalStorageService.finalizeUpdateParameter(loadedStudy);
+           this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
+            // clear post processing dictionnary
+            this.postProcessingService.clearPostProcessingDict();
+            this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id).subscribe(
+              notifications => {
+                console.log(notifications);
+                this.socketService.saveStudy(this.studyCaseDataService.loadedStudy.studyCase.id, notifications[notifications.length-1].changes);
+              }
+            );
+           
+
+            // Send socket notifications
+            // this.socketService.saveStudy(this.studyCaseDataService.loadedStudy.studyCase.id, resultData.changes);
           },
           error: (error) => {
             this.snackbarService.showError(`Error uploading file: ${error.description}`);
@@ -1233,7 +1245,11 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
               nodeDataCache.newValue,
               nodeData.oldValue,
               null,
-              nodeDataCache.lastModified);
+              nodeDataCache.lastModified,
+              null,
+              null,
+              null
+            );
 
             this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
               newItemSave,

@@ -258,8 +258,8 @@ export class StudyCaseLocalStorageService {
     });
   }
 
-  // 
-  finalizeUpdateParameter(loadedStudy: LoadedStudy) {
+  
+  finalizeUpdateParameterFromDataset(loadedStudy: LoadedStudy) {
     this.loadingDialogService.updateMessage(`Loading ontology`);
     // Prepare Ontology request inputs
     const ontologyRequest: PostOntology = {
