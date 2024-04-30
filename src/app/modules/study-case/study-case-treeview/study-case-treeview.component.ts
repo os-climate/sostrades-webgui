@@ -812,7 +812,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
         this.snackbarService.showInformation('Study case successfully terminated');
         studyCaseObserver.stop();
-    
+        
         this.loadingDialogService.updateMessage(`Refreshing study case ${this.studyCaseDataService.loadedStudy.studyCase.name}.`);
       },
       error: (errorReceived) => {
@@ -900,7 +900,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
                   this.setStatusOnRootNode((loadedstudyCase as LoadedStudy).studyCase.executionStatus);
                   this.calculationService.onCalculationChange.emit(false);
                   this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
+                  this.loadingDialogService.closeLoading();
                 }, false, true).subscribe();
+                
               },
           error: (errorReceived) => {
             const error = errorReceived as SoSTradesError;
@@ -911,6 +913,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
             }
             // Cleaning old subscriptions
             this.cleanExecutionSubscriptions();
+            this.loadingDialogService.closeLoading();
             this.calculationService.onCalculationChange.emit(false);
           }
         });
@@ -968,7 +971,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.root.rootNode.status = DisciplineStatus.STATUS_FAILED;
         break;
       case StudyCalculationStatus.STATUS_STOPPED:
-        this.root.rootNode.status = DisciplineStatus.STATUS_PENDING;
+        this.root.rootNode.status = DisciplineStatus.STATUS_CONFIGURE;
         break;
       case StudyCalculationStatus.STATUS_PENDING:
         this.root.rootNode.status = DisciplineStatus.STATUS_PENDING;

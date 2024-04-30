@@ -34,6 +34,7 @@ export class UserManagementComponent implements OnInit {
   public dataSourceUsers = new MatTableDataSource<User>();
   public usersList: User[];
   public usersProfilesList: UserProfile[];
+  public userCount: number;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -49,6 +50,7 @@ export class UserManagementComponent implements OnInit {
     this.usersProfilesList = [];
     this.columnsFilterSelected = 'All columns';
     this.isLoading = true;
+    this.userCount= 0
   }
 
   ngOnInit(): void {
@@ -56,7 +58,7 @@ export class UserManagementComponent implements OnInit {
     this.onFilterChange();
 
     // Retrieving user list
-    this.userService.getUserList().subscribe({
+    this.userService.loadAllUsers().subscribe({
       next: (users) => {
         this.usersList = users;
     
@@ -75,10 +77,12 @@ export class UserManagementComponent implements OnInit {
             this.dataSourceUsers.sortingDataAccessor = (item, property) =>
               typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
             this.dataSourceUsers.sort = this.sort;
+            this.userCount = this.usersList.length
             this.isLoading = false;
           },
           error: (errorReceived) => {
             this.isLoading = false;
+            this.userCount = 0;
             const error = errorReceived as SoSTradesError;
             if (error.redirect) {
               this.snackbarService.showError(error.description);
@@ -90,6 +94,7 @@ export class UserManagementComponent implements OnInit {
       },
       error: (errorReceived) => {
         this.isLoading = false;
+        this.userCount = 0;
         const error = errorReceived as SoSTradesError;
         if (error.redirect) {
           this.snackbarService.showError(error.description);
@@ -189,6 +194,7 @@ export class UserManagementComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceUsers.filter = filterValue.trim().toLowerCase();
+    this.userCount = this.dataSourceUsers.filteredData.length;
   }
 
   onFilterChange() {
@@ -213,6 +219,7 @@ export class UserManagementComponent implements OnInit {
             data.userprofilename.trim().toLowerCase().includes(filter);
       }
     };
+    this.userCount = this.dataSourceUsers.filteredData.length;
   }
 
   addUser() {

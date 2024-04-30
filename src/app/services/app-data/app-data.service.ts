@@ -17,7 +17,7 @@ import { StudyCaseMainService } from "../study-case/main/study-case-main.service
 import { StudyCasePostProcessingService } from "../study-case/post-processing/study-case-post-processing.service";
 import { Observable, of } from "rxjs";
 import { combineLatest } from "rxjs";
-import { StudyCaseAllocationStatus } from "src/app/models/study-case-allocation.model";
+import { StudyCaseAllocation, StudyCaseAllocationStatus } from "src/app/models/study-case-allocation.model";
 import { StudyCaseLoadingService } from "../study-case-loading/study-case-loading.service";
 import { PostProcessingService } from "../post-processing/post-processing.service";
 import { Router } from "@angular/router";
@@ -32,6 +32,7 @@ import { Routing } from "src/app/models/enumeration.model";
 export class AppDataService extends DataHttpService {
   // Timer use to check connection status server side
   private connectionStatusTimer;
+  public onStudyCreated: EventEmitter<number> = new EventEmitter();
   public onNoServerResponse: EventEmitter<boolean>;
   public platformInfo : any;
   public hasNoServerAvailable: boolean;
@@ -90,28 +91,36 @@ export class AppDataService extends DataHttpService {
                   this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
                 },
                 error: (errorReceived) => {
-                  this.snackbarService.showError("Error creating study\n" + errorReceived.description);
-                  isStudyCreated(false);
-                  this.loadingDialogService.closeLoading();
-                }
+                  
+                  this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study",()=> {
+                    this.onStudyCreated.emit(allocation.studyCaseId);
+                    messageObserver.complete();
+                    isStudyCreated(false);
+                  });
+              }
               });
             },
             error: (errorReceived) => {
-              this.snackbarService.showError("Error creating study\n" + errorReceived.description);
-              isStudyCreated(false);
-              this.loadingDialogService.closeLoading();
+              
+              this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study",()=> {
+                this.onStudyCreated.emit(allocation.studyCaseId);
+                messageObserver.complete();
+                isStudyCreated(false);
+              });
             }
           });
         } else {
-          this.snackbarService.showError("Study case allocation failed");
-          isStudyCreated(false);
-          messageObserver.complete();
+          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study",()=> {
+            this.onStudyCreated.emit(allocation.studyCaseId);
+            messageObserver.complete();
+            isStudyCreated(false);
+          });
         }
       },
       error: (errorReceived) => {
         this.snackbarService.showError("Error creating study\n" + errorReceived.description);
-        isStudyCreated(false);
         messageObserver.complete();
+        isStudyCreated(false);
       }
     });
   }    
@@ -149,28 +158,21 @@ export class AppDataService extends DataHttpService {
                   this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
                 },
                 error: (errorReceived) => {
-                  this.snackbarService.showError("Error copying study\n" + errorReceived.description);
-                  isStudyCreated(false);
-                  this.loadingDialogService.closeLoading();
+                  this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case",()=> isStudyCreated(false));
                 }
               });
             },
             error: (errorReceived) => {
-              this.snackbarService.showError("Error copying study\n" + errorReceived.description);
-              isStudyCreated(false);
-              this.loadingDialogService.closeLoading();
+              this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
             }
           });
         } else {
-          this.snackbarService.showError("Study case allocation failed");
-          isStudyCreated(false);
-          this.loadingDialogService.closeLoading();
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case" ,()=> isStudyCreated(false));
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error copying study\n" + errorReceived.description);
-        isStudyCreated(false);
-        this.loadingDialogService.closeLoading();
+        
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
       }
     });
   }
@@ -226,23 +228,20 @@ export class AppDataService extends DataHttpService {
                 }
               },
               error: (errorReceived) => {
-                this.loggerService.log(errorReceived);
-                this.snackbarService.showError("Error loading study\n" + errorReceived.description);
-                const studyNeedsLoading = true;
-                this.launchLoadStudy(studyNeedsLoading, studyId, null, isStudyLoaded, true, false);
+                isStudyLoaded(false);
+                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
               }
             });
           }
         } else {
-          this.snackbarService.showError("Study case allocation failed");
+          
           isStudyLoaded(false);
-          this.loadingDialogService.closeLoading();
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined);
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error loading study\n" + errorReceived.description);
         isStudyLoaded(false);
-        this.loadingDialogService.closeLoading();
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
       }
     });
   }    
@@ -270,23 +269,20 @@ export class AppDataService extends DataHttpService {
               this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
             },
             error: (errorReceived) => {
-              this.loggerService.log(errorReceived);
-              this.snackbarService.showError("Error loading study\n" + errorReceived.description);
-              this.loadingDialogService.closeLoading();
+              this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
             }
           });
         } else {
-          this.snackbarService.showError("Study case allocation failed");
-          this.loadingDialogService.closeLoading();
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined );
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error loading study\n" + errorReceived.description);
-        this.loadingDialogService.closeLoading();
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
       }
     });
   }    
 
+  
   /**
    * launch the Loading of the study if needed, and in parallel launch the loading of post processings then
    * finalize the loading with logs, ontology, validation...
@@ -333,10 +329,9 @@ export class AppDataService extends DataHttpService {
         }
       },
       error: (errorReceived) => {
-        this.loggerService.log(errorReceived);
-        this.snackbarService.showError("Error loading study\n" + errorReceived.description);
+       
         isStudyLoaded(false);
-        this.loadingDialogService.closeLoading();
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
       }
     });
 }
