@@ -17,6 +17,8 @@ import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/s
 import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
 import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
+import { LoggerService } from '../../logger/logger.service';
+import { SnackbarService } from '../../snackbar/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +26,12 @@ import { LoadingDialogService } from '../../loading-dialog/loading-dialog.servic
 export class StudyCaseDataService extends DataHttpService {
 
 
-  onStudyCompleted: EventEmitter<boolean> = new EventEmitter();
   onLoadedStudyForTreeview: EventEmitter<LoadedStudy> = new EventEmitter();
   onStudyCaseChange: EventEmitter<LoadedStudy> = new EventEmitter();
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
   onTreeNodeNavigation: EventEmitter<NodeData> = new EventEmitter<NodeData>();
+
 
   public tradeScenarioList: Scenario[];
 
@@ -60,6 +62,8 @@ export class StudyCaseDataService extends DataHttpService {
     private ontologyService: OntologyService,
     private location: Location,
     private loadingDialogService: LoadingDialogService,
+    private loggerService: LoggerService,
+    private snackbarService:SnackbarService,
     private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
@@ -111,6 +115,15 @@ export class StudyCaseDataService extends DataHttpService {
         });
         this.studyManagementData = studies;
         return studies;
+      }));
+  }
+
+  getStudy(studyId: number): Observable<Study> {
+    return this.http.get<Study>(`${this.apiRoute}/${studyId}`).pipe(map(
+      response => {
+        const study = Study.Create(response)
+        this.studyManagementData.splice(0,0, study)
+        return study;
       }));
   }
 
@@ -179,6 +192,7 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -191,6 +205,59 @@ export class StudyCaseDataService extends DataHttpService {
         this.studyCoeditionNotifications = notifications
         return notifications;
       }));
+  }
+
+  public checkPodStatusAndShowError(studyId:number, errorReceived: any, errorMessage:string="Error loading study", afterShowError=undefined){
+    ///Show error message and Close the loading. In case of error 502 the allocation pod status is checked
+    ///param studyId = the ID of the study
+    ///param errorReceived = the error that have been raised
+    ///param errorMessage = The message to show at the begining of the error (Error Loading study or error creating study...)
+    if (errorReceived !== undefined){
+      this.loggerService.log(errorReceived);
+    }
+    if (errorReceived === undefined || (errorReceived !== undefined && (errorReceived.statusCode == 502 || errorReceived.statusCode == 0))) {
+      //if the error server is not available, get the pod status
+      this.getStudyCaseAllocationStatus(studyId).subscribe(
+        {next: (allocation) => {
+          //show pod oomkilled message
+          if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
+            this.snackbarService.showError(errorMessage + "\n" + StudyCaseAllocation.OOMKILLEDLABEL);
+          }
+          else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
+            this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
+          }
+          else if (errorReceived !== undefined){
+              this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.");
+            }
+            this.loadingDialogService.closeLoading();
+
+            //do process after retreiving the status
+            if (afterShowError !== undefined){
+              afterShowError();
+            }
+            
+        },
+        error:(error)=> {
+          this.snackbarService.showError(errorMessage+"\n" + error.description);
+          this.loadingDialogService.closeLoading();
+          //do process after retreiving the status
+          if (afterShowError !== undefined){
+            afterShowError();
+          }
+        }
+        }
+      );
+      
+    }
+    else {
+      if (errorReceived !== undefined){
+        this.snackbarService.showError(errorMessage + "\n" + errorReceived.description);
+      }
+      
+      this.loadingDialogService.closeLoading();
+    }
+    
+    
   }
 
   getAuthorizedStudiesForProcess(process, repository): Observable<Study[]> {
@@ -543,33 +610,44 @@ export class StudyCaseDataService extends DataHttpService {
           // if the pod is still at pending after one minutes, show potential problem message
           if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
           if( Date.now() - startWaitingDate < 60000){
-              this.loadingDialogService.updateMessage("Study is half created, Study pod is loading ...")
+              this.loadingDialogService.updateMessage("Study pod is loading ...")
             }
             else{
-              this.loadingDialogService.updateMessage("Study is half created, Study pod is still loading after a long time...\n \
+              this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
               you can wait a little longer or maybe try again later")
-              //TODO: add cancel button here
-
+             
             }
           }
-          if (allocation.status === StudyCaseAllocationStatus.IN_PROGRESS){
-            this.loadingDialogService.updateMessage("Study pod is up...the study creation is in proress.")
+          if (allocation.status === StudyCaseAllocationStatus.ERROR || allocation.status === StudyCaseAllocationStatus.OOMKILLED){
+            allocationObservable.next(allocation);
           }
-          if (allocation.status === StudyCaseAllocationStatus.ERROR){
-            throw("Error while loading study pod: " + allocation.message);
+          else{
+            setTimeout(() => {
+              this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
+            }, 2000);
           }
           
-          setTimeout(() => {
-            this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
-          }, 2000);
         } else {
+          this.loadingDialogService.updateMessage("Study pod is up...the study loading is in progress.")
           allocationObservable.next(allocation);
         }
 
       }, error: error => {
-        throw(error);
+        allocationObservable.error(error);
       }
     });
+  }
+
+  public getStudyCaseAllocationStatus(studyCaseId: number): Observable<StudyCaseAllocation> {
+    let query: Observable<StudyCaseAllocation>;
+
+    const allocationObservable = new Observable<StudyCaseAllocation>((observer) => {
+
+      query = this.http.get<StudyCaseAllocation>(`${this.apiRoute}/${studyCaseId}/status`);
+      this.executeAllocationQuery(query, observer);
+    });
+
+    return allocationObservable;
   }
 
   /**

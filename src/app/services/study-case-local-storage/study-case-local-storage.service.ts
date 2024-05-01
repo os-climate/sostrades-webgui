@@ -247,11 +247,11 @@ export class StudyCaseLocalStorageService {
       },
       error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
-        this.loadingDialogService.closeLoading();
+        
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.snackbarService.showError('Error saving study case changes : ' + error.description);
+          this.studyCaseDataService.checkPodStatusAndShowError(parseInt(studyId), errorReceived,"Error saving study case changes" );
         }
         isStudySaved(false);
       }

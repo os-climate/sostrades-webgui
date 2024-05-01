@@ -73,22 +73,6 @@ mat-header-cell:nth-child(2) {
   height: 40px !important;
 }
 
-.entity {
-  height: 60px;
-  display: flex;
-  flex-direction: column;
-}
-
-.entity-first-line {
-  line-height: 30px;
-  height: 30px;
-}
-
-.entity-second-line {
-  line-height: 30px;
-  height: 30px;
-  color: grey;
-}
 
 .mat-mdc-option {
   height: unset;

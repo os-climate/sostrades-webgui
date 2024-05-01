@@ -15,6 +15,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { environment } from 'src/environments/environment';
 import { ContactDialogComponent } from '../contact-dialog/contact-dialog.component';
+import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 
 
 @Component({
@@ -38,6 +39,8 @@ export class HeaderComponent implements OnInit {
   private onCloseStudySubscription: Subscription;
   public displayMessageNoServer: boolean;
   public displayMessageNoStudyServer: boolean;
+  public displayOOMKilledMessage: boolean;
+  public OOMKilledMessage: string;
   constructor(
     private router: Router,
     private auth: AuthService,
@@ -60,6 +63,8 @@ export class HeaderComponent implements OnInit {
     this.onNoStudyServerSubscription = null;
     this.displayMessageNoServer = false;
     this.displayMessageNoStudyServer = false;
+    this.displayOOMKilledMessage = false;
+    this.OOMKilledMessage = "";
   }
 
   ngOnInit(): void {
@@ -137,12 +142,30 @@ export class HeaderComponent implements OnInit {
 
   onStudyServerSubscribe(){
     this.onNoStudyServerSubscription = this.studyCaseMainService.onNoStudyServer.subscribe(isLoaded => {
+      if (!isLoaded){
+        // check pod error or oomkilled
+        const study_id = this.studyCaseDataService.loadedStudy.studyCase.id;
+        this.studyCaseDataService.getStudyCaseAllocationStatus(study_id).subscribe({
+          next: allocation => {
+            this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
+            this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL;
+            this.displayMessageNoStudyServer = !isLoaded;
+          },
+          error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
+      }  
+      else{
         this.displayMessageNoStudyServer = !isLoaded;
+      }
+      
+        
     });
     //if the study is closed, the header should not be visible
     this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(closed=>{
       if(this.displayMessageNoStudyServer){
         this.displayMessageNoStudyServer = false;
+      }
+      if(this.displayOOMKilledMessage){
+        this.displayOOMKilledMessage = false;
       }
     })
   }

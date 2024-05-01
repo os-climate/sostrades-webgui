@@ -22,7 +22,7 @@ export class UserRoomDialogComponent implements OnInit, OnDestroy {
   private onRoomUserUpdateSubscription: Subscription;
   private onNewNotificationSubscription: Subscription;
 
-  public displayedColumns = ['firstname', 'lastname', 'email', 'execution'];
+  public displayedColumns = ['firstname', 'lastname', 'execution'];
   public dataSourceUsers = new MatTableDataSource<User>();
 
   @ViewChild(MatSort, { static: false })
