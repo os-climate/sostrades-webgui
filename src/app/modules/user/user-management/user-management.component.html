@@ -8,37 +8,40 @@
 </div>
 
 <div class="container" *ngIf="!isLoading">
-
-  <div class="filterSection">
-    <mat-form-field class="filter-form-field">
-      <mat-label class="filter-label-size">Filtered by</mat-label>
-      <mat-select
-        placeholder="Column(s) filtered"
-        class="filter-label-size"
-        (selectionChange)="onFilterChange()"
-        style="text-align: left"
-        [(ngModel)]="columnsFilterSelected"
-        [matTooltip]="columnsFilterSelected"
-        #selectionModel="ngModel"
-      >
-        <mat-option *ngFor="let item of colummnsFilter" [value]="item">
-          {{ item }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="filter-bar">
-      <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
-    </mat-form-field>
+  <div id="user-header">
+    <mat-label  class="number-users"> Number of users <b>{{ userCount }}</b></mat-label>
+    <div class="filterSection">
+      <mat-form-field class="filter-form-field">
+        <mat-label class="filter-label-size">Filtered by</mat-label>
+        <mat-select
+          placeholder="Column(s) filtered"
+          class="filter-label-size"
+          (selectionChange)="onFilterChange()"
+          style="text-align: left"
+          [(ngModel)]="columnsFilterSelected"
+          [matTooltip]="columnsFilterSelected"
+          #selectionModel="ngModel"
+        >
+          <mat-option *ngFor="let item of colummnsFilter" [value]="item">
+            {{ item }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="filter-bar">
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
+      </mat-form-field>
+    </div>
     <button
-      mat-mini-fab
+      mat-raised-button
+      id="create-user"
       color="primary"
       style="margin-left: 10px"
       (click)="addUser()"
-    >
-      <mat-icon>add</mat-icon>
+    > Create User
+    <mat-icon>add</mat-icon>
     </button>
   </div>
-
+  
   <table mat-table class="table" #table [dataSource]="dataSourceUsers" matSort>
     <!-- Username Column -->
     <ng-container matColumnDef="username">

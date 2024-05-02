@@ -11,7 +11,6 @@
         {{data.editionDialogName}}
     </h1>
     <br>
-    <br>
     <div class="edit-form" [formGroup]="editForm">
         <div id="name" *ngIf="data.editionDialogName != dialogEditionName.EDITION_USER">   
             <mat-form-field class="form-field">
@@ -36,7 +35,7 @@
                 >
             </mat-form-field>
         </div>
-        <br>
+        <br *ngIf="data.editionDialogName != dialogEditionName.EDITION_USER">
         
         <!-- Group Edition -->
         <div id="description" *ngIf="data.editionDialogName == dialogEditionName.EDITION_GROUP">
@@ -76,7 +75,7 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        <br>
+        <br *ngIf="data.editionDialogName == dialogEditionName.EDITION_STUDY">
         <div id="flavor-list" *ngIf="data.editionDialogName == dialogEditionName.EDITION_STUDY">
             <mat-form-field *ngIf="hasFlavors" class="form-field">
                 <mat-select 
@@ -97,7 +96,6 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        <br>
         <!-- User Edition -->
         <div id="username" *ngIf="data.editionDialogName == dialogEditionName.EDITION_USER">
             <mat-form-field class="form-field">
