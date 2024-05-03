@@ -17,7 +17,7 @@ import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/s
 import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
 import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
-import { StudyUpdateParameter } from 'src/app/models/study-update.model';
+import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 
 @Injectable({
   providedIn: 'root'
@@ -194,9 +194,21 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  addNewStudyNotification(studyId: number): Observable<number> {
+    const url = `${this.apiRoute}/${studyId}/notifications`;
+    const payloadForNotification = {
+      coedition_action : 'save',
+      change_type: UpdateParameterType.DATASET_MAPPING_CHANGE
+  };
+    return this.http.post<number>(url, payloadForNotification, this.options).pipe(map(
+      notification_id => {
+        return notification_id;
+      }));
+  }
 
-  getStudyParemeterChanges(studyId: number): Observable<StudyUpdateParameter[]> {
-    const url = `${this.apiRoute}/${studyId}/parameter-changes`;
+
+  getStudyParemeterChanges(studyId: number, notification_id: number): Observable<StudyUpdateParameter[]> {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/parameter-changes`;
     return this.http.get<StudyUpdateParameter[]>(url).pipe(map(
       response => {
         const parametersChanges: StudyUpdateParameter[] = [];

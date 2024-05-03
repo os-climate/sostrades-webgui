@@ -23,7 +23,7 @@ import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/vali
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { User } from 'src/app/models/user.model';
 import { UserRoomDialogComponent } from '../../user/user-room-dialog/user-room-dialog.component';
-import { StudyUpdateParameter } from 'src/app/models/study-update.model';
+import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
 import { UserService } from 'src/app/services/user/user.service';
 import { StudyCaseModificationDialogComponent } from '../study-case-modification-dialog/study-case-modification-dialog.component';
@@ -1045,29 +1045,40 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         formData.append('datasets_mapping_file', file);
         const currentStudyId = this.studyCaseDataService.loadedStudy.studyCase.id;
         this.loadingDialogService.showLoading('Update parameter from dataset mapping');
-        this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData).subscribe({
-          next: (loadedStudy) => {
-           this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
-            // clear post processing dictionnary
-            this.postProcessingService.clearPostProcessingDict();
-            // Retrieve parameter changes to trigger the socket service
-            this.studyCaseDataService.getStudyParemeterChanges(loadedStudy.studyCase.id).subscribe(
-              changes => {
-                if (changes.length > 0 ) {
-                  this.socketService.saveStudy(this.studyCaseDataService.loadedStudy.studyCase.id,changes);
-                }
-                else {
-                  this.snackbarService.showWarning("There has been no changes applied.")
-                }
-                
+        this.studyCaseDataService.addNewStudyNotification(currentStudyId).subscribe({
+          next: (notification_id) => {
+            this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
+              next: (loadedStudy) => {
+                this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id).subscribe(
+                  changes => {
+                    if (changes.length > 0 ) {
+                      this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
+                      // clear post processing dictionnary
+                      this.postProcessingService.clearPostProcessingDict();
+                      // Retrieve parameter changes to trigger the socket service
+                      this.socketService.saveStudy(currentStudyId,changes);
+                    }
+                    else {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showWarning("There has been no changes applied.");
+                    }
+                    
+                  }
+                );
+              },
+              error: (error) => {
+                this.snackbarService.showError(`Error uploading file: ${error.description}`);
+                this.loadingDialogService.closeLoading();
               }
-            );
+            });
+
           },
           error: (error) => {
-            this.snackbarService.showError(`Error uploading file: ${error.description}`);
+            this.snackbarService.showError(`Error to add new notification: ${error.description}`);
             this.loadingDialogService.closeLoading();
           }
-        });
+        })
+        
       }
     } else {
       this.snackbarService.showError('Any file selected');

@@ -237,8 +237,8 @@ export class StudyCaseMainService extends MainHttpService {
       }));
   }
 
-  importDatasetFromJsonFile(studyId: number, formData: any) {
-    const url = `${this.apiRoute}/${studyId}/import-datasets-mapping`;
+  importDatasetFromJsonFile(studyId: number, formData: any, notification_id: number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/import-datasets-mapping`;
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
       this.updateStudyParametersTimeout(+studyId, url, formData, observer);
     });
