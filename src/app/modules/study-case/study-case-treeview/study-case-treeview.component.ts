@@ -1050,16 +1050,18 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
            this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
             // clear post processing dictionnary
             this.postProcessingService.clearPostProcessingDict();
-            this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id).subscribe(
-              notifications => {
-                console.log(notifications);
-                this.socketService.saveStudy(this.studyCaseDataService.loadedStudy.studyCase.id, notifications[notifications.length-1].changes);
+            // Retrieve parameter changes to trigger the socket service
+            this.studyCaseDataService.getStudyParemeterChanges(loadedStudy.studyCase.id).subscribe(
+              changes => {
+                if (changes.length > 0 ) {
+                  this.socketService.saveStudy(this.studyCaseDataService.loadedStudy.studyCase.id,changes);
+                }
+                else {
+                  this.snackbarService.showWarning("There has been no changes applied.")
+                }
+                
               }
             );
-           
-
-            // Send socket notifications
-            // this.socketService.saveStudy(this.studyCaseDataService.loadedStudy.studyCase.id, resultData.changes);
           },
           error: (error) => {
             this.snackbarService.showError(`Error uploading file: ${error.description}`);
