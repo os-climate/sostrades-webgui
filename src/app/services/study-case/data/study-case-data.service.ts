@@ -17,6 +17,7 @@ import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/s
 import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
 import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
+import { StudyUpdateParameter } from 'src/app/models/study-update.model';
 
 @Injectable({
   providedIn: 'root'
@@ -193,6 +194,21 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+
+  getStudyParemeterChanges(studyId: number): Observable<StudyUpdateParameter[]> {
+    const url = `${this.apiRoute}/${studyId}/parameter-changes`;
+    return this.http.get<StudyUpdateParameter[]>(url).pipe(map(
+      response => {
+        const parametersChanges: StudyUpdateParameter[] = [];
+        if (response !== null && response !== undefined && response.length > 0 ) {
+            response.forEach(parameter => {
+          parametersChanges.push(StudyUpdateParameter.Create(parameter));
+          });
+        } 
+        return parametersChanges;
+      }));
+  }
+  
   getAuthorizedStudiesForProcess(process, repository): Observable<Study[]> {
     const url = `${this.apiRoute}/process`;
 
