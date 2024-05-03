@@ -28,6 +28,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
 
+  public selectedIndex: number;
   public showView: boolean;
   public showSearch: boolean;
   public isFullScreenOn: boolean;
@@ -82,6 +83,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
 
     private treeNodeDataService: TreeNodeDataService) {
+    this.selectedIndex = 0;
     this.showView = false;
     this.showSearch = false;
     this.showPostProcessing = false;
@@ -107,10 +109,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.routerSubscription = null;
     this.processIdentifier = '';
     this.newUserLevelValue = 0;
+    
   }
 
   ngOnInit() {
     this.tabNameSelected = 'Documentation';
+    this.selectedIndex = 3;
     this.showDocumentationContent=true
     this.showSearch = false;
     this.setDiplayableItems();
@@ -240,8 +244,9 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   onSelectedTabChange(event: MatTabChangeEvent) {
     if (event.tab !== null && event.tab !== undefined) {
-      this.tabNameSelected = event.tab.textLabel;
 
+      this.selectedIndex=3;
+      this.tabNameSelected = event.tab.textLabel;
       this.showPostProcessingContent = false;
       this.showVisualisationContent = false;
       this.showDocumentationContent = false;
