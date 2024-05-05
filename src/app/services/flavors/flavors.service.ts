@@ -20,9 +20,22 @@ export class FlavorsService extends DataHttpService {
   }
 
 
-  getAllFlavors(): Observable<string[]> {
+  getAllFlavorsStudy(): Observable<string[]> {
     if (this.flavorsList.length == 0){
-      return this.http.get<string[]>(`${this.apiRoute}`, this.options).pipe(map(
+      return this.http.get<string[]>(`${this.apiRoute}/study`, this.options).pipe(map(
+        response => {
+          this.flavorsList = response;
+          return response;
+        }));
+    }
+    else{
+      return of(this.flavorsList)
+    }
+  }
+
+  getAllFlavorsExec(): Observable<string[]> {
+    if (this.flavorsList.length == 0){
+      return this.http.get<string[]>(`${this.apiRoute}/exec`, this.options).pipe(map(
         response => {
           this.flavorsList = response;
           return response;

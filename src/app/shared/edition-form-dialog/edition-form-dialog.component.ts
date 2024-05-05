@@ -160,7 +160,7 @@ export class EditionFormDialogComponent {
 
   private loadFlavor() {
     //get flavors in config api
-    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+    this.flavorsService.getAllFlavorsStudy().subscribe(flavorList =>
       {
         this.flavorList = flavorList;
         this.onChange(null, this.data.editionDialogName);
