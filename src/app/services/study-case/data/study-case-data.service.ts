@@ -195,7 +195,7 @@ export class StudyCaseDataService extends DataHttpService {
   }
 
   addNewStudyNotification(studyId: number): Observable<number> {
-    const url = `${this.apiRoute}/${studyId}/notifications`;
+    const url = `${this.apiRoute}/${studyId}/notification`;
     const payloadForNotification = {
       coedition_action : 'save',
       change_type: UpdateParameterType.DATASET_MAPPING_CHANGE

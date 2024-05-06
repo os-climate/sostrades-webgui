@@ -1049,8 +1049,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           next: (notification_id) => {
             this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
               next: (loadedStudy) => {
-                this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id).subscribe(
-                  changes => {
+                this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id).subscribe({
+                  next: (changes) => {
                     if (changes.length > 0 ) {
                       this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
                       // clear post processing dictionnary
@@ -1060,11 +1060,16 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
                     }
                     else {
                       this.loadingDialogService.closeLoading();
-                      this.snackbarService.showWarning("There has been no changes applied.");
+                      this.snackbarService.showWarning("There has been no changes applied. Maybe verify your datasets-mapping file.");
                     }
-                    
+
+                  },
+                  error: (error) => {
+                    this.loadingDialogService.closeLoading();
+                    this.snackbarService.showError(`Error retrieving study case changes: ${error.description}`);
+                  
                   }
-                );
+                });
               },
               error: (error) => {
                 this.snackbarService.showError(`Error uploading file: ${error.description}`);
