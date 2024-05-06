@@ -83,7 +83,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
 
     private treeNodeDataService: TreeNodeDataService) {
-    this.selectedIndex = 0;
+    this.selectedIndex = 3;
     this.showView = false;
     this.showSearch = false;
     this.showPostProcessing = false;
@@ -222,7 +222,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
           let process = this.studyCaseDataService.loadedStudy.studyCase.process
           this.modelsFullPathList.push(repo.concat('.',process ))
         }
+        if (!treenode.isRoot) {
+          this.selectedIndex = 2;
       }
+    }
     });
   }
 
@@ -244,7 +247,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   onSelectedTabChange(event: MatTabChangeEvent) {
     if (event.tab !== null && event.tab !== undefined) {
-
       this.selectedIndex=3;
       this.tabNameSelected = event.tab.textLabel;
       this.showPostProcessingContent = false;
