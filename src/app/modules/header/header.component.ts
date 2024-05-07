@@ -140,22 +140,22 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  isStudyOpened(){
+    return this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined
+  }
+
   onStudyServerSubscribe(){
     this.onNoStudyServerSubscription = this.studyCaseMainService.onNoStudyServer.subscribe(isLoaded => {
-      if(this.studyCaseDataService.loadedStudy !== null || this.studyCaseDataService.loadedStudy !== undefined){
+      if(this.isStudyOpened()){
         if (!isLoaded){
           // check pod error or oomkilled
           const study_id = this.studyCaseDataService.loadedStudy.studyCase.id;
           this.studyCaseDataService.getStudyCaseAllocationStatus(study_id).subscribe({
             next: allocation => {
-              if(this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined){
-                this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
+              this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
                 this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL;
                 this.displayMessageNoStudyServer = !isLoaded;
-              }
-              else{
-                this.displayMessageNoStudyServer = false;
-              }
+             
             },
             error:(error)=>{this.displayMessageNoStudyServer = false;}});
         }  
