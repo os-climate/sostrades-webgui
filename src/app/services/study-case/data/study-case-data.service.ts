@@ -628,7 +628,7 @@ export class StudyCaseDataService extends DataHttpService {
           }
           
         } else {
-          this.loadingDialogService.updateMessage("Study pod is up...the study loading is in proress.")
+          this.loadingDialogService.updateMessage("Study pod is up...the study loading is in progress.")
           allocationObservable.next(allocation);
         }
 
