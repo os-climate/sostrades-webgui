@@ -150,7 +150,7 @@
 <div *ngIf="displayMessageNoServer" id="no-server">
   <span> <i class="fa-solid fa-triangle-exclamation warning-icon"></i> Be careful, the platform is currently down. Please wait until this message disappears before taking any action. <i class="fa-solid fa-triangle-exclamation warning-icon"></i></span>
 </div>
-<div *ngIf="displayMessageNoStudyServer&&!this.displayMessageNoServer" id="no-server">
+<div *ngIf="displayMessageNoStudyServer && !this.displayMessageNoServer && isStudyOpened()" id="no-server">
    <div *ngIf="!displayOOMKilledMessage" >
     <i class="fa-solid fa-triangle-exclamation warning-icon"></i> 
     Be careful, the study server is currently down. You should reload the study before taking any action.
