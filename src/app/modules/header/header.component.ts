@@ -142,19 +142,30 @@ export class HeaderComponent implements OnInit {
 
   onStudyServerSubscribe(){
     this.onNoStudyServerSubscription = this.studyCaseMainService.onNoStudyServer.subscribe(isLoaded => {
-      if (!isLoaded){
-        // check pod error or oomkilled
-        const study_id = this.studyCaseDataService.loadedStudy.studyCase.id;
-        this.studyCaseDataService.getStudyCaseAllocationStatus(study_id).subscribe({
-          next: allocation => {
-            this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
-            this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL;
-            this.displayMessageNoStudyServer = !isLoaded;
-          },
-          error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
-      }  
+      if(this.studyCaseDataService.loadedStudy !== null || this.studyCaseDataService.loadedStudy !== undefined){
+        if (!isLoaded){
+          // check pod error or oomkilled
+          const study_id = this.studyCaseDataService.loadedStudy.studyCase.id;
+          this.studyCaseDataService.getStudyCaseAllocationStatus(study_id).subscribe({
+            next: allocation => {
+              if(this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined){
+                this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
+                this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL;
+                this.displayMessageNoStudyServer = !isLoaded;
+              }
+              else{
+                this.displayMessageNoStudyServer = false;
+              }
+            },
+            error:(error)=>{this.displayMessageNoStudyServer = false;}});
+        }  
+        else{
+          this.displayMessageNoStudyServer = !isLoaded;
+        }
+      }
       else{
-        this.displayMessageNoStudyServer = !isLoaded;
+        this.displayMessageNoStudyServer = false;
+        this.displayOOMKilledMessage = false;
       }
       
         
