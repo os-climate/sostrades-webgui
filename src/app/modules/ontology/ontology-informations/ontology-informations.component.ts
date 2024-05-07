@@ -48,6 +48,7 @@ export class OntologyInformationsComponent implements OnInit {
 
   public keys = Object.keys;
   public ontologyInstance: OntologyParameter;
+  public hasChangesFromDataset: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -67,6 +68,7 @@ export class OntologyInformationsComponent implements OnInit {
     this.originDisciplines = [];
     this.isEditableOnAnotherNode = false;
     this.originNamespace = '';
+    this.hasChangesFromDataset= false;
   }
 
   ngOnInit(): void {
@@ -103,6 +105,14 @@ export class OntologyInformationsComponent implements OnInit {
 
     // Retrieve variable changes
     this.changesList = this.socketService.getParameterChangesList(this.data.name);
+    
+  if (this.changesList.some(parameter => 
+    (parameter.datasetConnectorId !== null && parameter.datasetConnectorId !== undefined) && 
+    (parameter.datasetId !== null && parameter.datasetId !== undefined)
+    )) {
+    this.displayedColumns.push('datasetConnectorId', 'datasetId');
+  }
+    
     this.dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>(this.changesList);
     this.dataSourceChanges.sortingDataAccessor = (item, property) => {
       return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
@@ -152,7 +162,7 @@ export class OntologyInformationsComponent implements OnInit {
 
   revertChanges(parameter: StudyUpdateParameter) {
 
-    if (parameter.changeType == UpdateParameterType.SCALAR) {
+    if (parameter.changeType == UpdateParameterType.SCALAR || parameter.changeType == UpdateParameterType.DATASET_MAPPING_CHANGE) {
       this.revertStringType(parameter);
     } else if (parameter.changeType == UpdateParameterType.CSV) {
       this.revertCsvType(parameter);
@@ -172,7 +182,10 @@ export class OntologyInformationsComponent implements OnInit {
       parameter.oldValue,
       this.data.nodeData.value,
       null,
-      new Date());
+      new Date(),
+      null,
+      null,
+      null);
 
     this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
       newUpdateParameter,
@@ -200,7 +213,10 @@ export class OntologyInformationsComponent implements OnInit {
       parameter.oldValue,
       this.data.nodeData.connector_data,
       null,
-      new Date());
+      new Date(),
+      null,
+      null,
+      null);
     console.log(newUpdateParameter)
     this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
       newUpdateParameter,
@@ -239,7 +255,10 @@ export class OntologyInformationsComponent implements OnInit {
             base64String,
             null,
             null,
-            new Date()
+            new Date(),
+            null,
+            null,
+            null
           );
     
           this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(

@@ -23,7 +23,7 @@ import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/vali
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { User } from 'src/app/models/user.model';
 import { UserRoomDialogComponent } from '../../user/user-room-dialog/user-room-dialog.component';
-import { StudyUpdateParameter } from 'src/app/models/study-update.model';
+import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
 import { UserService } from 'src/app/services/user/user.service';
 import { StudyCaseModificationDialogComponent } from '../study-case-modification-dialog/study-case-modification-dialog.component';
@@ -104,6 +104,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private flavorsList: string[];
 
   @ViewChild('filter', { static: false }) private filterElement: ElementRef;
+  @ViewChild('fileInput') fileInput: ElementRef;
 
   @HostListener('document:keydown.control.f', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     // Check group component is visible
@@ -1048,6 +1049,63 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     });
   }
 
+  onImportDatasetFromJsonFile(event) {
+    const inputElement = event.target as HTMLInputElement;
+    const file = inputElement.files?.[0];
+    
+    if (file) {
+      {
+        // Create formData object and send the file
+        const formData = new FormData();
+        formData.append('datasets_mapping_file', file);
+        const currentStudyId = this.studyCaseDataService.loadedStudy.studyCase.id;
+        this.loadingDialogService.showLoading('Update parameter from dataset mapping');
+        this.studyCaseDataService.addNewStudyNotification(currentStudyId).subscribe({
+          next: (notification_id) => {
+            this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
+              next: (loadedStudy) => {
+                this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id).subscribe({
+                  next: (changes) => {
+                    if (changes.length > 0 ) {
+                      this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
+                      // clear post processing dictionnary
+                      this.postProcessingService.clearPostProcessingDict();
+                      // Retrieve parameter changes to trigger the socket service
+                      this.socketService.saveStudy(currentStudyId,changes);
+                    }
+                    else {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showWarning("There has been no changes applied. Maybe verify your datasets-mapping file.");
+                    }
+
+                  },
+                  error: (error) => {
+                    this.loadingDialogService.closeLoading();
+                    this.snackbarService.showError(`Error retrieving study case changes: ${error.description}`);
+                  
+                  }
+                });
+              },
+              error: (error) => {
+                this.snackbarService.showError(`Error uploading file: ${error.description}`);
+                this.loadingDialogService.closeLoading();
+              }
+            });
+
+          },
+          error: (error) => {
+            this.snackbarService.showError(`Error to add new notification: ${error.description}`);
+            this.loadingDialogService.closeLoading();
+          }
+        })
+        
+      }
+    } else {
+      this.snackbarService.showError('Any file selected');
+    }
+    this.fileInput.nativeElement.value = null;
+  }
+
   saveData(saveDone: any) {
     let studyParameters: StudyUpdateParameter[] = [];
     studyParameters = this.studyCaseLocalStorageService
@@ -1220,7 +1278,11 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
               nodeDataCache.newValue,
               nodeData.oldValue,
               null,
-              nodeDataCache.lastModified);
+              nodeDataCache.lastModified,
+              null,
+              null,
+              null
+            );
 
             this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
               newItemSave,

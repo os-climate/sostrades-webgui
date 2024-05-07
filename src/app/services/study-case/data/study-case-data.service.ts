@@ -19,6 +19,7 @@ import { Router } from '@angular/router';
 import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 import { LoggerService } from '../../logger/logger.service';
 import { SnackbarService } from '../../snackbar/snackbar.service';
+import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 
 @Injectable({
   providedIn: 'root'
@@ -260,6 +261,33 @@ export class StudyCaseDataService extends DataHttpService {
     
   }
 
+  addNewStudyNotification(studyId: number): Observable<number> {
+    const url = `${this.apiRoute}/${studyId}/notification`;
+    const payloadForNotification = {
+      coedition_action : 'save',
+      change_type: UpdateParameterType.DATASET_MAPPING_CHANGE
+  };
+    return this.http.post<number>(url, payloadForNotification, this.options).pipe(map(
+      notification_id => {
+        return notification_id;
+      }));
+  }
+
+
+  getStudyParemeterChanges(studyId: number, notification_id: number): Observable<StudyUpdateParameter[]> {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/parameter-changes`;
+    return this.http.get<StudyUpdateParameter[]>(url).pipe(map(
+      response => {
+        const parametersChanges: StudyUpdateParameter[] = [];
+        if (response !== null && response !== undefined && response.length > 0 ) {
+            response.forEach(parameter => {
+          parametersChanges.push(StudyUpdateParameter.Create(parameter));
+          });
+        } 
+        return parametersChanges;
+      }));
+  }
+  
   getAuthorizedStudiesForProcess(process, repository): Observable<Study[]> {
     const url = `${this.apiRoute}/process`;
 

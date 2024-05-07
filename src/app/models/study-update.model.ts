@@ -14,7 +14,11 @@ export class StudyUpdateParameter {
     public newValue: any,
     public oldValue: any,
     public oldValueBlob: boolean,
-    public lastModified: Date) {
+    public lastModified: Date,
+    public datasetConnectorId: string,
+    public datasetId: string,
+    public dataset_parameter_id: string
+  ) {
     this.id = null;
     this.author = null;
   }
@@ -30,7 +34,11 @@ export class StudyUpdateParameter {
       jsonData[StudyUpdateParameterAttributes.NEWVALUE],
       jsonData[StudyUpdateParameterAttributes.OLDVALUE],
       jsonData[StudyUpdateParameterAttributes.OLDVALUEBLOB],
-      jsonData[StudyUpdateParameterAttributes.LASTMODIFIED]);
+      jsonData[StudyUpdateParameterAttributes.LASTMODIFIED],
+      jsonData[StudyUpdateParameterAttributes.DATASET_CONNECTOR_ID],
+      jsonData[StudyUpdateParameterAttributes.DATASET_ID],
+      jsonData[StudyUpdateParameterAttributes.DATASET_PARAMETER_ID]
+    );
 
     if (jsonData[StudyUpdateParameterAttributes.ID] !== null
       && jsonData[StudyUpdateParameterAttributes.ID] !== undefined) {
@@ -59,13 +67,19 @@ export enum StudyUpdateParameterAttributes {
   OLDVALUEBLOB = 'old_value_blob',
   LASTMODIFIED = 'last_modified',
   NOTIFICATIONID = 'notification_id',
-  DELETED_COLUMN = 'deleted_column'
+  DELETED_COLUMN = 'deleted_column',
+  DATASET_CONNECTOR_ID = 'dataset_connector_id',
+  DATASET_ID = 'dataset_id',
+  DATASET_PARAMETER_ID = 'dataset_parameter_id',
+
 }
 
 export enum UpdateParameterType {
   CSV = 'csv',
   SCALAR = 'scalar',
-  CONNECTOR_DATA = 'connector_data'
+  CONNECTOR_DATA = 'connector_data',
+  DATASET_MAPPING_CHANGE = 'dataset_mapping'
+
 }
 
 export class StudyUpdateContainer {

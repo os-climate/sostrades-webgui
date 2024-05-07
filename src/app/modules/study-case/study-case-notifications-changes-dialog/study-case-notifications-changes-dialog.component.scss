@@ -98,3 +98,23 @@ th.mat-mdc-header-cell:last-of-type {
 th.mat-mdc-header-cell:last-of-type {
   padding-right: 5px;
 }
+
+.mat-column-name {
+  width: 10% !important;
+}
+
+.mat-column-oldValue {
+  width: 20% !important;
+}
+
+.mat-column-newValue {
+  width: 20% !important;
+}
+
+.mat-column-datasetConnectorId {
+  width: 15% !important;
+}
+
+.mat-column-datasetId {
+  width: 15% !important;
+}
