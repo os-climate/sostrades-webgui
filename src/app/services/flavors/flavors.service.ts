@@ -11,25 +11,40 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class FlavorsService extends DataHttpService {
-  private flavorsList: string[]
+  private flavorsListStudy: string[]
+  private flavorsListExec: string[]
   constructor(
     private http: HttpClient,
     private location: Location) {
     super (location, 'flavors');
-    this.flavorsList = []
+    this.flavorsListStudy = []
+    this.flavorsListExec = []
   }
 
 
-  getAllFlavors(): Observable<string[]> {
-    if (this.flavorsList.length == 0){
-      return this.http.get<string[]>(`${this.apiRoute}`, this.options).pipe(map(
+  getAllFlavorsStudy(): Observable<string[]> {
+    if (this.flavorsListStudy.length == 0){
+      return this.http.get<string[]>(`${this.apiRoute}/study`, this.options).pipe(map(
         response => {
-          this.flavorsList = response;
+          this.flavorsListStudy = response;
           return response;
         }));
     }
     else{
-      return of(this.flavorsList)
+      return of(this.flavorsListStudy)
+    }
+  }
+
+  getAllFlavorsExec(): Observable<string[]> {
+    if (this.flavorsListExec.length == 0){
+      return this.http.get<string[]>(`${this.apiRoute}/exec`, this.options).pipe(map(
+        response => {
+          this.flavorsListExec = response;
+          return response;
+        }));
+    }
+    else{
+      return of(this.flavorsListExec)
     }
   }
 

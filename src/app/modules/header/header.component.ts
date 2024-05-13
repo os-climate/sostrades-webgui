@@ -140,21 +140,32 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  isStudyOpened(){
+    return this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined
+  }
+
   onStudyServerSubscribe(){
     this.onNoStudyServerSubscription = this.studyCaseMainService.onNoStudyServer.subscribe(isLoaded => {
-      if (!isLoaded){
-        // check pod error or oomkilled
-        const study_id = this.studyCaseDataService.loadedStudy.studyCase.id;
-        this.studyCaseDataService.getStudyCaseAllocationStatus(study_id).subscribe({
-          next: allocation => {
-            this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
-            this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL;
-            this.displayMessageNoStudyServer = !isLoaded;
-          },
-          error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
-      }  
+      if(this.isStudyOpened()){
+        if (!isLoaded){
+          // check pod error or oomkilled
+          const study_id = this.studyCaseDataService.loadedStudy.studyCase.id;
+          this.studyCaseDataService.getStudyCaseAllocationStatus(study_id).subscribe({
+            next: allocation => {
+              this.displayOOMKilledMessage = allocation.status == StudyCaseAllocationStatus.OOMKILLED;
+                this.OOMKilledMessage = StudyCaseAllocation.OOMKILLEDLABEL;
+                this.displayMessageNoStudyServer = !isLoaded;
+             
+            },
+            error:(error)=>{this.displayMessageNoStudyServer = false;}});
+        }  
+        else{
+          this.displayMessageNoStudyServer = !isLoaded;
+        }
+      }
       else{
-        this.displayMessageNoStudyServer = !isLoaded;
+        this.displayMessageNoStudyServer = false;
+        this.displayOOMKilledMessage = false;
       }
       
         

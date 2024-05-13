@@ -173,7 +173,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     });
 
     //get flavors in config api
-    this.flavorsService.getAllFlavors().subscribe(flavorsList =>
+    this.flavorsService.getAllFlavorsStudy().subscribe(flavorsList =>
       {
         this.flavorsList = flavorsList;
          //select flavor if it is already set for the study

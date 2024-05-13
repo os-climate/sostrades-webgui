@@ -279,7 +279,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     });
 
     //get flavors in config api
-    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+    this.flavorsService.getAllFlavorsExec().subscribe(flavorList =>
       {
         if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
          this.hasFlavors = true;

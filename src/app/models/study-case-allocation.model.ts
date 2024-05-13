@@ -19,7 +19,7 @@ export class StudyCaseAllocation {
     return result;
   }
 
-  public static OOMKILLEDLABEL:string = 'Pod has been killed because of not enough resources, \nyou may try to choose a bigger pod size before restart.'
+  public static OOMKILLEDLABEL:string = 'Server has been killed because of not enough resources, \nyou may try to choose a bigger pod opening size before restart.'
 }
 
 export enum StudyCaseAllocationStatus {
