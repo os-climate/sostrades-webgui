@@ -1,11 +1,9 @@
-import { I } from '@angular/cdk/keycodes';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { FilterDialogData } from 'src/app/models/dialog-data.model';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -47,6 +45,8 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.datas.columnName = this.formatColumnName(this.datas.columnName)
+ 
     // load the initial process list
     this.filteredResearchMulti.next(this.datas.possibleStringValues.slice());
 
@@ -121,6 +121,26 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
       this.isChecked = filteredLength > 0 && filteredLength === this.filteredResearchCache.length;
     }
   }
+
+public formatColumnName(columnName: string): string {
+    // If the word is empty, return an empty string
+    if (!columnName.trim()) {
+        return '';
+    }
+
+    // Capitalize the first letter
+    let formattedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
+
+     // Add a space before each uppercase letter, except the first one
+    for (let i = 1; i < formattedColumnName.length; i++) {
+        if (formattedColumnName.charAt(i) === formattedColumnName.charAt(i).toUpperCase()) {
+            formattedColumnName = formattedColumnName.slice(0, i) + ' ' + formattedColumnName.slice(i);
+            i++; // Move the cursor by one step to skip the added space
+        }
+    }
+
+    return formattedColumnName;
+}
 
   submitForm() {
     this.datas.cancel = false;
