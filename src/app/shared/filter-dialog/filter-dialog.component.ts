@@ -45,7 +45,7 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.datas.columnName = this.formatWord(this.datas.columnName)
+    this.datas.columnName = this.formatColumnName(this.datas.columnName)
  
     // load the initial process list
     this.filteredResearchMulti.next(this.datas.possibleStringValues.slice());
@@ -122,24 +122,24 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-public formatWord(word: string): string {
-    // Si le mot est vide, retourner une chaîne vide
-    if (!word.trim()) {
+public formatColumnName(columnName: string): string {
+    // If the word is empty, return an empty string
+    if (!columnName.trim()) {
         return '';
     }
 
-    // Mettre la première lettre en majuscule
-    let formattedWord = word.charAt(0).toUpperCase() + word.slice(1);
+    // Capitalize the first letter
+    let formattedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
 
-    // Ajouter un espace avant chaque lettre majuscule, sauf la première
-    for (let i = 1; i < formattedWord.length; i++) {
-        if (formattedWord.charAt(i) === formattedWord.charAt(i).toUpperCase()) {
-            formattedWord = formattedWord.slice(0, i) + ' ' + formattedWord.slice(i);
-            i++; // Avancer le curseur d'un pas pour sauter l'espace ajouté
+     // Add a space before each uppercase letter, except the first one
+    for (let i = 1; i < formattedColumnName.length; i++) {
+        if (formattedColumnName.charAt(i) === formattedColumnName.charAt(i).toUpperCase()) {
+            formattedColumnName = formattedColumnName.slice(0, i) + ' ' + formattedColumnName.slice(i);
+            i++; // Move the cursor by one step to skip the added space
         }
     }
 
-    return formattedWord;
+    return formattedColumnName;
 }
 
   submitForm() {
