@@ -1,11 +1,9 @@
-import { I } from '@angular/cdk/keycodes';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { FilterDialogData } from 'src/app/models/dialog-data.model';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -47,6 +45,8 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.datas.columnName = this.formatWord(this.datas.columnName)
+ 
     // load the initial process list
     this.filteredResearchMulti.next(this.datas.possibleStringValues.slice());
 
@@ -121,6 +121,26 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
       this.isChecked = filteredLength > 0 && filteredLength === this.filteredResearchCache.length;
     }
   }
+
+public formatWord(word: string): string {
+    // Si le mot est vide, retourner une chaîne vide
+    if (!word.trim()) {
+        return '';
+    }
+
+    // Mettre la première lettre en majuscule
+    let formattedWord = word.charAt(0).toUpperCase() + word.slice(1);
+
+    // Ajouter un espace avant chaque lettre majuscule, sauf la première
+    for (let i = 1; i < formattedWord.length; i++) {
+        if (formattedWord.charAt(i) === formattedWord.charAt(i).toUpperCase()) {
+            formattedWord = formattedWord.slice(0, i) + ' ' + formattedWord.slice(i);
+            i++; // Avancer le curseur d'un pas pour sauter l'espace ajouté
+        }
+    }
+
+    return formattedWord;
+}
 
   submitForm() {
     this.datas.cancel = false;

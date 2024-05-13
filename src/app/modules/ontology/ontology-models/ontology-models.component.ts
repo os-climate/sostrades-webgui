@@ -22,7 +22,7 @@ import { OntologyHttpService } from 'src/app/services/ontology-http/ontology-htt
 export class OntologyModelsComponent implements OnInit, OnDestroy {
 
   public visibleColumns = [
-    ColumnName.NAME,
+    ColumnName.LABEL,
     ColumnName.CODE_REPOSITORY,
     ColumnName.PROCESS_USING_MODEL,
     ColumnName.INFORMATION,
@@ -31,9 +31,6 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
   public columnsFilter = [
     ColumnName.ALL_COLUMNS,
     ColumnName.NAME,
-    ColumnName.TYPE,
-    ColumnName.SOURCE,
-    ColumnName.VALIDATED_BY,
     ColumnName.CODE_REPOSITORY
   ];
   public columnName = ColumnName;
@@ -296,7 +293,7 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
       let isMatch = true;
       if (filter.trim().length > 0) {
       switch (this.ontologyService.modelStatusColumnFiltered) {
-        case ColumnName.NAME:
+        case ColumnName.LABEL:
           isMatch = data.label.trim().toLowerCase().includes(filter);
           break;
         case ColumnName.ID:
@@ -329,7 +326,7 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
       this.ontologyService.modelStatusSelectedValues.forEach((values , key) => {
         if (values.length > 0) {
           switch (key) {
-            case ColumnName.NAME:
+            case ColumnName.LABEL:
               isMatch = isMatch && values.includes(data.label);
               break;
             case ColumnName.CODE_REPOSITORY:
