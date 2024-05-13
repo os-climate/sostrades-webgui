@@ -20,7 +20,7 @@
       </mat-label>
       <div class="filterSection">
         <mat-form-field class="filter-form-field">
-          <mat-label class="filter-label-size">Filtered by</mat-label>
+          <mat-label class="filter-bar">Filtered by</mat-label>
           <mat-select
             placeholder="Column(s) filtered"
             class="filter-label-size"
@@ -28,7 +28,6 @@
             style="text-align: left"
             [(ngModel)]="processService.processManagementColumnFiltered"
             [matTooltip]="processService.processManagementColumnFiltered"
-            #selectionModel="ngModel"
           >
             <mat-option *ngFor="let item of colummnsFilter" [value]="item" style="text-transform: capitalize;">
               {{ item }}
