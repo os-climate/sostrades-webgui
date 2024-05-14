@@ -236,7 +236,7 @@
               (click)="nodeClick(node)"
               mat-button
               [matTooltip]=" node.modelsFullPathList  | ontologyDisciplineConverter"
-              matTooltipClass="custom-tooltip-class"
+              matTooltipPosition="right"
               [ngClass]="node == currentSelectedNode ? 'active' : null"
               class="node-fullnamespace"
             >
