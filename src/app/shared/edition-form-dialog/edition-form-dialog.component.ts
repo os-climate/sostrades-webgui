@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ValidationDialogData } from 'src/app/models/dialog-data.model';
@@ -20,7 +20,7 @@ import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-di
   templateUrl: './edition-form-dialog.component.html',
   styleUrls: ['./edition-form-dialog.component.scss']
 })
-export class EditionFormDialogComponent {
+export class EditionFormDialogComponent implements OnInit {
   
   public editForm : FormGroup;
   public dialogEditionName = DialogEditionName;
@@ -92,7 +92,7 @@ export class EditionFormDialogComponent {
         this.editForm = new FormGroup({
           username: new FormControl(this.data.userUpdated.username, [Validators.required, Validators.pattern(TypeCheckingTools.TEXT_LETTER_NUMBER_REGEX)]),
           firstname: new FormControl(this.data.userUpdated.firstname, [Validators.required, Validators.pattern(TypeCheckingTools.TEXT_LETTER_NUMBER_REGEX)]),
-          lastname: new FormControl(this.data.userUpdated.lastname, [Validators.required, Validators.pattern(TypeCheckingTools.TEXT_LETTER_NUMBER_REGEX)]),
+          lastname: new FormControl(this.data.userUpdated.lastname, [Validators.pattern(TypeCheckingTools.TEXT_LETTER_NUMBER_REGEX)]),
           email: new FormControl(this.data.userUpdated.email, [Validators.required, Validators.pattern(TypeCheckingTools.EMAIL_REGEX)]),
           profile: new FormControl(this.data.userUpdated.userprofile === null ? 0 : this.data.userUpdated.userprofile, [Validators.required])
         });

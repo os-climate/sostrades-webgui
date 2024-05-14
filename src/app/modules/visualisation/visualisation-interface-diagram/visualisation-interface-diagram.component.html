@@ -1,4 +1,3 @@
-<div [hidden]="isLoading" class="container" #graphviz_placeholder></div>
 <div
 *ngIf="isLoading"
 style="
@@ -17,12 +16,15 @@ style="
     ></mat-progress-spinner>
     <div style="margin-top: 10px">Loading interface diagram</div>
   </div>
-  <div [hidden]="isLoading">
-    <button mat-button (click)="resetZoom()">
-      Reset Zoom
-    </button>
-    <button mat-button (click)="downloadSVG()">
-      <i class="fa-solid fa-download"></i> Download SVG
-    </button>
-  </div>
+
+<div [hidden]="isLoading">
+  <button mat-button (click)="resetZoom()">
+    Reset Zoom
+  </button>
+  <button mat-button (click)="downloadSVG()">
+    <i class="fa-solid fa-download"></i> Download SVG
+  </button>
+</div>
+<div [hidden]="isLoading" class="container" #graphviz_placeholder></div>
+
   

@@ -20,7 +20,7 @@
       </mat-label>
       <div class="filterSection">
         <mat-form-field class="filter-form-field">
-          <mat-label class="filter-label-size">Filtered by</mat-label>
+          <mat-label class="filter-bar">Filtered by</mat-label>
           <mat-select
             class="filter-label-size"
             placeholder="Column(s) filtered"
@@ -76,10 +76,10 @@
           matSort
         >
           <!-- Name Column -->
-          <ng-container [matColumnDef]="columnName.NAME">
+          <ng-container [matColumnDef]="columnName.LABEL">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 39%;">Name 
-                  <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
-                  (click)="displayFilter(columnName.NAME, $event)" ></i>
+                  <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.LABEL)? 'icon-filter-values':'icon-filter-any-values'" 
+                  (click)="displayFilter(columnName.LABEL, $event)" ></i>
   
             </th>
             <td

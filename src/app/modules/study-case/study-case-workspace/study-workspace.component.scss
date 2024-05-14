@@ -76,3 +76,8 @@
 .mat-mdc-selection-list {
   padding: 0 !important;
 }
+
+::ng-deep .mat-mdc-tab-body-wrapper{
+  height: 100% !important;
+}
+
