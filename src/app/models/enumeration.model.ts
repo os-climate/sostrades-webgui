@@ -51,7 +51,7 @@ export enum NavigationTitle {
 export enum ColumnName {
 
     NAME = 'name',
-    CODE_REPOSITORY = 'code repository',
+    CODE_REPOSITORY = 'codeRepository',
     PROCESS_USING_MODEL = 'process using model',
     INFORMATION = 'information',
     ALL_COLUMNS = 'all columns',
@@ -67,11 +67,11 @@ export enum ColumnName {
     ACCESS = 'access',
     SELECTED = 'selected',
     FAVORITE = 'isFavorite',
-    CREATION_DATE = 'creation date',
-    MODIFICATION_DATE = 'modification date',
-    GROUP = 'group',
-    STATUS = 'execution status',
-    REGENERATION_STATUS = 'regeneration status',
+    CREATION_DATE = 'creationDate',
+    MODIFICATION_DATE = 'modificationDate',
+    GROUP = 'groupName',
+    STATUS = 'executionStatus',
+    REGENERATION_STATUS = 'regenerationStatus',
     DESCRIPTION = 'description',
     DEFAULT = 'default',
     CONFIDENTIAL = 'confidential',
@@ -79,7 +79,7 @@ export enum ColumnName {
     USERNAME = 'username',
     EDIT = 'edit',
     DELETE = 'delete',
-    CREATION_STATUS = 'creation status'
+    CREATION_STATUS = 'creationStatus'
 }
 
 export enum LabelFormName {

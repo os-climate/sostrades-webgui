@@ -12,7 +12,8 @@ export enum ProcessGenerationStatus {
   STATUS_RUNNING = 'RUNNING',
   STATUS_FINISHED = 'FINISHED',
   STATUS_FAILED = 'FAILED',
-  STATUS_STOPPED = 'STOPPED'
+  STATUS_STOPPED = 'STOPPED',
+  STATUS_POD_ERROR = 'POD ERROR'
 }
 
 export class ReferenceGenerationStatusObserver {
@@ -54,7 +55,8 @@ export class ReferenceGenerationStatusObserver {
 
     if ((this.currentStatus.referenceGenerationStatus === ProcessGenerationStatus.STATUS_FINISHED) ||
       (this.currentStatus.referenceGenerationStatus === ProcessGenerationStatus.STATUS_FAILED) ||
-      (this.currentStatus.referenceGenerationStatus === ProcessGenerationStatus.STATUS_STOPPED)) {
+      (this.currentStatus.referenceGenerationStatus === ProcessGenerationStatus.STATUS_STOPPED) ||
+      (this.currentStatus.referenceGenerationStatus === ProcessGenerationStatus.STATUS_POD_ERROR)) {
       this.stop();
     } else {
       this.regenerationUpdate.emit(this.currentStatus);

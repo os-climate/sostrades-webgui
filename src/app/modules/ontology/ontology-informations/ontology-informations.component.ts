@@ -84,13 +84,13 @@ export class OntologyInformationsComponent implements OnInit {
         .filter(entry =>(typeof entry[1] === 'string' || typeof entry[1] === 'boolean') && entry[1] !== undefined && entry[1] !== ' ' && entry[1] !== '').map(entry => [OntologyParameter.getKeyLabel(entry[0]), entry[1]]);
       if (this.ontologyInstance.parameter_usage_details !== null && this.ontologyInstance.parameter_usage_details != undefined &&
         this.ontologyInstance.parameter_usage_details.length > 0){
-        let list_usages = Object.entries(this.ontologyInstance.parameter_usage_details[0])
+        const list_usages = Object.entries(this.ontologyInstance.parameter_usage_details[0])
         .filter(entry => entry[1] !== undefined && entry[1] !== ' ' && entry[1] !== '' && entry[0] != "datatype" && entry[0] != "unit"  && entry[0] != "range")
         .map(entry => [OntologyParameterUsage.getKeyLabel(entry[0]), this.getStringOntologyValue(entry[1])]);
         this.infoList = this.infoList.concat(list_usages);
 
         // add specific behavior for range
-        let range = this.ontologyInstance.parameter_usage_details[0].range;
+        const range = this.ontologyInstance.parameter_usage_details[0].range;
         if (range !== undefined && range !== ' ' && range !== ''){
           this.infoList = this.infoList.concat([["range",`[${range}]`]]);
         }
@@ -226,7 +226,7 @@ export class OntologyInformationsComponent implements OnInit {
     
         const reader = new FileReader();
         reader.readAsDataURL(blobData);
-        reader.onloadend = (ev) => {
+        reader.onloadend = () => {
           const base64String = reader.result as string;
     
           const newUpdateParameter = new StudyUpdateParameter(
@@ -276,7 +276,7 @@ export class OntologyInformationsComponent implements OnInit {
         spreadsheetDialogData.nodeData = this.data.nodeData;
         spreadsheetDialogData.readOnly = true;
     
-        const dialogRef = this.dialog.open(SpreadsheetComponent, {
+        this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData
         });
@@ -296,7 +296,7 @@ export class OntologyInformationsComponent implements OnInit {
 
   onShowCsvCurrentValue() {
     let name = '';
-    let ontologyParameter = this.ontologyService.getParameter(this.data.nodeData.variableKey);
+    const ontologyParameter = this.ontologyService.getParameter(this.data.nodeData.variableKey);
     if (ontologyParameter !== null
       && ontologyParameter !== undefined) {
       if (ontologyParameter.label !== null
@@ -322,7 +322,7 @@ export class OntologyInformationsComponent implements OnInit {
     if (isListType) {
       this.loadingDialogService.showLoading(`Loading list : ${name}`);
 
-      const dialogRef = this.dialog.open(SpreadsheetComponent, {
+      this.dialog.open(SpreadsheetComponent, {
         disableClose: true,
         data: spreadsheetDialogData
       });
@@ -336,7 +336,7 @@ export class OntologyInformationsComponent implements OnInit {
 
       if (updateParameter !== null) { // Temporay file in local storage
         spreadsheetDialogData.file = TypeConversionTools.b64StringToBlob(updateParameter.newValue);
-        const dialogRef = this.dialog.open(SpreadsheetComponent, {
+        this.dialog.open(SpreadsheetComponent, {
           disableClose: true,
           data: spreadsheetDialogData
         });
@@ -344,10 +344,9 @@ export class OntologyInformationsComponent implements OnInit {
       } else { // File in distant server
         this.studyCaseMainService.getFile(this.data.nodeData.identifier).subscribe({
           next: (file) => {
-            const spreadsheetDialogData: SpreadsheetDialogData = new SpreadsheetDialogData();
             spreadsheetDialogData.file = new Blob([file]);
         
-            const dialogRef = this.dialog.open(SpreadsheetComponent, {
+            this.dialog.open(SpreadsheetComponent, {
               disableClose: true,
               data: spreadsheetDialogData
             });
@@ -375,7 +374,7 @@ export class OntologyInformationsComponent implements OnInit {
     connectorDialogData.namespace = this.data.namespace;
     connectorDialogData.discipline = this.data.discipline;
 
-    const dialogRef = this.dialog.open(ConnectorDataComponent, {
+    this.dialog.open(ConnectorDataComponent, {
       disableClose: true,
       data: connectorDialogData
     });
@@ -391,7 +390,7 @@ export class OntologyInformationsComponent implements OnInit {
     connectorDialogData.discipline = this.data.discipline;
     connectorDialogData.isReadOnly = true;
 
-    const dialogRef = this.dialog.open(ConnectorDataComponent, {
+   this.dialog.open(ConnectorDataComponent, {
       disableClose: true,
       data: connectorDialogData
     });

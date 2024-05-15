@@ -245,3 +245,6 @@ li ul {
   font-size: 13px;
   display: block;
 }
+::ng-deep .mat-mdc-button-touch-target {
+  height: 0px !important;
+}

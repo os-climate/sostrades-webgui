@@ -121,7 +121,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     }
 
     //get flavors in config api
-    this.flavorsService.getAllFlavors().subscribe(flavorList =>
+    this.flavorsService.getAllFlavorsExec().subscribe(flavorList =>
       {
         if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
          this.hasFlavors = true;
@@ -262,11 +262,13 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.referenceGenerationUpdateSubscription = refGenObserver.regenerationUpdate.subscribe(refUpdate => {
       const refUpdateStatus = refUpdate as ReferenceGenerationStatus;
       study.regenerationStatus = refUpdateStatus.referenceGenerationStatus;
+      study.error = refUpdateStatus.generationLogs;
     });
 
     this.referenceGenerationDoneSubscription = refGenObserver.regenerationDone.subscribe(refDone => {
       const refDoneStatus = refDone as ReferenceGenerationStatus;
       study.regenerationStatus = refDoneStatus.referenceGenerationStatus;
+      study.error = refDoneStatus.generationLogs;
       study.creationDate = new Date();
       if (refDoneStatus.referenceGenerationStatus === ProcessGenerationStatus.STATUS_FINISHED) {
         this.snackbarService.showInformation('Generation of ' + study.process + '.' + study.name + ' reference done.');

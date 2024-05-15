@@ -154,7 +154,7 @@
 
             <!-- Default Group Column -->
             <ng-container [matColumnDef]="columnName.DEFAULT">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="columnName.DEFAULT">
                 Default
               </th>
               <td mat-cell *matCellDef="let element">
