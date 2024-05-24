@@ -257,6 +257,11 @@ export class StudyCaseMainService extends MainHttpService {
     return loaderObservable;
   }
 
+  getDatasetImportErrorMessage(studyId: number) {
+    const url = `${this.apiRoute}/${studyId}/import-datasets-error-message`;
+    return this.http.get<string>(url);
+  }
+
   //#region update study
   // eslint-disable-next-line max-len
   updateStudyParameters(parametersList: StudyUpdateParameter[], studyId: string): Observable<LoadedStudy> {
