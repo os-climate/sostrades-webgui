@@ -108,7 +108,10 @@ export class WidgetComponent implements OnInit, OnDestroy {
       value,
       this.nodeData.oldValue,
       null,
-      new Date());
+      new Date(),
+      null,
+      null,
+      null);
 
     this.nodeData.value = value;
 
