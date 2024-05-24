@@ -96,6 +96,23 @@
       >
     </button>
     <button
+      mat-button 
+      *ngIf="!isStudyReadOnly" 
+      (click)="fileInput.click()"
+      matTooltip="Import dataset from file.json"
+    >
+      <i class="fa-solid fa-file-import"></i> 
+    </button>
+    <input 
+      #fileInput
+      style="display: none" 
+      type="file" 
+      id="fileInput" 
+      (change)="onImportDatasetFromJsonFile($event)" 
+      accept=".json"
+    >
+  
+    <button
       [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
       mat-button
       (click)="onShowHideStatus(!showStatus)"
