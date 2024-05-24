@@ -410,7 +410,7 @@ export class StudyCaseMainService extends MainHttpService {
       next: (isLoaded) => {
       this.setNoStudyHeader(isLoaded);
       }, error: (error) => {
-        if (error.statusCode == 502 || error.statusCode == 0){
+        if (error.statusCode === 502 || error.statusCode === 0){
           this.setNoStudyHeader(false);
         }
       }
