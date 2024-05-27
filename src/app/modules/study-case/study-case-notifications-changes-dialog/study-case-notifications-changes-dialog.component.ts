@@ -13,12 +13,15 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
 
   public displayedColumns = ['name', 'oldValue', 'newValue'];
   public dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>();
+  public hasChangesFromDataset: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<StudyCaseNotificationsChangesDialogComponent>,
 
     @Inject(MAT_DIALOG_DATA) public data: CoeditionDialogData
-  ) { }
+  ) { 
+    this.hasChangesFromDataset = false;
+  }
 
   ngOnInit(): void {
     if (this.data.changes.length > 0) {
@@ -28,6 +31,17 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
           change.oldValue = 'Csv';
         }
       });
+      this.hasChangesFromDataset = this.data.changes.some(parameter => 
+        (parameter.datasetConnectorId !== null && parameter.datasetConnectorId !== undefined) && 
+        (parameter.datasetId !== null && parameter.datasetId !== undefined)
+    );
+    if (this.hasChangesFromDataset) {
+      this.displayedColumns.push('datasetConnectorId', 'datasetId');
+      this.dialogRef.updateSize(null,'700px');
+    }
+    else {
+      this.dialogRef.updateSize('800px','700px');
+    }
       this.dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>(this.data.changes);
     }
   }

@@ -249,6 +249,19 @@ export class StudyCaseMainService extends MainHttpService {
       }));
   }
 
+  importDatasetFromJsonFile(studyId: number, formData: any, notification_id: number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/import-datasets-mapping`;
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.updateStudyParametersTimeout(+studyId, url, formData, observer);
+    });
+    return loaderObservable;
+  }
+
+  getDatasetImportErrorMessage(studyId: number) {
+    const url = `${this.apiRoute}/${studyId}/import-datasets-error-message`;
+    return this.http.get<string>(url);
+  }
+
   //#region update study
   // eslint-disable-next-line max-len
   updateStudyParameters(parametersList: StudyUpdateParameter[], studyId: string): Observable<LoadedStudy> {
@@ -397,7 +410,7 @@ export class StudyCaseMainService extends MainHttpService {
       next: (isLoaded) => {
       this.setNoStudyHeader(isLoaded);
       }, error: (error) => {
-        if (error.statusCode == 502 || error.statusCode == 0){
+        if (error.statusCode === 502 || error.statusCode === 0){
           this.setNoStudyHeader(false);
         }
       }
