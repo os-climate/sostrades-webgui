@@ -118,10 +118,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showDocumentationContent=true
     this.showSearch = false;
     this.setDiplayableItems();
+    //select the documentation tab by default
+    this.displayDocumentationTab();
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-      this.treeNodeDataService.send_tree_node(loadedStudy.treeview.rootNode);
       this.setDiplayableItems();
-
     });
 
     if (this.userService.hasAccessToStudy()) {
@@ -192,8 +192,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.filterService.filters.showReadOnly = true;
       }
 
-      //select the documentation tab by default
-      this.displayDocumentationTab();
+      
     } else {
       this.showView = false;
     }
