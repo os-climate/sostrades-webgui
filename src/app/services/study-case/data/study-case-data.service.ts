@@ -32,6 +32,7 @@ export class StudyCaseDataService extends DataHttpService {
   onSearchVariableChange: EventEmitter<string> = new EventEmitter();
   onTradeSpaceSelectionChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
   onTreeNodeNavigation: EventEmitter<NodeData> = new EventEmitter<NodeData>();
+  onShowDataManagementContent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 
   public tradeScenarioList: Scenario[];
