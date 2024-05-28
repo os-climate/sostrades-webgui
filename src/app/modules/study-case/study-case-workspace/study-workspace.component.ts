@@ -48,6 +48,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private onStudyCaseChangeSubscription: Subscription;
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
+  private onShowDataManagementSubscription: Subscription;
   public modelsFullPathList: string[];
   public hasAccessToStudy: boolean;
   private userLevel: UserLevel;
@@ -56,6 +57,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   public processIdentifier : string;
   public newUserLevelValue: number;
+  public selectedTabIndex: number;
 
 
 
@@ -92,6 +94,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.onStudyCaseChangeSubscription = null;
     this.studyIsLoaded = false;
     this.onTreeNodeChangeSubscription = null;
+    this.onShowDataManagementSubscription = null;
     this.tabNameSelected = '';
     this.isFullScreenOn = false;
     this.showDocumentation = false;
@@ -107,6 +110,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.routerSubscription = null;
     this.processIdentifier = '';
     this.newUserLevelValue = 0;
+    this.selectedTabIndex = 0;
   }
 
   ngOnInit() {
@@ -114,9 +118,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showDocumentationContent=true
     this.showSearch = false;
     this.setDiplayableItems();
+    //select the documentation tab by default
+    this.displayDocumentationTab();
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
-    this.setDiplayableItems();
-
+      this.setDiplayableItems();
     });
 
     if (this.userService.hasAccessToStudy()) {
@@ -143,6 +148,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(searchVariable => {
       this.showSearch = true;
     });
+    this.onShowDataManagementSubscription = this.studyCaseDataService.onShowDataManagementContent.subscribe({next:(showData)=>{
+      //show the data management tab
+      this.showSearch = false;
+      this.selectedTabIndex = 0;
+    }})
   }
 
   setDiplayableItems() {
@@ -181,6 +191,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       if (this.studyCaseDataService.loadedStudy.readOnly) {
         this.filterService.filters.showReadOnly = true;
       }
+
+      
     } else {
       this.showView = false;
     }
@@ -218,8 +230,23 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
           let process = this.studyCaseDataService.loadedStudy.studyCase.process
           this.modelsFullPathList.push(repo.concat('.',process ))
         }
+        
       }
     });
+  }
+
+  displayDocumentationTab()
+  {
+    let selectedTabIndex = 1;
+    if (this.showDataManagement && this.showPostProcessing && this.showVisualisation){
+      selectedTabIndex = 3;
+    }
+    else if ((!this.showDataManagement && this.showPostProcessing && this.showVisualisation) ||
+    (this.showDataManagement && !this.showPostProcessing && this.showVisualisation) ||
+    (this.showDataManagement && this.showPostProcessing && !this.showVisualisation)){
+      selectedTabIndex = 2;
+    }
+    this.selectedTabIndex = selectedTabIndex;
   }
 
   ngOnDestroy() {

@@ -104,8 +104,6 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
 
     this.dialogRefNotificationChanges = this.dialog.open(StudyCaseNotificationsChangesDialogComponent, {
       disableClose: true,
-      width: '800px',
-      height: '800px',
       data: codeditData
     });
   }
