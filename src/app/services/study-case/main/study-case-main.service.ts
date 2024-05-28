@@ -69,6 +69,7 @@ export class StudyCaseMainService extends MainHttpService {
       error:(error) => {
         //just try another time to be sure server is not available
         setTimeout(() => {
+          console.log("Try to create study after first failure")
           this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
             response => {
               return LoadedStudy.Create(response);
@@ -162,6 +163,7 @@ export class StudyCaseMainService extends MainHttpService {
       error:(error) => {
         //just try another time to be sure server is not available
         setTimeout(() => {
+          console.log("Try to load study after first failure")
           this.internalLoadStudy(studyId).subscribe(
             {next: (loadedStudy) => {
               this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
@@ -202,6 +204,7 @@ export class StudyCaseMainService extends MainHttpService {
         error:(error) => {
           //just try another time to be sure server is not available
           setTimeout(() => {
+            console.log("Try to load study in read only mode after first failure")
             this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
               {next: (loadedStudy) => {
                 this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
