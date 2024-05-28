@@ -228,8 +228,10 @@ export class AppDataService extends DataHttpService {
                 }
               },
               error: (errorReceived) => {
-                isStudyLoaded(false);
-                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+                this.loggerService.log(errorReceived);
+                this.snackbarService.showError("Error loading study\n" + errorReceived.description);
+                const studyNeedsLoading = true;
+                this.launchLoadStudy(studyNeedsLoading, studyId, null, isStudyLoaded, true, false);
               }
             });
           }

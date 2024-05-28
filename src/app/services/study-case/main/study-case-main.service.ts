@@ -67,7 +67,28 @@ export class StudyCaseMainService extends MainHttpService {
         }
       },
       error:(error) => {
-        loaderObservable.error(error);
+        //just try another time to be sure server is not available
+        setTimeout(() => {
+          this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
+            response => {
+              return LoadedStudy.Create(response);
+            })).subscribe({
+              next:(loadedStudy) => {
+                if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+                  setTimeout(() => {
+                    this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
+                  }, 2000);
+                } else {
+                  // Add study case to study management list
+                  this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+                  loaderObservable.next(loadedStudy);
+                }
+              },
+            error:(error) => {
+              loaderObservable.error(error);
+            }
+          });
+        }, 2000);
       }
     });
   }
@@ -139,7 +160,17 @@ export class StudyCaseMainService extends MainHttpService {
         }
       },
       error:(error) => {
-          loaderObservable.error(error);
+        //just try another time to be sure server is not available
+        setTimeout(() => {
+          this.internalLoadStudy(studyId).subscribe(
+            {next: (loadedStudy) => {
+              this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+            },
+            error:(error) => {
+              loaderObservable.error(error);
+            }
+          });
+        },2000);
       }
     });
         
@@ -169,7 +200,17 @@ export class StudyCaseMainService extends MainHttpService {
         }
       },
         error:(error) => {
-          loaderObservable.error(error);
+          //just try another time to be sure server is not available
+          setTimeout(() => {
+            this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
+              {next: (loadedStudy) => {
+                this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+              },
+              error:(error) => {
+                loaderObservable.error(error);
+              }
+            });
+          },2000);
       }
     });
         
