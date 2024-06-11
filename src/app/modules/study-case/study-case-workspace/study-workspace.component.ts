@@ -118,8 +118,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showDocumentationContent=true
     this.showSearch = false;
     this.setDiplayableItems();
-    //select the documentation tab by default
-    this.displayDocumentationTab();
+    
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
       this.setDiplayableItems();
     });
@@ -196,7 +195,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     } else {
       this.showView = false;
     }
-
+    this.displayDocumentationTab();
     this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treenode => {
       this.showVisualisation = false;
       this.showSearch = false;
@@ -233,20 +232,23 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         
       }
     });
+    
   }
 
   displayDocumentationTab()
   {
     let selectedTabIndex = 1;
-    if (this.showDataManagement && this.showPostProcessing && this.showVisualisation){
-      selectedTabIndex = 3;
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      if (this.showDataManagement && this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData){
+        selectedTabIndex = 3;
+      }
+      else if ((!this.showDataManagement && this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData) ||
+      (this.showDataManagement && !this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData) ||
+      (this.showDataManagement && this.showPostProcessing && this.studyCaseDataService.loadedStudy.noData)){
+        selectedTabIndex = 2;
+      }
+      this.selectedTabIndex = selectedTabIndex;
     }
-    else if ((!this.showDataManagement && this.showPostProcessing && this.showVisualisation) ||
-    (this.showDataManagement && !this.showPostProcessing && this.showVisualisation) ||
-    (this.showDataManagement && this.showPostProcessing && !this.showVisualisation)){
-      selectedTabIndex = 2;
-    }
-    this.selectedTabIndex = selectedTabIndex;
   }
 
   ngOnDestroy() {
