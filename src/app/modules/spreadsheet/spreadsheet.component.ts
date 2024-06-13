@@ -195,7 +195,8 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       jExcelProperties.allowDeleteColumn = false;
       this.isLargeFile = true;
     }
-
+    jExcelProperties.tableOverflow = false;
+    
     jExcelProperties.onafterchanges = (instance, records) => {
       this.onCellAfterChanges(instance, records);
     };
