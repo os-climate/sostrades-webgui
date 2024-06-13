@@ -1,8 +1,8 @@
 import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable, Subscriber, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { Location } from '@angular/common';
@@ -299,6 +299,47 @@ export class StudyCaseMainService extends MainHttpService {
       this.updateStudyParametersTimeout(+studyId, url, formData, observer);
     });
     return loaderObservable;
+  }
+
+  exportDatasetFromJsonFile(studyId: number, formData: any, notification_id: number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/export-datasets-mapping`;
+    const loaderObservable = new Observable<string>((observer) => {
+      this.http.post<string>(url, formData).subscribe({
+        next:(exportStatus) => {
+          if (exportStatus === LoadStatus.IN_PROGESS) {
+              this.exportDatasetTimeout(+studyId, notification_id, observer);
+          }
+        },
+        error:(error) => {
+          observer.error(error);
+        }
+      });
+    });
+    return loaderObservable;
+  }
+
+  getDatasetExportErrorStatus(studyId: number, notification_id: number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/export-datasets-status`;
+    return this.http.get<string>(url);
+  }
+
+  private exportDatasetTimeout(studyId: number, notification_id: number, observable: Subscriber<string>) {
+    this.getDatasetExportErrorStatus(studyId, notification_id).subscribe(
+      {next:(exportStatus) => {
+        if (exportStatus === LoadStatus.IN_PROGESS) {
+          setTimeout(() => {
+            this.exportDatasetTimeout(studyId, notification_id, observable);
+          }, 2000);
+        } else {
+          observable.next(exportStatus);
+        }
+      },
+      error:(error) => {
+       
+        observable.error(error);
+       
+      }
+    });
   }
 
   getDatasetImportErrorMessage(studyId: number) {

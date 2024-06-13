@@ -262,11 +262,23 @@ export class StudyCaseDataService extends DataHttpService {
     
   }
 
-  addNewStudyNotification(studyId: number): Observable<number> {
+  addNewStudyNotificationForDatasetImport(studyId: number): Observable<number> {
     const url = `${this.apiRoute}/${studyId}/notification`;
     const payloadForNotification = {
       coedition_action : 'save',
       change_type: UpdateParameterType.DATASET_MAPPING_CHANGE
+  };
+    return this.http.post<number>(url, payloadForNotification, this.options).pipe(map(
+      notification_id => {
+        return notification_id;
+      }));
+  }
+
+  addNewStudyNotificationForDatasetExport(studyId: number): Observable<number> {
+    const url = `${this.apiRoute}/${studyId}/notification`;
+    const payloadForNotification = {
+      coedition_action : 'export',
+      change_type: UpdateParameterType.DATASET_MAPPING_EXPORT
   };
     return this.http.post<number>(url, payloadForNotification, this.options).pipe(map(
       notification_id => {
