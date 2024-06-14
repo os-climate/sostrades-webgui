@@ -347,6 +347,11 @@ export class StudyCaseMainService extends MainHttpService {
     return this.http.get<string>(url);
   }
 
+  getDatasetExportErrorMessage(studyId: number, notification_id:number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/export-datasets-error`;
+    return this.http.get<string>(url);
+  }
+
   //#region update study
   // eslint-disable-next-line max-len
   updateStudyParameters(parametersList: StudyUpdateParameter[], studyId: string): Observable<LoadedStudy> {

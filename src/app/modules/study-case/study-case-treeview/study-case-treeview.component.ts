@@ -1132,7 +1132,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           this.studyCaseMainService.exportDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
             next: (loadedStudy) => {
                 const parameterChange$ =  this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id);
-              const datasetExportStatus$ = this.studyCaseMainService.getDatasetImportErrorMessage(currentStudyId);
+              const datasetExportStatus$ = this.studyCaseMainService.getDatasetExportErrorMessage(currentStudyId, notification_id);
 
               combineLatest([parameterChange$,datasetExportStatus$]).subscribe({
                 next: ([changes, datasetMessage]) => {
