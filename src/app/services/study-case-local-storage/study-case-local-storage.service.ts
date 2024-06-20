@@ -258,6 +258,53 @@ export class StudyCaseLocalStorageService {
     });
   }
 
+  
+  finalizeUpdateParameterFromDataset(loadedStudy: LoadedStudy) {
+    this.loadingDialogService.updateMessage(`Loading ontology`);
+    // Prepare Ontology request inputs
+    const ontologyRequest: PostOntology = {
+      ontology_request: {
+        disciplines: [],
+        parameter_usages: []
+      }
+    };
+
+    // Extract ontology input data from study
+    TreenodeTools.recursiveTreenodeExtract(loadedStudy.treeview.rootNode, ontologyRequest);
+
+    // Call ontology service
+    this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe({
+      next: () => {
+        // Update ontology parameters in study
+        this.studyCaseDataService.updateParameterOntology(loadedStudy);
+        // Notify components observing study case status
+        this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+        this.onUpdateSuccess(loadedStudy.studyCase.id.toString());
+      },
+      error: (errorReceived) => {
+        this.onUpdateError(errorReceived.description, loadedStudy);
+      }
+    });
+  }
+
+  private onUpdateSuccess(studyId: string){
+    this.removeStudyParametersFromLocalStorage(studyId);
+    this.loadingDialogService.closeLoading();
+    this.snackbarService.showInformation('All changes have been saved');
+  }
+
+  private onUpdateError(errorMessage: string, loadedStudy: LoadedStudy){
+     // Reset ontology (make sure nothing was loaded)
+     this.ontologyService.resetOntology();
+    
+     // Notify user
+     this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorMessage}`);
+     this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+     this.removeStudyParametersFromLocalStorage(loadedStudy.studyCase.id.toString());
+     this.loadingDialogService.closeLoading();
+     this.snackbarService.showInformation('All changes have been saved');
+  }
+
   // Region study link management when login is requiered
   // Force usage of local storage to have persistence regarding login process (which redirect between web site)
   setStudyUrlRequestedInLocalStorage(studyUrl: string) {

@@ -161,7 +161,10 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
               newDataList,
               this.nodeData.oldValue,
               null,
-              new Date());
+              new Date(),
+              null,
+              null,
+              null);
 
             this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
                 updateItem,
@@ -186,7 +189,10 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
           null,
           this.nodeData.oldValue,
           null,
-          new Date());
+          new Date(),
+          null,
+          null,
+          null);
 
         reader.readAsDataURL(file);
         reader.onload = () => {

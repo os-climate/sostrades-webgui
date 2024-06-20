@@ -401,7 +401,10 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         newDataList,
         this.data.nodeData.oldValue,
         null,
-        new Date());
+        new Date(),
+        null,
+        null,
+        null);
 
       this.data.nodeData.value = newDataList;
 
@@ -434,7 +437,10 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
           null,
           this.data.nodeData.oldValue,
           null,
-          new Date());
+          new Date(),
+          null,
+          null,
+          null);
 
         updateItem.newValue = this.generateBase64file();
 
