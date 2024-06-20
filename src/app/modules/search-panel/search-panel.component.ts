@@ -77,6 +77,7 @@ export class SearchPanelComponent implements OnInit, OnDestroy {
   }
 
   goToVariable(nodeData: NodeData) {
+    this.studyCaseDataService.onShowDataManagementContent.emit(true);
     this.studyCaseDataService.onTreeNodeNavigation.emit(this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[nodeData.identifier]);
   }
 }

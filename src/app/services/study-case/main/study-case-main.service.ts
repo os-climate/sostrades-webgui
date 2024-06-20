@@ -257,6 +257,11 @@ export class StudyCaseMainService extends MainHttpService {
     return loaderObservable;
   }
 
+  getDatasetImportErrorMessage(studyId: number) {
+    const url = `${this.apiRoute}/${studyId}/import-datasets-error-message`;
+    return this.http.get<string>(url);
+  }
+
   //#region update study
   // eslint-disable-next-line max-len
   updateStudyParameters(parametersList: StudyUpdateParameter[], studyId: string): Observable<LoadedStudy> {
@@ -336,6 +341,7 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   getStudyZip(studyId: string): Observable<Blob> {
+    // get study from zip
     const options: {
       headers?: HttpHeaders;
       observe?: 'body';
@@ -405,7 +411,7 @@ export class StudyCaseMainService extends MainHttpService {
       next: (isLoaded) => {
       this.setNoStudyHeader(isLoaded);
       }, error: (error) => {
-        if (error.statusCode == 502 || error.statusCode == 0){
+        if (error.statusCode === 502 || error.statusCode === 0){
           this.setNoStudyHeader(false);
         }
       }

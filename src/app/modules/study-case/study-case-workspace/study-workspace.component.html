@@ -98,7 +98,7 @@
     class="container-workspace"
     *ngIf="showView"
     (selectedTabChange)="onSelectedTabChange($event)"
-    selectedIndex = 3 
+    [selectedIndex] = selectedTabIndex 
   >  
     <mat-tab
       label="Data management"

@@ -1064,26 +1064,36 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           next: (notification_id) => {
             this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
               next: (loadedStudy) => {
-                this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id).subscribe({
-                  next: (changes) => {
-                    if (changes.length > 0 ) {
-                      this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
-                      // clear post processing dictionnary
-                      this.postProcessingService.clearPostProcessingDict();
-                      // Retrieve parameter changes to trigger the socket service
-                      this.socketService.saveStudy(currentStudyId,changes);
-                    }
-                    else {
-                      this.loadingDialogService.closeLoading();
-                      this.snackbarService.showWarning("There has been no changes applied. Maybe verify your datasets-mapping file.");
-                    }
+                const parameterChange$ =  this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id);
+                const datasetImportStatus$ = this.studyCaseMainService.getDatasetImportErrorMessage(currentStudyId);
 
-                  },
-                  error: (error) => {
-                    this.loadingDialogService.closeLoading();
-                    this.snackbarService.showError(`Error retrieving study case changes: ${error.description}`);
+                combineLatest([parameterChange$,datasetImportStatus$]).subscribe({
+                  next: ([changes, datasetMessage]) => {
+                      if (datasetMessage !== null && datasetMessage !== undefined && datasetMessage !== ''){
+                        this.loadingDialogService.closeLoading();
+                        this.snackbarService.showError(datasetMessage);
+                      }
+                      else if (changes.length === 0)
+                      {
+                        this.loadingDialogService.closeLoading();
+                        this.snackbarService.showWarning("There has been no changes applied. Maybe verify your datasets-mapping file.");
+                      }
+                      if (changes.length > 0 ) {
+                        this.studyCaseLocalStorageService.finalizeUpdateParameterFromDataset(loadedStudy);
+                        // clear post processing dictionnary
+                        this.postProcessingService.clearPostProcessingDict();
+                        // Retrieve parameter changes to trigger the socket service
+                        this.socketService.saveStudy(currentStudyId,changes);
+                      }
+                      
                   
-                  }
+                },
+                error: (error) => {
+
+                  this.loadingDialogService.closeLoading();
+                  this.snackbarService.showError(`Error retrieving study case changes: ${error.description}`);
+                
+                }
                 });
               },
               error: (error) => {
