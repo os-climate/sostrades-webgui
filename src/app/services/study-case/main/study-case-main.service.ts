@@ -1,8 +1,8 @@
 import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable, Subscriber, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { Location } from '@angular/common';
@@ -67,7 +67,29 @@ export class StudyCaseMainService extends MainHttpService {
         }
       },
       error:(error) => {
-        loaderObservable.error(error);
+        //just try another time to be sure server is not available
+        setTimeout(() => {
+          console.log("Try to create study after first failure")
+          this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
+            response => {
+              return LoadedStudy.Create(response);
+            })).subscribe({
+              next:(loadedStudy) => {
+                if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+                  setTimeout(() => {
+                    this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
+                  }, 2000);
+                } else {
+                  // Add study case to study management list
+                  this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+                  loaderObservable.next(loadedStudy);
+                }
+              },
+            error:(error) => {
+              loaderObservable.error(error);
+            }
+          });
+        }, 2000);
       }
     });
   }
@@ -139,7 +161,18 @@ export class StudyCaseMainService extends MainHttpService {
         }
       },
       error:(error) => {
-          loaderObservable.error(error);
+        //just try another time to be sure server is not available
+        setTimeout(() => {
+          console.log("Try to load study after first failure")
+          this.internalLoadStudy(studyId).subscribe(
+            {next: (loadedStudy) => {
+              this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+            },
+            error:(error) => {
+              loaderObservable.error(error);
+            }
+          });
+        },2000);
       }
     });
         
@@ -169,7 +202,18 @@ export class StudyCaseMainService extends MainHttpService {
         }
       },
         error:(error) => {
-          loaderObservable.error(error);
+          //just try another time to be sure server is not available
+          setTimeout(() => {
+            console.log("Try to load study in read only mode after first failure")
+            this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
+              {next: (loadedStudy) => {
+                this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+              },
+              error:(error) => {
+                loaderObservable.error(error);
+              }
+            });
+          },2000);
       }
     });
         
@@ -257,8 +301,54 @@ export class StudyCaseMainService extends MainHttpService {
     return loaderObservable;
   }
 
+  exportDatasetFromJsonFile(studyId: number, formData: any, notification_id: number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/export-datasets-mapping`;
+    const loaderObservable = new Observable<string>((observer) => {
+      this.http.post<string>(url, formData).subscribe({
+        next:(exportStatus) => {
+          if (exportStatus === LoadStatus.IN_PROGESS) {
+              this.exportDatasetTimeout(+studyId, notification_id, observer);
+          }
+        },
+        error:(error) => {
+          observer.error(error);
+        }
+      });
+    });
+    return loaderObservable;
+  }
+
+  getDatasetExportErrorStatus(studyId: number, notification_id: number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/export-datasets-status`;
+    return this.http.get<string>(url);
+  }
+
+  private exportDatasetTimeout(studyId: number, notification_id: number, observable: Subscriber<string>) {
+    this.getDatasetExportErrorStatus(studyId, notification_id).subscribe(
+      {next:(exportStatus) => {
+        if (exportStatus === LoadStatus.IN_PROGESS) {
+          setTimeout(() => {
+            this.exportDatasetTimeout(studyId, notification_id, observable);
+          }, 2000);
+        } else {
+          observable.next(exportStatus);
+        }
+      },
+      error:(error) => {
+       
+        observable.error(error);
+       
+      }
+    });
+  }
+
   getDatasetImportErrorMessage(studyId: number) {
     const url = `${this.apiRoute}/${studyId}/import-datasets-error-message`;
+    return this.http.get<string>(url);
+  }
+
+  getDatasetExportErrorMessage(studyId: number, notification_id:number) {
+    const url = `${this.apiRoute}/${studyId}/${notification_id}/export-datasets-error`;
     return this.http.get<string>(url);
   }
 

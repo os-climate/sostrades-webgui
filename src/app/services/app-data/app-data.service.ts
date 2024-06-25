@@ -203,33 +203,23 @@ export class AppDataService extends DataHttpService {
           if (!loadingCanceled) {
             this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe({
               next: (loadedStudy) => {
-                if (!loadingCanceled) {
-                  if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
-                    this.loadingDialogService.disableCancelLoading(true);
-                          this.postProcessingService.clearPostProcessingDict();
-                          this.postProcessingService.clearPostProcessingDict();
-
-                          // Set post processing dictionnary from the loaded study
-                    this.postProcessingService.clearPostProcessingDict();
-
-                          // Set post processing dictionnary from the loaded study
-                          this.postProcessingService.setPostProcessing(loadedStudy);
-                          this.postProcessingService.setPostProcessing(loadedStudy);
-                          
-                          // load read only mode
-                    this.postProcessingService.setPostProcessing(loadedStudy);
-                          
-                          // load read only mode
-                    this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
-                  } else {
-                    const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
-                    this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
-                  }
-                }
+                this.loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded, messageObserver);
               },
               error: (errorReceived) => {
-                isStudyLoaded(false);
-                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+                console.log("Try to load study in read only mode if needed after first failure")
+                //just try again one more time to be sure there is a network issue
+                setTimeout(() => {
+                  this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe({
+                    next: (loadedStudy) => {
+                      this.loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded, messageObserver);
+                    },
+                    error: (errorReceived) => {
+                      isStudyLoaded(false);
+                      this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+                    }
+                  });
+                }, 2000);
+                
               }
             });
           }
@@ -246,6 +236,31 @@ export class AppDataService extends DataHttpService {
     });
   }    
 
+  private loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded, messageObserver){
+    if (!loadingCanceled) {
+      if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
+        this.loadingDialogService.disableCancelLoading(true);
+              this.postProcessingService.clearPostProcessingDict();
+              this.postProcessingService.clearPostProcessingDict();
+
+              // Set post processing dictionnary from the loaded study
+        this.postProcessingService.clearPostProcessingDict();
+
+              // Set post processing dictionnary from the loaded study
+              this.postProcessingService.setPostProcessing(loadedStudy);
+              this.postProcessingService.setPostProcessing(loadedStudy);
+              
+              // load read only mode
+        this.postProcessingService.setPostProcessing(loadedStudy);
+              
+              // load read only mode
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
+      } else {
+        const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
+        this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
+      }
+    }
+  }
   /**
    * Load the current study without read only mode (open in normal mode)
    */
