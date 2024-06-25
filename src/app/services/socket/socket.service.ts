@@ -145,6 +145,12 @@ export class SocketService {
       this.addNotificationToQueue(notification);
     });
 
+    this.socket.on('study-exported', (data) => {
+      const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, data.changes, false);
+      this.addNewNotificationOnList(notification)
+      this.addNotificationToQueue(notification);
+    });
+
     this.socket.on('study-submitted', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
       this.addNewNotificationOnList(notification)
@@ -234,6 +240,12 @@ export class SocketService {
   saveStudy(studyCaseId: number, changes: StudyUpdateParameter[]) {
     if (this.socket) {
       this.socket.emit('save', { study_case_id: studyCaseId, changes });
+    }
+  }
+
+  exportedStudy(studyCaseId: number, changes: StudyUpdateParameter[]) {
+    if (this.socket) {
+      this.socket.emit('export', { study_case_id: studyCaseId, changes });
     }
   }
 
