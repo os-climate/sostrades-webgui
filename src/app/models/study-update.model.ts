@@ -78,7 +78,8 @@ export enum UpdateParameterType {
   CSV = 'csv',
   SCALAR = 'scalar',
   CONNECTOR_DATA = 'connector_data',
-  DATASET_MAPPING_CHANGE = 'dataset_mapping'
+  DATASET_MAPPING_CHANGE = 'dataset_mapping',
+  DATASET_MAPPING_EXPORT = 'dataset_mapping_export'
 
 }
 

@@ -111,6 +111,23 @@
       (change)="onImportDatasetFromJsonFile($event)" 
       accept=".json"
     >
+
+    <button
+    mat-button 
+    *ngIf="!isStudyReadOnly" 
+    (click)="fileInputExport.click()"
+    matTooltip="Export in dataset with mapping.json"
+    >
+    <i class="fa-solid fa-file-export"></i> 
+  </button>
+    <input 
+      #fileInputExport
+      style="display: none" 
+      type="file" 
+      id="fileInputExport" 
+      (change)="onExportDatasetFromJsonFile($event)" 
+      accept=".json"
+    >
   
     <button
       [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
