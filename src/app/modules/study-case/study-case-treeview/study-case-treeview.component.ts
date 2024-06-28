@@ -1154,14 +1154,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
                 
                 },
                 error: (error) => {
-                  this.snackbarService.showError(`Error to add new notification: ${error.description}`);
+                  this.snackbarService.showError(`${error.description}`);
                   this.loadingDialogService.closeLoading();
                 }
               });
               
             },
             error: (error) => {
-              this.snackbarService.showError(`Error to add new notification: ${error.description}`);
+              this.snackbarService.showError(`${error.description}`);
               this.loadingDialogService.closeLoading();
             }
           });
