@@ -884,8 +884,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         }
         this.setStatusOnRootNode(studyCaseStatusList.studyCalculationStatus);
 
-        const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
-        this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
         if ((studyCaseStatusList.studyCalculationStatus ===  StudyCalculationStatus.STATUS_FAILED ||
           studyCaseStatusList.studyCalculationStatus ===  StudyCalculationStatus.STATUS_POD_ERROR)  && 
           studyCaseStatusList.studyCalculationErrorMessage) {

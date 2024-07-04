@@ -34,6 +34,8 @@ export class Study {
     public studyPodFlavor:string,
     public executionPodFlavor:string,
     public generationPodFlavor:string,
+    public last_cpu_usage:string,
+    public last_memory_usage:string,
 
   ) {
   }
@@ -69,6 +71,8 @@ export class Study {
       jsonData[StudyAttributes.STUDY_POD_FLAVOR],
       jsonData[StudyAttributes.EXECUTION_POD_FLAVOR],
       jsonData[StudyAttributes.GENERATION_POD_FLAVOR],
+      jsonData[StudyAttributes.LAST_CPU_USAGE],
+      jsonData[StudyAttributes.LAST_MEMORY_USAGE],
       );
     return result;
   }
@@ -178,6 +182,8 @@ export enum StudyAttributes {
   STUDY_POD_FLAVOR = 'study_pod_flavor',
   EXECUTION_POD_FLAVOR = 'execution_pod_flavor',
   GENERATION_POD_FLAVOR = 'generation_pod_flavor',
+  LAST_CPU_USAGE = 'last_cpu_usage',
+  LAST_MEMORY_USAGE = 'last_memory_usage',
 }
 
 export enum LoadedStudyAttributes {
