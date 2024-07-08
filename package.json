@@ -32,7 +32,7 @@
     "engine.io-parser": "5.2.1",
     "jspreadsheet-ce": "4.13.4",
     "jsuites": "5.0.30",
-    "katex": "0.15.6",
+    "katex": "0.13.24",
     "markdown-it": "14.0.0",
     "markdown-it-footnote": "3.0.3",
     "markdown-it-mermaid": "0.2.0",
