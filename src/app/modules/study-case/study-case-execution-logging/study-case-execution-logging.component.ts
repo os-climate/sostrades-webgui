@@ -36,6 +36,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   private logList: StudyCaseExecutionLogging[];
   public cpuLoad: string;
   public memoryLoad: string;
+  public memoryUnit: string;
   public displayMemoryCpu: boolean;
   public isCalculationRunning: boolean;
 
@@ -69,6 +70,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.memoryLoad = '----';
     this.isCalculationRunning = false;
     this.displayMemoryCpu = false;
+    this.memoryUnit = "";
   }
 
   ngOnInit(): void {
@@ -243,6 +245,14 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.memoryLoad = loadedStudy.studyCase.last_memory_usage;
     if ((this.cpuLoad !== null && this.cpuLoad !== undefined && this.cpuLoad.length > 0) && (this.memoryLoad !== null && this.memoryLoad !== undefined && this.memoryLoad.length > 0)) {
       this.displayMemoryCpu = true;
+      if (this.memoryLoad !== "----") {
+        if (this.memoryLoad.includes("MB")) {
+          this.memoryUnit = "Megabyte"
+        }
+        else {
+          this.memoryUnit = "Gigabyte"
+        }
+      }
     }
   }
 }
