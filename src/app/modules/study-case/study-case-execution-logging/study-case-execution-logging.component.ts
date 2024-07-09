@@ -36,6 +36,8 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   private logList: StudyCaseExecutionLogging[];
   public cpuLoad: string;
   public memoryLoad: string;
+  public memoryUnit: string;
+  public displayMemoryCpu: boolean;
   public isCalculationRunning: boolean;
 
   public bottomAnchorLog: boolean;
@@ -67,6 +69,8 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.cpuLoad = '----';
     this.memoryLoad = '----';
     this.isCalculationRunning = false;
+    this.displayMemoryCpu = false;
+    this.memoryUnit = "";
   }
 
   ngOnInit(): void {
@@ -85,6 +89,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       } else {
         this.dataSourceRef = null;
       }
+      this.displayLastCpuAndMemoryRecorded(this.studyCaseDataService.loadedStudy);
     }
 
     this.studyCaseSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
@@ -96,6 +101,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
         this.dataSourceRef = null;
         }
       }
+      this.displayLastCpuAndMemoryRecorded(loadedStudy);
     });
 
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
@@ -232,5 +238,21 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
         this.snackbarService.showError('Error downloading log file :  No raw logs found for this study. You should run it first.');
       }
     });
+  }
+
+  private displayLastCpuAndMemoryRecorded(loadedStudy: LoadedStudy) {
+    this.cpuLoad = loadedStudy.studyCase.last_cpu_usage;
+    this.memoryLoad = loadedStudy.studyCase.last_memory_usage;
+    if ((this.cpuLoad !== null && this.cpuLoad !== undefined && this.cpuLoad.length > 0) && (this.memoryLoad !== null && this.memoryLoad !== undefined && this.memoryLoad.length > 0)) {
+      this.displayMemoryCpu = true;
+      if (this.memoryLoad !== "----") {
+        if (this.memoryLoad.includes("MB")) {
+          this.memoryUnit = "Megabyte"
+        }
+        else {
+          this.memoryUnit = "Gigabyte"
+        }
+      }
+    }
   }
 }
