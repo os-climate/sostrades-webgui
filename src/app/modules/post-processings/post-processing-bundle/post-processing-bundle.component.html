@@ -97,23 +97,46 @@
     "
     class="plot-resize-zone"
   >
-    <app-post-processing-pareto-front
-      class="plot-pareto-front"
-      *ngFor="let plot of postProcessingBundle.plotlyParetoFront"
-      [plotData]="plot"
-    >
-    </app-post-processing-pareto-front>
+    <div *ngIf="postProcessingWithSection.length" style="width: 100%;background-color: #f4f4f4;">
+      <div *ngFor="let section of postProcessingWithSection" class="section-panel">
+        <mat-expansion-panel style="margin-bottom: 2px;">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ section.post_processing_section_name }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-post-processing-plotly 
+            [class]="
+              plot.data && plot.data[0] && plot.data[0].type === 'table'
+                ? 'table'
+                : 'plot'
+               "
+            
+            *ngFor="let plot of section.plots"
+            [plotData]="plot"
+            [fullNamespace]="fullNamespace"
+          >
+          </app-post-processing-plotly>
+        </mat-expansion-panel>
+      </div>
+    </div>
+      <app-post-processing-pareto-front
+        class="plot-pareto-front"
+        *ngFor="let plot of postProcessingBundle.plotlyParetoFront"
+        [plotData]="plot"
+      >
+      </app-post-processing-pareto-front>
 
-    <app-post-processing-plotly
-      [class]="
-        plot.data && plot.data[0] && plot.data[0].type === 'table'
-          ? 'table'
-          : 'plot'
-      "
-      *ngFor="let plot of postProcessingBundle.plotly"
-      [plotData]="plot"
-      [fullNamespace]="fullNamespace"
-    >
-    </app-post-processing-plotly>
+      <app-post-processing-plotly
+        [class]="
+          plot.data && plot.data[0] && plot.data[0].type === 'table'
+            ? 'table'
+            : 'plot'
+        "
+        *ngFor="let plot of postProcessingWithoutSection"
+        [plotData]="plot"
+        [fullNamespace]="fullNamespace"
+      >
+      </app-post-processing-plotly>
   </div>
 </mat-expansion-panel>
