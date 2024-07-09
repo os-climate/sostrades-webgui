@@ -24,6 +24,12 @@
   margin-top: 5px;
 }
 
+::ng-deep .section-panel .mat-expansion-panel-body {
+  display: flex;
+  background-color: #f4f4f4;
+  flex-wrap: wrap;
+}
+
 .legend-header {
   flex-grow: 0;
   width: 100%;

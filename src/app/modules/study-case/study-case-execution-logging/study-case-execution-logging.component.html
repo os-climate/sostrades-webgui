@@ -20,7 +20,7 @@
   </button>
   <div class="toolbar-spacer"></div>
 
-  <div class="server-load" *ngIf="isCalculationRunning">
+  <div class="server-load" *ngIf="displayMemoryCpu">
     <div style="margin-right: 5px">CPU</div>
     <div
       style="
@@ -43,6 +43,14 @@
     >
       {{ memoryLoad }}
     </div>
+    <button
+      *ngIf="!isCalculationRunning"
+      mat-button
+      [matTooltip]="'Last metrics recorded from file system. The memory unit is in ' + memoryUnit "
+      color='accent'
+    >
+      <i class="fa-solid fa-circle-info"> </i>
+    </button>
   </div>
 
   <div class="toolbar-spacer"></div>

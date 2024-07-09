@@ -290,9 +290,14 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
    private AddGeneratedRefenceToProcessList(study: Study){
     if (this.processService.processManagemenentData !== null && this.processService.processManagemenentData !== undefined && this.processService.processManagemenentData.length > 0) {
       const process = this.processService.processManagemenentData.find(process => process.processId === study.process)
-      const existingReference =  process.referenceList.find(reference => reference.name === study.name);
-      if(!existingReference) {
+      if(process) {
+        const existingReferenceIndex =  process.referenceList.findIndex(reference => reference.name === study.name);
+        if (existingReferenceIndex === -1) {
         process.referenceList.unshift(study)
+        }
+        else {
+          process.referenceList[existingReferenceIndex] = study;
+        }
       }
     }
    }
