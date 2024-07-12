@@ -59,7 +59,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         this.postProcessingService.removePostProcessingRequestFromQueue(this.fullNamespace, this.postProcessingBundle.name);
         this.plot(false);
       }
-      this.sectionnedPostProcessing(this.postProcessingBundle.plotly);
+      this.addSectionInPostProcessing(this.postProcessingBundle.plotly, false);
     } else {
       this.displayFilterButton = false;
     }
@@ -114,7 +114,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
           }
           this.postProcessingService.resumePostProcessingRequestQueue();
           this.displayProgressBar = false;
-          this.sectionnedPostProcessing(postProcessing);
+          this.addSectionInPostProcessing(postProcessing, needToUpdate);
         },
         error: (errorReceived) => {
           const error = errorReceived as SoSTradesError;
@@ -129,10 +129,12 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
       });    
   }
 
-  private sectionnedPostProcessing(postProcessing: any) {
+  private addSectionInPostProcessing(postProcessing: any, needToUpdate:boolean ) {
+    
+    const postProcessingWithoutSectionWithFilter: PostProcessingBundle[] = [];
     // Create a dictionnary to section the post_processing by a name
     const postProcessingBundleSectionned = new Map<string, PostProcessingBundle[]>();
-    postProcessing.forEach(plotly => {
+    postProcessing.forEach(plotly => {     
       if (plotly.post_processing_section_name) {
         // Check if key "post_processing_section_name" already exist
         if (!postProcessingBundleSectionned.has(plotly.post_processing_section_name)) {
@@ -141,10 +143,19 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         // Add ploty on the section
         postProcessingBundleSectionned.get(plotly.post_processing_section_name)?.push(plotly);
       } else {
-        // Add ploty on list without section
-        this.postProcessingWithoutSection.push(plotly);
+        // Check if need to update 
+        if (needToUpdate) {
+          postProcessingWithoutSectionWithFilter.push(plotly);
+        } else {
+          this.postProcessingWithoutSection.push(plotly);
+        }
       }
     });
+
+    // Add new array with filter on postProcessingWithoutSection
+    if (postProcessingWithoutSectionWithFilter.length > 0) {
+      this.postProcessingWithoutSection = postProcessingWithoutSectionWithFilter
+    }  
     // Create a array with post_processing sectionned
     this.postProcessingWithSection = Array.from(postProcessingBundleSectionned, ([post_processing_section_name, plots]) => ({ post_processing_section_name, plots }));
   }
