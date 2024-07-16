@@ -89,7 +89,8 @@
     </div>   
     <div id="username-second-menu" class="div-header">
  
-      <div class="version-container">
+      <div [ngClass]="{'version-container':true, 'clickable':hasGitInfo}"
+      (click)="openVersionTab()">
         <div class="platform-text">
             {{ platform }}
         </div>
