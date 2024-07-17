@@ -38,6 +38,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
   public memoryLoad: string;
   public memoryUnit: string;
   public displayMemoryCpu: boolean;
+  public displayIconInfoMemoryCpu: boolean;
   public isCalculationRunning: boolean;
 
   public bottomAnchorLog: boolean;
@@ -70,6 +71,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     this.memoryLoad = '----';
     this.isCalculationRunning = false;
     this.displayMemoryCpu = false;
+    this.displayIconInfoMemoryCpu = false;
     this.memoryUnit = "";
   }
 
@@ -246,6 +248,7 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
     if ((this.cpuLoad !== null && this.cpuLoad !== undefined && this.cpuLoad.length > 0) && (this.memoryLoad !== null && this.memoryLoad !== undefined && this.memoryLoad.length > 0)) {
       this.displayMemoryCpu = true;
       if (this.memoryLoad !== "----") {
+        this.displayIconInfoMemoryCpu = true;
         if (this.memoryLoad.includes("MB")) {
           this.memoryUnit = "Megabyte"
         }
