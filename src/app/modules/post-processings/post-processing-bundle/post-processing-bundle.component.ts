@@ -30,6 +30,8 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   calculationChangeSubscription: Subscription;
   validationChangeSubscription: Subscription;
   studyStatusChangeSubscription: Subscription;
+  postProcessingWithSection: any[] = [];
+  postProcessingWithoutSection: any[] = [];
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
@@ -57,7 +59,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         this.postProcessingService.removePostProcessingRequestFromQueue(this.fullNamespace, this.postProcessingBundle.name);
         this.plot(false);
       }
-
+      this.addSectionInPostProcessing(this.postProcessingBundle.plotly, false);
     } else {
       this.displayFilterButton = false;
     }
@@ -112,6 +114,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
           }
           this.postProcessingService.resumePostProcessingRequestQueue();
           this.displayProgressBar = false;
+          this.addSectionInPostProcessing(postProcessing, needToUpdate);
         },
         error: (errorReceived) => {
           const error = errorReceived as SoSTradesError;
@@ -123,6 +126,37 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
             this.snackbarService.showError('Error loading charts : ' + error.description);
           }
         }
-      });
+      });    
+  }
+
+  private addSectionInPostProcessing(postProcessing: any, needToUpdate:boolean ) {
+    
+    const postProcessingWithoutSectionWithFilter: PostProcessingBundle[] = [];
+    // Create a dictionnary to section the post_processing by a name
+    const postProcessingBundleSectionned = new Map<string, PostProcessingBundle[]>();
+    postProcessing.forEach(plotly => {     
+      if (plotly.post_processing_section_name) {
+        // Check if key "post_processing_section_name" already exist
+        if (!postProcessingBundleSectionned.has(plotly.post_processing_section_name)) {
+          postProcessingBundleSectionned.set(plotly.post_processing_section_name, []);
+        }
+        // Add ploty on the section
+        postProcessingBundleSectionned.get(plotly.post_processing_section_name)?.push(plotly);
+      } else {
+        // Check if need to update 
+        if (needToUpdate) {
+          postProcessingWithoutSectionWithFilter.push(plotly);
+        } else {
+          this.postProcessingWithoutSection.push(plotly);
+        }
+      }
+    });
+
+    // Add new array with filter on postProcessingWithoutSection
+    if (postProcessingWithoutSectionWithFilter.length > 0) {
+      this.postProcessingWithoutSection = postProcessingWithoutSectionWithFilter
+    }  
+    // Create a array with post_processing sectionned
+    this.postProcessingWithSection = Array.from(postProcessingBundleSectionned, ([post_processing_section_name, plots]) => ({ post_processing_section_name, plots }));
   }
 }

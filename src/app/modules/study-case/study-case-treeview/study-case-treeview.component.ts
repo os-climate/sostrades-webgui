@@ -105,6 +105,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
   @ViewChild('filter', { static: false }) private filterElement: ElementRef;
   @ViewChild('fileInput') fileInput: ElementRef;
+  @ViewChild('fileInputExport') fileInputExport: ElementRef;
 
   @HostListener('document:keydown.control.f', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     // Check group component is visible
@@ -883,8 +884,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         }
         this.setStatusOnRootNode(studyCaseStatusList.studyCalculationStatus);
 
-        const systemLoad = new StudyCaseExecutionSystemLoad('----', '----');
-        this.calculationService.onCalculationSystemLoadChange.emit(systemLoad);
         if ((studyCaseStatusList.studyCalculationStatus ===  StudyCalculationStatus.STATUS_FAILED ||
           studyCaseStatusList.studyCalculationStatus ===  StudyCalculationStatus.STATUS_POD_ERROR)  && 
           studyCaseStatusList.studyCalculationErrorMessage) {
@@ -1060,7 +1059,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         formData.append('datasets_mapping_file', file);
         const currentStudyId = this.studyCaseDataService.loadedStudy.studyCase.id;
         this.loadingDialogService.showLoading('Update parameter from dataset mapping');
-        this.studyCaseDataService.addNewStudyNotification(currentStudyId).subscribe({
+        this.studyCaseDataService.addNewStudyNotificationForDatasetImport(currentStudyId).subscribe({
           next: (notification_id) => {
             this.studyCaseMainService.importDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
               next: (loadedStudy) => {
@@ -1114,6 +1113,66 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.snackbarService.showError('Any file selected');
     }
     this.fileInput.nativeElement.value = null;
+  }
+
+  onExportDatasetFromJsonFile(event) {
+    const inputElement = event.target as HTMLInputElement;
+    const file = inputElement.files?.[0];
+    
+    if (file){
+      // Create formData object and send the file
+      const formData = new FormData();
+      formData.append('datasets_mapping_file', file);
+      const currentStudyId = this.studyCaseDataService.loadedStudy.studyCase.id;
+      this.loadingDialogService.showLoading('Export parameters from dataset mapping');
+      this.studyCaseDataService.addNewStudyNotificationForDatasetExport(currentStudyId).subscribe({
+        next: (notification_id) => {
+          this.studyCaseMainService.exportDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
+            next: (loadedStudy) => {
+                const parameterChange$ =  this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id);
+              const datasetExportStatus$ = this.studyCaseMainService.getDatasetExportErrorMessage(currentStudyId, notification_id);
+
+              combineLatest([parameterChange$,datasetExportStatus$]).subscribe({
+                next: ([changes, datasetMessage]) => {
+                    if (datasetMessage !== null && datasetMessage !== undefined && datasetMessage !== ''){
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showError(datasetMessage);
+                    }
+                    else if (changes.length === 0)
+                    {
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showWarning("There has been nothing to export. Maybe verify your datasets-mapping file.");
+                    }
+                    else{
+                      // Retrieve parameter changes to trigger the socket service
+                      this.socketService.exportedStudy(currentStudyId,changes);
+                      this.loadingDialogService.closeLoading();
+                      this.snackbarService.showInformation("Study parameters have been exported in datasets, see notifications to see the exported parameters and locations.");
+                    }                     
+                
+                },
+                error: (error) => {
+                  this.snackbarService.showError(`${error.description}`);
+                  this.loadingDialogService.closeLoading();
+                }
+              });
+              
+            },
+            error: (error) => {
+              this.snackbarService.showError(`${error.description}`);
+              this.loadingDialogService.closeLoading();
+            }
+          });
+        },
+        error: (error) => {
+          this.snackbarService.showError(`Error to add new notification: ${error.description}`);
+          this.loadingDialogService.closeLoading();
+        }
+      });
+    } else {
+      this.snackbarService.showError('No file selected');
+    }
+    this.fileInputExport.nativeElement.value = null;
   }
 
   saveData(saveDone: any) {
