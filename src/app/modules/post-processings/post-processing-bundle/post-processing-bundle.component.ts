@@ -152,7 +152,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Add new array with filter on postProcessingWithoutSection
+    // Replace the new array with filter on postProcessingWithoutSection
     if (postProcessingWithoutSectionWithFilter.length > 0) {
       this.postProcessingWithoutSection = postProcessingWithoutSectionWithFilter
     }  
