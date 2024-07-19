@@ -329,7 +329,7 @@ export class HeaderComponent implements OnInit {
 
       const dialogRef = this.dialog.open(RepositoryTraceabilityDialogComponent, {
         disableClose: false,
-        width: '800px',
+        width: '1000px',
         height: '400px',
         data: dialogData
       });
