@@ -415,4 +415,8 @@ export class AppDataService extends DataHttpService {
      ));  
    }
   }
+
+  public getGitReposInfo() {
+    return this.http.get(this.apiRoute + "/git-repos-info"); 
+  }
 }
