@@ -23,6 +23,11 @@
   margin-right: 25px;
 }
 
+.clickable {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
 .platform-text {
   font: initial;
   font-size: 15px;
