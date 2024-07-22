@@ -40,6 +40,7 @@ import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/stu
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
+import { PanelSection } from 'src/app/models/user-study-preferences.model';
 
 
 @Component({
@@ -232,8 +233,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.treeControl.expand(this.originTreeNode);
 
         Object.keys(this.root.rootDict).forEach(treenodeKey => {
-
-          if (this.studyCaseDataService.GetUserStudyPreference(this.root.rootDict[treenodeKey].fullNamespace, false)) {
+          const panel_id = `${this.root.rootDict[treenodeKey].fullNamespace}.${PanelSection.TREEVIEW_SECTION}`
+          if (this.studyCaseDataService.getUserStudyPreference(panel_id, false)) {
             this.treeControl.expand(this.root.rootDict[treenodeKey]);
           }
         });
@@ -439,15 +440,15 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     setTimeout(() => {
       // Expand disciplines
       discNames.forEach(discName => {
-        this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${discName}`);
+        this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${PanelSection.TREEVIEW_SECTION}.${discName}`);
 
         // Expand discipline types panel
         if (nodeData.numerical) {
-          this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${discName}.${PannelIds.NUMERICAL}`);
+          this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${PanelSection.TREEVIEW_SECTION}.${discName}.${PannelIds.NUMERICAL}`);
         } else if (nodeData.ioType === IoType.IN) {
-          this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${discName}.${PannelIds.INPUTS}`);
+          this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${PanelSection.TREEVIEW_SECTION}.${discName}.${PannelIds.INPUTS}`);
         } else if (nodeData.ioType === IoType.OUT) {
-          this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${discName}.${PannelIds.OUTPUTS}`);
+          this.setExpandForDisciplinePanel(`${nodeData.parent.fullNamespace}.${PanelSection.TREEVIEW_SECTION}.${discName}.${PannelIds.OUTPUTS}`);
         }
       });
     }, 1000);
@@ -463,7 +464,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     }, 7000);
 
     // Expand treenode and his parents
-    this.setExpandTreeNodeAndParent(treenode);;
+    this.setExpandTreeNodeAndParent(treenode);
 
     // Scroll to node
     setTimeout(() => {
@@ -476,9 +477,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   setExpandForDisciplinePanel(TreeNodeOrPanelId: string) {
-    this.studyCaseDataService.loadedStudy.userStudyPreferences.treeNodeExpandedData[TreeNodeOrPanelId] = true;
-
-    this.studyCaseDataService.SetUserStudyPreference(TreeNodeOrPanelId, true).subscribe({
+    this.studyCaseDataService.loadedStudy.userStudyPreferences.expandedData[TreeNodeOrPanelId] = true;
+    this.studyCaseDataService.setUserStudyPreference(TreeNodeOrPanelId, true).subscribe({
       next: (_) => {},
       error: (error) => {
         this.snackbarService.showError(error);
@@ -498,8 +498,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   saveTreeViewPreferences(node: TreeNode) {
-    var isExpanded = this.treeControl.isExpanded(node);
-    this.studyCaseDataService.SetUserStudyPreference(node.fullNamespace, isExpanded).subscribe({
+    const isExpanded = this.treeControl.isExpanded(node);
+    const panelId = `${node.fullNamespace}.${PanelSection.TREEVIEW_SECTION}`
+    this.studyCaseDataService.setUserStudyPreference(panelId, isExpanded).subscribe({
       next: (_) => {},
       error: (error) => {
         this.snackbarService.showError(error);
