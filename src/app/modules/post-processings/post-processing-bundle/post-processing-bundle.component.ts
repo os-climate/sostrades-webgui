@@ -8,7 +8,7 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { LoadStatus } from 'src/app/models/study.model';
-import { ThisReceiver } from '@angular/compiler';
+import { PanelSection } from 'src/app/models/user-study-preferences.model';
 
 @Component({
   selector: 'app-post-processing-bundle',
@@ -74,7 +74,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
     });
-    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation => {
+    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(() => {
       this.plot(false);
     });
 
@@ -150,6 +150,17 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
           this.postProcessingWithoutSection.push(plotly);
         }
       }
+      if (this.postProcessingWithSection.length > 0) {
+        this.postProcessingWithSection.sort((a: any, b: any) => {
+          if (a.post_processing_section_name < b.post_processing_section_name) {
+              return -1;
+          } else if (a.post_processing_section_name > b.post_processing_section_name) {
+              return 1;
+          } else {
+              return 0;
+          }
+        });
+      }
     });
 
     // Replace the new array with filter on postProcessingWithoutSection
@@ -159,4 +170,20 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     // Create a array with post_processing sectionned
     this.postProcessingWithSection = Array.from(postProcessingBundleSectionned, ([post_processing_section_name, plots]) => ({ post_processing_section_name, plots }));
   }
-}
+
+
+  IsExpand(section: string) {
+      const id = `${this.postProcessingBundle.disciplineName}.${PanelSection.POST_PROCESSING_SECTION}.${section}`;
+    return this.studyCaseDataService.getUserStudyPreference(id, false);
+
+  }
+
+  SetIsExpand(section: string, isExpand: boolean) {
+    console.log(section + " "  +isExpand)
+    if (this.IsExpand(section) != isExpand)//save data only if necessary
+    {
+      const id = `${this.postProcessingBundle.disciplineName}.${PanelSection.POST_PROCESSING_SECTION}.${section}`;
+      this.studyCaseDataService.setUserStudyPreference(id, isExpand).subscribe();
+    }
+  }
+ }

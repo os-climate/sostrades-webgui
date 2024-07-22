@@ -1,10 +1,10 @@
 import { Component, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { DataManagementDiscipline, PannelIds } from 'src/app/models/data-management-discipline.model';
 import { NodeData } from 'src/app/models/node-data.model';
 import { OntologyDiscipline } from 'src/app/models/ontology-discipline.model';
 import { ValidationTreeNodeState } from 'src/app/models/study-case-validation.model';
+import { PanelSection } from 'src/app/models/user-study-preferences.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
@@ -73,7 +73,7 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
     // Load model details
     this.modelDetails = null;
     if (this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]) !== null) {
-      const ontologyInstance = this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]);
+      this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]);
       this.modelDetails = Object.entries(this.ontologyService.getDiscipline(this.disciplineData.modelNameFullPath[0]))
         .filter(entry => typeof entry[1] === 'string').map(entry => [OntologyDiscipline.getKeyLabel(entry[0]), entry[1]]);
       
@@ -101,30 +101,25 @@ export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
     }
   }
 
-
   setCalculationCss(isCalculationRunning: boolean) {
     //if (isCalculationRunning) {
     //  return 'execution-running';
     //}
   }
 
-
+  
   IsExpand(pannelID: string): boolean {
-    var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey[0]}.${pannelID}`;
-    var defaultExpandable = pannelID == PannelIds.INPUTS || pannelID == "";
-    return this.studyCaseDataService.GetUserStudyPreference(id, defaultExpandable);
+    const id = pannelID == "" ? `${this.disciplineData.disciplineKey[0]}.${PanelSection.DATA_MANAGEMENT_SECTION}` : `${this.disciplineData.disciplineKey[0]}.${PanelSection.DATA_MANAGEMENT_SECTION}.${pannelID}`;
+    const defaultExpandable = pannelID == PannelIds.INPUTS || pannelID == "";
+    return this.studyCaseDataService.getUserStudyPreference(id, defaultExpandable);
 
   }
 
   SetIsExpand(pannelID: string, isExpand: boolean) {
     if (this.IsExpand(pannelID) != isExpand)//save data only if necessary
     {
-      var id = pannelID == "" ? this.disciplineData.disciplineKey[0] : `${this.disciplineData.disciplineKey[0]}.${pannelID}`;
-      this.studyCaseDataService.SetUserStudyPreference(id, isExpand).subscribe(
-        _ => { },
-        error => {
-          //this.snackbarService.showError(error);
-        });;
+      const id = pannelID == "" ? `${this.disciplineData.disciplineKey[0]}.${PanelSection.DATA_MANAGEMENT_SECTION}` : `${this.disciplineData.disciplineKey[0]}.${PanelSection.DATA_MANAGEMENT_SECTION}.${pannelID}`;
+      this.studyCaseDataService.setUserStudyPreference(id, isExpand).subscribe();
     }
   }
 }

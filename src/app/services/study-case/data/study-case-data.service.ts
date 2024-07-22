@@ -358,26 +358,28 @@ export class StudyCaseDataService extends DataHttpService {
     return this.http.post(url, data, options);
   }
 
-  SetUserStudyPreference(TreeNodeOrPanelId: string, isExpanded: boolean): Observable<any> {
-    this.loadedStudy.userStudyPreferences.treeNodeExpandedData[TreeNodeOrPanelId] = isExpanded;
-    return this.SaveUserStudyPreferences(this.loadedStudy.studyCase.id, this.loadedStudy.userStudyPreferences);
+  setUserStudyPreference(panelId: string, isExpanded: boolean): Observable<any> {
+    this.loadedStudy.userStudyPreferences.expandedData[panelId] = isExpanded;
+    return this.saveUserStudyPreferences(this.loadedStudy.studyCase.id, panelId, isExpanded);
   }
 
-  GetUserStudyPreference(TreeNodeOrPanelId: string, defaultValue: boolean): boolean {
+  getUserStudyPreference(panelId: string, defaultValue: boolean): boolean {
     if (this.loadedStudy.userStudyPreferences !== undefined) {
-      if (this.loadedStudy.userStudyPreferences.treeNodeExpandedData[TreeNodeOrPanelId] !== undefined) {
-        return this.loadedStudy.userStudyPreferences.treeNodeExpandedData[TreeNodeOrPanelId];
+      if (this.loadedStudy.userStudyPreferences.expandedData[panelId] !== undefined) {
+        return this.loadedStudy.userStudyPreferences.expandedData[panelId];
       }
     }
     return defaultValue;
   }
 
-  private SaveUserStudyPreferences(studyID: number, userStudyPreferences: UserStudyPreferences): Observable<any> {
+  private saveUserStudyPreferences(studyID: number, panelId: string, panelOpened ): Observable<any> {
 
     const request = {
-      preference: userStudyPreferences.treeNodeExpandedData,
+      panel_identifier: panelId,
+      panel_opened: panelOpened
     };
-    return this.http.post(`${this.apiRoute}/${studyID}/preference`, request);
+    const response = this.http.post(`${this.apiRoute}/${studyID}/preference`, request);
+    return response
   }
 
   claimStudyExecutionRight(): Observable<any> {
@@ -629,7 +631,7 @@ export class StudyCaseDataService extends DataHttpService {
       })).subscribe({ 
         next: allocation => {
           if (allocation.status !== StudyCaseAllocationStatus.DONE){
-            let startWaitingDate = Date.now()
+            const startWaitingDate = Date.now()
             setTimeout(() => {
               this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer, startWaitingDate);
             }, 2000);
