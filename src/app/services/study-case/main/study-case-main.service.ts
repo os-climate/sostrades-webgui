@@ -58,7 +58,7 @@ export class StudyCaseMainService extends MainHttpService {
 
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
-            this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
+            this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable);
           }, 2000);
         } else {
           // Add study case to study management list
@@ -77,7 +77,7 @@ export class StudyCaseMainService extends MainHttpService {
               next:(loadedStudy) => {
                 if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
                   setTimeout(() => {
-                    this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
+                    this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable);
                   }, 2000);
                 } else {
                   // Add study case to study management list
@@ -118,7 +118,7 @@ export class StudyCaseMainService extends MainHttpService {
         next:(study) => {
 
         setTimeout(() => {
-          this.loadStudyInReadOnlyModeIfNeededTimeout(study.id, false, loaderObservable, true);
+          this.loadStudyInReadOnlyModeIfNeededTimeout(study.id, false, loaderObservable);
         }, 2000);
       },
         error:(error) => {
@@ -185,12 +185,27 @@ export class StudyCaseMainService extends MainHttpService {
       }));
   }
 
-  private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
-    this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
+  loadStudyInReadOnlyModeIfNeeded(studyId: number, withEmit: boolean, withTimeout = true): Observable<LoadedStudy> {
+    if (withTimeout) {
+      const loaderObservable = new Observable<LoadedStudy>((observer) => {
+        // Start study case loading to other services
+        this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, observer);
+      });
+      return loaderObservable;
+
+    }
+    else {
+      return this.internalloadStudyInReadOnlyModeIfNeeded(studyId);
+    }
+
+  }
+
+  private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>) {
+    this.internalloadStudyInReadOnlyModeIfNeeded(studyId).subscribe(
       {next: (loadedStudy) => {
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
-            this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+            this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable);
           }, 2000);
         } else {
           if(withEmit){
@@ -205,9 +220,9 @@ export class StudyCaseMainService extends MainHttpService {
           //just try another time to be sure server is not available
           setTimeout(() => {
             console.log("Try to load study in read only mode after first failure")
-            this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
+            this.internalloadStudyInReadOnlyModeIfNeeded(studyId).subscribe(
               {next: (loadedStudy) => {
-                this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+                this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable);
               },
               error:(error) => {
                 loaderObservable.error(error);
@@ -219,7 +234,7 @@ export class StudyCaseMainService extends MainHttpService {
         
   }
 
-  public loadtudyInReadOnlyModeIfNeeded(studyId: number): Observable<LoadedStudy> {
+  private internalloadStudyInReadOnlyModeIfNeeded(studyId: number): Observable<LoadedStudy> {
     return this.http.get(`${this.apiRoute}/${studyId}/read-only-mode`).pipe(map(
       response => {
         if (response !== null && response !== undefined) {
