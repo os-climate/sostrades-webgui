@@ -193,3 +193,18 @@
 .spacer {
   flex: 1 1 auto;
 }
+
+/* Désactiver la barre de défilement par défaut du panneau de sélection */
+::ng-deep .mat-mdc-select-panel {
+  max-height: none !important;
+  min-width: 230px !important;
+  overflow: hidden !important;
+}
+
+/* Appliquer le défilement personnalisé à la div conteneur */
+.custom-options-container {
+  max-height: 200px; 
+  overflow: auto; 
+  display: flex;
+  flex-direction: column;
+}
