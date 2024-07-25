@@ -2,12 +2,12 @@ export class UserStudyPreferences {
 
   //contains the treeNode ID of each nodes and a dict for each node with id of the node 
   //and its isExpanded and id of each panel and its isExpanded
-  public treeNodeExpandedData :{[treeNodeID: string]:boolean}
+  public expandedData :{[treeNodeID: string]:boolean}
   constructor(preference : {}) {
-    this.treeNodeExpandedData = {};
+    this.expandedData = {};
       if(preference !== null && preference  !== undefined)
       {
-          this.treeNodeExpandedData = preference;
+          this.expandedData = preference;
       }
   }
 
@@ -16,5 +16,10 @@ export class UserStudyPreferences {
     return result;
   }
 
-
 }
+
+export enum PanelSection {
+  TREEVIEW_SECTION = "treeview_section",
+  DATA_MANAGEMENT_SECTION = "data_management_section",
+  POST_PROCESSING_SECTION = "post_processing_section"
+ }

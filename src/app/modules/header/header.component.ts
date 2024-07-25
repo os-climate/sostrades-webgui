@@ -16,6 +16,8 @@ import { SocketService } from 'src/app/services/socket/socket.service';
 import { environment } from 'src/environments/environment';
 import { ContactDialogComponent } from '../contact-dialog/contact-dialog.component';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
+import { RepositoryTraceabilityDialogData } from 'src/app/models/dialog-data.model';
+import { RepositoryTraceabilityDialogComponent } from '../ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
 
 
 @Component({
@@ -41,6 +43,8 @@ export class HeaderComponent implements OnInit {
   public displayMessageNoStudyServer: boolean;
   public displayOOMKilledMessage: boolean;
   public OOMKilledMessage: string;
+  public repositoriesGitInfo:any;
+  public hasGitInfo:boolean
   constructor(
     private router: Router,
     private auth: AuthService,
@@ -65,10 +69,19 @@ export class HeaderComponent implements OnInit {
     this.displayMessageNoStudyServer = false;
     this.displayOOMKilledMessage = false;
     this.OOMKilledMessage = "";
+    this.repositoriesGitInfo = undefined;
+    this.hasGitInfo = false;
   }
 
   ngOnInit(): void {
+    this.appDataService.getGitReposInfo().subscribe(gitInfo=>{
+      
+      if (gitInfo !== undefined && gitInfo !== null){
+        this.repositoriesGitInfo = gitInfo;
+        this.hasGitInfo = true;
+      }
 
+    });
     this.username = this.userService.getFullUsernameWithNameInCapitalize();
     this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
     this.hasAccessToStudy = this.userService.hasAccessToStudy();
@@ -305,6 +318,24 @@ export class HeaderComponent implements OnInit {
   onClickOnContact() {
     this.dialog.open(ContactDialogComponent);
   }
+
+  openVersionTab(){
+    // get repository git info
+    if (this.repositoriesGitInfo !==undefined){
+    
+      const dialogData: RepositoryTraceabilityDialogData = new RepositoryTraceabilityDialogData();
+
+      dialogData.codeSourceTraceability = this.repositoriesGitInfo;
+
+      const dialogRef = this.dialog.open(RepositoryTraceabilityDialogComponent, {
+        disableClose: false,
+        width: '1000px',
+        height: '400px',
+        data: dialogData
+      });
+    }
+  }
+    
 
   logout() {
     this.auth.deauthenticate().subscribe({

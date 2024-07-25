@@ -99,7 +99,10 @@
   >
     <div *ngIf="postProcessingWithSection.length" style="width: 100%;background-color: #f4f4f4;">
       <div *ngFor="let section of postProcessingWithSection" class="section-panel">
-        <mat-expansion-panel style="margin-bottom: 2px;">
+        <mat-expansion-panel style="margin-bottom: 2px;"
+        [expanded]="IsExpand(section.post_processing_section_name)"
+        (opened)="SetIsExpand(section.post_processing_section_name, true)"
+        (closed)="SetIsExpand(section.post_processing_section_name, false)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               {{ section.post_processing_section_name }}

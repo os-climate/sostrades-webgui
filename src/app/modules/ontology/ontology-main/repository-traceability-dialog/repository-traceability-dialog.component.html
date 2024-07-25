@@ -4,8 +4,8 @@
         <h1> Code Repository Traceability</h1>
     </div>
 
-    <div>
-        <table mat-table [dataSource]="dataSourceCodeRepositoryTraceability" matSort class="table table-sm table-borderless">
+    <div class="div-container">
+        <table mat-table [dataSource]="dataSourceCodeRepositoryTraceability" matSort class="table table-sm">
             <ng-container  matColumnDef='name'>
             <th mat-header-cell *matHeaderCellDef>Repository</th>
             <td
@@ -17,7 +17,7 @@
             </td>
             </ng-container>
             <ng-container  matColumnDef='branch'>
-            <th mat-header-cell *matHeaderCellDef>Branch</th>
+            <th mat-header-cell *matHeaderCellDef>Branch or Tag</th>
             <td
                 id="branch"
                 mat-cell
@@ -43,7 +43,7 @@
             >{{element.committed_date}}
             </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="codeRepositoryTraceabilityColumns; sticky: false"></tr>
+            <tr mat-header-row *matHeaderRowDef="codeRepositoryTraceabilityColumns; sticky: true"></tr>
             <tr
             mat-row
             class="table-row"
