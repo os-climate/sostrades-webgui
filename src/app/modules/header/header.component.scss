@@ -10,17 +10,28 @@
 }
 
 .version-container {
+  padding: 5px;
   height: 70%;
   border: solid;
   border-radius: 7px;
   border-width: 1px;
   border-color: white;
-  padding: 5px;
   display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-right: 25px;
+}
+
+.clickable:hover{
+  background-color: rgba(0, 0, 0, 0.1); /* Dark semi-transparent overlay on hover */
+}
+
+.version-name {
+  padding: 5px;
+  display: block;
   justify-content: space-evenly;
   align-items: center;
   flex-direction: column;
-  margin-right: 25px;
 }
 
 .clickable {
