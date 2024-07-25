@@ -24,6 +24,12 @@
   margin-top: 5px;
 }
 
+::ng-deep .section-panel .mat-expansion-panel-body {
+  display: flex;
+  background-color: #f4f4f4;
+  flex-wrap: wrap;
+}
+
 .legend-header {
   flex-grow: 0;
   width: 100%;
@@ -186,4 +192,19 @@
 
 .spacer {
   flex: 1 1 auto;
+}
+
+/* Désactiver la barre de défilement par défaut du panneau de sélection */
+::ng-deep .mat-mdc-select-panel {
+  max-height: none !important;
+  min-width: 230px !important;
+  overflow: hidden !important;
+}
+
+/* Appliquer le défilement personnalisé à la div conteneur */
+.custom-options-container {
+  max-height: 200px; 
+  overflow: auto; 
+  display: flex;
+  flex-direction: column;
 }

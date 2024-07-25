@@ -44,6 +44,7 @@
       {{ memoryLoad }}
     </div>
     <button
+      *ngIf="!isCalculationRunning && displayIconInfoMemoryCpu"
       mat-button
       [matTooltip]="'Last metrics recorded from file system. The memory unit is in ' + memoryUnit "
       color='accent'

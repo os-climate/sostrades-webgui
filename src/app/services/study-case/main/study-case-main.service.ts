@@ -446,6 +446,7 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   getStudyZip(studyId: string): Observable<Blob> {
+    // get study from zip
     const options: {
       headers?: HttpHeaders;
       observe?: 'body';
