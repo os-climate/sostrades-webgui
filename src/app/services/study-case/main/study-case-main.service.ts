@@ -1,4 +1,4 @@
-import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
+import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus, CreationStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
@@ -56,7 +56,7 @@ export class StudyCaseMainService extends MainHttpService {
       })).subscribe({
         next:(loadedStudy) => {
 
-        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS || loadedStudy.studyCase.creationStatus !== CreationStatus.CREATION_DONE) {
           setTimeout(() => {
             this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
           }, 2000);
@@ -75,7 +75,7 @@ export class StudyCaseMainService extends MainHttpService {
               return LoadedStudy.Create(response);
             })).subscribe({
               next:(loadedStudy) => {
-                if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+                if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS || loadedStudy.studyCase.creationStatus !== CreationStatus.CREATION_DONE) {
                   setTimeout(() => {
                     this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
                   }, 2000);
@@ -147,7 +147,7 @@ export class StudyCaseMainService extends MainHttpService {
   private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
     this.internalLoadStudy(studyId).subscribe(
       {next:(loadedStudy) => {
-        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS || loadedStudy.studyCase.creationStatus !== CreationStatus.CREATION_DONE) {
           setTimeout(() => {
             this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
           }, 2000);
@@ -188,7 +188,7 @@ export class StudyCaseMainService extends MainHttpService {
   private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
     this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
       {next: (loadedStudy) => {
-        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS || loadedStudy.studyCase.creationStatus !== CreationStatus.CREATION_DONE) {
           setTimeout(() => {
             this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
           }, 2000);
