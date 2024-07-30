@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
-
-declare let Plotly: any;
+import * as Plotly from 'plotly.js-dist-min';
 
 @Component({
   selector: 'app-post-processing-plotly',
