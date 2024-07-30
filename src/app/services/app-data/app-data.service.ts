@@ -39,6 +39,7 @@ export class AppDataService extends DataHttpService {
   public hasNoServerAvailable: boolean;
   public support : any;
 
+
   constructor(
     private http: HttpClient,
     private studyCaseLoadingService: StudyCaseLoadingService,
@@ -136,6 +137,7 @@ export class AppDataService extends DataHttpService {
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
         );
         loadingCanceled = true;
+        this.loadingDialogService.closeLoading();
         this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
 
@@ -234,49 +236,52 @@ export class AppDataService extends DataHttpService {
     
     loadedStudy$.subscribe({
       next: (resultLoadedStudy) => {
+        //check that the loading has not been canceled
+        if (this.loadingDialogService.isLoadingOpen()){
+          //disable the cancel
+          this.loadingDialogService.disableCancelLoading(true);
+          let loadedStudyCase = resultLoadedStudy as LoadedStudy;
 
-        this.loadingDialogService.disableCancelLoading(true);
-        let loadedStudyCase = resultLoadedStudy as LoadedStudy;
+          // in case of read only mode, set post processings of the loaded study case
+          const isReadOnlyMode = loadedStudyCase.loadStatus == LoadStatus.READ_ONLY_MODE
+          if (isReadOnlyMode){
 
-        // in case of read only mode, set post processings of the loaded study case
-        const isReadOnlyMode = loadedStudyCase.loadStatus == LoadStatus.READ_ONLY_MODE
-        if (isReadOnlyMode){
+            // Set post processing dictionnary from the loaded study
+            this.postProcessingService.clearPostProcessingDict();
+    
+            // load read only mode
+            this.postProcessingService.setPostProcessing(loadedStudyCase);  
 
-          // Set post processing dictionnary from the loaded study
-          this.postProcessingService.clearPostProcessingDict();
-  
-          // load read only mode
-          this.postProcessingService.setPostProcessing(loadedStudyCase);  
-
-          this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);     
-        }
-        else {
-          const isLoaded = loadedStudyCase.loadStatus == LoadStatus.LOADED
-          
-          //load post processings if the study is loaded
-          let loadPostProc$ = new Observable<Boolean>((observer) => observer.next(null));
-          if (isLoaded){
-            loadPostProc$ = this.studyCasePostProcessingService.loadStudy(studyId, false);
+            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);     
           }
-
-          loadPostProc$.subscribe({
-            next: (isLoaded) => {
-              
-              this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);
-              if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
-                this.loadingDialogService.updateMessage(`Loading unsaved changes`);
-                let studyParameters: StudyUpdateParameter[] = [];
-                studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(studyId.toString());
-                studyParameters.forEach((element) => {
-                  this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[element.variableId].value = element.newValue;
-                });
-              }
-            },
-            error: (errorReceived) => {
-              functionToDoAfterLoading(false);
-              this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+          else {
+            const isLoaded = loadedStudyCase.loadStatus == LoadStatus.LOADED
+            
+            //load post processings if the study is loaded
+            let loadPostProc$ = new Observable<Boolean>((observer) => observer.next(null));
+            if (isLoaded){
+              loadPostProc$ = this.studyCasePostProcessingService.loadStudy(studyId, false);
             }
-          });
+
+            loadPostProc$.subscribe({
+              next: (isLoaded) => {
+                
+                this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);
+                if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
+                  this.loadingDialogService.updateMessage(`Loading unsaved changes`);
+                  let studyParameters: StudyUpdateParameter[] = [];
+                  studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(studyId.toString());
+                  studyParameters.forEach((element) => {
+                    this.studyCaseDataService.loadedStudy.treeview.rootNodeDataDict[element.variableId].value = element.newValue;
+                  });
+                }
+              },
+              error: (errorReceived) => {
+                functionToDoAfterLoading(false);
+                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+              }
+            });
+          }
         }
       },
       error: (errorReceived) => {
