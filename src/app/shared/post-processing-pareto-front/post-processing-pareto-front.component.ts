@@ -3,8 +3,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Scenario } from 'src/app/models/scenario.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-
-declare let Plotly: any;
+import * as Plotly from 'plotly.js-dist-min';
 
 @Component({
   selector: 'app-post-processing-pareto-front',
