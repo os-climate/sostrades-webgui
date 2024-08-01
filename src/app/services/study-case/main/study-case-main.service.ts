@@ -256,20 +256,12 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private reloadStudytimeout(studyid: number, loaderObservable: Subscriber<LoadedStudy>) {
-    return this.http.get(`${this.apiRoute}/${studyid}/reload`, this.options).pipe(map(
-      response => {
-        return LoadedStudy.Create(response);
-      })).subscribe(
-        { next:(loadedStudy) => {
-        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+    return this.http.get(`${this.apiRoute}/${studyid}/reload`, this.options).subscribe(
+        { next:(isReloaded) => {
           setTimeout(() => {
-            this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);
+            this.loadStudyTimeout(studyid, true, loaderObservable, true);
           }, 2000);
-        } else {
-          this.updateStudyCaseDataService(loadedStudy);
-          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-          loaderObservable.next(loadedStudy);
-        }
+        
       },
       error:(error) => {
         loaderObservable.error(error);
