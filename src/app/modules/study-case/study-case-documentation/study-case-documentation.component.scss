@@ -24,3 +24,39 @@
 .bookmarks-title {
   font-weight: bold;
 }
+
+.footnote {
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+
+.footnote-ref {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.footnote-ref::before {
+  content: '[';
+}
+
+.footnote-ref::after {
+  content: ']';
+}
+
+.footnote-backref {
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+ol {
+  margin-top: 10px;
+}
+
+ol li {
+  list-style-type: decimal;
+  margin-bottom: 5px;
+}
+ ::ng-deep .mat-mdc-tab-body.mat-mdc-tab-body-active {
+  
+  overflow-y: hidden !important;
+ }

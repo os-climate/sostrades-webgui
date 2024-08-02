@@ -36,8 +36,14 @@
               "src/assets/google/css/fonts-googleapis.css",
               "src/assets/github/css/github-markdown.min.css",
               "src/assets/texmath/css/texmath.css",
-              "src/assets/katex/css/katex.min.css",
+              "node_modules/katex/dist/katex.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+            ],
+            "scripts": [
+              "node_modules/marked/marked.min.js",
+              "node_modules/katex/dist/katex.min.js",
+              "node_modules/katex/dist/contrib/auto-render.min.js",
+              "node_modules/mermaid/dist/mermaid.min.js"
             ],
             "vendorChunk": true,
             "extractLicenses": false,
