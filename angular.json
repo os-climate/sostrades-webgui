@@ -36,11 +36,14 @@
               "src/assets/google/css/fonts-googleapis.css",
               "src/assets/github/css/github-markdown.min.css",
               "src/assets/texmath/css/texmath.css",
-              "src/assets/katex/css/katex.min.css",
+              "node_modules/katex/dist/katex.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
             "scripts": [
-              "src/assets/plotly-latest.min.js"
+              "node_modules/marked/marked.min.js",
+              "node_modules/katex/dist/katex.min.js",
+              "node_modules/katex/dist/contrib/auto-render.min.js",
+              "node_modules/mermaid/dist/mermaid.min.js"
             ],
             "vendorChunk": true,
             "extractLicenses": false,
@@ -68,7 +71,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "10mb"
+                  "maximumError": "11mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -95,24 +98,6 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "sos-trades-gui:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "./src/styles.scss"
-            ],
-            "scripts": []
           }
         },
         "lint": {

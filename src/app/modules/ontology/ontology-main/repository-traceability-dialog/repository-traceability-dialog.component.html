@@ -13,7 +13,7 @@
             *matCellDef="let element"
             style="word-wrap: break-word;"
             >
-            <a [href]="element.url" target="_blank" style="text-transform: capitalize;">{{ element.name }}</a>
+            <a [href]="element.url" target="_blank">{{ element.name }}</a>
             </td>
             </ng-container>
             <ng-container  matColumnDef='branch'>
@@ -22,7 +22,8 @@
                 id="branch"
                 mat-cell
                 *matCellDef="let element"
-            >{{element.branch}}
+            >
+            <a [href]="element.url + '/tree/' + element.branch" target="_blank">{{element.branch}}</a>
             </td>
             </ng-container>
             <ng-container  matColumnDef='commit'>
@@ -31,7 +32,8 @@
                 id="commit"
                 mat-cell
                 *matCellDef="let element"
-            >{{element.commit}}
+            >
+            <a [href]="element.url + '/tree/' + element.commit" target="_blank">{{element.commit}}</a>
             </td>
             </ng-container>
             <ng-container  matColumnDef='committedDate'>
