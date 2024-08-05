@@ -56,7 +56,7 @@ ol li {
   list-style-type: decimal;
   margin-bottom: 5px;
 }
- ::ng-deep .mat-mdc-tab-body.mat-mdc-tab-body-active {
+ ::ng-deep .mat-mdc-tab-body-content {
   
-  overflow-y: hidden !important;
+  height: auto !important;
  }

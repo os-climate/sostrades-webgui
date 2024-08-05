@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, Renderer2} from '@angular/core';
-import { marked } from 'marked';
-import { KatexOptions, MarkdownService } from 'ngx-markdown';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, Renderer2} from '@angular/core';
+import { KatexOptions } from 'ngx-markdown';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
@@ -63,55 +62,60 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
    */
   private insertAttributOnReference() {
     this.hasDocumentationSubject
-        .pipe(filter(hasDoc => hasDoc))
-        .subscribe(() => {
-          // Add IDs to footnote reference elements and set up smooth scrolling
-          this.el.nativeElement.querySelectorAll('.footnote-ref a').forEach((element: HTMLElement) => {
-              const href = element.getAttribute('href');
-              const classRef = element.getAttribute('class');
-              if (href && classRef) {
-                  element.setAttribute('id', classRef);
-                  element.removeAttribute('class');
-                  // Add an event listener for smooth scrolling to the target
-                  element.addEventListener('click', (event) => {
-                      event.preventDefault();
-                      const targetId = href.substring(1);
-                      const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
-                      if (targetElement) {
-                          targetElement.scrollIntoView({ behavior: 'smooth' });  
-                      }
-                  });
-              }
-          });
+      .pipe(filter(hasDoc => hasDoc))
+      .subscribe(() => {
+        // Add IDs to footnote reference elements and set up smooth scrolling
+        this.el.nativeElement.querySelectorAll('.footnote-ref a').forEach((element: HTMLElement) => {
+            const href = element.getAttribute('href');
+            const classRef = element.getAttribute('class');
+            if (href && classRef) {
+                element.setAttribute('id', classRef);
+                element.removeAttribute('class');
+                // Add an event listener for smooth scrolling to the target
+                element.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = href.substring(1);
+                    const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });  
+                    }
+                });
+            }
+        });
 
-          // Add unique IDs to footnote list items and set up smooth scrolling for back references
-          this.el.nativeElement.querySelectorAll('li.footnote-item').forEach((element: HTMLElement, index) => {
-              const id = `fn${index + 1}`;
-              element.setAttribute('id', id);
-              // Add an event listener for smooth scrolling back to the footnote reference
-              element.querySelectorAll('.footnote-backref').forEach((backrefElement: HTMLElement) => {
-                  const backHref = backrefElement.getAttribute('href');
-                  if (backHref) {
-                      backrefElement.addEventListener('click', (event) => {
-                          event.preventDefault();
-                          const targetId = backHref.substring(1);
-                          const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
-                          if (targetElement) {
-                              targetElement.scrollIntoView({ behavior: 'smooth' });
-                          }
-                      });
-                  }
-              });
-          });
+        // Add unique IDs to footnote list items and set up smooth scrolling for back references
+        this.el.nativeElement.querySelectorAll('li.footnote-item').forEach((element: HTMLElement, index) => {
+            const id = `fn${index + 1}`;
+            element.setAttribute('id', id);
+            // Add an event listener for smooth scrolling back to the footnote reference
+            element.querySelectorAll('.footnote-backref').forEach((backrefElement: HTMLElement) => {
+                const backHref = backrefElement.getAttribute('href');
+                if (backHref) {
+                    backrefElement.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const targetId = backHref.substring(1);
+                        const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
+                        if (targetElement) {
+                            targetElement.scrollIntoView();
+                        }
+                    });
+                }
+            });
+        });
 
-          // Hide paragraphs that contain base64 image references
-          const base64ImageReferenceRegex = /\[.*?\]:\s*data:image\/(PNG|png|jpg|jpeg|gif);base64,.*?(\r?\n|$)/g;
-          this.el.nativeElement.querySelectorAll('p').forEach((element: HTMLElement) => {
-              if (base64ImageReferenceRegex.test(element.innerHTML)) {
-                console.log(element)
-                  this.renderer.setStyle(element, 'display', 'none');
-              }
-          });
+        // Hide paragraphs that contain base64 image references
+        const base64ImageReferenceRegex = /\[.*?\]:\s*data:image\/(PNG|png|jpg|jpeg|gif);base64,.*?(\r?\n|$)/g;
+        this.el.nativeElement.querySelectorAll('p').forEach((element: HTMLElement) => {
+            if (base64ImageReferenceRegex.test(element.innerHTML)) {
+              console.log(element)
+                this.renderer.setStyle(element, 'display', 'none');
+            }
+        });
+        // Target element .katex-display > .katex et supprimer white-space: nowrap
+        const katexElements = this.el.nativeElement.querySelectorAll('.katex-display > .katex');
+        katexElements.forEach((element: HTMLElement) => {
+          this.renderer.setStyle(element, 'white-space', 'normal');
+        });
       });
   }
 
@@ -162,7 +166,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
  * @returns The processed markdown string with footnote links and a footnote list.
  */
   private transformFootnotesAndEquationKatexAndImages(markdown: string): string {
-    const footnoteRegex = /\[\^(\d+)\]:\s(.+)/g;
+    const footnoteRegex = /\[\^(\d+)\]:\s((?:.|\n)+?)(?=\n\[\^|\n*$)/gs;
     const inlineFootnoteRegex = /\[\^(\d+)\]/g;
     const katexEquationRegex = /\$\$([^\$]+)\$\$/g;
     const base64ImageReferenceRegex = /!\[\]\[*.*\]/g;
