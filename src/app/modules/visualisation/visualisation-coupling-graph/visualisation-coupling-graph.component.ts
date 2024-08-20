@@ -68,9 +68,12 @@ export class CouplingGraphComponent implements OnInit {
       if (Object.keys(loadedStudy.n2Diagram).length === 0) {
         this.visualisationService.getDiagramN2Data(loadedStudy.studyCase.id).subscribe({
           next: (res: any) => {
-            loadedStudy.n2Diagram = res;
-            this.data = loadedStudy.n2Diagram;
-            this.initGraph();
+            if (Object.keys(res).length > 0) {
+              loadedStudy.n2Diagram = res;
+              this.data = loadedStudy.n2Diagram;
+              this.initGraph();
+            }
+           
             this.isLoading = false;
           },
           error: (err: any) => {
@@ -87,9 +90,6 @@ export class CouplingGraphComponent implements OnInit {
   }
 
   initGraph(): void {
-
-
-
     this.modelTypes.setValue(this.typeList);
 
     if ((this.data !== null) &&
