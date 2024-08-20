@@ -95,9 +95,6 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
       if (this.isListType && !this.hasSubTypeDescriptor) {
         // Saving list type
         this.loadingDialogService.showLoading(`Saving in temporary changes : ${this.nodeData.displayName}`);
-
-        const newDataList = [];
-
         this.papa.parse(file, {
           complete: papaparseResults => {
 
@@ -149,9 +146,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
               }
             });
 
-            let updateItem: StudyUpdateParameter;
-
-            updateItem = new StudyUpdateParameter(
+            const updateItem = new StudyUpdateParameter(
               this.nodeData.identifier,
               this.nodeData.type.toString(),
               UpdateParameterType.SCALAR,
@@ -173,13 +168,14 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
 
             this.nodeData.value = newDataList;
             this.stateUpdate.emit();
+            this.loadingDialogService.closeLoading();
+            this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
           }
         });
       } else {
         this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.nodeData.displayName}.csv`);
 
-        let updateItem: StudyUpdateParameter;
-        updateItem = new StudyUpdateParameter(
+        const updateItem = new StudyUpdateParameter(
           this.nodeData.identifier,
           UpdateParameterType.CSV,
           UpdateParameterType.CSV,
@@ -193,26 +189,66 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
           null,
           null,
           null);
+        const maxByteSize = 1024*1024*1024
+        if (file.size < maxByteSize) {
+          reader.readAsDataURL(file)
+          
+          reader.onprogress = (event) => {  
+            if (event.lengthComputable) {
+              const loaded = event.loaded;
+              const total = event.total;
+              const remaining = total - loaded;
+          
+              const formatBytes = (bytes) => {
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                if (bytes === 0) return '0 Byte';
+                const i = Math.floor(Math.log(bytes) / Math.log(1024));
+                return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+              };
+          
+              const percentLoaded = Math.round((loaded / total) * 100);
+              const remainingSize = formatBytes(remaining);
+          
+              this.loadingDialogService.updateMessage(`${percentLoaded}% loaded. Remaining: ${remainingSize}`);
+            }
+          };
 
-        reader.readAsDataURL(file);
-        reader.onload = () => {
+          
+          reader.onload = () => {
+            try {
+              let csvText = atob(reader.result.toString().split(',')[1]);
+              csvText = csvText.replace(/SEP=.*\r?\n|\r/g, '');
 
-          // Remove excel csv sep if it exists
-          let csvText = atob(reader.result.toString().split(',')[1]);
-          csvText = csvText.replace(/SEP=.*\r?\n|\r/g, '');
+              updateItem.newValue = reader.result.toString().split(',')[0] + ',' + btoa(csvText);
 
-          updateItem.newValue = reader.result.toString().split(',')[0] + ',' + btoa(csvText);
-
-          this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
-            updateItem,
-            this.nodeData,
-            this.studyCaseDataService.loadedStudy.studyCase.id.toString());
-          this.nodeData.value = reader.result.toString();
-          this.stateUpdate.emit();
-        };
+              this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
+                updateItem,
+                this.nodeData,
+                this.studyCaseDataService.loadedStudy.studyCase.id.toString());
+              this.nodeData.value = reader.result.toString();
+              this.stateUpdate.emit();
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
+            } catch (error) {
+              event.target.value='';
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError(`Error to upload "${file.name}"\n ${error} `);
+            }
+          };
+        } else {
+          event.target.value='';
+          this.loadingDialogService.closeLoading();
+          let sizeGigaOctet = file.size/1024/1024/1024;
+          let unity ="";
+          if (sizeGigaOctet > 1) {
+            unity = "Go";
+          } else {
+            sizeGigaOctet = sizeGigaOctet * 1024;
+            unity = "Mo";
+          }
+          this.snackbarService.showError(`Error to upload "${file.name}". Its size ${sizeGigaOctet.toFixed(2)}${unity} is bigger than ${maxByteSize/(1024 * 1024 * 1024)}Go`);
+         }               
       }
-      this.loadingDialogService.closeLoading();
-      this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
     }
   }
 
