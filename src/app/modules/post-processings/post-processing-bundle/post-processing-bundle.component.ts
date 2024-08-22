@@ -114,7 +114,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.postProcessingService.getPostProcessing(
       needToUpdate,
       this.studyCaseDataService.loadedStudy,
-      this.fullNamespace,
+      this.postProcessingBundle.disciplineName,
       this.postProcessingBundle.name,
       this.postProcessingBundle.filters).subscribe({
         next: (postProcessing) => {
