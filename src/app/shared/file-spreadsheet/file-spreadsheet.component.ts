@@ -192,7 +192,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
           null,
           null,
           null);
-        const maxByteSize = 1024*1024*1024
+        const maxByteSize = 50*1024*1024
         if (file.size < maxByteSize) {
           reader.readAsDataURL(file)
           
@@ -251,7 +251,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
             sizeGigaOctet = sizeGigaOctet * 1024;
             unity = "Mo";
           }
-          this.snackbarService.showError(`Error to upload "${file.name}". Its size ${sizeGigaOctet.toFixed(2)}${unity} is bigger than ${maxByteSize/(1024 * 1024 * 1024)}Go`);
+          this.snackbarService.showError(`Error to upload "${file.name}". Its size ${sizeGigaOctet.toFixed(2)}${unity} is bigger than ${maxByteSize/(1024 * 1024)}Mo`);
          }               
       }
     }
