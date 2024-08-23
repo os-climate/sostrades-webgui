@@ -90,6 +90,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
   onSelection(event) {
     if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
       const file = event.target.files[0];
+      const isBig = file.size > 2*1024*1024;//if the file isBig > 2Mo, the data will not be shown in GUI
       const reader = new FileReader();
 
       if (this.isListType && !this.hasSubTypeDescriptor) {
@@ -167,6 +168,8 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
                 this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
             this.nodeData.value = newDataList;
+            // reset the isBig value to show the new data (there is another security in case it it upper max length)
+            this.nodeData.isBig = isBig;
             this.stateUpdate.emit();
             this.loadingDialogService.closeLoading();
             this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
@@ -226,6 +229,8 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
                 this.nodeData,
                 this.studyCaseDataService.loadedStudy.studyCase.id.toString());
               this.nodeData.value = reader.result.toString();
+              // reset the isBig value to show the new data (there is another security in case it it upper max length)
+              this.nodeData.isBig = isBig;
               this.stateUpdate.emit();
               this.loadingDialogService.closeLoading();
               this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
@@ -329,17 +334,25 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
         } else { // File in distant server
           this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe({
             next: (file) => {
-              spreadsheetDialogData.file = new Blob([file]);
-              this.dialogRef = this.dialog.open(SpreadsheetComponent, {
-                disableClose: true,
-                data: spreadsheetDialogData
-              });
-              this.dialogRef.afterClosed().subscribe((result) => {
-                if (result.cancel === false) {
-                  this.stateUpdate.emit();
-                }
-              });
+              if (file.byteLength/1024/1024 > 2){
+                //the file length is upper than 2Mo, it cannot be displayed
+                this.snackbarService.showWarning(`The data is too big to be displayed`);
+                this.nodeData.isBig = true;
+              }
+              else{
+                spreadsheetDialogData.file = new Blob([file]);
+                this.dialogRef = this.dialog.open(SpreadsheetComponent, {
+                  disableClose: true,
+                  data: spreadsheetDialogData
+                });
+                this.dialogRef.afterClosed().subscribe((result) => {
+                  if (result.cancel === false) {
+                    this.stateUpdate.emit();
+                  }
+                });
+              }
               this.loadingDialogService.closeLoading();
+            
             },
             error: (errorReceived) => {
               const error = errorReceived as SoSTradesError;

@@ -200,6 +200,7 @@ export class NodeData {
         jsonData[NodeDataAttributes.DISCIPLINE_FULL_PATH_LIST],
         jsonData[NodeDataAttributes.VARIABLE_KEY],
         jsonData[NodeDataAttributes.CHECK_INTEGRITY_MSG],
+        jsonData[NodeDataAttributes.IS_BIG],
         parent,
         isDataDisc
       );
@@ -234,6 +235,7 @@ export class NodeData {
     public disciplineFullPathList: string[],
     public variableKey: string,
     public checkIntegrityMessage: string,
+    public isBig: boolean,
     public parent: TreeNode,
     public isDataDisc: boolean) {
 
@@ -390,5 +392,6 @@ export enum NodeDataAttributes {
   DATAFRAME_EDITION_LOCKED = 'dataframe_edition_locked',
   DISCIPLINE_FULL_PATH_LIST = 'discipline_full_path_list',
   VARIABLE_KEY = 'variable_key',
-  CHECK_INTEGRITY_MSG = 'check_integrity_msg'
+  CHECK_INTEGRITY_MSG = 'check_integrity_msg',
+  IS_BIG = 'is_big'
 }

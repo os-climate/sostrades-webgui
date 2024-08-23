@@ -268,6 +268,8 @@ export class OntologyInformationsComponent implements OnInit {
           );
     
           this.data.nodeData.value = newUpdateParameter.newValue;
+          // reset the isBig value to show the new data (there is another security in case it it upper max length)
+          this.data.nodeData.isBig = false;
           this.loadingDialogService.closeLoading();
           this.dialogRef.close();
           this.snackbarService.showInformation(`${this.data.nodeData.displayName} data reverted to date : ${parameter.lastModified}`);
@@ -363,12 +365,18 @@ export class OntologyInformationsComponent implements OnInit {
       } else { // File in distant server
         this.studyCaseMainService.getFile(this.data.nodeData.identifier).subscribe({
           next: (file) => {
-            spreadsheetDialogData.file = new Blob([file]);
-        
-            this.dialog.open(SpreadsheetComponent, {
-              disableClose: true,
-              data: spreadsheetDialogData
-            });
+            if (file.byteLength/1024/1024 > 2){
+              //the file length is upper than 2Mo, it cannot be displayed
+              this.snackbarService.showWarning(`The data is too big to be displayed`);
+            }
+            else{
+              spreadsheetDialogData.file = new Blob([file]);
+          
+              this.dialog.open(SpreadsheetComponent, {
+                disableClose: true,
+                data: spreadsheetDialogData
+              });
+            }
             this.loadingDialogService.closeLoading();
           },
           error: (errorReceived) => {
