@@ -268,8 +268,8 @@ export class OntologyInformationsComponent implements OnInit {
           );
     
           this.data.nodeData.value = newUpdateParameter.newValue;
-          // reset the isBig value to show the new data (there is another security in case it it upper max length)
-          this.data.nodeData.isBig = false;
+          // reset the size value to show the new data (there is another security in case it it upper max length)
+          this.data.nodeData.sizeInMo = 0;
           this.loadingDialogService.closeLoading();
           this.dialogRef.close();
           this.snackbarService.showInformation(`${this.data.nodeData.displayName} data reverted to date : ${parameter.lastModified}`);

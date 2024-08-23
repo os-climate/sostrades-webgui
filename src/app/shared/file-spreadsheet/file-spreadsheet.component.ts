@@ -90,7 +90,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
   onSelection(event) {
     if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
       const file = event.target.files[0];
-      const isBig = file.size > 2*1024*1024;//if the file isBig > 2Mo, the data will not be shown in GUI
+      const size_mo = file.size/1024/1024;
       const reader = new FileReader();
 
       if (this.isListType && !this.hasSubTypeDescriptor) {
@@ -168,8 +168,8 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
                 this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
             this.nodeData.value = newDataList;
-            // reset the isBig value to show the new data (there is another security in case it it upper max length)
-            this.nodeData.isBig = isBig;
+            // reset the size value 
+            this.nodeData.sizeInMo = size_mo;
             this.stateUpdate.emit();
             this.loadingDialogService.closeLoading();
             this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
@@ -229,8 +229,8 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
                 this.nodeData,
                 this.studyCaseDataService.loadedStudy.studyCase.id.toString());
               this.nodeData.value = reader.result.toString();
-              // reset the isBig value to show the new data (there is another security in case it it upper max length)
-              this.nodeData.isBig = isBig;
+              // reset the size value
+              this.nodeData.sizeInMo = size_mo;
               this.stateUpdate.emit();
               this.loadingDialogService.closeLoading();
               this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
@@ -337,7 +337,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
               if (file.byteLength/1024/1024 > 2){
                 //the file length is upper than 2Mo, it cannot be displayed
                 this.snackbarService.showWarning(`The data is too big to be displayed`);
-                this.nodeData.isBig = true;
+                this.nodeData.sizeInMo = file.byteLength/1024/1024;
               }
               else{
                 spreadsheetDialogData.file = new Blob([file]);

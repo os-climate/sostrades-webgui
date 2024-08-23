@@ -132,6 +132,7 @@ export class NodeData {
   private _subTypeDrescriptorNestedLevelCount: number;
   public modified: boolean;
 
+
   /**
    * Explore subtype descriptor nested level to extract final stored type
    * @param subTypeDescriptor: nested object we want to extract last final value
@@ -200,7 +201,7 @@ export class NodeData {
         jsonData[NodeDataAttributes.DISCIPLINE_FULL_PATH_LIST],
         jsonData[NodeDataAttributes.VARIABLE_KEY],
         jsonData[NodeDataAttributes.CHECK_INTEGRITY_MSG],
-        jsonData[NodeDataAttributes.IS_BIG],
+        jsonData[NodeDataAttributes.SIZE_IN_MO],
         parent,
         isDataDisc
       );
@@ -235,7 +236,7 @@ export class NodeData {
     public disciplineFullPathList: string[],
     public variableKey: string,
     public checkIntegrityMessage: string,
-    public isBig: boolean,
+    public sizeInMo: number,
     public parent: TreeNode,
     public isDataDisc: boolean) {
 
@@ -353,6 +354,11 @@ export class NodeData {
     }
     return has_connector_data;
   }
+
+  get isBig(): boolean {
+    // check that the size of the data is upper than 2Mo
+    return this.sizeInMo > 2;
+  }
 }
 
 export function CreateNodeDataDictionary(jsonData: any, parent: TreeNode, isDataDisc: boolean): { [id: string]: NodeData } {
@@ -393,5 +399,5 @@ export enum NodeDataAttributes {
   DISCIPLINE_FULL_PATH_LIST = 'discipline_full_path_list',
   VARIABLE_KEY = 'variable_key',
   CHECK_INTEGRITY_MSG = 'check_integrity_msg',
-  IS_BIG = 'is_big'
+  SIZE_IN_MO = 'size_mo'
 }
