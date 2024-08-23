@@ -14,43 +14,51 @@
         <mat-icon class="icon-size">cloud_upload</mat-icon>
       </div>
     </button>
-
-    <button
-      mat-raised-button
-      *ngIf="isReadOnly"
-      aria-label="Show data"
-      matTooltip="Show data"
-      (click)="onClickShow()"
-      [disabled]="nodeData.value === null || nodeData.value === undefined"
-      class="custom-button"
-    >
-      <div class="custom-button-container">
-        <div style="line-height: 24px">Show</div>
-        <mat-icon class="icon-size">grid_on</mat-icon>
-      </div>
-    </button>
-
-    <button
-      mat-raised-button
-      *ngIf="
-        (nodeData.value !== undefined &&
-          nodeData.value !== null &&
-          !isReadOnly) ||
-        (isListType && !isReadOnly)||
-        (isArrayType && !isReadOnly)
-      "
-      color="accent"
-      aria-label="Edit data"
-      matTooltip="Edit data"
-      (click)="onClickEdit()"
-      [disabled]="(nodeData.value === null && !isListType && !isArrayType)"
-      class="custom-button"
-    >
-      <div class="custom-button-container">
-        <div style="line-height: 24px">Edit</div>
-        <mat-icon class="icon-size">edit</mat-icon>
-      </div>
-    </button>
+    <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
+    <div [matTooltip]="nodeData.isBig? 'The data is too big to be displayed': ''">
+      <button
+        mat-raised-button
+        *ngIf="isReadOnly"
+        aria-label="Show data"
+        matTooltip="Show data"
+        (click)="onClickShow()"
+        [disabled]="nodeData.value === null || nodeData.value === undefined || nodeData.isBig"
+        class="custom-button"
+      >
+        <div class="custom-button-container">
+          <div style="line-height: 24px">Show</div>
+          <mat-icon class="icon-size">grid_on</mat-icon>
+          <!-- Add warning if Show is disabled if value is too big -->
+          <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="nodeData.isBig"></i>
+        </div>
+      </button>
+    </div>
+    <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
+    <div [matTooltip]="nodeData.isBig? 'The data is too big to be displayed': ''">
+      <button
+        mat-raised-button
+        *ngIf="
+          (nodeData.value !== undefined &&
+            nodeData.value !== null &&
+            !isReadOnly) ||
+          (isListType && !isReadOnly)||
+          (isArrayType && !isReadOnly)
+        "
+        color="accent"
+        aria-label="Edit data"
+        matTooltip="Edit data"
+        (click)="onClickEdit()"
+        [disabled]="((nodeData.value === null && !isListType && !isArrayType) ||nodeData.isBig)"
+        class="custom-button"
+      >
+        <div class="custom-button-container">
+          <div style="line-height: 24px">Edit</div>
+          <mat-icon class="icon-size">edit</mat-icon>
+          <!-- Add warning if Show is disabled if value is too big -->
+          <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="nodeData.isBig"></i>
+        </div>
+      </button>
+    </div>
 
     <button
       mat-raised-button
