@@ -243,15 +243,15 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
         } else {
           event.target.value='';
           this.loadingDialogService.closeLoading();
-          let sizeGigaOctet = file.size/1024/1024/1024;
+          let sizeGigaByte = file.size/1024/1024/1024;
           let unity ="";
-          if (sizeGigaOctet > 1) {
-            unity = "Go";
+          if (sizeGigaByte > 1) {
+            unity = "GB";
           } else {
-            sizeGigaOctet = sizeGigaOctet * 1024;
-            unity = "Mo";
+            sizeGigaByte = sizeGigaByte * 1024;
+            unity = "MB";
           }
-          this.snackbarService.showError(`Error to upload "${file.name}". Its size ${sizeGigaOctet.toFixed(2)}${unity} is bigger than ${maxByteSize/(1024 * 1024)}Mo`);
+          this.snackbarService.showError(`Error to upload "${file.name}". Its size ${sizeGigaByte.toFixed(2)}${unity} is bigger than our ${maxByteSize/(1024 * 1024)}MB limit.`);
          }               
       }
     }
