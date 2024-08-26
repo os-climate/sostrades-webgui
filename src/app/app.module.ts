@@ -65,7 +65,6 @@ import { StudyCaseModificationDialogComponent } from './modules/study-case/study
 import { SamlComponent } from './modules/saml/saml.component';
 import { DataManagementInformationComponent } from './modules/data-management/data-management-information/data-management-information.component';
 import { PostProcessingPlotlyComponent } from './shared/post-processing/post-processing-plotly/post-processing-plotly.component';
-import { MarkdownRendererDirective } from './directives/markdown-renderer/markdown-renderer.directive';
 import { UpdateEntityRightComponent } from './modules/entity-right/update-entity-right/update-entity-right.component';
 import { UpdateEntityRightAddPeopleComponent } from './modules/entity-right/update-entity-right-add-people/update-entity-right-add-people.component';
 import { ReferenceManagementComponent } from './modules/reference-management/reference-management.component';
@@ -117,6 +116,7 @@ import { ProcessBuilderComponent } from './shared/process-builder/process-builde
 import { NoServerComponent } from './modules/no-server/no-server.component';
 import { LoginInformationDialogComponent } from './modules/login/login-information-dialog/login-information-dialog.component';
 import { EditionFormDialogComponent } from './shared/edition-form-dialog/edition-form-dialog.component';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 registerLocaleData(fr);
 
@@ -166,7 +166,6 @@ registerLocaleData(fr);
         SamlComponent,
         DataManagementInformationComponent,
         PostProcessingPlotlyComponent,
-        MarkdownRendererDirective,
         UpdateEntityRightComponent,
         UpdateEntityRightAddPeopleComponent,
         ReferenceManagementComponent,
@@ -227,7 +226,19 @@ registerLocaleData(fr);
         ScrollingModule,
         TableVirtualScrollModule,
         ClipboardModule,
-        AngularSplitModule
+        AngularSplitModule,
+        MarkdownModule.forRoot({
+            markedOptions: {
+              provide: MarkedOptions,
+              useValue: {
+                gfm: true,
+                breaks: true,
+                pedantic: false,
+                smartLists: true,
+                smartypants: false,
+              },
+            },
+          }),
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

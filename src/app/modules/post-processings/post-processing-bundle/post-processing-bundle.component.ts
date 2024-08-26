@@ -213,7 +213,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     }
     // filter values
     this.filter.filteredValues = this.filter.filterValues.filter(
-      value => value.toString().toLowerCase().indexOf(value) > -1
+      search => search.toString().toLowerCase().indexOf(value) > -1
     )        
   }     
   
