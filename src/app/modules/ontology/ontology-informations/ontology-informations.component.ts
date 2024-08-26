@@ -367,7 +367,7 @@ export class OntologyInformationsComponent implements OnInit {
           next: (file) => {
             if (file.byteLength/1024/1024 > 2){
               //the file length is upper than 2Mo, it cannot be displayed
-              this.snackbarService.showWarning(`The data is too big to be displayed`);
+              this.snackbarService.showWarning(`The data is too big to be displayed, it can still be downloaded`);
             }
             else{
               spreadsheetDialogData.file = new Blob([file]);

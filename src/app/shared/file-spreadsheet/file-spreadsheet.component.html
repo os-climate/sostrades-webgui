@@ -15,7 +15,7 @@
       </div>
     </button>
     <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
-    <div [matTooltip]="nodeData.isBig? 'The data is too big to be displayed': ''">
+    <div [matTooltip]="nodeData.isBig? 'The data is too big to be displayed, it can still be downloaded': ''">
       <button
         mat-raised-button
         *ngIf="isReadOnly"
@@ -34,7 +34,7 @@
       </button>
     </div>
     <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
-    <div [matTooltip]="nodeData.isBig? 'The data is too big to be displayed': ''">
+    <div [matTooltip]="nodeData.isBig? 'The data is too big to be displayed, it can still be downloaded': ''">
       <button
         mat-raised-button
         *ngIf="
