@@ -25,10 +25,12 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   public options: KatexOptions = {
     delimiters: [
       { left: "$$", right: "$$", display: true },
+      { left: "$",   right: "$",   display: false },
+      { left: "\\(", right: "\\)", display: false },
+      { left: "\\[", right: "\\]", display: true }
     ],
     displayMode: true,
     macros: {"\\R": "\\mathbb{R}"},
-    strict: false
   }
 
   constructor(
