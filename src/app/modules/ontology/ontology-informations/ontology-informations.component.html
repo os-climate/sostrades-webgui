@@ -16,7 +16,7 @@
       *ngIf="data.nodeData.widgetType === 'fileSpreadsheet'"
     >
       <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
-      <div [matTooltip]="data.nodeData.isBig? 'The data is too big to be displayed': ''">
+      <div [matTooltip]="data.nodeData.isBig? 'The data is too big to be displayed, it can still be downloaded': ''">
         <button
           mat-raised-button
           style="line-height: 24px"
