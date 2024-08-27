@@ -28,6 +28,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     ],
     displayMode: true,
     macros: {"\\R": "\\mathbb{R}"},
+    strict: false
   }
 
   constructor(
@@ -166,7 +167,8 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
  * @returns The processed markdown string with footnote links and a footnote list.
  */
   private transformFootnotesAndEquationKatexAndImages(markdown: string): string {
-    const footnoteRegex = /\[\^(\d+)\]:\s((?:.|\n)+?)(?=\n\[\^|\n*$)/gs;
+    // const footnoteRegex = /\[\^(\d+)\]:\s((?:.|\n)+?)(?=\n\[\^|\n*$)/gs;
+    const footnoteRegex = /\[\^(\d+)\]:\s*(.*)/g;
     const inlineFootnoteRegex = /\[\^(\d+)\]/g;
     const katexEquationRegex = /\$\$([^\$]+)\$\$/g;
     const base64ImageReferenceRegex = /!\[\]\[*.*\]/g;
@@ -176,13 +178,22 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     const footnoteOccurrences: { [id: string]: number } = {};
     let match;
     
+    // Display undescore on equations
     markdown = markdown.replace(katexEquationRegex, (match, equation) => {
       const escapedEquation = equation.replace(/_/g, '\\_');
       return `$$${escapedEquation}$$`;
       });
-  
-    // Find all footnotes and store them in a dictionary
-    while ((match = footnoteRegex.exec(markdown)) !== null) {
+    
+    // Find all footnotes and store them in a dictionary  
+    const referencesTitle = "# References";
+    const referencesTitlePosition = markdown.indexOf(referencesTitle);
+    let references = markdown
+
+    if (referencesTitlePosition !== -1) { 
+      references = markdown.slice(referencesTitlePosition)
+    }
+    
+    while ((match = footnoteRegex.exec(references)) !== null) {
       const id = match[1];
       const content = match[2];
       if (!footnoteMap[id]) {
@@ -190,8 +201,9 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       }
     }
 
+   
+    // Regex to retrieve images base64 
     const imageRefs = {};
-    // Regex to retrieve images base64
     const base64Regex = /\[([^\]]+)\]:\s*data:image\/([a-zA-Z]+);base64,([^\s]+)/g;
     markdown = markdown.replace(base64Regex, (match, p1, p2, p3) => {
       imageRefs[p1.replace(/_/g, '-')] = `data:image/${p2};base64,${p3}`;
@@ -208,14 +220,11 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       return match; // Return original text if not corresponding reference
     });
   
-    // Remove footnote definitions from the main content
-    markdown = markdown.replace(footnoteRegex, '');
+    markdown = markdown.replace(footnoteRegex, '');    
     
     markdown =  markdown = markdown.replace(base64ImageReferenceRegex, (match, equation) => {
-      console.log(match);
-      console.log(equation);
       return match
-      });
+    });
   
     // Replace inline footnote references and add back reference links
     markdown = markdown.replace(inlineFootnoteRegex, (match, id) => {
