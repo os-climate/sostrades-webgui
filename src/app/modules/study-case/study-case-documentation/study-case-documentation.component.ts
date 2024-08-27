@@ -173,6 +173,8 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     const footnoteRegex = /\[\^(\d+)\]:\s*(.*)/g;
     const inlineFootnoteRegex = /\[\^(\d+)\]/g;
     const katexEquationRegex = /\$\$([^\$]+)\$\$/g;
+    const katex2ndEquationRegex = /(?<![^\s\(])\$(?![\/\\])([^\$]+?)\$/g;
+
     const base64ImageReferenceRegex = /!\[\]\[*.*\]/g;
       
     let footnoteList = '<ol>';
@@ -185,6 +187,13 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       const escapedEquation = equation.replace(/_/g, '\\_');
       return `$$${escapedEquation}$$`;
       });
+    
+    // Display undescore on equations
+    markdown = markdown.replace(katex2ndEquationRegex, (match, equation) => {
+      const escapedEquation = equation.replace(/_/g, '\\_');
+      return `$${escapedEquation}$`;
+    });
+
     
     // Find all footnotes and store them in a dictionary  
     const referencesTitle = "# References";
