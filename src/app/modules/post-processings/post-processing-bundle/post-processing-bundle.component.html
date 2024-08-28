@@ -30,7 +30,7 @@
           </div>
           <div class="widget-separator"></div>
           <div class="widget-cell">
-            <mat-form-field floatLabel="never">
+            <mat-form-field floatLabel="never" (click)="passfilter($event, filter)">
               <mat-select
                 [placeholder]="filter.filterName"
                 style="text-align: right"
@@ -38,22 +38,34 @@
                 [(ngModel)]="filter.selectedValues"
                 [matTooltip]="filter.selectedValues"
                 #selectionModel="ngModel"
+                class="custom-select-panel"
               >
+                <!-- Search bar inside mat-select -->
+                <mat-option>
+                  <ngx-mat-select-search
+                    [formControl]="chartsFiltered"
+                    placeholderLabel="Find chart..."
+                    noEntriesFoundLabel="No matching chart found"
+                    >
+                  </ngx-mat-select-search>
+                </mat-option>
                 <app-select-all-option
                   *ngIf="filter.multipleSelection"
                   [model]="selectionModel"
-                  [values]="filter.filterValues"
+                  [values]="filter.filteredValues"
                 ></app-select-all-option>
-                <mat-option
-                  *ngFor="let item of filter.filterValues"
-                  [value]="item"
-                  matTooltip="{{ item }}"
-                  matToolTipPosition="after"
-                  matTooltipShowDelay="100"
-                  matTooltipHideDelay="100"
-                >
-                  {{ item }}
-                </mat-option>
+                <div class="custom-options-container">
+                  <mat-option
+                    *ngFor="let item of filter.filteredValues"
+                    [value]="item"
+                    matTooltip="{{ item }}"
+                    matToolTipPosition="after"
+                    matTooltipShowDelay="100"
+                    matTooltipHideDelay="100"
+                  >
+                    {{ item }}
+                  </mat-option>
+                </div>
               </mat-select>
             </mat-form-field>
           </div>
@@ -99,7 +111,10 @@
   >
     <div *ngIf="postProcessingWithSection.length" style="width: 100%;background-color: #f4f4f4;">
       <div *ngFor="let section of postProcessingWithSection" class="section-panel">
-        <mat-expansion-panel style="margin-bottom: 2px;">
+        <mat-expansion-panel style="margin-bottom: 2px;"
+        [expanded]="isExpand(section.post_processing_section_name)"
+        (opened)="setIsExpand(section.post_processing_section_name, true)"
+        (closed)="setIsExpand(section.post_processing_section_name, false)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               {{ section.post_processing_section_name }}

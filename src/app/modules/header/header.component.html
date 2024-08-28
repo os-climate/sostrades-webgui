@@ -89,13 +89,17 @@
     </div>   
     <div id="username-second-menu" class="div-header">
  
-      <div class="version-container">
-        <div class="platform-text">
-            {{ platform }}
-        </div>
-        <div class="date-text">
-            {{ versionDate }}
-        </div>  
+      <div [ngClass]="{'version-container':true, 'clickable':hasGitInfo}"
+      (click)="openVersionTab()">
+        <div class="version-name" >
+          <div class="platform-text">
+              {{ platform }}
+          </div>
+          <div class="date-text">
+              {{ versionDate }}
+          </div> 
+        </div> 
+        <i *ngIf="hasGitInfo" class="fa-solid fa-ellipsis-vertical version-name"></i>
       </div> 
       <div id="secondMenu" class="margin-right">
         <button

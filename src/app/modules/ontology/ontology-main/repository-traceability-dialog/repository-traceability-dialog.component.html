@@ -4,8 +4,8 @@
         <h1> Code Repository Traceability</h1>
     </div>
 
-    <div>
-        <table mat-table [dataSource]="dataSourceCodeRepositoryTraceability" matSort class="table table-sm table-borderless">
+    <div class="div-container">
+        <table mat-table [dataSource]="dataSourceCodeRepositoryTraceability" matSort class="table table-sm">
             <ng-container  matColumnDef='name'>
             <th mat-header-cell *matHeaderCellDef>Repository</th>
             <td
@@ -13,16 +13,17 @@
             *matCellDef="let element"
             style="word-wrap: break-word;"
             >
-            <a [href]="element.url" target="_blank" style="text-transform: capitalize;">{{ element.name }}</a>
+            <a [href]="element.url" target="_blank">{{ element.name }}</a>
             </td>
             </ng-container>
             <ng-container  matColumnDef='branch'>
-            <th mat-header-cell *matHeaderCellDef>Branch</th>
+            <th mat-header-cell *matHeaderCellDef>Branch or Tag</th>
             <td
                 id="branch"
                 mat-cell
                 *matCellDef="let element"
-            >{{element.branch}}
+            >
+            <a [href]="element.url + '/tree/' + element.branch" target="_blank">{{element.branch}}</a>
             </td>
             </ng-container>
             <ng-container  matColumnDef='commit'>
@@ -31,7 +32,8 @@
                 id="commit"
                 mat-cell
                 *matCellDef="let element"
-            >{{element.commit}}
+            >
+            <a [href]="element.url + '/tree/' + element.commit" target="_blank">{{element.commit}}</a>
             </td>
             </ng-container>
             <ng-container  matColumnDef='committedDate'>
@@ -43,7 +45,7 @@
             >{{element.committed_date}}
             </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="codeRepositoryTraceabilityColumns; sticky: false"></tr>
+            <tr mat-header-row *matHeaderRowDef="codeRepositoryTraceabilityColumns; sticky: true"></tr>
             <tr
             mat-row
             class="table-row"

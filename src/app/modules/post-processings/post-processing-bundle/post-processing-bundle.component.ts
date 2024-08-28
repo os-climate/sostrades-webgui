@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { PostProcessingService } from 'src/app/services/post-processing/post-processing.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -8,7 +8,9 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { LoadStatus } from 'src/app/models/study.model';
-import { ThisReceiver } from '@angular/compiler';
+import { PanelSection } from 'src/app/models/user-study-preferences.model';
+import { FormControl } from '@angular/forms';
+import { PostProcessingFilter } from 'src/app/models/post-processing-filter.model';
 
 @Component({
   selector: 'app-post-processing-bundle',
@@ -27,6 +29,9 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   public isCalculationRunning: boolean;
   public isReadOnlyMode: boolean;
   public additionalDisciplineName: string;
+  public chartsFiltered: FormControl;
+  private filter: any
+  protected onDestroy = new Subject<void>();
   calculationChangeSubscription: Subscription;
   validationChangeSubscription: Subscription;
   studyStatusChangeSubscription: Subscription;
@@ -49,6 +54,8 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.isCalculationRunning = false;
     this.isReadOnlyMode = false;
     this.additionalDisciplineName = '';
+    this.chartsFiltered = new FormControl('');
+    this.filter = null;
   }
 
   ngOnInit() {
@@ -74,7 +81,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
     });
-    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(newValidation => {
+    this.validationChangeSubscription = this.studyCaseValidationService.onValidationChange.subscribe(() => {
       this.plot(false);
     });
 
@@ -95,6 +102,8 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     if ((this.studyStatusChangeSubscription !== null) && (this.studyStatusChangeSubscription !== undefined)) {
       this.studyStatusChangeSubscription.unsubscribe();
     }
+    this.onDestroy.next();
+    this.onDestroy.complete();
   }
 
   plot(needToUpdate) {
@@ -105,7 +114,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.postProcessingService.getPostProcessing(
       needToUpdate,
       this.studyCaseDataService.loadedStudy,
-      this.fullNamespace,
+      this.postProcessingBundle.disciplineName,
       this.postProcessingBundle.name,
       this.postProcessingBundle.filters).subscribe({
         next: (postProcessing) => {
@@ -152,11 +161,60 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Add new array with filter on postProcessingWithoutSection
+    // Replace the new array with filter on postProcessingWithoutSection
     if (postProcessingWithoutSectionWithFilter.length > 0) {
       this.postProcessingWithoutSection = postProcessingWithoutSectionWithFilter
     }  
     // Create a array with post_processing sectionned
     this.postProcessingWithSection = Array.from(postProcessingBundleSectionned, ([post_processing_section_name, plots]) => ({ post_processing_section_name, plots }));
+    if (this.postProcessingWithSection.length > 0) {
+      this.postProcessingWithSection.sort((a: any, b: any) => {
+        if (a.post_processing_section_name < b.post_processing_section_name) {
+            return -1;
+        } else if (a.post_processing_section_name > b.post_processing_section_name) {
+            return 1;
+        } else {
+            return 0;
+        }
+      });
+    }
+    // Listen for search field value changes
+    this.chartsFiltered.valueChanges.pipe(takeUntil(this.onDestroy))
+    .subscribe((value) => {
+      this.filterValues(value)
+    });
   }
-}
+
+  passfilter(event, filter: PostProcessingFilter): void {
+    event.stopPropagation();
+    this.filter = filter
+  }
+
+  public isExpand(section: string) {
+      const id = `${this.postProcessingBundle.disciplineName}.${PanelSection.POST_PROCESSING_SECTION}.${section}`;
+    return this.studyCaseDataService.getUserStudyPreference(id, false);
+
+  }
+
+  public setIsExpand(section: string, isExpand: boolean) {
+    if (this.isExpand(section) != isExpand)//save data only if necessary
+    {
+      const id = `${this.postProcessingBundle.disciplineName}.${PanelSection.POST_PROCESSING_SECTION}.${section}`;
+      this.studyCaseDataService.setUserStudyPreference(id, isExpand).subscribe();
+    }
+  }
+
+  protected filterValues(value: string) {
+    if (!value) {
+      this.filter.filteredValues = this.filter.filterValues;
+      return;
+    } else {
+      value = value.toLowerCase();
+    }
+    // filter values
+    this.filter.filteredValues = this.filter.filterValues.filter(
+      search => search.toString().toLowerCase().indexOf(value) > -1
+    )        
+  }     
+  
+ }

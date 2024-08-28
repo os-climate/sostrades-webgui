@@ -4,6 +4,7 @@ export class PostProcessingFilter {
               public filterValues: string[],
               public selectedValues: string[],
               public filterKey: string,
+              public filteredValues: string [],
               public multipleSelection: boolean) {
 
   }
@@ -14,6 +15,7 @@ export class PostProcessingFilter {
       jsonData[ChartFilterAttributes.FILTERVALUES],
       jsonData[ChartFilterAttributes.SELECTEDVALUES],
       jsonData[ChartFilterAttributes.FILTERKEY],
+      jsonData[ChartFilterAttributes.FILTERVALUES],
       jsonData[ChartFilterAttributes.MULTIPLESELECTION]
     );
 

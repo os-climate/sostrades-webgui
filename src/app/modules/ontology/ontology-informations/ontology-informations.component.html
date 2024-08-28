@@ -15,17 +15,22 @@
       class="button-current-value"
       *ngIf="data.nodeData.widgetType === 'fileSpreadsheet'"
     >
-      <button
-        mat-raised-button
-        style="line-height: 24px"
-        color="primary"
-        aria-label="Show data"
-        matTooltip="Show data"
-        [disabled]="data.nodeData.value === null"
-        (click)="onShowCsvCurrentValue()"
-      >
-        Show
-      </button>
+      <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
+      <div [matTooltip]="data.nodeData.isBig? 'The data is too big to be displayed, it can still be downloaded': ''">
+        <button
+          mat-raised-button
+          style="line-height: 24px"
+          color="primary"
+          aria-label="Show data"
+          matTooltip="Show data"
+          [disabled]="data.nodeData.value === null || data.nodeData.isBig"
+          (click)="onShowCsvCurrentValue()"
+        >
+          Show
+          <!-- Add warning icon if Show is disabled because value is too big -->
+          <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="data.nodeData.isBig"></i>
+        </button>
+      </div>
     </div>
     <div
       class="text-zone"
@@ -190,7 +195,7 @@
                   *ngIf="element.oldValueBlob === false"
                   style="line-height: 24px; padding-left: 10px"
                 >
-                  No value
+                  No value or Data is too big to be displayed
                 </div>
               </div>
               <div *ngIf="element.changeType === 'scalar' || element.changeType === 'dataset_mapping'">

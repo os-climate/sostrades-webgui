@@ -90,14 +90,12 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
   onSelection(event) {
     if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
       const file = event.target.files[0];
+      const size_mo = file.size/1024/1024;
       const reader = new FileReader();
 
       if (this.isListType && !this.hasSubTypeDescriptor) {
         // Saving list type
         this.loadingDialogService.showLoading(`Saving in temporary changes : ${this.nodeData.displayName}`);
-
-        const newDataList = [];
-
         this.papa.parse(file, {
           complete: papaparseResults => {
 
@@ -149,9 +147,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
               }
             });
 
-            let updateItem: StudyUpdateParameter;
-
-            updateItem = new StudyUpdateParameter(
+            const updateItem = new StudyUpdateParameter(
               this.nodeData.identifier,
               this.nodeData.type.toString(),
               UpdateParameterType.SCALAR,
@@ -172,14 +168,17 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
                 this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
             this.nodeData.value = newDataList;
+            // reset the size value 
+            this.nodeData.sizeInMo = size_mo;
             this.stateUpdate.emit();
+            this.loadingDialogService.closeLoading();
+            this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
           }
         });
       } else {
         this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.nodeData.displayName}.csv`);
 
-        let updateItem: StudyUpdateParameter;
-        updateItem = new StudyUpdateParameter(
+        const updateItem = new StudyUpdateParameter(
           this.nodeData.identifier,
           UpdateParameterType.CSV,
           UpdateParameterType.CSV,
@@ -193,26 +192,68 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
           null,
           null,
           null);
+        const maxByteSize = 50*1024*1024
+        if (file.size < maxByteSize) {
+          reader.readAsDataURL(file)
+          
+          reader.onprogress = (event) => {  
+            if (event.lengthComputable) {
+              const loaded = event.loaded;
+              const total = event.total;
+              const remaining = total - loaded;
+          
+              const formatBytes = (bytes) => {
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                if (bytes === 0) return '0 Byte';
+                const i = Math.floor(Math.log(bytes) / Math.log(1024));
+                return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+              };
+          
+              const percentLoaded = Math.round((loaded / total) * 100);
+              const remainingSize = formatBytes(remaining);
+          
+              this.loadingDialogService.updateMessage(`${percentLoaded}% loaded. Remaining: ${remainingSize}`);
+            }
+          };
 
-        reader.readAsDataURL(file);
-        reader.onload = () => {
+          
+          reader.onload = () => {
+            try {
+              let csvText = atob(reader.result.toString().split(',')[1]);
+              csvText = csvText.replace(/SEP=.*\r?\n|\r/g, '');
 
-          // Remove excel csv sep if it exists
-          let csvText = atob(reader.result.toString().split(',')[1]);
-          csvText = csvText.replace(/SEP=.*\r?\n|\r/g, '');
+              updateItem.newValue = reader.result.toString().split(',')[0] + ',' + btoa(csvText);
 
-          updateItem.newValue = reader.result.toString().split(',')[0] + ',' + btoa(csvText);
-
-          this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
-            updateItem,
-            this.nodeData,
-            this.studyCaseDataService.loadedStudy.studyCase.id.toString());
-          this.nodeData.value = reader.result.toString();
-          this.stateUpdate.emit();
-        };
+              this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
+                updateItem,
+                this.nodeData,
+                this.studyCaseDataService.loadedStudy.studyCase.id.toString());
+              this.nodeData.value = reader.result.toString();
+              // reset the size value
+              this.nodeData.sizeInMo = size_mo;
+              this.stateUpdate.emit();
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
+            } catch (error) {
+              event.target.value='';
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showError(`Error to upload "${file.name}"\n ${error} `);
+            }
+          };
+        } else {
+          event.target.value='';
+          this.loadingDialogService.closeLoading();
+          let sizeGigaByte = file.size/1024/1024/1024;
+          let unity ="";
+          if (sizeGigaByte > 1) {
+            unity = "GB";
+          } else {
+            sizeGigaByte = sizeGigaByte * 1024;
+            unity = "MB";
+          }
+          this.snackbarService.showError(`Error to upload "${file.name}". Its size ${sizeGigaByte.toFixed(2)}${unity} is bigger than our ${maxByteSize/(1024 * 1024)}MB limit.`);
+         }               
       }
-      this.loadingDialogService.closeLoading();
-      this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
     }
   }
 
@@ -293,17 +334,25 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
         } else { // File in distant server
           this.studyCaseMainService.getFile(this.nodeData.identifier).subscribe({
             next: (file) => {
-              spreadsheetDialogData.file = new Blob([file]);
-              this.dialogRef = this.dialog.open(SpreadsheetComponent, {
-                disableClose: true,
-                data: spreadsheetDialogData
-              });
-              this.dialogRef.afterClosed().subscribe((result) => {
-                if (result.cancel === false) {
-                  this.stateUpdate.emit();
-                }
-              });
+              if (file.byteLength/1024/1024 > 2){
+                //the file length is upper than 2Mo, it cannot be displayed
+                this.snackbarService.showWarning(`The data is too big to be displayed, it can still be downloaded`);
+                this.nodeData.sizeInMo = file.byteLength/1024/1024;
+              }
+              else{
+                spreadsheetDialogData.file = new Blob([file]);
+                this.dialogRef = this.dialog.open(SpreadsheetComponent, {
+                  disableClose: true,
+                  data: spreadsheetDialogData
+                });
+                this.dialogRef.afterClosed().subscribe((result) => {
+                  if (result.cancel === false) {
+                    this.stateUpdate.emit();
+                  }
+                });
+              }
               this.loadingDialogService.closeLoading();
+            
             },
             error: (errorReceived) => {
               const error = errorReceived as SoSTradesError;

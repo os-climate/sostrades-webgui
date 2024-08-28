@@ -35,7 +35,12 @@
             <h1 id="{{documentItem.name}}" style="text-align: center;">
               {{documentItem.name | ontologyDisciplineConverter }}
             </h1>
-            <div appMarkdownRenderer [data]="documentItem.documentation"></div>
+            <markdown
+              katex
+              [katexOptions]="options"
+              mermaid
+              [data]="documentItem.documentation">
+            </markdown>
           </div>
         </div>
       </div>
