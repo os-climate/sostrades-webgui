@@ -42,7 +42,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public showDataManagement: boolean;
   public showDocumentation: boolean;
   public showDataValidation: boolean;
-  public showDashboard: boolean;
+  // Hide the dashboad page
+  // public showDashboard: boolean;
   public hasDocumentation: boolean;
   public hasDashboard: boolean;
   private onStudyCaseChangeSubscription: Subscription;
@@ -82,7 +83,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private appDataService: AppDataService,
     private socketService: SocketService,
-
     private treeNodeDataService: TreeNodeDataService) {
     this.showView = false;
     this.showSearch = false;
@@ -100,7 +100,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showDocumentation = false;
     this.hasDocumentation = false;
     this.modelsFullPathList = [];
-    this.showDashboard = false;
+    // this.showDashboard = false;
     this.hasDashboard = false;
     this.showDataManagement = true;
     this.showDataValidation = false;
@@ -161,10 +161,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       // Check  study status to display or not post processing
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
         this.showPostProcessing = true;
-        this.showDashboard = true;
+        // this.showDashboard = true;
       } else {
         this.showPostProcessing = false;
-        this.showDashboard = false;
+        // this.showDashboard = false;
       }
 
       // Set process
@@ -175,7 +175,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDataManagement = false;
         this.showVisualisation = false;
         this.showDataValidation = false;
-        this.showDashboard = false;
+        // this.showDashboard = false;
 
         // Study is loaded without data management, triggering post processing display
         this.showPostProcessingContent = true;
@@ -183,7 +183,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDataManagement = true;
         this.showVisualisation = true;
         this.showDataValidation = true;
-        this.showDashboard = true;
+        // this.showDashboard = true;
       }
 
       // Activate show not editable variable if study is read only
@@ -225,8 +225,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         // if node is root node, add process documentation
         if (treenode === this.studyCaseDataService.loadedStudy.treeview.rootNode){
           //build process path with repo.process
-          let repo = this.studyCaseDataService.loadedStudy.studyCase.repository
-          let process = this.studyCaseDataService.loadedStudy.studyCase.process
+          const repo = this.studyCaseDataService.loadedStudy.studyCase.repository
+          const process = this.studyCaseDataService.loadedStudy.studyCase.process
           this.modelsFullPathList.push(repo.concat('.',process ))
         }
         
