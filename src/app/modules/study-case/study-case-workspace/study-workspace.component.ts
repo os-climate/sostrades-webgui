@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, HostListener, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
@@ -83,6 +83,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private appDataService: AppDataService,
     private socketService: SocketService,
+    private renderer: Renderer2,
     private treeNodeDataService: TreeNodeDataService) {
     this.showView = false;
     this.showSearch = false;
@@ -232,7 +233,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         
       }
     });
-    
   }
 
   displayDocumentationTab()
@@ -248,7 +248,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         selectedTabIndex = 2;
       }
       this.selectedTabIndex = selectedTabIndex;
-    }
+    } 
   }
 
   ngOnDestroy() {
@@ -284,6 +284,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         // this is needed so that when we are not on the tab, the request to get the documentation is not sent
         this.showDocumentationContent = true;
       }
+      this.applyStyleToDocumentationTab();
     }
   }
 
@@ -323,6 +324,22 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     } else if (this.tabGroup.nativeElement.msRequestFullscreen) {
       /* IE/Edge */
       this.tabGroup.nativeElement.msRequestFullscreen();
+    }
+  }
+
+  private applyStyleToDocumentationTab() {
+   /* In order to remove the double scrool bar in documentation tab without changes any other tabs*/
+    const allTabGroups = document.querySelectorAll('mat-tab-body');
+    if (allTabGroups.length > 0) {
+      allTabGroups.forEach((tabBody: Element) => {
+        const documentationTab = tabBody.querySelector('app-study-case-documentation');
+        if (documentationTab) {
+          const content = tabBody.querySelector('.mat-mdc-tab-body-content');
+          if (content) {
+            this.renderer.setStyle(content, 'height', 'auto');
+          }
+        }
+      })
     }
   }
 
