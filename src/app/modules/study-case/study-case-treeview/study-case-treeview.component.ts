@@ -1351,6 +1351,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
               nodeDataCache.lastModified,
               null,
               null,
+              null,
+              null,
               null
             );
 

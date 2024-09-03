@@ -138,16 +138,20 @@ export class UsersRoomDialogData extends AbstractDialogData {
   }
 }
 
-export class CoeditionDialogData extends AbstractDialogData {
-  title: string;
-  message: string;
+export class NotificationDialogData extends AbstractDialogData {
+  date: string;
+  user: string;
+  type: string;
+  studyId: number;
   buttonText: string;
   changes: StudyUpdateParameter[];
 
   public constructor() {
     super();
-    this.title = '';
-    this.message = '';
+    this.date = '';
+    this.user = '';
+    this.studyId = 0;
+    this.type = '';
     this.buttonText = '';
     this.changes = [];
   }
