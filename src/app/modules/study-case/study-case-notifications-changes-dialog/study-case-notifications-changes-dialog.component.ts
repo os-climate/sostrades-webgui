@@ -59,7 +59,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
   onExportCSVClick() {
     //export the changes from dataset export or import into a CSV file
     const CSVFileName = `${this.title}_study-${this.data.studyId}_${this.data.user}_${this.data.date.replace(/\//g,'-')}.csv`;
-    const csvHeader = "Ontology name;Ontology description;ontology unit;SOS namespace;Sos parameter;Connector name;Dataset name;location";
+    const csvHeader = "Ontology name,Ontology description,Ontology unit,SOS namespace,SOS parameter,Connector name,Dataset name,Location";
     const csvData = [csvHeader];
     this.data.changes.forEach(change => {
       let changeLine = []
@@ -85,7 +85,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
       changeLine.push(change.datasetDataPath);
 
       //concatenate information separated by ';' and add it to the csv
-      csvData.push(changeLine.join(';'))
+      csvData.push(changeLine.join(','))
     });
     //export the csv
     const csvContent = csvData.join('\n');
