@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { CoeditionDialogData, ExecutionDialogData } from 'src/app/models/dialog-data.model';
+import { NotificationDialogData, ExecutionDialogData } from 'src/app/models/dialog-data.model';
 import { StudyCaseNotificationsChangesDialogComponent } from '../study-case-notifications-changes-dialog/study-case-notifications-changes-dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/services/user/user.service';
@@ -95,11 +95,13 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
   }
 
   seeNotificationChanges(notification: CoeditionNotification) {
-    const codeditData = new CoeditionDialogData();
-
-    codeditData.title = notification.type + ', ' + formatDate(notification.created, 'short', 'Fr-fr');
-    codeditData.message = 'Done by ' + notification.author;
+    const codeditData = new NotificationDialogData();
+    
+    codeditData.date = formatDate(notification.created, 'shortDate', 'Fr-fr');
+    codeditData.type = notification.type;
+    codeditData.user = notification.author;
     codeditData.buttonText = 'OK';
+    codeditData.studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
     codeditData.changes = notification.changes;
 
     this.dialogRefNotificationChanges = this.dialog.open(StudyCaseNotificationsChangesDialogComponent, {

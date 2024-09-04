@@ -1,7 +1,7 @@
 <div class="flex-container">
-  <h1 mat-dialog-title>Modification : {{ data.title }}</h1>
+  <h1 mat-dialog-title>{{ title }}, {{data.date}}</h1>
   <div class="message-container">
-    <div class="message">{{ data.message }}</div>
+    <div class="message">Done by {{ data.user }}</div>
   </div>
   <div class="container-table">
     <table
@@ -66,6 +66,9 @@
   <div mat-dialog-actions>
     <button mat-raised-button color="success" (click)="onOkClick()">
       {{ data.buttonText }}
+    </button>
+    <button mat-raised-button color="primary" (click)="onExportCSVClick()" *ngIf="hasChangesFromDataset">
+      Export to CSV
     </button>
   </div>
 </div>
