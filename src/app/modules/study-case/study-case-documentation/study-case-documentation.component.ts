@@ -265,7 +265,19 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     // Build the footnote list with back reference links
     for (const id in footnoteMap) {
       const { content, backrefs } = footnoteMap[id];
-      footnoteList += `<li class="footnote-item">${content} ${backrefs.join(' ')}</li>`;
+      const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g;
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+      const formattedContent = content
+        .replace(markdownLinkRegex, (match, text, url) => {
+          return `<a href="${url}" target="_blank">${text}</a>`;
+        })
+        .replace(urlRegex, (match) => {
+          // Check if this URL was already processed as part of a Markdown link
+          const isProcessed = content.includes(`](${match})`);
+          return isProcessed ? match : `<a href="${match}" target="_blank">${match}</a>`;
+        });
+      footnoteList += `<li class="footnote-item">${formattedContent} ${backrefs.join(' ')}</li>`;
     }
     footnoteList += '</ol>';
     
