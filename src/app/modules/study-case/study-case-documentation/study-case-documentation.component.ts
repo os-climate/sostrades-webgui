@@ -195,8 +195,25 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       const escapedEquation = equation.replace(/_/g, '\\_');
       return `$${escapedEquation}$`;
     });
+   
+    // Regex to retrieve images base64 
+    const imageRefs = {};
+    const base64Regex = /\[([^\]]+)\]:\s*data:image\/([a-zA-Z]+);base64,([^\s]+)/g;
+    markdown = markdown.replace(base64Regex, (match, p1, p2, p3) => {
+      imageRefs[p1.replace(/_/g, '-')] = `data:image/${p2};base64,${p3}`;
+      return ''; // Delete reference of marldown
+    });
 
-    
+    // Regex to replace reference by <img>
+    const refRegex = /!\[\]\[([^\]]+)\]/g;
+    markdown = markdown.replace(refRegex, (match, p1) => {
+      const imageName = p1.replace(/_/g, '-');
+      if (imageRefs[imageName]) {
+        return `<img src="${imageRefs[imageName]}" alt="${imageName}">`;
+      }
+      return match; // Return original text if not corresponding reference
+    });
+  
     // Find all footnotes and store them in a dictionary  
     const sectionRegex = /^(#+\s*Sources|#+\s*References)/mi;
     const sectionMatch = markdown.match(sectionRegex);
@@ -221,27 +238,6 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       // Rebuild the markdown
       markdown = beforeReferences + references;
     }
-
-   
-    // Regex to retrieve images base64 
-    const imageRefs = {};
-    const base64Regex = /\[([^\]]+)\]:\s*data:image\/([a-zA-Z]+);base64,([^\s]+)/g;
-    markdown = markdown.replace(base64Regex, (match, p1, p2, p3) => {
-      imageRefs[p1.replace(/_/g, '-')] = `data:image/${p2};base64,${p3}`;
-      return ''; // Delete reference of marldown
-    });
-
-    // Regex to replace reference by <img>
-    const refRegex = /!\[\]\[([^\]]+)\]/g;
-    markdown = markdown.replace(refRegex, (match, p1) => {
-      const imageName = p1.replace(/_/g, '-');
-      if (imageRefs[imageName]) {
-        return `<img src="${imageRefs[imageName]}" alt="${imageName}">`;
-      }
-      return match; // Return original text if not corresponding reference
-    });
-  
-    
     markdown =  markdown = markdown.replace(base64ImageReferenceRegex, (match, equation) => {
       return match
     });
