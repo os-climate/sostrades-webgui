@@ -185,6 +185,8 @@ export class OntologyInformationsComponent implements OnInit {
       new Date(),
       null,
       null,
+      null,
+      null,
       null);
 
     this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
@@ -214,6 +216,8 @@ export class OntologyInformationsComponent implements OnInit {
       this.data.nodeData.connector_data,
       null,
       new Date(),
+      null,
+      null,
       null,
       null,
       null);
@@ -256,6 +260,8 @@ export class OntologyInformationsComponent implements OnInit {
             null,
             null,
             new Date(),
+            null,
+            null,
             null,
             null,
             null

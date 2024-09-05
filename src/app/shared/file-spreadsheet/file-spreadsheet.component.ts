@@ -160,6 +160,8 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
               new Date(),
               null,
               null,
+              null,
+              null,
               null);
 
             this.studyCaselocalStorageService.setStudyParametersInLocalStorage(
@@ -189,6 +191,8 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
           this.nodeData.oldValue,
           null,
           new Date(),
+          null,
+          null,
           null,
           null,
           null);

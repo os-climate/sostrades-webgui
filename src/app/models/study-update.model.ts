@@ -17,7 +17,9 @@ export class StudyUpdateParameter {
     public lastModified: Date,
     public datasetConnectorId: string,
     public datasetId: string,
-    public dataset_parameter_id: string
+    public datasetParameterId: string,
+    public datasetDataPath: string,
+    public variableKey:string
   ) {
     this.id = null;
     this.author = null;
@@ -37,7 +39,9 @@ export class StudyUpdateParameter {
       jsonData[StudyUpdateParameterAttributes.LASTMODIFIED],
       jsonData[StudyUpdateParameterAttributes.DATASET_CONNECTOR_ID],
       jsonData[StudyUpdateParameterAttributes.DATASET_ID],
-      jsonData[StudyUpdateParameterAttributes.DATASET_PARAMETER_ID]
+      jsonData[StudyUpdateParameterAttributes.DATASET_PARAMETER_ID],
+      jsonData[StudyUpdateParameterAttributes.DATASET_DATA_PATH],
+      jsonData[StudyUpdateParameterAttributes.VARIABLE_KEY]
     );
 
     if (jsonData[StudyUpdateParameterAttributes.ID] !== null
@@ -71,6 +75,8 @@ export enum StudyUpdateParameterAttributes {
   DATASET_CONNECTOR_ID = 'dataset_connector_id',
   DATASET_ID = 'dataset_id',
   DATASET_PARAMETER_ID = 'dataset_parameter_id',
+  DATASET_DATA_PATH = 'dataset_data_path',
+  VARIABLE_KEY = 'variable_key'
 
 }
 
