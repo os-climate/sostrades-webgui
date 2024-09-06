@@ -46,6 +46,8 @@ export class ConnectorDataComponent implements OnInit {
         new Date(),
         null,
         null,
+        null,
+        null,
         null);
 
       /* this.nodeData.value = value; */

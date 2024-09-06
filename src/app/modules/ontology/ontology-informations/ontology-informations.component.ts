@@ -185,6 +185,8 @@ export class OntologyInformationsComponent implements OnInit {
       new Date(),
       null,
       null,
+      null,
+      null,
       null);
 
     this.studyCaseLocalStorageService.setStudyParametersInLocalStorage(
@@ -214,6 +216,8 @@ export class OntologyInformationsComponent implements OnInit {
       this.data.nodeData.connector_data,
       null,
       new Date(),
+      null,
+      null,
       null,
       null,
       null);
@@ -258,6 +262,8 @@ export class OntologyInformationsComponent implements OnInit {
             new Date(),
             null,
             null,
+            null,
+            null,
             null
           );
     
@@ -268,6 +274,8 @@ export class OntologyInformationsComponent implements OnInit {
           );
     
           this.data.nodeData.value = newUpdateParameter.newValue;
+          // reset the size value to show the new data (there is another security in case it it upper max length)
+          this.data.nodeData.sizeInMo = 0;
           this.loadingDialogService.closeLoading();
           this.dialogRef.close();
           this.snackbarService.showInformation(`${this.data.nodeData.displayName} data reverted to date : ${parameter.lastModified}`);
@@ -363,12 +371,18 @@ export class OntologyInformationsComponent implements OnInit {
       } else { // File in distant server
         this.studyCaseMainService.getFile(this.data.nodeData.identifier).subscribe({
           next: (file) => {
-            spreadsheetDialogData.file = new Blob([file]);
-        
-            this.dialog.open(SpreadsheetComponent, {
-              disableClose: true,
-              data: spreadsheetDialogData
-            });
+            if (file.byteLength/1024/1024 > 2){
+              //the file length is upper than 2Mo, it cannot be displayed
+              this.snackbarService.showWarning(`The data is too big to be displayed, it can still be downloaded`);
+            }
+            else{
+              spreadsheetDialogData.file = new Blob([file]);
+          
+              this.dialog.open(SpreadsheetComponent, {
+                disableClose: true,
+                data: spreadsheetDialogData
+              });
+            }
             this.loadingDialogService.closeLoading();
           },
           error: (errorReceived) => {
