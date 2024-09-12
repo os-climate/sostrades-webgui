@@ -25,6 +25,9 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   public options: KatexOptions = {
     delimiters: [
       { left: "$$", right: "$$", display: true },
+      { left: "$",   right: "$",   display: false },
+      { left: "\\(", right: "\\)", display: false },
+      { left: "\\[", right: "\\]", display: true }
     ],
     displayMode: true,
     macros: {"\\R": "\\mathbb{R}"},
@@ -77,7 +80,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
                     const targetId = href.substring(1);
                     const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
                     if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });  
+                      targetElement.scrollIntoView({ behavior: 'smooth' });
                     }
                 });
             }
@@ -91,26 +94,18 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
             element.querySelectorAll('.footnote-backref').forEach((backrefElement: HTMLElement) => {
                 const backHref = backrefElement.getAttribute('href');
                 if (backHref) {
-                    backrefElement.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        const targetId = backHref.substring(1);
-                        const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
-                        if (targetElement) {
-                            targetElement.scrollIntoView();
-                        }
-                    });
+                  backrefElement.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = backHref.substring(1);
+                    const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
+                    if (targetElement) {
+                      targetElement.scrollIntoView();
+                    }
+                  });
                 }
             });
         });
 
-        // Hide paragraphs that contain base64 image references
-        const base64ImageReferenceRegex = /\[.*?\]:\s*data:image\/(PNG|png|jpg|jpeg|gif);base64,.*?(\r?\n|$)/g;
-        this.el.nativeElement.querySelectorAll('p').forEach((element: HTMLElement) => {
-            if (base64ImageReferenceRegex.test(element.innerHTML)) {
-              console.log(element)
-                this.renderer.setStyle(element, 'display', 'none');
-            }
-        });
         // Target element .katex-display > .katex et supprimer white-space: nowrap
         const katexElements = this.el.nativeElement.querySelectorAll('.katex-display > .katex');
         katexElements.forEach((element: HTMLElement) => {
@@ -166,9 +161,11 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
  * @returns The processed markdown string with footnote links and a footnote list.
  */
   private transformFootnotesAndEquationKatexAndImages(markdown: string): string {
-    const footnoteRegex = /\[\^(\d+)\]:\s((?:.|\n)+?)(?=\n\[\^|\n*$)/gs;
+    const footnoteRegex = /\[\^(\d+)\]:\s*((?:.|\n(?!\[\^))*)(?=\n\[\^|$)/gm;
     const inlineFootnoteRegex = /\[\^(\d+)\]/g;
     const katexEquationRegex = /\$\$([^\$]+)\$\$/g;
+    const katex2ndEquationRegex = /(?<![^\s\(])\$(?![\/\\])([^\$]+?)\$/g;
+
     const base64ImageReferenceRegex = /!\[\]\[*.*\]/g;
       
     let footnoteList = '<ol>';
@@ -176,22 +173,20 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     const footnoteOccurrences: { [id: string]: number } = {};
     let match;
     
+    // Display undescore on equations
     markdown = markdown.replace(katexEquationRegex, (match, equation) => {
       const escapedEquation = equation.replace(/_/g, '\\_');
       return `$$${escapedEquation}$$`;
       });
-  
-    // Find all footnotes and store them in a dictionary
-    while ((match = footnoteRegex.exec(markdown)) !== null) {
-      const id = match[1];
-      const content = match[2];
-      if (!footnoteMap[id]) {
-        footnoteMap[id] = { content, backrefs: [] };
-      }
-    }
-
+    
+    // Display undescore on equations
+    markdown = markdown.replace(katex2ndEquationRegex, (match, equation) => {
+      const escapedEquation = equation.replace(/_/g, '\\_');
+      return `$${escapedEquation}$`;
+    });
+   
+    // Regex to retrieve images base64 
     const imageRefs = {};
-    // Regex to retrieve images base64
     const base64Regex = /\[([^\]]+)\]:\s*data:image\/([a-zA-Z]+);base64,([^\s]+)/g;
     markdown = markdown.replace(base64Regex, (match, p1, p2, p3) => {
       imageRefs[p1.replace(/_/g, '-')] = `data:image/${p2};base64,${p3}`;
@@ -207,16 +202,36 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       }
       return match; // Return original text if not corresponding reference
     });
-  
-    // Remove footnote definitions from the main content
-    markdown = markdown.replace(footnoteRegex, '');
-    
-    markdown =  markdown = markdown.replace(base64ImageReferenceRegex, (match, equation) => {
-      console.log(match);
-      console.log(equation);
+
+    markdown = markdown.replace(base64ImageReferenceRegex, (match, equation) => {
       return match
-      });
+    });
   
+    // Find all footnotes and store them in a dictionary  
+    const sectionRegex = /^(#+\s*Sources|#+\s*References)/mi;
+    const sectionMatch = markdown.match(sectionRegex);
+
+    if (sectionMatch) {
+      const referenceIndex = sectionMatch.index;
+      const beforeReferences = markdown.slice(0, referenceIndex);
+      let references = markdown.slice(referenceIndex);
+    
+      // Extract footnotes from the references section
+      while ((match = footnoteRegex.exec(references)) !== null) {
+        const id = match[1];
+        const content = match[2];
+        if (!footnoteMap[id]) {
+          footnoteMap[id] = { content, backrefs: [] };
+        }
+      }
+
+      // Apply replacement only on the references part
+      references = references.replace(footnoteRegex, '');
+
+      // Rebuild the markdown
+      markdown = beforeReferences + references;
+    }
+
     // Replace inline footnote references and add back reference links
     markdown = markdown.replace(inlineFootnoteRegex, (match, id) => {
       if (!footnoteOccurrences[id]) {
@@ -236,7 +251,19 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     // Build the footnote list with back reference links
     for (const id in footnoteMap) {
       const { content, backrefs } = footnoteMap[id];
-      footnoteList += `<li class="footnote-item">${content} ${backrefs.join(' ')}</li>`;
+      const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g;
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+      const formattedContent = content
+        .replace(markdownLinkRegex, (match, text, url) => {
+          return `<a href="${url}" target="_blank">${text}</a>`;
+        })
+        .replace(urlRegex, (match) => {
+          // Check if this URL was already processed as part of a Markdown link
+          const isProcessed = content.includes(`](${match})`);
+          return isProcessed ? match : `<a href="${match}" target="_blank">${match}</a>`;
+        });
+      footnoteList += `<li class="footnote-item">${formattedContent} ${backrefs.join(' ')}</li>`;
     }
     footnoteList += '</ol>';
     
