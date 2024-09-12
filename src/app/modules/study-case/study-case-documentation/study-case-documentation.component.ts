@@ -80,7 +80,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
                     const targetId = href.substring(1);
                     const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
                     if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });  
+                      targetElement.scrollIntoView({ behavior: 'smooth' });
                     }
                 });
             }
@@ -94,26 +94,18 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
             element.querySelectorAll('.footnote-backref').forEach((backrefElement: HTMLElement) => {
                 const backHref = backrefElement.getAttribute('href');
                 if (backHref) {
-                    backrefElement.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        const targetId = backHref.substring(1);
-                        const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
-                        if (targetElement) {
-                            targetElement.scrollIntoView();
-                        }
-                    });
+                  backrefElement.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = backHref.substring(1);
+                    const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
+                    if (targetElement) {
+                      targetElement.scrollIntoView();
+                    }
+                  });
                 }
             });
         });
 
-        // Hide paragraphs that contain base64 image references
-        const base64ImageReferenceRegex = /\[.*?\]:\s*data:image\/(PNG|png|jpg|jpeg|gif);base64,.*?(\r?\n|$)/g;
-        this.el.nativeElement.querySelectorAll('p').forEach((element: HTMLElement) => {
-            if (base64ImageReferenceRegex.test(element.innerHTML)) {
-              console.log(element)
-                this.renderer.setStyle(element, 'display', 'none');
-            }
-        });
         // Target element .katex-display > .katex et supprimer white-space: nowrap
         const katexElements = this.el.nativeElement.querySelectorAll('.katex-display > .katex');
         katexElements.forEach((element: HTMLElement) => {
@@ -169,10 +161,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
  * @returns The processed markdown string with footnote links and a footnote list.
  */
   private transformFootnotesAndEquationKatexAndImages(markdown: string): string {
-    // const footnoteRegex = /\[\^(\d+)\]:\s((?:.|\n)+?)(?=\n\[\^|\n*$)/gs;
     const footnoteRegex = /\[\^(\d+)\]:\s*((?:.|\n(?!\[\^))*)(?=\n\[\^|$)/gm;
-
-    // const footnoteRegex = /\[\^(\d+)\]:\s*(.*)/g;
     const inlineFootnoteRegex = /\[\^(\d+)\]/g;
     const katexEquationRegex = /\$\$([^\$]+)\$\$/g;
     const katex2ndEquationRegex = /(?<![^\s\(])\$(?![\/\\])([^\$]+?)\$/g;
@@ -213,6 +202,10 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       }
       return match; // Return original text if not corresponding reference
     });
+
+    markdown = markdown.replace(base64ImageReferenceRegex, (match, equation) => {
+      return match
+    });
   
     // Find all footnotes and store them in a dictionary  
     const sectionRegex = /^(#+\s*Sources|#+\s*References)/mi;
@@ -238,10 +231,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       // Rebuild the markdown
       markdown = beforeReferences + references;
     }
-    markdown =  markdown = markdown.replace(base64ImageReferenceRegex, (match, equation) => {
-      return match
-    });
-  
+
     // Replace inline footnote references and add back reference links
     markdown = markdown.replace(inlineFootnoteRegex, (match, id) => {
       if (!footnoteOccurrences[id]) {
