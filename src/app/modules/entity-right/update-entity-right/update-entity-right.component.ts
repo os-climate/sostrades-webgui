@@ -172,8 +172,8 @@ export class UpdateEntityRightComponent implements OnInit {
 
     if (typeof (itemSearched) === 'string') {
       filteredList = this.entitiesAvailable.filter(x =>{
-        x.entityObject.search(itemSearched);
         console.log("Share entity: " + x.entityObject);
+        x.entityObject.search(itemSearched);
       } );
       this._sortAlphaList(filteredList);
       return filteredList;
