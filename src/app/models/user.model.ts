@@ -36,6 +36,12 @@ export class User implements AccessRightItem {
   }
 
   search(itemSearched: string): boolean {
+    console.log("first_name: " + this.firstname);
+    console.log("letters: " + itemSearched);
+    if (this.firstname.toUpperCase().includes(itemSearched.toUpperCase())
+      || this.lastname.toUpperCase().includes(itemSearched.toUpperCase())) {
+      console.log("Match with: :" + this.title)
+      }
     return this.firstname.toUpperCase().includes(itemSearched.toUpperCase())
       || this.lastname.toUpperCase().includes(itemSearched.toUpperCase());
   }
