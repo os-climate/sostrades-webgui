@@ -169,10 +169,12 @@ export class UpdateEntityRightComponent implements OnInit {
   private _filter(itemSearched: string | EntityRight): EntityRight[] {
 
     let filteredList: EntityRight[] = [];
-    console.log("Share entity : " + this.entitiesAvailable)
 
     if (typeof (itemSearched) === 'string') {
-      filteredList = this.entitiesAvailable.filter(x => x.entityObject.search(itemSearched));
+      filteredList = this.entitiesAvailable.filter(x =>{
+        x.entityObject.search(itemSearched);
+        console.log("Share entity: " + x.entityObject);
+      } );
       this._sortAlphaList(filteredList);
       return filteredList;
 
