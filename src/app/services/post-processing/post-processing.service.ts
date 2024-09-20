@@ -59,7 +59,6 @@ export class PostProcessingService extends PostProcessingHttpService {
     let postProcessing: PostProcessingBundle = null;
     postProcessingBundle = this.getPostProcessingDict(disciplineKey);
     if (postProcessingBundle !== null && postProcessingBundle !== undefined && !needToUpdate) {
-      
       postProcessingBundle.forEach(postProc => {
         if (postProc.name === moduleName){
           postProcessing = postProc;
@@ -140,7 +139,12 @@ export class PostProcessingService extends PostProcessingHttpService {
       const rootDict = loadedStudy.treeview.rootDict;
       const postProcessingBundle = rootDict[key].postProcessingBundle;
       if (postProcessingBundle !== undefined && postProcessingBundle !== null) {
-        // Set post processing dictionnary
+        // Check if post_processings have plots
+        for (let index = postProcessingBundle.length - 1; index >= 0; index--) {
+          if ((!postProcessingBundle[index].plotly || postProcessingBundle[index].plotly.length === 0) && (!postProcessingBundle[index].plotlyParetoFront || postProcessingBundle[index].plotlyParetoFront.length === 0)) {
+            postProcessingBundle.splice(index, 1);
+          }
+        }
         this.postProcessingBundleDict.set(rootDict[key].fullNamespace, postProcessingBundle);
       }
     });
