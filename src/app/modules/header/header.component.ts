@@ -170,7 +170,7 @@ export class HeaderComponent implements OnInit {
                 this.displayMessageNoStudyServer = !isLoaded;
              
             },
-            error:(error)=>{this.displayMessageNoStudyServer = false;}});
+            error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
         }  
         else{
           this.displayMessageNoStudyServer = !isLoaded;
