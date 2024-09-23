@@ -1,9 +1,15 @@
 <div class="flex-container">
   <h1 mat-dialog-title>Processing Request</h1>
+  <div>{{message}} {{status}}</div>
+  <div class="progress-container" *ngIf="status">
+    <div class="arrow" *ngFor="let step of steps; let i = index" 
+    [ngClass]="{'gray': step.status === 1, 'blue': step.status === 2, 'green': step.status === 3}">
+      {{ step.label }}
+    </div>
+  </div>
   <app-progress-bar
     class="container-dialog"
     progressMode="indeterminate"
-    progressText="{{message}}"
   ></app-progress-bar>
   <div mat-dialog-actions *ngIf="showCancelButton">
     <button 

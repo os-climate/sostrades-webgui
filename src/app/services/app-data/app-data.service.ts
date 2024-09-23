@@ -196,11 +196,13 @@ export class AppDataService extends DataHttpService {
         this.loadingDialogService.updateMessage(message),
       complete: () => this.loadingDialogService.closeLoading(),
     };
+    this.loadingDialogService.updateStatus(StudyCaseAllocationStatus.PENDING);
 
     this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
       next: (allocation) => {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
           if (!loadingCanceled) {
+            this.loadingDialogService.updateStatus(LoadStatus.IN_PROGESS);
             this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe({
               next: (loadedStudy) => {
                 this.loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded, messageObserver);
@@ -257,6 +259,7 @@ export class AppDataService extends DataHttpService {
         this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
       } else {
         const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
+        this.loadingDialogService.updateStatus(LoadStatus.IN_PROGESS);
         this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
       }
     }
@@ -281,6 +284,7 @@ export class AppDataService extends DataHttpService {
             next: (loadedStudy) => {
               this.postProcessingService.addPostProcessingAfterSwitchEditionMode(loadedStudy);
               const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
+              this.loadingDialogService.updateStatus(LoadStatus.IN_PROGESS);
               this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
             },
             error: (errorReceived) => {

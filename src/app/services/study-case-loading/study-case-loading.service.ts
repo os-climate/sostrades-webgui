@@ -1,4 +1,4 @@
-import { LoadedStudy } from "src/app/models/study.model";
+import { LoadedStudy, LoadStatus } from "src/app/models/study.model";
 import { Injectable, EventEmitter } from "@angular/core";
 import { combineLatest, Observable, Observer, Subscriber } from "rxjs";
 import { StudyCaseValidationService } from "../study-case-validation/study-case-validation.service";
@@ -10,6 +10,7 @@ import { SnackbarService } from "../snackbar/snackbar.service";
 import { PostOntology } from "src/app/models/ontology.model";
 import { TreenodeTools } from "src/app/tools/treenode.tool";
 import { CoeditionNotification } from "src/app/models/coedition-notification.model";
+import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
 
 @Injectable({
   providedIn: "root",
@@ -24,6 +25,7 @@ export class StudyCaseLoadingService {
     private studyCaseDataService: StudyCaseDataService,
     private ontologyService: OntologyService,
     private snackbarService: SnackbarService,
+    private loadingDialogService: LoadingDialogService,
     private studyCaseExecutionObserverService: StudyCaseExecutionObserverService
   ) {
     this.onLoadStudy = null;
@@ -73,6 +75,9 @@ export class StudyCaseLoadingService {
     messageObserver: Observer<string>
   ) {
     const studyId = loadedStudy.studyCase.id;
+    
+    // Update state of the popup of loading
+    this.loadingDialogService.updateStatus(LoadStatus.LOADED);
 
     // Assign study to data service
     this.updateStudyCaseDataService(loadedStudy);

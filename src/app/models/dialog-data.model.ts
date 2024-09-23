@@ -1,4 +1,4 @@
-import { Study } from './study.model';
+import { LoadStatus, Study } from './study.model';
 import { User } from './user.model';
 import { StudyUpdateParameter } from './study-update.model';
 import { EntityRight, EntityResourceRights } from './entity-right.model';
@@ -10,6 +10,7 @@ import { OntologyModelStatus } from './ontology-model-status.model';
 import { TreeNode } from './tree-node.model';
 import { LoadedGroup } from './group.model';
 import { ColumnName } from './enumeration.model';
+import { StudyCaseAllocationStatus } from './study-case-allocation.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -22,6 +23,7 @@ export abstract class AbstractDialogData {
 export class LoadingDialogData extends AbstractDialogData {
   message: string;
   showCancelButton: boolean;
+  status: StudyCaseAllocationStatus | LoadStatus
 
   public constructor() {
     super();

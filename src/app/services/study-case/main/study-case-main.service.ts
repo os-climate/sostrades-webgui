@@ -1,19 +1,16 @@
 import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
-import { Observable, Subscriber, of, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, Subscriber} from 'rxjs';
 import { Router } from '@angular/router';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { Location } from '@angular/common';
 import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
-import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
 import { Routing } from 'src/app/models/enumeration.model';
-import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
-import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 
 
 @Injectable({
@@ -27,7 +24,6 @@ export class StudyCaseMainService extends MainHttpService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private studyCaseValidationService: StudyCaseValidationService,
     private studyCaseDataService: StudyCaseDataService,
     private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
     private location: Location) {

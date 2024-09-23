@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Observable } from "rxjs";
 import { LoadingDialogData } from "src/app/models/dialog-data.model";
+import { StudyCaseAllocationStatus } from "src/app/models/study-case-allocation.model";
+import { LoadStatus } from "src/app/models/study.model";
 import { LoadingDialogComponent } from "src/app/modules/loading-dialog/loading-dialog.component";
 
 @Injectable({
@@ -41,6 +43,7 @@ export class LoadingDialogService {
     const loadingDialogData = new LoadingDialogData();
     loadingDialogData.message = message;
     loadingDialogData.showCancelButton = showCancelButton;
+    loadingDialogData.status = StudyCaseAllocationStatus.NOT_STARTED
 
     this.dialogRef = this.dialog.open(LoadingDialogComponent, {
       disableClose: true,
@@ -62,6 +65,17 @@ export class LoadingDialogService {
       this.dialogRef.componentInstance !== undefined
     ) {
       this.dialogRef.componentInstance.message = message;
+    }
+  }
+
+  updateStatus(status: StudyCaseAllocationStatus | LoadStatus) {
+    if (
+      this.dialogRef !== null &&
+      this.dialogRef !== undefined &&
+      this.dialogRef.componentInstance !== null &&
+      this.dialogRef.componentInstance !== undefined
+    ) {
+      this.dialogRef.componentInstance.status = status;
     }
   }
 
