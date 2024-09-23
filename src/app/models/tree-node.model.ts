@@ -30,6 +30,13 @@ export class TreeView {
             });
           }
         });
+        // Add namespaced post processing in treenode
+        if (treenodeKey in jsonPostProcessings && !(treenodeKey in result.rootDict[treenodeKey].dataManagementDisciplineDict)){
+          let postProc = (jsonPostProcessings[treenodeKey].map(cf => PostProcessingBundle.Create(cf)));
+          postProc.forEach(element => {
+            result.rootDict[treenodeKey].postProcessingBundle.push(element);
+          });
+        }
         if (treenodeKey in jsonPostProcessings && result.rootDict[treenodeKey].postProcessingBundle.length == 0) {
           result.rootDict[treenodeKey].postProcessingBundle = jsonPostProcessings[treenodeKey].map(cf => PostProcessingBundle.Create(cf));
         }

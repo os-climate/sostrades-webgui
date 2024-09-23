@@ -243,17 +243,13 @@ export class AppDataService extends DataHttpService {
               this.postProcessingService.clearPostProcessingDict();
               this.postProcessingService.clearPostProcessingDict();
 
-              // Set post processing dictionnary from the loaded study
+        // Set post processing dictionnary from the loaded study
         this.postProcessingService.clearPostProcessingDict();
 
-              // Set post processing dictionnary from the loaded study
-              this.postProcessingService.setPostProcessing(loadedStudy);
-              this.postProcessingService.setPostProcessing(loadedStudy);
-              
-              // load read only mode
+        // Set post processing dictionnary from the loaded study
         this.postProcessingService.setPostProcessing(loadedStudy);
               
-              // load read only mode
+        // load read only mode
         this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
       } else {
         const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
