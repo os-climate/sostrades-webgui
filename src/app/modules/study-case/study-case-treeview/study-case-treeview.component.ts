@@ -813,6 +813,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.calculationService.stop(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
       next: (response) => {
         this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
+
+        this.socketService.stopStudyExecution(this.studyCaseDataService.loadedStudy.studyCase.id, true);
+
         this.snackbarService.showInformation('Study case successfully terminated');
         studyCaseObserver.stop();
         
