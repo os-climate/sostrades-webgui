@@ -117,6 +117,7 @@ import { NoServerComponent } from './modules/no-server/no-server.component';
 import { LoginInformationDialogComponent } from './modules/login/login-information-dialog/login-information-dialog.component';
 import { EditionFormDialogComponent } from './shared/edition-form-dialog/edition-form-dialog.component';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { LoadingStudyDialogComponent } from './modules/loading-study-dialog/loading-study-dialog.component';
 
 registerLocaleData(fr);
 
@@ -212,6 +213,7 @@ registerLocaleData(fr);
         NoServerComponent,
         LoginInformationDialogComponent,
         EditionFormDialogComponent,
+        LoadingStudyDialogComponent,
     ],
     imports: [
         BrowserModule,

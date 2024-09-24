@@ -16,10 +16,10 @@ import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
-import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 import { LoggerService } from '../../logger/logger.service';
 import { SnackbarService } from '../../snackbar/snackbar.service';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
+import { LoadingStudyDialogService } from '../../loading-study-dialog/loading-study-dialog.service';
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +63,7 @@ export class StudyCaseDataService extends DataHttpService {
     private http: HttpClient,
     private ontologyService: OntologyService,
     private location: Location,
-    private loadingDialogService: LoadingDialogService,
+    private loadingStudyDialogService: LoadingStudyDialogService,
     private loggerService: LoggerService,
     private snackbarService:SnackbarService,
     private router: Router) {
@@ -231,7 +231,7 @@ export class StudyCaseDataService extends DataHttpService {
           else if (errorReceived !== undefined){
               this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.");
             }
-            this.loadingDialogService.closeLoading();
+            this.loadingStudyDialogService.closeLoading();
 
             //do process after retreiving the status
             if (afterShowError !== undefined){
@@ -241,7 +241,7 @@ export class StudyCaseDataService extends DataHttpService {
         },
         error:(error)=> {
           this.snackbarService.showError(errorMessage+"\n" + error.description);
-          this.loadingDialogService.closeLoading();
+          this.loadingStudyDialogService.closeLoading();
           //do process after retreiving the status
           if (afterShowError !== undefined){
             afterShowError();
@@ -256,7 +256,7 @@ export class StudyCaseDataService extends DataHttpService {
         this.snackbarService.showError(errorMessage + "\n" + errorReceived.description);
       }
       
-      this.loadingDialogService.closeLoading();
+      this.loadingStudyDialogService.closeLoading();
     }
     
     
@@ -652,14 +652,14 @@ export class StudyCaseDataService extends DataHttpService {
         if (allocation.status !== StudyCaseAllocationStatus.DONE) {
           // if the pod is still at pending after one minutes, show potential problem message
           if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
-          if( Date.now() - startWaitingDate < 60000){
-              this.loadingDialogService.updateMessage("Study pod is loading ...")
-            }
-            else{
-              this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
-              you can wait a little longer or maybe try again later")
+          // if( Date.now() - startWaitingDate < 60000){
+          //     this.loadingDialogService.updateMessage("Study pod is loading ...")
+          //   }
+          //   else{
+          //     this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
+          //     you can wait a little longer or maybe try again later")
              
-            }
+          //   }
           }
           if (allocation.status === StudyCaseAllocationStatus.ERROR || allocation.status === StudyCaseAllocationStatus.OOMKILLED){
             allocationObservable.next(allocation);
@@ -671,7 +671,6 @@ export class StudyCaseDataService extends DataHttpService {
           }
           
         } else {
-          this.loadingDialogService.updateMessage("Study pod is up...the study loading is in progress.")
           allocationObservable.next(allocation);
         }
 
