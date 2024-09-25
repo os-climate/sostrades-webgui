@@ -3,16 +3,17 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    max-width: 450px;
-    padding-left:20px;
-    
   }
+
+
+.progress-bar-size{
+  width: 100px;
+}
 
 .progress-container {
     display: flex;
-    width: 100%;
-    justify-content: space-around;
-   padding-left:20px;
+
+  
   }
 
 
