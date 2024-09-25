@@ -10,12 +10,22 @@ import { OntologyModelStatus } from './ontology-model-status.model';
 import { TreeNode } from './tree-node.model';
 import { LoadedGroup } from './group.model';
 import { ColumnName } from './enumeration.model';
+import { LoadingDialogStep } from './loading-study-dialog.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
 
   public constructor() {
     this.cancel = false;
+  }
+}
+
+export class LoadingStudyDialogData extends AbstractDialogData {
+  step: LoadingDialogStep
+
+  public constructor() {
+    super();
+    this.step = LoadingDialogStep.NOT_STARTED;
   }
 }
 
