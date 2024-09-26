@@ -31,7 +31,7 @@
 
 .step-descrition{
   position: absolute;
-  top: 52%;
+  top: 110px;
   font-size: smaller;
 }
 
@@ -52,7 +52,7 @@
     margin-bottom: 30px;
   }
 
-  .button-cancel{
+  .button-end{
     margin-top: 50px;
   }
   
@@ -60,6 +60,28 @@
     text-align: center;
     font-weight: 500;
   }
+
+  .button-error{
+    margin-top: 30px;
+    justify-content: center;
+    font-size: small;
+  }
+
+  .icon-error-message{
+    font-size: medium;
+    color:#E4002B;
+    margin:0px;
+    vertical-align: sub;
+  }
+
+  .error-message{
+    text-align: center;
+    height: 60px;
+    overflow: auto;
+    justify-content: space-around;
+    font-weight: bold;
+  }
+
   
 .line-succeed{
   width: 100%;
@@ -75,9 +97,21 @@
   background-color: #ccc; 
   
 }
+
+.line-error{
+  width: 100%;
+  height: 4px;
+  background-color: #E4002B; 
+  
+}
+
   
 
 .color-before{
   color: darkgrey;
+}
+
+.color-error{
+  color: #E4002B;
 }
  

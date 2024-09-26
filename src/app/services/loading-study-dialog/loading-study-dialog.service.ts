@@ -10,7 +10,7 @@ import { LoadingStudyDialogComponent } from 'src/app/modules/loading-study-dialo
 })
 export class LoadingStudyDialogService {
   private dialogRef: MatDialogRef<LoadingStudyDialogComponent>;
-
+  
   constructor(private dialog: MatDialog) {
     this.dialogRef = null;
   }
@@ -28,6 +28,10 @@ export class LoadingStudyDialogService {
     });
 
     return cancelObservable;
+  }
+
+  setError(error:string){
+    this.dialogRef.componentInstance.setError(error);
   }
 
   showLoading(title: string) {
