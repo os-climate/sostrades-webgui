@@ -10,7 +10,8 @@ import { LoadingDialogStep } from 'src/app/models/loading-study-dialog.model';
 })
 export class LoadingStudyDialogComponent {
   public disableCancelLoading: boolean;
-  public _currentStep: LoadingDialogStep;
+  public currentStep: LoadingDialogStep;
+  public title:string;
   steps = [
     { 
       step: LoadingDialogStep.ACCESSING_STUDY_SERVER, 
@@ -33,21 +34,20 @@ export class LoadingStudyDialogComponent {
   }
 
   ngOnInit(): void {
-    this._currentStep = this.data.step;
+    this.currentStep = this.data.step;
+    this.title = this.data.title;
   }
 
 
   updateCurrentStep(value: LoadingDialogStep) {
-      this._currentStep = value;
-      if (this._currentStep >= LoadingDialogStep.LOADING_ONTOLOGY){
+      this.currentStep = value;
+      if (this.currentStep >= LoadingDialogStep.LOADING_ONTOLOGY){
         this.disableCancelLoading = true;
       }
 
   }
 
-  get currentStep() {
-    return this._currentStep;
-  }
+  
 
   onCancelClick() {
     this.data.cancel = true;

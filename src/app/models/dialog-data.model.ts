@@ -22,10 +22,12 @@ export abstract class AbstractDialogData {
 
 export class LoadingStudyDialogData extends AbstractDialogData {
   step: LoadingDialogStep
+  title:string
 
   public constructor() {
     super();
-    this.step = LoadingDialogStep.NOT_STARTED;
+    this.step = LoadingDialogStep.ACCESSING_STUDY_SERVER;
+    this.title = ""
   }
 }
 

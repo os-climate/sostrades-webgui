@@ -36,6 +36,7 @@ export class LoadingStudyDialogService {
     }
 
     const loadingDialogData = new LoadingStudyDialogData();
+    loadingDialogData.title = title;
 
     this.dialogRef = this.dialog.open(LoadingStudyDialogComponent, {
       disableClose: true,
