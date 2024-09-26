@@ -223,15 +223,17 @@ export class StudyCaseDataService extends DataHttpService {
         {next: (allocation) => {
           //show pod oomkilled message
           if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
-            this.snackbarService.showError(errorMessage + "\n" + StudyCaseAllocation.OOMKILLEDLABEL);
+            errorMessage = errorMessage + "\n" + StudyCaseAllocation.OOMKILLEDLABEL;
+            
           }
           else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
-            this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
+            errorMessage = errorMessage+ " due to pod error: " + allocation.message;
           }
           else if (errorReceived !== undefined){
-              this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.");
+            errorMessage = errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.";
+              
             }
-            this.loadingStudyDialogService.closeLoading();
+            this.loadingStudyDialogService.setError(errorMessage);
 
             //do process after retreiving the status
             if (afterShowError !== undefined){
@@ -240,8 +242,7 @@ export class StudyCaseDataService extends DataHttpService {
             
         },
         error:(error)=> {
-          this.snackbarService.showError(errorMessage+"\n" + error.description);
-          this.loadingStudyDialogService.closeLoading();
+          this.loadingStudyDialogService.setError(errorMessage+"\n" + error.description);
           //do process after retreiving the status
           if (afterShowError !== undefined){
             afterShowError();
@@ -253,10 +254,12 @@ export class StudyCaseDataService extends DataHttpService {
     }
     else {
       if (errorReceived !== undefined){
-        this.snackbarService.showError(errorMessage + "\n" + errorReceived.description);
+        this.loadingStudyDialogService.setError(errorMessage + "\n" + errorReceived.description);
+      }
+      else{
+        this.loadingStudyDialogService.closeLoading();
       }
       
-      this.loadingStudyDialogService.closeLoading();
     }
     
     

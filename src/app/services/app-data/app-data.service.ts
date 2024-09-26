@@ -92,7 +92,7 @@ export class AppDataService extends DataHttpService {
                   
                   this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study",()=> {
                     this.onStudyCreated.emit(allocation.studyCaseId);
-                    this.loadingStudyDialogService.closeLoading();
+                    
                     isStudyCreated(false);
                   });
               }
@@ -102,7 +102,7 @@ export class AppDataService extends DataHttpService {
               
               this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study",()=> {
                 this.onStudyCreated.emit(allocation.studyCaseId);
-                this.loadingStudyDialogService.closeLoading();
+                
                 isStudyCreated(false);
               });
             }
@@ -110,14 +110,13 @@ export class AppDataService extends DataHttpService {
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study",()=> {
             this.onStudyCreated.emit(allocation.studyCaseId);
-            this.loadingStudyDialogService.closeLoading();
+            
             isStudyCreated(false);
           });
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error creating study\n" + errorReceived.description);
-        this.loadingStudyDialogService.closeLoading();
+        this.loadingStudyDialogService.setError("Error creating study\n" + errorReceived.description);
         isStudyCreated(false);
       }
     });
