@@ -6,7 +6,7 @@
       </h1>
     </div>
   
-    <div mat-dialog-content>
+    <div >
       <mat-form-field>
       <mat-select id="flavor" placeholder="select pod size" formControlName="flavor" >
         <mat-option
@@ -16,23 +16,77 @@
           {{ flavor }}
         </mat-option>
       </mat-select>
+      </mat-form-field>
+     
+    </div>
+    
+  
+    <div>
+      <mat-expansion-panel >
+        <mat-expansion-panel-header>
+          <span>
+            <i id="icon-info" class="fa-solid fa-circle-info"></i>
+            Pod sizes description
+          </span>
+        </mat-expansion-panel-header>
+        <div class="panel-open">
+          <table mat-table class="table"
+            #table [dataSource]="data.flavorsDescription">
+            <!-- Name Column -->
+            <ng-container matColumnDef="FLAVOR">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.name }}
+              </td>
+            </ng-container>
+            <!-- CPU Column -->
+            <ng-container matColumnDef="CPU">
+              <th mat-header-cell *matHeaderCellDef>CPU (Request/limit)</th>
+              <td mat-cell *matCellDef="let element" style="text-align: center;">
+                {{ element.CPURequest }} / {{ element.CPULimit }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="MEMORY">
+              <th mat-header-cell *matHeaderCellDef>Memory (Request/limit)</th>
+              <td mat-cell *matCellDef="let element" style="text-align: center;">
+                {{ element.MemoryRequest }} / {{ element.MemoryLimit }}
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+          <tr
+            mat-row
+            class="table-row"
+            
+            *matRowDef="let row; columns:displayedColumns"
+          ></tr>
+          </table>
+        </div> 
+      </mat-expansion-panel>
+    </div>
+    <div *ngIf="data.checkReloadPod" class="checkbox-container" >
+      <mat-checkbox
+      id="reload"
+      [(ngModel)]="reload"
+      class="checkbox"
+      [ngModelOptions]="{ standalone: true }">
+      <span >Reload the study server to directly apply the change.</span>
+          
+      </mat-checkbox>
+      <div style="margin-top: -10px;margin-bottom: 10px;">
+        <mat-hint style="font-size: smaller;"> (If this case is not checked the change will be applied at the next server restart).</mat-hint>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>
+      <button
+        id='submit'
+        mat-button
+        (click)="submitForm()"
+        [disabled]="!settingsForm.valid"
+      >
+        Ok
+      </button>
+    </div>
 
-      <mat-error *ngIf="hasError('flavor', 'required')">
-        Field is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
   </div>
-
-  <div mat-dialog-actions>
-    <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>
-    <button
-      id='submit'
-      mat-button
-      (click)="submitForm()"
-      [disabled]="!settingsForm.valid"
-    >
-      Ok
-    </button>
-  </div>
-</div>
 </div>

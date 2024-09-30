@@ -234,6 +234,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       dialogData.flavorsList = this.flavorsList;
       dialogData.type = "Generation reference";
       dialogData.flavor = flavor;
+      dialogData.flavorsDescription = this.flavorsService.flavorsListExec;
         
       const dialogRef = this.dialog.open(PodSettingsComponent, {
         disableClose: false,

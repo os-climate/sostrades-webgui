@@ -615,6 +615,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.studyCaseDataService.getExecutionFlavor(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(flavor=> {
       const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
       dialogData.flavorsList = this.flavorsList;
+      dialogData.flavorsDescription = this.flavorsService.flavorsListExec;
       dialogData.type = "Execution";
       dialogData.flavor = flavor;
       

@@ -71,6 +71,7 @@ export enum ColumnName {
     MODIFICATION_DATE = 'modificationDate',
     GROUP = 'groupName',
     STATUS = 'executionStatus',
+    FLAVOR = 'flavor',
     REGENERATION_STATUS = 'regenerationStatus',
     DESCRIPTION = 'description',
     DEFAULT = 'default',
