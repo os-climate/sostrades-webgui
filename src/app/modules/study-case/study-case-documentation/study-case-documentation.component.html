@@ -32,6 +32,13 @@
       <div class="markdown-body markdown-container" >
         <div *ngFor="let documentItem of documentation" >
           <div class="markdown">
+            <button
+              mat-raised-button
+              color="accent"
+              style="text-align: right;"
+              (click)="refresh(documentItem)">
+              Refresh
+          </button>
             <h1 id="{{documentItem.name}}" style="text-align: center;">
               {{documentItem.name | ontologyDisciplineConverter }}
             </h1>

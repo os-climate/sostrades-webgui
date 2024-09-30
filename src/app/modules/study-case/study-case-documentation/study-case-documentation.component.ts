@@ -6,6 +6,8 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
+import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 @Component({
   selector: 'app-study-case-documentation',
@@ -36,6 +38,8 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   constructor(
     public ontologyService: OntologyService,
     public snackbarService: SnackbarService,
+    public studyCaseMainService:StudyCaseMainService,
+    public studyCaseDataService:StudyCaseDataService,
     private el: ElementRef,
     private renderer: Renderer2
     ) {
@@ -155,6 +159,20 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       });
     });
   }
+
+  refresh(documentationItem:MardownDocumentation){
+    const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
+    this.studyCaseMainService.getMarkdowndocumentation(studyId, documentationItem.name).subscribe((response)=>{
+      if ((response.documentation !== null) && (response.documentation !== undefined)) {
+        documentationItem.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+        this.hasDocumentation = true;
+      } else if (this.documentation.length == 0) {
+        this.hasDocumentation = false;
+      }
+    })
+
+  }
+
 
 /**
  * This function has been created because there are not plugin footnote for ngx-markdown v15. marked-footnote V1.0.0 will be available with marked v.7.0.0 with ngx-markdown v17.0.0. with angular v17. 
