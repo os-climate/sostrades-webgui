@@ -349,7 +349,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
          * Changes 23/09/2022
          * Call createStudyCase with 'null' as process and 'null' study_name to launch a non process and non reference intialized modal
          */
-        this.studyCreationService.showCreateStudyCaseDialog(null);
+        this.studyCreationService.showCreateStudyCaseDialog(null, null);
         }
     });
   }
