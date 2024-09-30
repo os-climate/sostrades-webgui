@@ -12,7 +12,10 @@ export class LoadingStudyDialogComponent {
   public disableCancelLoading: boolean;
   public currentStep: LoadingDialogStep;
   public title:string;
-  steps = [
+  public isInError: boolean;
+  public errorMessage: string;
+
+  public steps = [
     { 
       step: LoadingDialogStep.ACCESSING_STUDY_SERVER, 
       labelBefore: 'Accessing Study server', labelAfter:'Study Server Running'
@@ -36,9 +39,11 @@ export class LoadingStudyDialogComponent {
   ngOnInit(): void {
     this.currentStep = this.data.step;
     this.title = this.data.title;
+    this.errorMessage = '';
+    this.isInError = false;
   }
 
-
+  
   updateCurrentStep(value: LoadingDialogStep) {
       this.currentStep = value;
       if (this.currentStep >= LoadingDialogStep.LOADING_ONTOLOGY){
@@ -47,6 +52,11 @@ export class LoadingStudyDialogComponent {
 
   }
 
+  setError(error:string){
+    this.errorMessage = error;
+    this.dialogRef.updateSize('260');
+    this.isInError = true;
+  }
   
 
   onCancelClick() {
