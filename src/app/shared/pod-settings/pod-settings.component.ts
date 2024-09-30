@@ -11,12 +11,16 @@ import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 })
 export class PodSettingsComponent implements OnInit {
   public settingsForm: FormGroup;
+  public reload:boolean;
   public flavorsList: string[];
+  public displayedColumns =['FLAVOR', 'CPU', 'MEMORY'];
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: PodSettingsDialogData,
     public dialogRef: MatDialogRef<PodSettingsComponent>,
   ) {
     this.flavorsList = [];
+    this.reload = false;
   }
 
   ngOnInit(): void {
@@ -29,7 +33,7 @@ export class PodSettingsComponent implements OnInit {
       //select flavor if it is already set for the study
       if (this.data.flavor !== null && this.data.flavor !== undefined && this.flavorsList.includes(this.data.flavor)) {
         this.settingsForm.patchValue({
-          flavor: this.data.flavor,
+          flavor: this.data.flavor
         });
         this.settingsForm.value.flavor = this.data.flavor;
       }
@@ -44,17 +48,12 @@ export class PodSettingsComponent implements OnInit {
           
   }
 
-  
-
-  public hasError = (controlName: string, errorName: string) => {
-    return this.settingsForm.controls[controlName].hasError(errorName);
-  }
-
   submitForm() {
     this.data.cancel = false;
    
     this.data.cancel = false;
     this.data.flavor = this.settingsForm.value.flavor;
+    this.data.doReload = this.reload;
     this.dialogRef.close(this.data);
    
     
