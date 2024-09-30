@@ -346,7 +346,14 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
 
         // check if a pre selected usecase is existing
         if (this.data.reference) {
-          selectedReferecence = this.referenceList.find(dataSource => dataSource.id === this.data.studyId);
+          if(this.data.studyId) {
+              selectedReferecence = this.referenceList.find(dataSource => dataSource.id === this.data.studyId);
+          }
+          else {
+            selectedReferecence = this.referenceList.find(dataSource => dataSource.name === this.data.reference);
+            this.createStudyForm.get('selectedRef').disable();
+            this.createStudyForm.get('processId').disable();
+          }
         }
       }
 
@@ -420,7 +427,12 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     let selectedRef = this.createStudyForm.value.selectedRef
 
     if (selectedRef === null || selectedRef === undefined) {
-      selectedRef = this.referenceList.find(study => study.id === this.data.studyId);
+      if(this.data.studyId) {
+        selectedRef = this.referenceList.find(dataSource => dataSource.id === this.data.studyId);
+      }
+      else {
+        selectedRef = this.referenceList.find(dataSource => dataSource.name === this.data.reference);
+      }
     }
 
     if(selectedRef.name !== this.EMPTY_STUDY_NAME) {

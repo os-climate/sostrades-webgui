@@ -80,7 +80,8 @@ export enum ColumnName {
     USERNAME = 'username',
     EDIT = 'edit',
     DELETE = 'delete',
-    CREATION_STATUS = 'creationStatus'
+    CREATION_STATUS = 'creationStatus',
+    STUDY_CREATION = 'studyCreation'
 }
 
 export enum LabelFormName {
