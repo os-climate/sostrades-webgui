@@ -179,12 +179,11 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  updateStudy(studyId: number, studyName: string, groupId: number, flavor: string): Observable<boolean> {
+  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
       group_id: groupId,
-      flavor: flavor
     };
     const url = `${this.apiRoute}/${studyId}/edit`;
     return this.http.post<boolean>(url, payload, this.options).pipe(map(

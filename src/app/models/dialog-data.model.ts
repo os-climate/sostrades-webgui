@@ -409,7 +409,6 @@ export class EditionDialogData extends AbstractDialogData {
   description: string;
   groupList: LoadedGroup[];
   userUpdated: User;
-  flavor: string
 
   public constructor() {
     super();
@@ -420,7 +419,6 @@ export class EditionDialogData extends AbstractDialogData {
     this.groupId = null;
     this.groupList = [];
     this.userUpdated = null;
-    this.flavor = null;
 
   }
 

@@ -484,7 +484,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     dialogData.editionDialogName = DialogEditionName.EDITION_STUDY;
     dialogData.name = study.name;
     dialogData.groupId = study.groupId;
-    dialogData.flavor = study.studyPodFlavor;
 
     const dialogRef = this.dialog.open(EditionFormDialogComponent, {
       disableClose: false,
@@ -495,13 +494,13 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       const editStudyCaseData: EditionDialogData = result as EditionDialogData;
       if (editStudyCaseData !== null && editStudyCaseData !== undefined) {
         if (editStudyCaseData.cancel === false) {
-         this._updateStudy(study.id, editStudyCaseData.name, editStudyCaseData.groupId, editStudyCaseData.flavor);
+         this._updateStudy(study.id, editStudyCaseData.name, editStudyCaseData.groupId);
         }
       }
     });
   }
 
-  _updateStudy(studyId, name, groupId, flavor){
+  _updateStudy(studyId, name, groupId){
      // Close study if the loaded study is the same that the study edited
      if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       if (this.studyCaseDataService.loadedStudy.studyCase.id === studyId) {
@@ -509,7 +508,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     }
     this.loadingDialogService.showLoading(`Updating study ${name}. Please wait`);
-    this.studyCaseDataService.updateStudy(studyId, name, groupId, flavor).subscribe({
+    this.studyCaseDataService.updateStudy(studyId, name, groupId).subscribe({
       next: (studyIsEdited) => {
         if (studyIsEdited) {
               this.socketService.updateStudy(studyId);
