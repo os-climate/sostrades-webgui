@@ -5,30 +5,7 @@
         {{ data.type }} pod size
       </h1>
     </div>
-  
-    <!-- <div >
-      <mat-form-field>
-      <mat-select id="flavor" placeholder="select pod size" formControlName="flavor" >
-        <mat-option
-          *ngFor="let flavor of flavorsList"
-          [value]="flavor"
-        >
-          {{ flavor }}
-        </mat-option>
-      </mat-select>
-      </mat-form-field>
-     
-    </div>
-     -->
-  
     <div>
-      <!-- <mat-expansion-panel >
-        <mat-expansion-panel-header>
-          <span>
-            <i id="icon-info" class="fa-solid fa-circle-info"></i>
-            Pod sizes description
-          </span>
-        </mat-expansion-panel-header>-->
         <div class="pod-table"> 
           <table mat-table
             #table [dataSource]="data.flavorsDescription">
@@ -99,6 +76,5 @@
         Ok
       </button>
     </div>
-
   </div>
 </div>
