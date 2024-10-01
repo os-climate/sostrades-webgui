@@ -1,19 +1,21 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PodSettingsDialogData } from 'src/app/models/dialog-data.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FlavorsService } from 'src/app/services/flavors/flavors.service';
+import { Flavor } from 'src/app/models/flavor.model';
 
 @Component({
   selector: 'app-pod-settings',
   templateUrl: './pod-settings.component.html',
   styleUrls: ['./pod-settings.component.scss']
 })
-export class PodSettingsComponent implements OnInit {
+export class PodSettingsComponent implements OnInit  {
   public settingsForm: FormGroup;
   public reload:boolean;
   public flavorsList: string[];
-  public displayedColumns =['FLAVOR', 'CPU', 'MEMORY'];
+  public displayedColumns =['SELECT', 'FLAVOR', 'CPU', 'MEMORY'];
+  public selectedFlavor: string;
+  public disabledValidation: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: PodSettingsDialogData,
@@ -21,6 +23,8 @@ export class PodSettingsComponent implements OnInit {
   ) {
     this.flavorsList = [];
     this.reload = false;
+    this.selectedFlavor = "";
+    this.disabledValidation = true;
   }
 
   ngOnInit(): void {
@@ -32,6 +36,7 @@ export class PodSettingsComponent implements OnInit {
       this.flavorsList = this.data.flavorsList;
       //select flavor if it is already set for the study
       if (this.data.flavor !== null && this.data.flavor !== undefined && this.flavorsList.includes(this.data.flavor)) {
+        this.selectedFlavor = this.data.flavor
         this.settingsForm.patchValue({
           flavor: this.data.flavor
         });
@@ -48,6 +53,16 @@ export class PodSettingsComponent implements OnInit {
           
   }
 
+  onFlavorSelect(element: Flavor) {
+    this.selectedFlavor = element.name;
+    this.settingsForm.patchValue({ flavor: element.name });
+    if (this.selectedFlavor !== this.data.flavor) {
+      this.disabledValidation = false;
+    } else {
+      this.disabledValidation = true;
+    }
+  }
+
   submitForm() {
     this.data.cancel = false;
    
@@ -55,7 +70,6 @@ export class PodSettingsComponent implements OnInit {
     this.data.flavor = this.settingsForm.value.flavor;
     this.data.doReload = this.reload;
     this.dialogRef.close(this.data);
-   
     
   }
 

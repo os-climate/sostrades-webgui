@@ -1,12 +1,12 @@
 <div class="flex-container">
   <div class="flex-container" [formGroup]="settingsForm" >
-    <div mat-dialog-title>
+    <div>
       <h1 style="margin-bottom: 10px !important; text-align: center">
         {{ data.type }} pod size
       </h1>
     </div>
   
-    <div >
+    <!-- <div >
       <mat-form-field>
       <mat-select id="flavor" placeholder="select pod size" formControlName="flavor" >
         <mat-option
@@ -19,23 +19,36 @@
       </mat-form-field>
      
     </div>
-    
+     -->
   
     <div>
-      <mat-expansion-panel >
+      <!-- <mat-expansion-panel >
         <mat-expansion-panel-header>
           <span>
             <i id="icon-info" class="fa-solid fa-circle-info"></i>
             Pod sizes description
           </span>
-        </mat-expansion-panel-header>
-        <div class="panel-open">
-          <table mat-table class="table"
+        </mat-expansion-panel-header>-->
+        <div class="pod-table"> 
+          <table mat-table
             #table [dataSource]="data.flavorsDescription">
+            <!-- Selection Column -->
+            <ng-container matColumnDef="SELECT">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <mat-radio-button                  
+                  (change)="onFlavorSelect(element)"
+                  [id]="'radio-button-flavor-' + element.name"
+                  [checked]="element.name === selectedFlavor"
+                  [disabled]="element.name === selectedFlavor"
+                  [matTooltip]="element.name">
+                </mat-radio-button>
+              </td>
+            </ng-container>
             <!-- Name Column -->
             <ng-container matColumnDef="FLAVOR">
               <th mat-header-cell *matHeaderCellDef>Name</th>
-              <td mat-cell *matCellDef="let element">
+              <td mat-cell *matCellDef="let element" style="padding: 0px 16px 0px 16px !important;">
                 {{ element.name }}
               </td>
             </ng-container>
@@ -43,13 +56,13 @@
             <ng-container matColumnDef="CPU">
               <th mat-header-cell *matHeaderCellDef>CPU (Request/limit)</th>
               <td mat-cell *matCellDef="let element" style="text-align: center;">
-                {{ element.CPURequest }} / {{ element.CPULimit }}
+                <span [matTooltip]="element.CPURequestUnit">{{ element.CPURequest }}</span> /  <span [matTooltip]="element.CPULimitUnit">{{ element.CPULimit }}</span>
               </td>
             </ng-container>
             <ng-container matColumnDef="MEMORY">
               <th mat-header-cell *matHeaderCellDef>Memory (Request/limit)</th>
               <td mat-cell *matCellDef="let element" style="text-align: center;">
-                {{ element.MemoryRequest }} / {{ element.MemoryLimit }}
+                <span [matTooltip]="element.memoryRequestUnit">{{ element.memoryRequest }}</span> / <span [matTooltip]="element.memoryLimitUnit">{{ element.memoryLimit }}</span>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
@@ -61,28 +74,27 @@
           ></tr>
           </table>
         </div> 
-      </mat-expansion-panel>
+      <!-- </mat-expansion-panel> -->
     </div>
-    <div *ngIf="data.checkReloadPod" class="checkbox-container" >
-      <mat-checkbox
-      id="reload"
-      [(ngModel)]="reload"
-      class="checkbox"
-      [ngModelOptions]="{ standalone: true }">
-      <span >Reload the study server to directly apply the change.</span>
-          
-      </mat-checkbox>
-      <div style="margin-top: -10px;margin-bottom: 10px;">
-        <mat-hint style="font-size: smaller;"> (If this case is not checked the change will be applied at the next server restart).</mat-hint>
-      </div>
+    <div *ngIf="data.checkReloadPod">
+        <mat-checkbox
+        id="reload"
+        [(ngModel)]="reload"
+        class="checkbox"
+        [ngModelOptions]="{ standalone: true }">
+          <div style="margin-top: 30px">
+            <span >Reload the study server to directly apply the change.</span>
+            <p style="font-size: 9px">If this case is not checked the change will be applied at the next server restart.</p>
+          </div>
+        </mat-checkbox>
     </div>
     <div mat-dialog-actions>
       <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>
       <button
-        id='submit'
+        id='save'
         mat-button
         (click)="submitForm()"
-        [disabled]="!settingsForm.valid"
+        [disabled]="disabledValidation"
       >
         Ok
       </button>
