@@ -102,11 +102,7 @@
       >
         <!-- Selected Column -->
         <ng-container [matColumnDef]="columnName.SELECTED">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            style="padding: 0 6px; text-align: unset"
-          >
+          <th mat-header-cell *matHeaderCellDef>
             <mat-checkbox
               (change)="$event ? masterToggle() : null"
               [checked]="selection.hasValue() && isAllSelected()"
@@ -116,7 +112,7 @@
             </mat-checkbox>
           </th>
 
-          <td mat-cell *matCellDef="let element" style="padding: 0 6px">
+          <td mat-cell *matCellDef="let element" style="text-align: center;">
             <mat-checkbox
               [id]="'checkbox-study-management-' + element.name +'-' + element.groupName"
               (click)="$event.stopPropagation()"
@@ -233,6 +229,7 @@
             <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="(element.executionStatus === 'IN ERROR' || element.executionStatus === 'POD ERROR' || element.executionStatus === 'FAILED' || element.executionStatus === 'POD PENDING') && element.error"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus ==='CREATION DONE' || element.creationStatus ==='DONE'"> {{ element.executionStatusLabel }} </span>
           </td>
         </ng-container>
+
         <!-- Flavor Column -->
         <ng-container [matColumnDef]="columnName.FLAVOR" *ngIf="showFlavors">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Study Pod size
@@ -271,16 +268,7 @@
         <ng-container [matColumnDef]="columnName.ACTION">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
-            <button
-              style="margin: 0 5px"
-              [id]="'btn-study-management-load-' + element.groupName +'-' +element.name"
-              mat-icon-button
-              color="primary"
-              [matTooltip]="'Load ' + element.name"
-              (click)="loadStudy($event, element)"
-            >
-                <i class="fa-regular fa-folder-open fa-fw"></i>
-            </button>
+            
             <input
                 type="file"
                 #fileUpload

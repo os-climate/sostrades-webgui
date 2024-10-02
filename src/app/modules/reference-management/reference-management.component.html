@@ -64,7 +64,7 @@
       >
         <!-- Status Column -->
         <ng-container [matColumnDef]="columnName.REGENERATION_STATUS">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 160px;">Status
             <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REGENERATION_STATUS)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilter(columnName.REGENERATION_STATUS, $event)" ></i>
           </th>
