@@ -439,9 +439,11 @@ div.tooltip {
   margin-right: 10px;
   width: 120px;
 }
-
-.align-text-center {
-  text-align: center;
+.tables {
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  margin-bottom: 0 !important;
 }
 
 /* Markdown */
