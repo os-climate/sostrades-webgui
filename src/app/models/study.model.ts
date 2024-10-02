@@ -1,4 +1,4 @@
-import { TreeNode, TreeView } from './tree-node.model';
+import { TreeView } from './tree-node.model';
 import { StudyReference } from './study-reference.model';
 import { UserStudyPreferences } from './user-study-preferences.model';
 
