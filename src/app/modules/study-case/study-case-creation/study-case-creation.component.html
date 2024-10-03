@@ -123,7 +123,7 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field *ngIf="hasFlavors">
-      <mat-select id="flavor" placeholder="study pod size" formControlName="flavor" >
+      <mat-select id="flavor" placeholder="study pod size" formControlName="flavor">
         <mat-option
           *ngFor="let flavor of flavorsList"
           [value]="flavor"

@@ -74,7 +74,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     ColumnName.GROUP,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
-    ColumnName.TYPE,
     ColumnName.STATUS,
     ColumnName.FLAVOR
   ];
@@ -783,6 +782,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               }
           });
         return possibleStringValues;
+        case ColumnName.FLAVOR:
+          this.studyCaseDataService.studyManagementData.forEach(study => {
+            // Verify to  not push duplicate process
+            if (study.studyPodFlavor && !possibleStringValues.includes(study.studyPodFlavor)) {
+              possibleStringValues.push(study.studyPodFlavor);
+              possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+                }
+            });
+          return possibleStringValues;
         case ColumnName.STATUS:
         this.studyCaseDataService.studyManagementData.forEach(study => {
           
@@ -856,8 +864,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           case ColumnName.PROCESS:
             isMatch = data.processDisplayName.trim().toLowerCase().includes(filter) || data.process.trim().toLowerCase().includes(filter);
             break;
-          case ColumnName.TYPE:
-            isMatch = data.studyType.trim().toLowerCase().includes(filter);
+          case ColumnName.FLAVOR:
+            isMatch = data.studyPodFlavor.trim().toLowerCase().includes(filter) || data.studyPodFlavor.trim().toLowerCase().includes(filter);
             break;
           case ColumnName.STATUS:
             if (data.creationStatus !== CreationStatus.CREATION_DONE)
@@ -877,7 +885,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               data.repository.trim().toLowerCase().includes(filter) ||
               data.processDisplayName.trim().toLowerCase().includes(filter) ||
               data.process.trim().toLowerCase().includes(filter) ||
-              data.studyType.trim().toLowerCase().includes(filter) ||
+              data.studyPodFlavor.trim().toLowerCase().includes(filter) ||
               (data.creationStatus !== CreationStatus.CREATION_DONE && data.creationStatus.trim().toLowerCase().includes(filter)) ||
               (data.creationStatus === CreationStatus.CREATION_DONE && data.executionStatusLabel.trim().toLowerCase().includes(filter))
             );
@@ -900,6 +908,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               case ColumnName.PROCESS:
                 isMatch = isMatch && (values.includes(data.processDisplayName)
                 || values.includes(data.process));
+                break;
+              case ColumnName.FLAVOR:
+                isMatch = isMatch && (values.includes(data.studyPodFlavor)
+                || values.includes(data.studyPodFlavor));
                 break;
               case ColumnName.STATUS:
                 if (data.creationStatus !== CreationStatus.CREATION_DONE){
