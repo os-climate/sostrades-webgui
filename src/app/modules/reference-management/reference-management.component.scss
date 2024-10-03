@@ -39,7 +39,7 @@
 
 
 
-.table {
+.table-reference {
   max-height: 100%;
   width: 100%;
   overflow-y: auto;
@@ -99,18 +99,6 @@ table td {
   border-collapse: separate;
   width: 100%;
   margin-bottom: 0 !important;
-}
-
-td.mat-mdc-cell:first-of-type,
-th.mat-mdc-header-cell:first-of-type,
-mat-footer-cell:first-of-type {
-  padding-left: 4px;
-}
-
-td.mat-mdc-cell:last-of-type,
-th.mat-mdc-header-cell:last-of-type,
-mat-footer-cell:last-of-type {
-  padding-right: 4px;
 }
 
 .PENDING {

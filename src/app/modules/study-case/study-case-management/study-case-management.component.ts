@@ -4,7 +4,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { CreationStatus, Study } from 'src/app/models/study.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData, FilterDialogData, StudyCaseCreateDialogData, EditionDialogData} from 'src/app/models/dialog-data.model';
+import { ValidationDialogData, StudyCaseModificationDialogData, UpdateEntityRightDialogData, FilterDialogData, StudyCaseCreateDialogData, EditionDialogData, PodSettingsDialogData} from 'src/app/models/dialog-data.model';
 import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/validation-dialog.component';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -34,6 +34,8 @@ import { Process } from 'src/app/models/process.model';
 import { StudyCaseCreationComponent } from '../study-case-creation/study-case-creation.component';
 import { DialogEditionName } from 'src/app/models/enumeration.model';
 import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
+import { FlavorsService } from 'src/app/services/flavors/flavors.service';
+import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 
 
 @Component({
@@ -72,13 +74,14 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     ColumnName.GROUP,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
-    ColumnName.TYPE,
-    ColumnName.STATUS
+    ColumnName.STATUS,
+    ColumnName.FLAVOR
   ];
   public selection = new SelectionModel<Study>(true, []);
   public columnName = ColumnName;
   public studyCount: number;
   public dataSourceStudies = new MatTableDataSource<Study>();
+  public showFlavors:boolean;
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
     this.dataSourceStudies.sort = v;
@@ -120,16 +123,30 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private processService: ProcessService,
     private userService: UserService,
     private studyCreationService: StudyCaseCreationService,
+    private flavorService: FlavorsService
   ) {
     this.isFavorite = true;
     this.isLoading = true;
     this.studyCount = 0;
     this.onCurrentStudyDeletedSubscription = null;
     this.onCurrentStudyEditedSubscription = null;
+    this.showFlavors = false;
 
   }
 
   ngOnInit(): void {
+    this.flavorService.checkIfHasFlavors().subscribe(hasFlavors=>{
+      //had the column flavor if there is flavors
+      if (hasFlavors){
+        const index = this.displayedColumns.indexOf(ColumnName.STATUS); // Trouver l'index de l'élément de référence
+
+        if (index !== -1) {
+          this.displayedColumns.splice(index+1, 0, ColumnName.FLAVOR); // Insérer l'élément à l'index trouvé
+        }
+      }
+      this.showFlavors = hasFlavors;
+
+    })
     if (this.getOnlyFavoriteStudy) {
       // remove selected column from the array
       const selectedColumn = this.displayedColumns.indexOf(ColumnName.SELECTED);
@@ -331,7 +348,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
          * Changes 23/09/2022
          * Call createStudyCase with 'null' as process and 'null' study_name to launch a non process and non reference intialized modal
          */
-        this.studyCreationService.showCreateStudyCaseDialog(null);
+        this.studyCreationService.showCreateStudyCaseDialog(null, null);
         }
     });
   }
@@ -411,13 +428,61 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateFlavor(study: Study){
+    this.flavorService.getAllFlavorsStudy().subscribe((flavorsList)=>{
+      
+    const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
+      dialogData.flavorsList = flavorsList;
+      dialogData.flavorsDescription = this.flavorService.flavorsListStudy;
+      dialogData.type = "Study";
+      dialogData.flavor = study.studyPodFlavor;
+      dialogData.checkReloadPod = true;
+        
+      const dialogRef = this.dialog.open(PodSettingsComponent, {
+        disableClose: false,
+        data: dialogData
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        const podData: PodSettingsDialogData = result as PodSettingsDialogData;
+        if (podData !== null && podData !== undefined) {
+          if (podData.cancel === false) {
+            this.studyCaseDataService.updateStudyFlavor(study.id,  podData.flavor, podData.doReload).subscribe({
+              next: (studyIsEdited) => {
+                  study.studyPodFlavor = podData.flavor;
+                  this.loadingDialogService.closeLoading();
+                  if (studyIsEdited && podData.doReload){
+                    this.socketService.updateStudy(study.id);
+                    this.snackbarService.showInformation(`Study ${study.name} has been succesfully updated`);
+                  }
+                  else if (studyIsEdited){
+                    this.snackbarService.showInformation(`Study ${study.name} has been succesfully updated, the change will take place after the next pod start.`);
+                  }
+                  
+              },
+              error: (errorReceived) => {
+                const error = errorReceived as SoSTradesError;
+                if (error.redirect) {
+                  this.loadingDialogService.closeLoading();
+                  this.snackbarService.showError(error.description);
+                } else {
+                  this.loadingDialogService.closeLoading();
+                  this.snackbarService.showError(`Error updating study-case: ${error.description}`);
+                }
+              }
+            });
+          }
+        }
+      });
+    });
+  }
+
   updateStudy(study: Study) {
     
     const dialogData: EditionDialogData = new EditionDialogData();
     dialogData.editionDialogName = DialogEditionName.EDITION_STUDY;
     dialogData.name = study.name;
     dialogData.groupId = study.groupId;
-    dialogData.flavor = study.studyPodFlavor;
 
     const dialogRef = this.dialog.open(EditionFormDialogComponent, {
       disableClose: false,
@@ -428,33 +493,37 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       const editStudyCaseData: EditionDialogData = result as EditionDialogData;
       if (editStudyCaseData !== null && editStudyCaseData !== undefined) {
         if (editStudyCaseData.cancel === false) {
-          // Close study if the loaded study is the same that the study edited
-          if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-            if (this.studyCaseDataService.loadedStudy.studyCase.id === study.id) {
-              this.studyCaseMainService.closeStudy(true);
-            }
-          }
-          this.loadingDialogService.showLoading(`Updating study ${editStudyCaseData.name}. Please wait`);
-          this.studyCaseDataService.updateStudy(study.id, editStudyCaseData.name, editStudyCaseData.groupId, editStudyCaseData.flavor).subscribe({
-            next: (studyIsEdited) => {
-              if (studyIsEdited) {
-                    this.socketService.updateStudy(study.id);
-                    this.loadingDialogService.closeLoading();
-                    this.snackbarService.showInformation(`Study ${editStudyCaseData.name} has been succesfully updated`);
-                    this.loadStudyManagementData();
-              }
-            },
-            error: (errorReceived) => {
-              const error = errorReceived as SoSTradesError;
-              if (error.redirect) {
-                this.loadingDialogService.closeLoading();
-                this.snackbarService.showError(error.description);
-              } else {
-                this.loadingDialogService.closeLoading();
-                this.snackbarService.showError(`Error updating study-case: ${error.description}`);
-              }
-            }
-          });
+         this._updateStudy(study.id, editStudyCaseData.name, editStudyCaseData.groupId);
+        }
+      }
+    });
+  }
+
+  _updateStudy(studyId, name, groupId){
+     // Close study if the loaded study is the same that the study edited
+     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      if (this.studyCaseDataService.loadedStudy.studyCase.id === studyId) {
+        this.studyCaseMainService.closeStudy(true);
+      }
+    }
+    this.loadingDialogService.showLoading(`Updating study ${name}. Please wait`);
+    this.studyCaseDataService.updateStudy(studyId, name, groupId).subscribe({
+      next: (studyIsEdited) => {
+        if (studyIsEdited) {
+              this.socketService.updateStudy(studyId);
+              this.loadingDialogService.closeLoading();
+              this.snackbarService.showInformation(`Study ${name} has been succesfully updated`);
+              this.loadStudyManagementData();
+        }
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.loadingDialogService.closeLoading();
+          this.snackbarService.showError(error.description);
+        } else {
+          this.loadingDialogService.closeLoading();
+          this.snackbarService.showError(`Error updating study-case: ${error.description}`);
         }
       }
     });
@@ -713,6 +782,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               }
           });
         return possibleStringValues;
+        case ColumnName.FLAVOR:
+          this.studyCaseDataService.studyManagementData.forEach(study => {
+            // Verify to  not push duplicate process
+            if (study.studyPodFlavor && !possibleStringValues.includes(study.studyPodFlavor)) {
+              possibleStringValues.push(study.studyPodFlavor);
+              possibleStringValues.sort((a, b) => (a < b ? -1 : 1));
+                }
+            });
+          return possibleStringValues;
         case ColumnName.STATUS:
         this.studyCaseDataService.studyManagementData.forEach(study => {
           
@@ -786,8 +864,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           case ColumnName.PROCESS:
             isMatch = data.processDisplayName.trim().toLowerCase().includes(filter) || data.process.trim().toLowerCase().includes(filter);
             break;
-          case ColumnName.TYPE:
-            isMatch = data.studyType.trim().toLowerCase().includes(filter);
+          case ColumnName.FLAVOR:
+            isMatch = data.studyPodFlavor.trim().toLowerCase().includes(filter) || data.studyPodFlavor.trim().toLowerCase().includes(filter);
             break;
           case ColumnName.STATUS:
             if (data.creationStatus !== CreationStatus.CREATION_DONE)
@@ -807,7 +885,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               data.repository.trim().toLowerCase().includes(filter) ||
               data.processDisplayName.trim().toLowerCase().includes(filter) ||
               data.process.trim().toLowerCase().includes(filter) ||
-              data.studyType.trim().toLowerCase().includes(filter) ||
+              data.studyPodFlavor.trim().toLowerCase().includes(filter) ||
               (data.creationStatus !== CreationStatus.CREATION_DONE && data.creationStatus.trim().toLowerCase().includes(filter)) ||
               (data.creationStatus === CreationStatus.CREATION_DONE && data.executionStatusLabel.trim().toLowerCase().includes(filter))
             );
@@ -830,6 +908,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               case ColumnName.PROCESS:
                 isMatch = isMatch && (values.includes(data.processDisplayName)
                 || values.includes(data.process));
+                break;
+              case ColumnName.FLAVOR:
+                isMatch = isMatch && (values.includes(data.studyPodFlavor)
+                || values.includes(data.studyPodFlavor));
                 break;
               case ColumnName.STATUS:
                 if (data.creationStatus !== CreationStatus.CREATION_DONE){

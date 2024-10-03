@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { ColumnName } from 'src/app/models/enumeration.model';
-import { FilterDialogData, PodSettingsDialogData } from 'src/app/models/dialog-data.model';
+import { FilterDialogData, PodSettingsDialogData, StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
 import { ProcessGenerationStatus } from 'src/app/models/reference-generation-status-observer.model';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
@@ -19,6 +19,10 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { UserService } from 'src/app/services/user/user.service';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
+import { Process } from 'src/app/models/process.model';
+import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
+import { StudyCaseCreationComponent } from '../study-case/study-case-creation/study-case-creation.component';
+import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 
 @Component({
   selector: 'app-reference-management',
@@ -35,6 +39,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line max-len
   public displayedColumns = [
     ColumnName.REGENERATION_STATUS,
+    ColumnName.STUDY_CREATION,
     ColumnName.NAME,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
@@ -83,7 +88,10 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     private snackbarService: SnackbarService,
     private flavorsService: FlavorsService,
     private dialog: MatDialog,
-    private referenceGenerationObserverService: ReferenceGenerationObserverService
+    private referenceGenerationObserverService: ReferenceGenerationObserverService,
+    private studyCreationService: StudyCaseCreationService,
+    private loadingDialogService: LoadingDialogService,
+
   ) {
     this.isLoading = true;
     this.isAllReferencesRegenerating = false;
@@ -234,6 +242,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
       dialogData.flavorsList = this.flavorsList;
       dialogData.type = "Generation reference";
       dialogData.flavor = flavor;
+      dialogData.flavorsDescription = this.flavorsService.flavorsListExec;
         
       const dialogRef = this.dialog.open(PodSettingsComponent, {
         disableClose: false,
@@ -501,6 +510,20 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+  createStudyFromReference(usecase: Study) {
+    let selectedProcess: Process;
+    if (this.processService.processManagemenentData === null || this.processService.processManagemenentData === undefined
+      || this.processService.processManagemenentData.length === 0) {
+      this.loadingDialogService.showLoading(`Retrieving of "${usecase.process}" in ontology processes list`);
+    }
+    this.processService.getUserProcesses(false).subscribe({
+      next: (processes) => {
+        selectedProcess = processes.find(p => p.processId === usecase.process);
+        this.loadingDialogService.closeLoading();
+        this.studyCreationService.showCreateStudyCaseDialog(selectedProcess, usecase);
+        }
+    })
   }
 
 }

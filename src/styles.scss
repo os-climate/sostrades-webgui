@@ -99,7 +99,7 @@ body {
 }
 
 .mat-mdc-cell {
-  padding: 3px !important;
+  padding: 10px 16px 0px 16px !important;
 }
 
 .mat-mdc-header-cell {
@@ -438,6 +438,12 @@ div.tooltip {
 .filter-form-field {
   margin-right: 10px;
   width: 120px;
+}
+.tables {
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  margin-bottom: 0 !important;
 }
 
 /* Markdown */
