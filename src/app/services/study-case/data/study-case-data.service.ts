@@ -145,11 +145,11 @@ export class StudyCaseDataService extends DataHttpService {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
   }
 
-  updateStudyFlavor(studyId: number, flavor: string, restartPod: boolean): Observable<boolean> {
+  updateStudyFlavor(studyId: number, flavor: string): Observable<boolean> {
     const payload = {
       study_id : studyId,
       flavor: flavor,
-      restart: restartPod
+      restart: true
     };
     const url = `${this.apiRoute}/${studyId}/update-study-flavor`;
     return this.http.post<boolean>(url, payload, this.options).pipe(map(
