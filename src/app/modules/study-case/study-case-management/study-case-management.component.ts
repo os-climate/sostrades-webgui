@@ -436,7 +436,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       dialogData.flavorsDescription = this.flavorService.flavorsListStudy;
       dialogData.type = "Study";
       dialogData.flavor = study.studyPodFlavor;
-      dialogData.checkReloadPod = true;
         
       const dialogRef = this.dialog.open(PodSettingsComponent, {
         disableClose: false,
@@ -447,17 +446,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         const podData: PodSettingsDialogData = result as PodSettingsDialogData;
         if (podData !== null && podData !== undefined) {
           if (podData.cancel === false) {
-            this.studyCaseDataService.updateStudyFlavor(study.id,  podData.flavor, podData.doReload).subscribe({
+            this.studyCaseDataService.updateStudyFlavor(study.id,  podData.flavor).subscribe({
               next: (studyIsEdited) => {
                   study.studyPodFlavor = podData.flavor;
                   this.loadingDialogService.closeLoading();
-                  if (studyIsEdited && podData.doReload){
+                  if (studyIsEdited){
                     this.socketService.updateStudy(study.id);
                     this.snackbarService.showInformation(`Study ${study.name} has been succesfully updated`);
                   }
-                  else if (studyIsEdited){
-                    this.snackbarService.showInformation(`Study ${study.name} has been succesfully updated, the change will take place after the next pod start.`);
-                  }
+                  
                   
               },
               error: (errorReceived) => {

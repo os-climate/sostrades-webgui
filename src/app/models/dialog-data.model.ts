@@ -239,8 +239,6 @@ export class PodSettingsDialogData extends AbstractDialogData {
   type:string;
   flavorsList : string[];
   flavorsDescription: Flavor[];
-  checkReloadPod:boolean;
-  doReload:boolean;
 
   public constructor() {
     super();
@@ -248,8 +246,6 @@ export class PodSettingsDialogData extends AbstractDialogData {
     this.type = '';
     this.flavorsList = [];
     this.flavorsDescription = [];
-    this.checkReloadPod = false;
-    this.doReload = false;
   }
 }
 

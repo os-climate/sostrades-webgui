@@ -132,9 +132,14 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.flavorsService.getAllFlavorsExec().subscribe(flavorList =>
       {
         if (flavorList !== null && flavorList !== undefined && flavorList.length > 0){
-         this.hasFlavors = true;
-         this.flavorsList = flavorList;
-        
+          this.hasFlavors = true;
+          this.flavorsList = flavorList;
+          //had the column flavor if there is flavors
+            const index = this.displayedColumns.indexOf(ColumnName.PROCESS); // find reference column
+
+            if (index !== -1) {
+              this.displayedColumns.splice(index+1, 0, ColumnName.FLAVOR); //Add column at the index
+            }
         }
       }
     );
@@ -255,6 +260,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
             if (podData.cancel === false) {
               this.referenceDataService.updateGenerateReferenceFlavor(study.regenerationId, podData.flavor).subscribe(
                 studyIsUpdated => {
+                    study.generationPodFlavor = podData.flavor;
                     this.snackbarService.showInformation(`Reference ${study.name} has been succesfully updated.`);
                   }, errorReceived => {
                     this.snackbarService.showError('Error updating reference\n' + errorReceived.description);

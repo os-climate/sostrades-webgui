@@ -162,6 +162,19 @@
           </td>
         </ng-container>
 
+        <!-- Process Column -->
+        <ng-container [matColumnDef]="columnName.FLAVOR" *ngIf="hasFlavors">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Execution Pod Size
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            style="word-wrap: break-word; max-width: 230px"
+          >
+            <span >{{ element.generationPodFlavor }}</span>
+          </td>
+        </ng-container>
+
         <!-- CreationDate Column -->
         <ng-container [matColumnDef]="columnName.CREATION_DATE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>

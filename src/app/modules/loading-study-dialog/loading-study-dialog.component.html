@@ -61,13 +61,14 @@
         Loading is almost finished, cancel button is now disable to terminate the process.
       </div>
     </div>
+
     <div mat-dialog-actions class="button-error" *ngIf="isInError">
       
       <div class="error-message">
         <mat-icon class="icon-error-message">error</mat-icon>
         {{errorMessage}}
       </div>
-      <button 
+      <button class="button-end"
         id="close"
         mat-raised-button
         color="primary" 
@@ -76,5 +77,5 @@
       </button>
       
     </div>
-  </div>
+</div>
   
