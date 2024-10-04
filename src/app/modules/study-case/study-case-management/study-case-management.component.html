@@ -159,7 +159,7 @@
             <a routerLink="/study/{{element.id}}"
               class="link-study-title"
               [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
-              [matTooltip]="element.name"
+              [matTooltip]="'/study/' + element.id"
               matTooltipPosition="right"
               >
               {{ element.name }}
