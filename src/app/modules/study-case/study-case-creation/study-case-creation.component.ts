@@ -47,6 +47,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public title: string;
   public flavorsList: string[];
   public hasFlavors: boolean;
+  public loadingName: boolean;
 
 
   readonly EMPTY_STUDY_NAME = 'Empty Study';
@@ -77,6 +78,7 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.title = 'Create new study';
     this.flavorsList = [];
     this.hasFlavors = false;
+    this.loadingName = false;
 
 
     /**
@@ -438,17 +440,32 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     if(selectedRef.name !== this.EMPTY_STUDY_NAME) {
       refName = selectedRef.name;
     }
+    this.loadingName = true;
+    this.studyCaseDataService.check_study_already_exist(this.createStudyForm.value.studyName, this.createStudyForm.value.groupId).subscribe({
+      next: (isExist) => {
+        if(!isExist) {
+          this.data.studyType = selectedRef.studyType;
+          this.data.studyId = selectedRef.id;
+          this.data.studyName = this.createStudyForm.value.studyName;
+          this.data.reference = refName;
+          this.data.groupId = this.createStudyForm.value.groupId;
+          this.data.selectedFlavor = this.createStudyForm.value.flavor;
 
-    this.data.studyType = selectedRef.studyType;
-    this.data.studyId = selectedRef.id;
-    this.data.studyName = this.createStudyForm.value.studyName;
-    this.data.reference = refName;
-    this.data.groupId = this.createStudyForm.value.groupId;
-    this.data.selectedFlavor = this.createStudyForm.value.flavor;
+          this.data.process = this.process;
 
-    this.data.process = this.process;
-
-    this.dialogRef.close(this.data);
+          this.dialogRef.close(this.data);
+        } else {
+          this.createStudyForm.get('studyName').setErrors({
+            studyExists: `The following study case name "${this.createStudyForm.value.studyName}" already exist in the database for the selected group`
+          }); 
+        }
+        this.loadingName = false; 
+        },
+        error: (errorReceived) => {
+          this.snackbarService.showError("Error creating study\n" + errorReceived.description);
+          this.loadingName = false; 
+        }
+      });
   }
 
   onCancelClick() {

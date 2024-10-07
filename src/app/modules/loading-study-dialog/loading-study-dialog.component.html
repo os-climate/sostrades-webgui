@@ -1,5 +1,5 @@
 <div class="flex-container">
-    <h1 mat-dialog-title>{{title}}</h1>
+    <h1 mat-dialog-title [matTooltip]="tootipTitle.length > 0 ? tootipTitle :''">{{title}}</h1>
     
     <div class="progress-container" >
       <div *ngFor="let step of steps;" class="inline-container">
