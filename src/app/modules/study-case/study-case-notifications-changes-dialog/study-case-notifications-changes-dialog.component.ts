@@ -41,7 +41,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
     );
     if (this.hasChangesFromDataset) {
       this.title = this.data.type == CoeditionType.EXPORT?"Dataset export": "Dataset import";
-      this.displayedColumns.push('datasetConnectorId', 'datasetId');
+      this.displayedColumns.push('datasetId');
       this.dialogRef.updateSize(null,'700px');
     }
     else {
