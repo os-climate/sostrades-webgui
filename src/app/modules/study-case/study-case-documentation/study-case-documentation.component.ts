@@ -338,29 +338,16 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
           link.removeAttribute('href');
         });
     
-        // Add custom CSS rules for better page-break handling in PDF
         // Improve formatting for references (adding margin for better readability)
         // Style adjustments for paragraphs (handling long words for better breaks)
         // Style adjustments for table headers
         // Style adjustments for images
         const style = document.createElement('style');
         style.textContent = `
-          p, li {
-            page-break-inside: avoid; // Prevent breaking paragraphs inside a page
-          }
-          span.katex-display {
-            page-break-inside: avoid; // Prevent breaking math formulas inside a page
-          }
-          
-          h1, h2, h3, h4, h5, h6 {
-            page-break-after: avoid; // Prevent breaking after headings
-            page-break-inside: avoid; // Prevent breaking inside headings
-          }
           ol li span {
             margin-left: 20px
           }
           table {
-            page-break-inside: avoid; // Prevent breaking tables inside a page
             width: 100%; // Full width for tables
             border-collapse: collapse; // Collapse borders
           }
@@ -374,7 +361,6 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
           img {
             max-width: 700px; // Limit image width
             height: auto; // Maintain aspect ratio
-            page-break-inside: avoid; // Prevent breaking images inside a page
           }
         `;
         // Append the style rules to the cloned element
@@ -384,6 +370,8 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
         const opt = {
           margin: [10, 0, 15, 0],
           filename: `${label}.pdf`,
+          pagebreak: { avoid: ["p", "span.katex-display", "table", "h1", "h2", "h3", "h4", "h5", "h6", "img", "li"]
+          },
           image: { type: 'jpeg', quality: 1 },
           html2canvas: { scale: 2 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
