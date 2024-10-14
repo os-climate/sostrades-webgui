@@ -80,6 +80,7 @@ table td {
   border-collapse: separate;
   width: 100%;
   margin-bottom: 0 !important;
+  table-layout: fixed;
 }
 
 .container-table {
@@ -100,7 +101,7 @@ th.mat-mdc-header-cell:last-of-type {
 }
 
 .mat-column-name {
-  width: 10% !important;
+  width: 30% !important;
 }
 
 .mat-column-oldValue {
@@ -111,10 +112,6 @@ th.mat-mdc-header-cell:last-of-type {
   width: 20% !important;
 }
 
-.mat-column-datasetConnectorId {
-  width: 15% !important;
-}
-
 .mat-column-datasetId {
-  width: 15% !important;
+  width: 30% !important;
 }

@@ -129,6 +129,18 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  check_study_already_exist(studyName: string, groupId: number) {
+    const params = new HttpParams()
+    .set('studyName', studyName)
+    .set('groupId', groupId);
+
+    return this.http.get<Study>(`${this.apiRoute}/exist`, { params: params }).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+
 
   addFavoriteStudy(studyId: number, userId: number): Observable<StudyFavorite> {
     const payload = {
