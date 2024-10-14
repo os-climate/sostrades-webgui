@@ -8,6 +8,9 @@ import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
+import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
+import * as html2pdf from 'html2pdf.js';
+
 
 @Component({
   selector: 'app-study-case-documentation',
@@ -23,6 +26,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   public hasDocumentation: boolean;
   public showBookmarks: boolean;
   private hasDocumentationSubject = new BehaviorSubject<boolean>(false);
+  public isPDFGenerating: boolean;
 
   public options: KatexOptions = {
     delimiters: [
@@ -41,12 +45,15 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     public studyCaseMainService:StudyCaseMainService,
     public studyCaseDataService:StudyCaseDataService,
     private el: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private loadingDialogService: LoadingDialogService
     ) {
     this.hasDocumentation = false;
     this.showBookmarks = false;
     this.documentation = [];
+    this.isPDFGenerating = false;
   }
+
   ngOnChanges (): void {
     
     this.updateDocumentation();  
@@ -291,12 +298,118 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
           const isProcessed = content.includes(`](${match})`);
           return isProcessed ? match : `<a href="${match}" target="_blank">${match}</a>`;
         });
-      footnoteList += `<li class="footnote-item">${formattedContent} ${backrefs.join(' ')}</li>`;
+      footnoteList += `<li class="footnote-item"><span>${formattedContent} ${backrefs.join(' ')}</span></li>`;
     }
     footnoteList += '</ol>';
     
     return markdown + footnoteList
-}
+  }
+
+  async generatePDF(disciplineName: string) {
+    // Display the loading page
+    this.loadingDialogService.showLoading(`Generating pdf`);
+
+    // Set the flag to indicate that the PDF is being generated
+    this.isPDFGenerating = true;
+
+    // Retrieve label of displine from ontology
+    let label = disciplineName;
+    const discipline = this.ontologyService.getDiscipline(disciplineName);
+    if (discipline && discipline.label) {
+      label = discipline.label
+    }
+
+    try {
+      // Get the element that contains the markdown content
+      const element = document.getElementById('markdown');
+      if (element) {
+        // Create a deep copy of the element to avoid affecting the original DOM
+        const clonedElement = element.cloneNode(true) as HTMLElement;
+    
+        // Remove `href` from footnote backreferences to disable linking
+        const footnoteLinks = clonedElement.querySelectorAll('a.footnote-backref');
+        footnoteLinks.forEach((link: HTMLAnchorElement) => {
+          link.removeAttribute('href');
+        });
+    
+        // Remove `href` from footnote references to disable linking
+        const footnoteRefs = clonedElement.querySelectorAll('sup.footnote-ref > a');
+        footnoteRefs.forEach((link: HTMLAnchorElement) => {
+          link.removeAttribute('href');
+        });
+    
+        // Add custom CSS rules for better page-break handling in PDF
+        // Improve formatting for references (adding margin for better readability)
+        // Style adjustments for paragraphs (handling long words for better breaks)
+        // Style adjustments for table headers
+        // Style adjustments for images
+        const style = document.createElement('style');
+        style.textContent = `
+          p, li {
+            page-break-inside: avoid; // Prevent breaking paragraphs inside a page
+          }
+          span.katex-display {
+            page-break-inside: avoid; // Prevent breaking math formulas inside a page
+          }
+          
+          h1, h2, h3, h4, h5, h6 {
+            page-break-after: avoid; // Prevent breaking after headings
+            page-break-inside: avoid; // Prevent breaking inside headings
+          }
+          ol li span {
+            margin-left: 20px
+          }
+          table {
+            page-break-inside: avoid; // Prevent breaking tables inside a page
+            width: 100%; // Full width for tables
+            border-collapse: collapse; // Collapse borders
+          }
+          p {
+            word-break: break-word;
+          }
+          th, td {
+            border: 1px solid #dfe2e5; 
+            padding: 6px;
+          }
+          img {
+            max-width: 700px; // Limit image width
+            height: auto; // Maintain aspect ratio
+            page-break-inside: avoid; // Prevent breaking images inside a page
+          }
+        `;
+        // Append the style rules to the cloned element
+        clonedElement.appendChild(style);
+  
+        // PDF generation options
+        const opt = {
+          margin: [10, 0, 15, 0],
+          filename: `${label}.pdf`,
+          image: { type: 'jpeg', quality: 1 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        };
+  
+        // Generate the PDF asynchronously
+        await new Promise<void>((resolve) => {
+          setTimeout(() => {
+            html2pdf().from(clonedElement).set(opt).save().then(() => {
+              resolve();
+            });
+          }, 0);
+        });
+        
+      }
+    } catch (error) {
+      this.snackbarService.showError(error);
+      this.loadingDialogService.closeLoading();
+    } finally {
+      // Reset the flag after the generation is complete (whether successful or not)
+      this.isPDFGenerating = false;
+      this.snackbarService.showInformation(`Documentation of ${label} has been succefully formated into pdf`);
+      this.loadingDialogService.closeLoading();
+    }
+  }
+  
   
   onClick(event, identifier) {
     event.preventDefault();
