@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
+import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-visualisation-coupling-graph',
@@ -22,6 +23,7 @@ export class CouplingGraphComponent implements OnInit {
 
   constructor(private studyCaseDataService: StudyCaseDataService,
               private visualisationService: VisualisationService,
+              private snackbarService: SnackbarService,
               private loggerService: LoggerService) {
     this.isLoading = true;
 
@@ -76,9 +78,9 @@ export class CouplingGraphComponent implements OnInit {
            
             this.isLoading = false;
           },
-          error: (err: any) => {
-            console.log(err);
+          error: (err) => {
             this.isLoading = false;
+            this.snackbarService.showError(err.description);
           }
         });
       } else {
