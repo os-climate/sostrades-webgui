@@ -32,25 +32,21 @@
       <div class="markdown-body markdown-container" >
         <div *ngFor="let documentItem of documentation" >
           <div id="button-pdf-refresh">
-            <button
+            <span
               id="refresh"
               mat-raised-button
-              color="accent"
               style="text-align: right;"
               matTooltip="Reload markdown from file"
               (click)="refresh(documentItem)">
-              Refresh
-            </button>
-            <button
+              <i class="fa-solid fa-rotate fa-fw cursor-pointer"></i>
+            </span>
+            <span
               id="download-pdf"
               mat-raised-button
-              color="accent"
               matTooltip="Download markdown into pdf format"
-              [disabled]="isPDFGenerating"
               (click)="generatePDF(documentItem.name)">
-              <span>PDF
-              <i class="fa-solid fa-file-arrow-down"></i></span>
-            </button>
+              <i class="fa-solid fa-file-arrow-down cursor-pointer"></i>
+            </span>
           </div>
           <div class="markdown" id="markdown">
             
