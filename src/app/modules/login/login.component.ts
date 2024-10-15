@@ -89,8 +89,7 @@ export class LoginComponent implements OnInit {
           next: (keycloakAvailable) => {  
             
             if (!keycloakAvailable) {
-              this.isLocalPlatform = true;
-              this.loginWithCredential = true;
+              
               this.showLogin = true;
               this.samlService.getSSOUrl().subscribe(ssoUrl => {
                 this.ssoUrl = ssoUrl;
@@ -103,6 +102,7 @@ export class LoginComponent implements OnInit {
                     this.showGitHubLogin = response;
                     if(!this.showGitHubLogin){
                       this.loginWithCredential = true;
+                      this.isLocalPlatform = true;
                     }
                     this.showLogin = true;
                   }, error => {
