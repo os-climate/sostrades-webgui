@@ -30,7 +30,7 @@
     "d3-graphviz": "5.2.0",
     "d3-selection": "3.0.0",
     "engine.io-parser": "5.2.1",
-    "html2pdf.js": "^0.10.2",
+    "html2pdf.js": "0.10.2",
     "jspreadsheet-ce": "4.13.4",
     "jsuites": "5.0.30",
     "katex": "^0.16.9",
