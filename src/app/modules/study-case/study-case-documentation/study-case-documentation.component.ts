@@ -370,7 +370,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
         const opt = {
           margin: [10, 0, 15, 0],
           filename: `${label}.pdf`,
-          pagebreak: { avoid: ["p", "span.katex-display", "table", "h1", "h2", "h3", "h4", "h5", "h6", "img", "li"]
+          pagebreak: { avoid: ["p", "span.katex-display", "table", "h1", "h2", "h3", "h4", "h5", "h6", "img", "li", ".mermaid"]
           },
           image: { type: 'jpeg', quality: 1 },
           html2canvas: { scale: 2 },
