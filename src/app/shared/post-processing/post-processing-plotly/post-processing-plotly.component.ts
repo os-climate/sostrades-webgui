@@ -125,7 +125,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
             icon: legendIcon,
             click: () => {
               showLegend = !showLegend;
-              Plotly.restyle(this.PlotlyPlaceHolder.nativeElement, { showlegend: showLegend });
+              Plotly.relayout(this.PlotlyPlaceHolder.nativeElement, { showlegend: showLegend });
             }
           },
           // Set standard plotly toolbar icons
@@ -145,7 +145,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
             icon: legendIcon,
             click: () => {
               showLegend = !showLegend;
-              Plotly.restyle(this.PlotlyPlaceHolder.nativeElement, { showlegend: showLegend });
+              Plotly.relayout(this.PlotlyPlaceHolder.nativeElement, { showlegend: showLegend });
             }
           },
           // Restore standard plotly toolbar icons
