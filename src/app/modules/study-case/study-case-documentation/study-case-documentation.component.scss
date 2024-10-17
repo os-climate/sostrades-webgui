@@ -58,9 +58,14 @@ ol li {
 }
 #button-pdf-refresh {
   position: fixed;
-  width: 9%;
+  min-width: 50px;
+  max-width: 60px;
   display: flex;
   justify-content: space-between;
-  margin-left: 40px;
-  margin-top: 2px;
+  right: 40px;
+  margin-top: -40px;
+}
+
+#refresh, #download-pdf {
+  color: white;
 }

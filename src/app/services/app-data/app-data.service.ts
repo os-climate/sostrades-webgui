@@ -287,7 +287,7 @@ export class AppDataService extends DataHttpService {
 
     // // Display loading message
     this.loadingStudyDialogService
-      .showLoadingWithCancelobserver(`Switching study case ${studyName} to edition mode`)
+      .showLoadingWithCancelobserver(`Switching to edition mode`)
       .subscribe((isCancel) => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
