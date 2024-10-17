@@ -3,6 +3,7 @@ import { Graphviz, graphviz } from 'd3-graphviz';
 import * as d3 from 'd3';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
+import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 
 
@@ -24,7 +25,8 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
-    private visualisationService: VisualisationService
+    private visualisationService: VisualisationService,
+    private snackbarService: SnackbarService
   ) { this.isLoading = true; }
 
   ngOnInit(): void {
@@ -33,8 +35,9 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
         this.dotString = res['dotString'];
         this.initGraph();
       },
-      error: (err: any) => {
-        console.log(err);
+      error: (err) => {
+        this.isLoading = false;
+        this.snackbarService.showError(err.description);
       }
     });
   }
