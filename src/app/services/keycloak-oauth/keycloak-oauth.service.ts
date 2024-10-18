@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
@@ -22,5 +22,9 @@ export class KeycloakOAuthService extends DataHttpService {
 
   getKeycloakOAuthUrl(): Observable<string> {
     return this.http.get<string>(`${this.apiRoute}/authenticate`);
-  } 
+  }
+  
+  logout_url(): Observable<string> {
+    return this.http.get<string>(`${this.apiRoute}/logout-url`);
+  }
 }

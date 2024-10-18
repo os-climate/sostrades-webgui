@@ -18,6 +18,7 @@ import { ContactDialogComponent } from '../contact-dialog/contact-dialog.compone
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { RepositoryTraceabilityDialogData } from 'src/app/models/dialog-data.model';
 import { RepositoryTraceabilityDialogComponent } from '../ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
+import { KeycloakOAuthService } from 'src/app/services/keycloak-oauth/keycloak-oauth.service';
 
 
 @Component({
@@ -48,6 +49,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private auth: AuthService,
+    private keycloakOauthService:KeycloakOAuthService,
     private headerService: HeaderService,
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
@@ -346,6 +348,52 @@ export class HeaderComponent implements OnInit {
     
 
   logout() {
+    this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe({
+      next: (keycloakAvailable) => {  
+        
+        if (!keycloakAvailable) {
+          this.deauthenticate();
+          
+        }
+        else{
+          this.keycloakOauthService.logout_url().subscribe({
+            next: (keycloakLogoutURL) => {
+              this.auth.deauthenticate().subscribe({
+                next: () => {
+                  // logout from keycloak
+                  document.location.href = keycloakLogoutURL;
+                },
+                error: (error) => {
+                  if (error.statusCode == 502 || error.statusCode == 0) {
+                    this.snackbarService.showError('No response from server');
+                  } else {
+                    this.snackbarService.showError('Error at logout : ' + error.statusText);
+                  }
+                }
+              });
+            },
+            error: (error) => {
+              if (error.statusCode == 502 || error.statusCode == 0) {
+                this.snackbarService.showError('No response from server');
+              } else {
+                this.snackbarService.showError('Error at logout : ' + error.statusText);
+              }
+            }
+          });
+
+        }
+      },
+      error:  (error) => {
+        this.snackbarService.showError(error.description);
+        if (!error.redirect) {
+          this.router.navigate([Routing.LOGIN]);
+        }
+      }
+
+    });
+  }
+
+  deauthenticate(){
     this.auth.deauthenticate().subscribe({
       next: () => {
         this.router.navigate([Routing.LOGIN]);
