@@ -15,6 +15,7 @@ export class LoadingStudyDialogComponent implements OnInit {
   public isInError: boolean;
   public errorMessage: string;
   public tootipTitle: string;
+  public tooltipErrorMessage: string;
 
   public steps = [
     { 
@@ -66,6 +67,12 @@ export class LoadingStudyDialogComponent implements OnInit {
 
   setError(error:string){
     this.errorMessage = error;
+    if (error.length > 90) {
+        this.errorMessage = error.slice(0, 90) + '...';
+        this.tooltipErrorMessage = error;  
+    } 
+    
+    
     this.dialogRef.updateSize('260');
     this.isInError = true;
   }
