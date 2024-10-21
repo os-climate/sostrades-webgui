@@ -46,6 +46,7 @@ export class AppDataService extends DataHttpService {
     private studyCaseDataService: StudyCaseDataService,
     private studyCaseMainService: StudyCaseMainService,
     private postProcessingService: PostProcessingService,
+    private studyCasePostProcessingService: StudyCasePostProcessingService,
     private snackbarService: SnackbarService,
     private loadingStudyDialogService: LoadingStudyDialogService,
     private loggerService: LoggerService,
@@ -95,12 +96,22 @@ export class AppDataService extends DataHttpService {
                 if (!loadingCanceled){
                   // Après la création, charger l'étude dans le post-traitement
                   // Cela doit être fait après la fin de la création, sinon le chargement ne peut pas être effectué
-                  
+                  this.studyCasePostProcessingService.loadStudy(loadedStudy.studyCase.id, false).subscribe({
+                    next: (isLoaded) => {
                       if (!loadingCanceled){
                         // Charger les derniers éléments de l'étude et mettre à jour l'étude chargée actuellement
                         this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe();
                       }
-                    
+                    },
+                    error: (errorReceived) => {
+                      
+                      this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study",()=> {
+                        this.onStudyCreated.emit(allocation.studyCaseId);
+                        
+                        isStudyCreated(false);
+                      });
+                  }
+                  });
                 }
               },
               error: (errorReceived) => {
@@ -162,12 +173,17 @@ export class AppDataService extends DataHttpService {
                   // Après la création, charger l'étude dans le post-traitement
                   // Cela doit être fait après la fin de la création, sinon le chargement ne peut pas être effectué
                   loadedStudy = loadedStudy as LoadedStudy;
-                  
+                  this.studyCasePostProcessingService.loadStudy(loadedStudy.studyCase.id, false).subscribe({
+                    next: (isLoaded) => {
                       if(!loadingCanceled){
                         // Charger les derniers éléments de l'étude et mettre à jour l'étude chargée actuellement
                         this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe();
                       }
-                    
+                    },
+                    error: (errorReceived) => {
+                      this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case",()=> isStudyCreated(false));
+                    }
+                  });
                 }
               },
               error: (errorReceived) => {
@@ -332,9 +348,9 @@ export class AppDataService extends DataHttpService {
     if (isstudyNeedLoaded) {
       loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, false);
     } 
-    
-    combineLatest([loadedStudy$]).subscribe({
-      next: ([resultLoadedStudy]) => {
+    const studyCasePostProcessing$ = this.studyCasePostProcessingService.loadStudy(studyId, false);
+    combineLatest([loadedStudy$, studyCasePostProcessing$]).subscribe({
+      next: ([resultLoadedStudy, isLoaded]) => {
         if (isstudyNeedLoaded) {
           loadedStudy = resultLoadedStudy as LoadedStudy;
         }
