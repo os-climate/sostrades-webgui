@@ -276,7 +276,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.showDocumentationContent = false;
 
 
-      if (event.tab.textLabel === 'Post processing') {
+      if (event.tab.textLabel === 'Charts') {
         this.showPostProcessingContent = true;
       } else if (event.tab.textLabel === 'Visualisation') {
         this.showVisualisationContent = true;
