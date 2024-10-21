@@ -933,7 +933,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.studyCaseLoadingService.updateStudyCaseDataService(loadedStudy);
       this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
       //reload study for post processing
-      
+      this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false).subscribe({
+        next: (response) => {
           //send coedition reload
           this.socketService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id);
       
@@ -949,7 +950,17 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       
           this.snackbarService.showInformation('Study case successfully reloaded');
           this.loadingDialogService.closeLoading();
-        
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError('Study case reloading failed : ' + error.description);
+          }
+        }
+      });
     });
   }
 
