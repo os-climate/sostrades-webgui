@@ -159,7 +159,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.showView = true;
       this.showSearch = false;
-      // Check  study status to display or not post processing
+      // Check  study status to display or not charts
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
         this.showPostProcessing = true;
         // this.showDashboard = true;
@@ -178,7 +178,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.showDataValidation = false;
         // this.showDashboard = false;
 
-        // Study is loaded without data management, triggering post processing display
+        // Study is loaded without data management, triggering charts display
         this.showPostProcessingContent = true;
       } else {
         this.showDataManagement = true;
