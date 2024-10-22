@@ -302,7 +302,7 @@ export class AppDataService extends DataHttpService {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
           if(!loadingCanceled){ 
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
-            this.studyCaseMainService.loadStudy(studyId, true, false).subscribe({
+            this.studyCaseMainService.loadStudy(studyId, true, true).subscribe({
               next: (loadedStudy) => {
                 if(!loadingCanceled){ 
                   this.postProcessingService.addPostProcessingAfterSwitchEditionMode(loadedStudy);
