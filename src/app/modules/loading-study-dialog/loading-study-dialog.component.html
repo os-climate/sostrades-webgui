@@ -66,7 +66,7 @@
       
       <div class="error-message">
         <mat-icon class="icon-error-message">error</mat-icon>
-        {{errorMessage}}
+        <span [matTooltip]="tooltipErrorMessage.length > 0 ? tooltipErrorMessage :''">{{errorMessage}}</span>
       </div>
       <button class="button-end"
         id="close"

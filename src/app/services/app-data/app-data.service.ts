@@ -45,8 +45,8 @@ export class AppDataService extends DataHttpService {
     private studyCaseLoadingService: StudyCaseLoadingService,
     private studyCaseDataService: StudyCaseDataService,
     private studyCaseMainService: StudyCaseMainService,
-    private studyCasePostProcessingService: StudyCasePostProcessingService,
     private postProcessingService: PostProcessingService,
+    private studyCasePostProcessingService: StudyCasePostProcessingService,
     private snackbarService: SnackbarService,
     private loadingStudyDialogService: LoadingStudyDialogService,
     private loggerService: LoggerService,
@@ -302,7 +302,7 @@ export class AppDataService extends DataHttpService {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
           if(!loadingCanceled){ 
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
-            this.studyCaseMainService.loadStudy(studyId, true, false).subscribe({
+            this.studyCaseMainService.loadStudy(studyId, true, true).subscribe({
               next: (loadedStudy) => {
                 if(!loadingCanceled){ 
                   this.postProcessingService.addPostProcessingAfterSwitchEditionMode(loadedStudy);
@@ -349,7 +349,6 @@ export class AppDataService extends DataHttpService {
       loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, false);
     } 
     const studyCasePostProcessing$ = this.studyCasePostProcessingService.loadStudy(studyId, false);
-    
     combineLatest([loadedStudy$, studyCasePostProcessing$]).subscribe({
       next: ([resultLoadedStudy, isLoaded]) => {
         if (isstudyNeedLoaded) {
