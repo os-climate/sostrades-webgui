@@ -68,13 +68,16 @@
         <mat-icon class="icon-error-message">error</mat-icon>
         <span [matTooltip]="tooltipErrorMessage.length > 0 ? tooltipErrorMessage :''">{{errorMessage}}</span>
       </div>
-      <button class="button-end"
+      <div style="text-align: center;"> 
+        <button
         id="close"
         mat-raised-button
         color="primary" 
         (click)="onCancelClick()" >
         Close
       </button>
+    </div>
+      
       
     </div>
 </div>
