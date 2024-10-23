@@ -37,6 +37,7 @@ export class LoadingStudyDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: LoadingStudyDialogData,
   ) {
     this.tootipTitle = ""
+    this.tooltipErrorMessage = ""
   }
 
   ngOnInit(): void {
