@@ -66,12 +66,11 @@
           progressText="Loading models list"
         ></app-progress-bar>
       </div>
-      <div class="table" *ngIf="!isLoading">
+      <div class="tables" *ngIf="!isLoading">
   
         <table
           mat-table
           #table
-          class="table"
           [dataSource]="dataSourceModelStatus"
           matSort
         >

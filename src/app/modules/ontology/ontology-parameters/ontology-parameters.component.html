@@ -66,10 +66,9 @@
           progressText="Loading parameters list"
         ></app-progress-bar>
       </div>
-      <div class="table">
+      <div class="tables">
         <table
           mat-table
-          class="table"
           *ngIf="!isLoading"
           #table
           [dataSource]="dataSourceParameters"

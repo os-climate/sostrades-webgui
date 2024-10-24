@@ -25,6 +25,8 @@ import { StudyCaseLocalStorageService } from "../study-case-local-storage/study-
 import { UserService } from "../user/user.service";
 import { map } from "rxjs/operators";
 import { Routing } from "src/app/models/enumeration.model";
+import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
+import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
 
 @Injectable({
   providedIn: "root",
@@ -43,10 +45,10 @@ export class AppDataService extends DataHttpService {
     private studyCaseLoadingService: StudyCaseLoadingService,
     private studyCaseDataService: StudyCaseDataService,
     private studyCaseMainService: StudyCaseMainService,
-    private studyCasePostProcessingService: StudyCasePostProcessingService,
     private postProcessingService: PostProcessingService,
+    private studyCasePostProcessingService: StudyCasePostProcessingService,
     private snackbarService: SnackbarService,
-    private loadingDialogService: LoadingDialogService,
+    private loadingStudyDialogService: LoadingStudyDialogService,
     private loggerService: LoggerService,
     private router: Router,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
@@ -63,63 +65,75 @@ export class AppDataService extends DataHttpService {
 
   createCompleteStudy(study: StudyCasePayload, isStudyCreated: any) {
     // Display loading message
-    this.loadingDialogService.showLoading(`Create study case ${study.name}`);
+    let loadingCanceled: boolean = false;
 
-    const messageObserver = {
-      next: (message: string) =>
-        this.loadingDialogService.updateMessage(message),
-      complete: () => this.loadingDialogService.closeLoading(),
-    };
-
+    // Display loading message
+    this.loadingStudyDialogService
+      .showLoadingWithCancelobserver(`Create study case ${study.name}`)
+      .subscribe((isCancel) => {
+        this.loggerService.log(
+          `Loading has been canceled, redirecting to study management component from ${this.router.url} `
+        );
+        loadingCanceled = true;
+        this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+      });
+    
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
     this.studyCaseDataService.createAllocationForNewStudyCase(study).subscribe({
       next: (allocation) => {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
-          const studyInformation = new StudyCaseInitialSetupPayload(
-            allocation.studyCaseId,
-            study.reference,
-            study.type
-          );
-    
-          // Demander au serveur les données du cas d'étude
-          this.studyCaseMainService.createStudy(studyInformation, false).subscribe({
-            next: (loadedStudy) => {
-              // Après la création, charger l'étude dans le post-traitement
-              // Cela doit être fait après la fin de la création, sinon le chargement ne peut pas être effectué
-              this.studyCasePostProcessingService.loadStudy(loadedStudy.studyCase.id, false).subscribe({
-                next: (isLoaded) => {
-                  // Charger les derniers éléments de l'étude et mettre à jour l'étude chargée actuellement
-                  this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
-                },
-                error: (errorReceived) => {
-                  
-                  this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study",()=> {
-                    this.onStudyCreated.emit(allocation.studyCaseId);
-                    messageObserver.complete();
-                    isStudyCreated(false);
+          if (!loadingCanceled){
+            this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
+            const studyInformation = new StudyCaseInitialSetupPayload(
+              allocation.studyCaseId,
+              study.reference,
+              study.type
+            );
+      
+            // Demander au serveur les données du cas d'étude
+            this.studyCaseMainService.createStudy(studyInformation, false).subscribe({
+              next: (loadedStudy) => {
+                if (!loadingCanceled){
+                  // Après la création, charger l'étude dans le post-traitement
+                  // Cela doit être fait après la fin de la création, sinon le chargement ne peut pas être effectué
+                  this.studyCasePostProcessingService.loadStudy(loadedStudy.studyCase.id, false).subscribe({
+                    next: (isLoaded) => {
+                      if (!loadingCanceled){
+                        // Charger les derniers éléments de l'étude et mettre à jour l'étude chargée actuellement
+                        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe();
+                      }
+                    },
+                    error: (errorReceived) => {
+                      
+                      this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study",()=> {
+                        this.onStudyCreated.emit(allocation.studyCaseId);
+                        
+                        isStudyCreated(false);
+                      });
+                  }
                   });
+                }
+              },
+              error: (errorReceived) => {
+                
+                this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study",()=> {
+                  this.onStudyCreated.emit(allocation.studyCaseId);
+                  
+                  isStudyCreated(false);
+                });
               }
-              });
-            },
-            error: (errorReceived) => {
-              
-              this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study",()=> {
-                this.onStudyCreated.emit(allocation.studyCaseId);
-                messageObserver.complete();
-                isStudyCreated(false);
-              });
-            }
-          });
+            });
+          }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study",()=> {
             this.onStudyCreated.emit(allocation.studyCaseId);
-            messageObserver.complete();
+            
             isStudyCreated(false);
           });
         }
       },
       error: (errorReceived) => {
-        this.snackbarService.showError("Error creating study\n" + errorReceived.description);
-        messageObserver.complete();
+        this.loadingStudyDialogService.setError("Error creating study\n" + errorReceived.description);
         isStudyCreated(false);
       }
     });
@@ -132,40 +146,51 @@ export class AppDataService extends DataHttpService {
     flavor:string,
     isStudyCreated: any
   ) {
-    this.loadingDialogService.showLoading(`Create study case ${newName}`);
-
-    const messageObserver = {
-      next: (message: string) =>
-        this.loadingDialogService.updateMessage(message),
-      complete: () => this.loadingDialogService.closeLoading(),
-    };
 
     // Display loading message
-    messageObserver.next(`Creating copy of study case : "${newName}"`);
+    let loadingCanceled: boolean = false;
 
+    // Display loading message
+    this.loadingStudyDialogService
+      .showLoadingWithCancelobserver(`Creating copy of study case : "${newName}"`)
+      .subscribe((isCancel) => {
+        this.loggerService.log(
+          `Loading has been canceled, redirecting to study management component from ${this.router.url} `
+        );
+        loadingCanceled = true;
+        this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+      });
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
     this.studyCaseDataService.createAllocationForCopyingStudyCase(studyId, newName, groupId, flavor).subscribe({
       next: (allocation) => {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
-          // Demander au serveur les données du cas d'étude
-          this.studyCaseMainService.copyStudy(studyId, allocation.studyCaseId).subscribe({
-            next: (loadedStudy) => {
-              // Après la création, charger l'étude dans le post-traitement
-              // Cela doit être fait après la fin de la création, sinon le chargement ne peut pas être effectué
-              loadedStudy = loadedStudy as LoadedStudy;
-              this.studyCasePostProcessingService.loadStudy(loadedStudy.studyCase.id, false).subscribe({
-                next: (isLoaded) => {
-                  // Charger les derniers éléments de l'étude et mettre à jour l'étude chargée actuellement
-                  this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe(messageObserver);
-                },
-                error: (errorReceived) => {
-                  this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case",()=> isStudyCreated(false));
+          if(!loadingCanceled){
+            this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
+            // Demander au serveur les données du cas d'étude
+            this.studyCaseMainService.copyStudy(studyId, allocation.studyCaseId).subscribe({
+              next: (loadedStudy) => {
+                if(!loadingCanceled){
+                  // Après la création, charger l'étude dans le post-traitement
+                  // Cela doit être fait après la fin de la création, sinon le chargement ne peut pas être effectué
+                  loadedStudy = loadedStudy as LoadedStudy;
+                  this.studyCasePostProcessingService.loadStudy(loadedStudy.studyCase.id, false).subscribe({
+                    next: (isLoaded) => {
+                      if(!loadingCanceled){
+                        // Charger les derniers éléments de l'étude et mettre à jour l'étude chargée actuellement
+                        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyCreated, true, false).subscribe();
+                      }
+                    },
+                    error: (errorReceived) => {
+                      this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case",()=> isStudyCreated(false));
+                    }
+                  });
                 }
-              });
-            },
-            error: (errorReceived) => {
-              this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
-            }
-          });
+              },
+              error: (errorReceived) => {
+                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
+              }
+            });
+          }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case" ,()=> isStudyCreated(false));
         }
@@ -181,7 +206,7 @@ export class AppDataService extends DataHttpService {
     let loadingCanceled: boolean = false;
 
     // Display loading message
-    this.loadingDialogService
+    this.loadingStudyDialogService
       .showLoadingWithCancelobserver(`Loading study case ${studyName}`)
       .subscribe((isCancel) => {
         this.loggerService.log(
@@ -191,19 +216,16 @@ export class AppDataService extends DataHttpService {
         this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
 
-    const messageObserver = {
-      next: (message: string) =>
-        this.loadingDialogService.updateMessage(message),
-      complete: () => this.loadingDialogService.closeLoading(),
-    };
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
 
     this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
       next: (allocation) => {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
+          this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
           if (!loadingCanceled) {
             this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe({
               next: (loadedStudy) => {
-                this.loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded, messageObserver);
+                this.loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded);
               },
               error: (errorReceived) => {
                 console.log("Try to load study in read only mode if needed after first failure")
@@ -211,7 +233,7 @@ export class AppDataService extends DataHttpService {
                 setTimeout(() => {
                   this.studyCaseMainService.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe({
                     next: (loadedStudy) => {
-                      this.loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded, messageObserver);
+                      this.loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded);
                     },
                     error: (errorReceived) => {
                       isStudyLoaded(false);
@@ -236,25 +258,18 @@ export class AppDataService extends DataHttpService {
     });
   }    
 
-  private loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded, messageObserver){
+  private loadStudyReadOnlyMode(loadedStudy, loadingCanceled,isStudyLoaded){
     if (!loadingCanceled) {
       if (loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
-        this.loadingDialogService.disableCancelLoading(true);
-              this.postProcessingService.clearPostProcessingDict();
-              this.postProcessingService.clearPostProcessingDict();
-
-              // Set post processing dictionnary from the loaded study
+        
+        // Set post processing dictionnary from the loaded study
         this.postProcessingService.clearPostProcessingDict();
 
-              // Set post processing dictionnary from the loaded study
-              this.postProcessingService.setPostProcessing(loadedStudy);
-              this.postProcessingService.setPostProcessing(loadedStudy);
-              
-              // load read only mode
+        // Set post processing dictionnary from the loaded study
         this.postProcessingService.setPostProcessing(loadedStudy);
               
-              // load read only mode
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe(messageObserver);
+        // load read only mode
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, false, false).subscribe();
       } else {
         const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
         this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
@@ -268,25 +283,38 @@ export class AppDataService extends DataHttpService {
     const studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
     const isStudyLoaded = (isLoaded: boolean) => {};
+    let loadingCanceled: boolean = false;
 
-    // Display loading message
-    this.loadingDialogService.showLoading(
-      `Switching study case ${studyName} to edition mode`
-    );
+    // // Display loading message
+    this.loadingStudyDialogService
+      .showLoadingWithCancelobserver(`Switching to edition mode`)
+      .subscribe((isCancel) => {
+        this.loggerService.log(
+          `Loading has been canceled, redirecting to study management component from ${this.router.url} `
+        );
+        loadingCanceled = true;
+        this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+      });
 
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
     this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
       next: (allocation) => {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
-          this.studyCaseMainService.loadStudy(studyId, true, false).subscribe({
-            next: (loadedStudy) => {
-              this.postProcessingService.addPostProcessingAfterSwitchEditionMode(loadedStudy);
-              const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
-              this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
-            },
-            error: (errorReceived) => {
-              this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
-            }
-          });
+          if(!loadingCanceled){ 
+            this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
+            this.studyCaseMainService.loadStudy(studyId, true, true).subscribe({
+              next: (loadedStudy) => {
+                if(!loadingCanceled){ 
+                  this.postProcessingService.addPostProcessingAfterSwitchEditionMode(loadedStudy);
+                  const studyNeedsLoading = loadedStudy.loadStatus !== LoadStatus.LOADED;
+                  this.launchLoadStudy(studyNeedsLoading, loadedStudy.studyCase.id, loadedStudy, isStudyLoaded, true, false);
+                }
+              },
+              error: (errorReceived) => {
+                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+              }
+            });
+          }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined );
         }
@@ -315,27 +343,20 @@ export class AppDataService extends DataHttpService {
     isFromCreateStudy: boolean,
     loadOnlyOntology = false
   ) {
-    const messageObserver = {
-      next: (message: string) =>
-        this.loadingDialogService.updateMessage(message),
-      complete: () => this.loadingDialogService.closeLoading(),
-    };
-
+    
     let loadedStudy$ = new Observable<LoadedStudy>((observer) => observer.next(null))
     if (isstudyNeedLoaded) {
       loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, false);
     } 
     const studyCasePostProcessing$ = this.studyCasePostProcessingService.loadStudy(studyId, false);
-    
     combineLatest([loadedStudy$, studyCasePostProcessing$]).subscribe({
       next: ([resultLoadedStudy, isLoaded]) => {
         if (isstudyNeedLoaded) {
           loadedStudy = resultLoadedStudy as LoadedStudy;
         }
-        this.loadingDialogService.disableCancelLoading(true);
-        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, isFromCreateStudy, loadOnlyOntology).subscribe(messageObserver);
+        this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudy, isStudyLoaded, isFromCreateStudy, loadOnlyOntology).subscribe();
         if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
-          this.loadingDialogService.updateMessage(`Loading unsaved changes`);
+          
           let studyParameters: StudyUpdateParameter[] = [];
           studyParameters = this.studyCaseLocalStorageService.getStudyParametersFromLocalStorage(studyId.toString());
           studyParameters.forEach((element) => {

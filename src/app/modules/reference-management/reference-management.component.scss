@@ -38,14 +38,6 @@
 }
 
 
-
-.table {
-  max-height: 100%;
-  width: 100%;
-  overflow-y: auto;
-  margin-bottom: 0 !important;
-}
-
 th.mat-mdc-header-cell:last-of-type {
   text-align: left !important;
   padding-left: 3px;
@@ -86,8 +78,7 @@ tr.mat-mdc-row {
 }
 
 .mat-mdc-cell {
-  font-size: 12px;
-  color: unset;
+  padding: 0px 16px 0px 16px !important;
 }
 
 .table th,
@@ -99,18 +90,6 @@ table td {
   border-collapse: separate;
   width: 100%;
   margin-bottom: 0 !important;
-}
-
-td.mat-mdc-cell:first-of-type,
-th.mat-mdc-header-cell:first-of-type,
-mat-footer-cell:first-of-type {
-  padding-left: 4px;
-}
-
-td.mat-mdc-cell:last-of-type,
-th.mat-mdc-header-cell:last-of-type,
-mat-footer-cell:last-of-type {
-  padding-right: 4px;
 }
 
 .PENDING {

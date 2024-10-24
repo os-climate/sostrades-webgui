@@ -71,6 +71,7 @@ export enum ColumnName {
     MODIFICATION_DATE = 'modificationDate',
     GROUP = 'groupName',
     STATUS = 'executionStatus',
+    FLAVOR = 'flavor',
     REGENERATION_STATUS = 'regenerationStatus',
     DESCRIPTION = 'description',
     DEFAULT = 'default',
@@ -79,7 +80,8 @@ export enum ColumnName {
     USERNAME = 'username',
     EDIT = 'edit',
     DELETE = 'delete',
-    CREATION_STATUS = 'creationStatus'
+    CREATION_STATUS = 'creationStatus',
+    STUDY_CREATION = 'studyCreation'
 }
 
 export enum LabelFormName {

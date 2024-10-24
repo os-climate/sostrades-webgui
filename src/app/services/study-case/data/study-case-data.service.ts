@@ -16,10 +16,10 @@ import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { Router } from '@angular/router';
-import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 import { LoggerService } from '../../logger/logger.service';
 import { SnackbarService } from '../../snackbar/snackbar.service';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
+import { LoadingStudyDialogService } from '../../loading-study-dialog/loading-study-dialog.service';
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +63,7 @@ export class StudyCaseDataService extends DataHttpService {
     private http: HttpClient,
     private ontologyService: OntologyService,
     private location: Location,
-    private loadingDialogService: LoadingDialogService,
+    private loadingStudyDialogService: LoadingStudyDialogService,
     private loggerService: LoggerService,
     private snackbarService:SnackbarService,
     private router: Router) {
@@ -129,6 +129,18 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  check_study_already_exist(studyName: string, groupId: number) {
+    const params = new HttpParams()
+    .set('studyName', studyName)
+    .set('groupId', groupId);
+
+    return this.http.get<Study>(`${this.apiRoute}/exist`, { params: params }).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+
 
   addFavoriteStudy(studyId: number, userId: number): Observable<StudyFavorite> {
     const payload = {
@@ -143,6 +155,19 @@ export class StudyCaseDataService extends DataHttpService {
 
   removeFavoriteStudy(studyId: number, userId: number) {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
+  }
+
+  updateStudyFlavor(studyId: number, flavor: string): Observable<boolean> {
+    const payload = {
+      study_id : studyId,
+      flavor: flavor,
+      restart: true
+    };
+    const url = `${this.apiRoute}/${studyId}/update-study-flavor`;
+    return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
   }
 
   updateExecutionFlavor(studyId: number, flavor: string): Observable<boolean> {
@@ -166,12 +191,11 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  updateStudy(studyId: number, studyName: string, groupId: number, flavor: string): Observable<boolean> {
+  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
       group_id: groupId,
-      flavor: flavor
     };
     const url = `${this.apiRoute}/${studyId}/edit`;
     return this.http.post<boolean>(url, payload, this.options).pipe(map(
@@ -223,15 +247,17 @@ export class StudyCaseDataService extends DataHttpService {
         {next: (allocation) => {
           //show pod oomkilled message
           if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
-            this.snackbarService.showError(errorMessage + "\n" + StudyCaseAllocation.OOMKILLEDLABEL);
+            errorMessage = errorMessage + "\n" + StudyCaseAllocation.OOMKILLEDLABEL;
+            
           }
           else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
-            this.snackbarService.showError(errorMessage+ " due to pod error: " + allocation.message);
+            errorMessage = errorMessage+ " due to pod error: " + allocation.message;
           }
           else if (errorReceived !== undefined){
-              this.snackbarService.showError(errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.");
+            errorMessage = errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.";
+              
             }
-            this.loadingDialogService.closeLoading();
+            this.loadingStudyDialogService.setError(errorMessage);
 
             //do process after retreiving the status
             if (afterShowError !== undefined){
@@ -240,8 +266,7 @@ export class StudyCaseDataService extends DataHttpService {
             
         },
         error:(error)=> {
-          this.snackbarService.showError(errorMessage+"\n" + error.description);
-          this.loadingDialogService.closeLoading();
+          this.loadingStudyDialogService.setError(errorMessage+"\n" + error.description);
           //do process after retreiving the status
           if (afterShowError !== undefined){
             afterShowError();
@@ -253,10 +278,12 @@ export class StudyCaseDataService extends DataHttpService {
     }
     else {
       if (errorReceived !== undefined){
-        this.snackbarService.showError(errorMessage + "\n" + errorReceived.description);
+        this.loadingStudyDialogService.setError(errorMessage + "\n" + errorReceived.description);
+      }
+      else{
+        this.loadingStudyDialogService.closeLoading();
       }
       
-      this.loadingDialogService.closeLoading();
     }
     
     
@@ -652,14 +679,14 @@ export class StudyCaseDataService extends DataHttpService {
         if (allocation.status !== StudyCaseAllocationStatus.DONE) {
           // if the pod is still at pending after one minutes, show potential problem message
           if (allocation.status === StudyCaseAllocationStatus.PENDING || allocation.status === StudyCaseAllocationStatus.NOT_STARTED){
-          if( Date.now() - startWaitingDate < 60000){
-              this.loadingDialogService.updateMessage("Study pod is loading ...")
-            }
-            else{
-              this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
-              you can wait a little longer or maybe try again later")
+          // if( Date.now() - startWaitingDate < 60000){
+          //     this.loadingDialogService.updateMessage("Study pod is loading ...")
+          //   }
+          //   else{
+          //     this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
+          //     you can wait a little longer or maybe try again later")
              
-            }
+          //   }
           }
           if (allocation.status === StudyCaseAllocationStatus.ERROR || allocation.status === StudyCaseAllocationStatus.OOMKILLED){
             allocationObservable.next(allocation);
@@ -671,7 +698,6 @@ export class StudyCaseDataService extends DataHttpService {
           }
           
         } else {
-          this.loadingDialogService.updateMessage("Study pod is up...the study loading is in progress.")
           allocationObservable.next(allocation);
         }
 

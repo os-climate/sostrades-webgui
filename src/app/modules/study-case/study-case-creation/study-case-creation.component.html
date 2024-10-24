@@ -26,8 +26,8 @@
         <mat-error *ngIf="hasError('studyName', 'required')"
           >A study name is <strong>required</strong></mat-error
         >
-        <mat-error *ngIf="hasError('studyName', 'error')">
-          Study case name already <strong>exist</strong>
+        <mat-error *ngIf="createStudyForm.get('studyName').hasError('studyExists')">
+          {{createStudyForm.get('studyName').getError('studyExists')}}
         </mat-error>
         <mat-error *ngIf="hasError('studyName', 'pattern')"
           >Only letters, numbers, dashes and underscores are authorized</mat-error
@@ -123,7 +123,7 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field *ngIf="hasFlavors">
-      <mat-select id="flavor" placeholder="study pod size" formControlName="flavor" >
+      <mat-select id="flavor" placeholder="study pod size" formControlName="flavor">
         <mat-option
           *ngFor="let flavor of flavorsList"
           [value]="flavor"
@@ -147,6 +147,7 @@
       [disabled]="!createStudyForm.valid"
     >
       Ok
+      <span id='loadingName' style="color: #f0ad4e;" *ngIf="loadingName">Checking name</span>
     </button>
   </div>
 </div>

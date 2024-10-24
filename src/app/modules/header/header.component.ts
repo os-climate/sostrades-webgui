@@ -170,7 +170,7 @@ export class HeaderComponent implements OnInit {
                 this.displayMessageNoStudyServer = !isLoaded;
              
             },
-            error:(error)=>{this.displayMessageNoStudyServer = false;}});
+            error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
         }  
         else{
           this.displayMessageNoStudyServer = !isLoaded;
@@ -321,19 +321,27 @@ export class HeaderComponent implements OnInit {
 
   openVersionTab(){
     // get repository git info
-    if (this.repositoriesGitInfo !==undefined){
+    this.appDataService.getGitReposInfo().subscribe(gitInfo=>{
+      
+      if (gitInfo !== undefined && gitInfo !== null){
+        this.repositoriesGitInfo = gitInfo;
+        this.hasGitInfo = true;
+        const dialogData: RepositoryTraceabilityDialogData = new RepositoryTraceabilityDialogData();
+
+        dialogData.codeSourceTraceability = this.repositoriesGitInfo;
+
+        const dialogRef = this.dialog.open(RepositoryTraceabilityDialogComponent, {
+          disableClose: false,
+          width: '1000px',
+          height: '400px',
+          data: dialogData
+        });
     
-      const dialogData: RepositoryTraceabilityDialogData = new RepositoryTraceabilityDialogData();
+      }
 
-      dialogData.codeSourceTraceability = this.repositoriesGitInfo;
-
-      const dialogRef = this.dialog.open(RepositoryTraceabilityDialogComponent, {
-        disableClose: false,
-        width: '1000px',
-        height: '400px',
-        data: dialogData
-      });
-    }
+    });
+    
+      
   }
     
 
