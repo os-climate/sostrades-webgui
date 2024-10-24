@@ -45,7 +45,7 @@ export class LoadingStudyDialogComponent implements OnInit {
     this.title = this.data.title;
 
     // Transform title and add tooltip on title if lenght > 20
-    const prefixCreation = 'create study case '
+    const prefixCreation = 'Create study case '
     if (this.data.title.toLocaleLowerCase().startsWith(prefixCreation.toLocaleLowerCase())) {
       const remainingText = this.data.title.slice(prefixCreation.length); 
       if (remainingText.length > 20) {
