@@ -81,7 +81,11 @@ export enum ColumnName {
     EDIT = 'edit',
     DELETE = 'delete',
     CREATION_STATUS = 'creationStatus',
-    STUDY_CREATION = 'studyCreation'
+    STUDY_CREATION = 'studyCreation',
+    VARIABLE_ID = 'variableId', 
+    OLD_VALUE = 'oldValue', 
+    NEW_VALUE = 'newValue',
+    DATASET_ID = 'datasetId'
 }
 
 export enum LabelFormName {
