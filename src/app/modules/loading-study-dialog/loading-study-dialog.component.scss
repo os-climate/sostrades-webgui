@@ -65,6 +65,7 @@
     margin-top: 30px;
     justify-content: center;
     font-size: small;
+    display: block;
   }
 
   .icon-error-message{
@@ -77,6 +78,7 @@
   .error-message{
     text-align: center;
     height: 60px;
+    width: 400px;
     overflow: auto;
     justify-content: space-around;
     font-weight: bold;

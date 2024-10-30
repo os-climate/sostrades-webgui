@@ -129,6 +129,18 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
+  check_study_already_exist(studyName: string, groupId: number) {
+    const params = new HttpParams()
+    .set('studyName', studyName)
+    .set('groupId', groupId);
+
+    return this.http.get<Study>(`${this.apiRoute}/exist`, { params: params }).pipe(map(
+      response => {
+        return response;
+      }));
+  }
+
+
 
   addFavoriteStudy(studyId: number, userId: number): Observable<StudyFavorite> {
     const payload = {
@@ -143,6 +155,19 @@ export class StudyCaseDataService extends DataHttpService {
 
   removeFavoriteStudy(studyId: number, userId: number) {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
+  }
+
+  updateStudyFlavor(studyId: number, flavor: string): Observable<boolean> {
+    const payload = {
+      study_id : studyId,
+      flavor: flavor,
+      restart: true
+    };
+    const url = `${this.apiRoute}/${studyId}/update-study-flavor`;
+    return this.http.post<boolean>(url, payload, this.options).pipe(map(
+      response => {
+        return response;
+      }));
   }
 
   updateExecutionFlavor(studyId: number, flavor: string): Observable<boolean> {
@@ -166,12 +191,11 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  updateStudy(studyId: number, studyName: string, groupId: number, flavor: string): Observable<boolean> {
+  updateStudy(studyId: number, studyName: string, groupId: number): Observable<boolean> {
     const payload = {
       study_id : studyId,
       new_study_name: studyName,
       group_id: groupId,
-      flavor: flavor
     };
     const url = `${this.apiRoute}/${studyId}/edit`;
     return this.http.post<boolean>(url, payload, this.options).pipe(map(

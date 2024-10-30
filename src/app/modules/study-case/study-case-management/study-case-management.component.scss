@@ -193,3 +193,17 @@ tr:hover .actions-hover-row {
 .link-study-title:hover {
   text-decoration: underline;
 }
+
+.mat-column-process .cell-content,
+.mat-column-repository .cell-content {
+  width: 100%;
+  word-break: break-word;
+}
+
+.mat-column-process,
+.mat-column-repository{
+  width: 20% !important;
+}
+.mat-column-name{
+  width: 10% !important;
+}

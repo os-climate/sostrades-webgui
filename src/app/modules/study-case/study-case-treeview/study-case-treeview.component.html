@@ -141,7 +141,7 @@
     <button
       mat-button
       [id]="showState ? 'hide-validation-state': 'show-validation-state'"
-      [matTooltip]=" showState ? 'Hide validation state' : 'show-validation-state'"
+      [matTooltip]=" showState ? 'Hide validation state' : 'Show validation state'"
       (click)="onShowHideState()"
     >
     <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
@@ -174,20 +174,21 @@
         <i class="fa-solid fa-up-right-from-square"></i>
     </button>
    
-    <button
-      mat-button
-      id="btn-treeview-reload-study"
-      aria-hidden="false"
-      *ngIf="!(isStudyReadOnly || isStudyNoData)"
-      [disabled]="!studyCanReload || executionStarted"
-      (click)="onReloadStudy()"
-      [color]="studyCanReload && !executionStarted ? 'primary' : ''"
+    <span 
       [matTooltip]="studyCanReload && !executionStarted ? 'Reload the study' : !studyCanReload || executionStarted ? 'No reload possible before first run or while running' : ''"
     >
+      <button
+        mat-button
+        id="btn-treeview-reload-study"
+        aria-hidden="false"
+        *ngIf="!(isStudyReadOnly || isStudyNoData)"
+        [disabled]="!studyCanReload || executionStarted"
+        (click)="onReloadStudy()"
+        [color]="studyCanReload && !executionStarted ? 'primary' : ''"
+      >
         <i
           *ngIf="studyCanReload && !executionStarted"
           class="fa-solid fa-rotate fa-fw"
-          matTooltip="Reload the study"
         >
         </i>
         <i
@@ -195,7 +196,8 @@
           class="fa-solid fa-rotate fa-fw status-off-grey"
         >
         </i>
-    </button>
+      </button>
+    </span>
     <button
       mat-button
       id="btn-treeview-study-settings"

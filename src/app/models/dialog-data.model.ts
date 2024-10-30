@@ -11,6 +11,7 @@ import { TreeNode } from './tree-node.model';
 import { LoadedGroup } from './group.model';
 import { ColumnName } from './enumeration.model';
 import { LoadingDialogStep } from './loading-study-dialog.model';
+import { Flavor } from './flavor.model';
 
 export abstract class AbstractDialogData {
   cancel: boolean;
@@ -237,12 +238,14 @@ export class PodSettingsDialogData extends AbstractDialogData {
   flavor: string;
   type:string;
   flavorsList : string[];
+  flavorsDescription: Flavor[];
 
   public constructor() {
     super();
     this.flavor = '';
     this.type = '';
     this.flavorsList = [];
+    this.flavorsDescription = [];
   }
 }
 
@@ -402,7 +405,6 @@ export class EditionDialogData extends AbstractDialogData {
   description: string;
   groupList: LoadedGroup[];
   userUpdated: User;
-  flavor: string
 
   public constructor() {
     super();
@@ -413,7 +415,6 @@ export class EditionDialogData extends AbstractDialogData {
     this.groupId = null;
     this.groupList = [];
     this.userUpdated = null;
-    this.flavor = null;
 
   }
 

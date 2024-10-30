@@ -615,6 +615,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.studyCaseDataService.getExecutionFlavor(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(flavor=> {
       const dialogData: PodSettingsDialogData = new PodSettingsDialogData();
       dialogData.flavorsList = this.flavorsList;
+      dialogData.flavorsDescription = this.flavorsService.flavorsListExec;
       dialogData.type = "Execution";
       dialogData.flavor = flavor;
       
@@ -932,7 +933,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.studyCaseLoadingService.updateStudyCaseDataService(loadedStudy);
       this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
       //reload study for post processing
-      this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe({
+      this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false).subscribe({
         next: (response) => {
           //send coedition reload
           this.socketService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id);

@@ -118,6 +118,7 @@ import { LoginInformationDialogComponent } from './modules/login/login-informati
 import { EditionFormDialogComponent } from './shared/edition-form-dialog/edition-form-dialog.component';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { LoadingStudyDialogComponent } from './modules/loading-study-dialog/loading-study-dialog.component';
+import { FilterBarComponent } from './shared/filter-bar/filter-bar.component';
 
 registerLocaleData(fr);
 
@@ -214,6 +215,7 @@ registerLocaleData(fr);
         LoginInformationDialogComponent,
         EditionFormDialogComponent,
         LoadingStudyDialogComponent,
+        FilterBarComponent,
     ],
     imports: [
         BrowserModule,

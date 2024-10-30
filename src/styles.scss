@@ -99,12 +99,18 @@ body {
 }
 
 .mat-mdc-cell {
-  padding: 3px !important;
+  font-size: 12px;
+  color: unset;
+  padding: 10px 16px 0px 16px !important;
 }
 
 .mat-mdc-header-cell {
   color: rgba(0, 0, 0, 0.54) !important;
   font-weight: 500;
+}
+
+.mat-sort-header-container {
+  border-bottom: solid 1px transparent !important;
 }
 
 .mat-mdc-form-field {
@@ -438,6 +444,12 @@ div.tooltip {
 .filter-form-field {
   margin-right: 10px;
   width: 120px;
+}
+.tables {
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  margin-bottom: 0 !important;
 }
 
 /* Markdown */

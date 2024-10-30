@@ -31,11 +31,30 @@
     <ng-template #onlyDocumentation>
       <div class="markdown-body markdown-container" >
         <div *ngFor="let documentItem of documentation" >
-          <div class="markdown">
+          <div id="button-pdf-refresh">
+            <span
+              id="refresh"
+              mat-raised-button
+              style="text-align: right;"
+              matTooltip="Reload markdown from file"
+              (click)="refresh(documentItem)">
+              <i class="fa-solid fa-rotate fa-fw cursor-pointer"></i>
+            </span>
+            <span
+              id="download-pdf"
+              mat-raised-button
+              matTooltip="Download markdown into pdf format"
+              (click)="generatePDF(documentItem.name)">
+              <i class="fa-solid fa-file-arrow-down cursor-pointer"></i>
+            </span>
+          </div>
+          <div class="markdown" id="markdown">
+            
             <h1 id="{{documentItem.name}}" style="text-align: center;">
               {{documentItem.name | ontologyDisciplineConverter }}
             </h1>
             <markdown
+              [id]="'markdown-'+ documentItem.name"
               katex
               [katexOptions]="options"
               mermaid

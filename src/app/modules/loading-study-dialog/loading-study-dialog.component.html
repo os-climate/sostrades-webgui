@@ -1,5 +1,5 @@
 <div class="flex-container">
-    <h1 mat-dialog-title>{{title}}</h1>
+    <h1 mat-dialog-title [matTooltip]="tootipTitle.length > 0 ? tootipTitle :''">{{title}}</h1>
     
     <div class="progress-container" >
       <div *ngFor="let step of steps;" class="inline-container">
@@ -61,20 +61,24 @@
         Loading is almost finished, cancel button is now disable to terminate the process.
       </div>
     </div>
+
     <div mat-dialog-actions class="button-error" *ngIf="isInError">
       
       <div class="error-message">
         <mat-icon class="icon-error-message">error</mat-icon>
-        {{errorMessage}}
+        <span [matTooltip]="tooltipErrorMessage.length > 0 ? tooltipErrorMessage :''">{{errorMessage}}</span>
       </div>
-      <button 
-        id="ok-button"
+      <div style="text-align: center;"> 
+        <button
+        id="close"
         mat-raised-button
         color="primary" 
         (click)="onCancelClick()" >
         Close
       </button>
+    </div>
+      
       
     </div>
-  </div>
+</div>
   

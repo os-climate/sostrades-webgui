@@ -1,11 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NotificationDialogData } from 'src/app/models/dialog-data.model';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { CoeditionType } from 'src/app/models/coedition-notification.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
-import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
+import { MatSort } from '@angular/material/sort';
+import { ColumnName } from 'src/app/models/enumeration.model';
 
 @Component({
   selector: 'app-coedition-dialog',
@@ -14,42 +15,116 @@ import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
 })
 export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
 
-  public displayedColumns = ['name', 'oldValue', 'newValue'];
+  public displayedColumns = [ColumnName.VARIABLE_ID, ColumnName.OLD_VALUE, ColumnName.NEW_VALUE];
+  public columnValuesDict = new Map <ColumnName, string[]>();
+  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
   public dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>();
   public hasChangesFromDataset: boolean;
   public title: string;
+  public columnName = ColumnName;
+  @ViewChild(MatSort, { static: false })
+  set sort(v: MatSort) {
+    this.dataSourceChanges.sort = v;
+  }
 
   constructor(
     public dialogRef: MatDialogRef<StudyCaseNotificationsChangesDialogComponent>,
     private ontologyService: OntologyService,
     @Inject(MAT_DIALOG_DATA) public data: NotificationDialogData
+    
   ) { 
     this.hasChangesFromDataset = false;
+    this.columnValuesDict.clear();
+    this.colummnsDictForTitleSelection.clear();
   }
 
   ngOnInit(): void {
     if (this.data.changes.length > 0) {
       this.data.changes.forEach(change => {
         if (change.changeType === UpdateParameterType.CSV) {
-          change.newValue = 'Csv';
-          change.oldValue = 'Csv';
+          change.newValue = change.oldValue = 'Csv';
         }
       });
       this.hasChangesFromDataset = this.data.changes.some(parameter => 
         (parameter.datasetConnectorId !== null && parameter.datasetConnectorId !== undefined) && 
         (parameter.datasetId !== null && parameter.datasetId !== undefined)
-    );
+      );
+     
+      this.setColumnValuesDict();
+      this.setcolummnsDictForTitleSelection();
+      if (this.hasChangesFromDataset) {
+        this.setupDatasetColumns();
+      }
+      this.configureDialogPage();
+      this.initializeDataSource();
+    }
+  }
+  
+
+  // Set up column filters and values
+  private setColumnValuesDict(): void {
+    this.columnValuesDict.set(ColumnName.VARIABLE_ID, ['Parameter name']);
+    this.columnValuesDict.set(ColumnName.NEW_VALUE, ["New value"]);
+    this.columnValuesDict.set(ColumnName.OLD_VALUE, ["Server value"]);
+  }
+  
+  // Set up column filters and values
+  private setcolummnsDictForTitleSelection(): void {
+    this.colummnsDictForTitleSelection.set(ColumnName.VARIABLE_ID, 'Parameter name');
+    this.colummnsDictForTitleSelection.set(ColumnName.NEW_VALUE, "New value");
+    this.colummnsDictForTitleSelection.set(ColumnName.OLD_VALUE, "Server value");
+  }
+  
+  // Set up additional columns for dataset changes
+  private setupDatasetColumns(): void {
+    this.displayedColumns.push(ColumnName.DATASET_ID);
+    this.colummnsDictForTitleSelection.set(ColumnName.DATASET_ID, "Dataset ID");
+    this.columnValuesDict.set(ColumnName.DATASET_ID, ['Dataset ID']);
+  
+    if (this.data.type === CoeditionType.EXPORT) {
+      this.removeColumn([ColumnName.NEW_VALUE]);
+      this.colummnsDictForTitleSelection.set(ColumnName.OLD_VALUE, "Parameter value");
+      this.columnValuesDict.set(ColumnName.OLD_VALUE, ["Parameter value"]);
+    }
+  }
+  
+  // Remove the NEW_VALUE column for export type
+  private removeColumn(columnsName: ColumnName[]): void {
+    columnsName.forEach(column => {
+      const indexToRemove = this.displayedColumns.indexOf(column);
+      this.displayedColumns.splice(indexToRemove, 1);
+      this.colummnsDictForTitleSelection.delete(column);
+      this.columnValuesDict.delete(column);
+    })
+    
+  }
+  
+  // Configure dialog title and size
+  private configureDialogPage(): void {
     if (this.hasChangesFromDataset) {
-      this.title = this.data.type == CoeditionType.EXPORT?"Dataset export": "Dataset import";
-      this.displayedColumns.push('datasetConnectorId', 'datasetId');
-      this.dialogRef.updateSize(null,'700px');
-    }
-    else {
+      this.title = this.data.type === CoeditionType.EXPORT ? "Dataset export" : "Dataset import";
+      this.dialogRef.updateSize(null, '700px');
+    } else {
       this.title = "Parameters changed";
-      this.dialogRef.updateSize('800px','700px');
+      this.dialogRef.updateSize('800px', '700px');
     }
-      this.dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>(this.data.changes);
-    }
+  }
+  
+  // Initialize the MatTableDataSource and set up sorting
+  private initializeDataSource(): void {
+    this.dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>(this.data.changes);
+    this.dataSourceChanges.sortingDataAccessor = (item, property) => this.customSortingAccessor(item[property]);
+    this.dataSourceChanges.sort = this.sort;
+  }
+  
+  // Custom sorting accessor for different data types
+  private customSortingAccessor(value: any) {
+    if (value == null || value === "") return "zzzz"; // Empty values at the end
+    if (typeof value === 'string') return value.toLowerCase();
+    if (typeof value === 'boolean') return value ? "true" : "false";
+    if (typeof value === 'number') return value;
+    if (Array.isArray(value)) return value.length;
+    return String(value).toLowerCase();
   }
 
   onOkClick() {
@@ -62,7 +137,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
     const csvHeader = "Ontology name,Ontology description,Ontology unit,SOS namespace,SOS parameter,Connector name,Dataset name,Location";
     const csvData = [csvHeader];
     this.data.changes.forEach(change => {
-      let changeLine = []
+      const changeLine = []
       //get ontology information of the data change
       const ontologyData = this.ontologyService.getParameter(change.variableKey);
       if (ontologyData !== null){
