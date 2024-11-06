@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
@@ -26,7 +26,7 @@ import { KeycloakOAuthService } from 'src/app/services/keycloak-oauth/keycloak-o
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
 
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
@@ -34,6 +34,7 @@ export class HeaderComponent implements OnInit {
   public versionDate: string;
   public platform: string;
   public title: string;
+  public keycloakAvailable: boolean
   environment = environment;
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;
@@ -73,6 +74,7 @@ export class HeaderComponent implements OnInit {
     this.OOMKilledMessage = "";
     this.repositoriesGitInfo = undefined;
     this.hasGitInfo = false;
+    this.keycloakAvailable = false;
   }
 
   ngOnInit(): void {
@@ -84,6 +86,11 @@ export class HeaderComponent implements OnInit {
       }
 
     });
+    this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe(
+      response => {
+        this.keycloakAvailable = response
+      }
+    )
     this.username = this.userService.getFullUsernameWithNameInCapitalize();
     this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
     this.hasAccessToStudy = this.userService.hasAccessToStudy();
@@ -172,7 +179,7 @@ export class HeaderComponent implements OnInit {
                 this.displayMessageNoStudyServer = !isLoaded;
              
             },
-            error:(error)=>{this.displayMessageNoStudyServer = !isLoaded;}});
+            error:()=>{this.displayMessageNoStudyServer = !isLoaded;}});
         }  
         else{
           this.displayMessageNoStudyServer = !isLoaded;
@@ -186,7 +193,7 @@ export class HeaderComponent implements OnInit {
         
     });
     //if the study is closed, the header should not be visible
-    this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(closed=>{
+    this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(() =>{
       if(this.displayMessageNoStudyServer){
         this.displayMessageNoStudyServer = false;
       }
@@ -198,7 +205,7 @@ export class HeaderComponent implements OnInit {
 
   reloadStudy()
   {
-    let isInEditionMode = !this.studyCaseDataService.loadedStudy.readOnly;
+    const isInEditionMode = !this.studyCaseDataService.loadedStudy.readOnly;
     if (isInEditionMode){
       this.appDataService.loadStudyInEditionMode();
     }
@@ -332,45 +339,45 @@ export class HeaderComponent implements OnInit {
 
         dialogData.codeSourceTraceability = this.repositoriesGitInfo;
 
-        const dialogRef = this.dialog.open(RepositoryTraceabilityDialogComponent, {
+        this.dialog.open(RepositoryTraceabilityDialogComponent, {
           disableClose: false,
           width: '1000px',
           height: '400px',
           data: dialogData
         });
-    
       }
-
-    });
-    
-      
+    });    
   }
-    
+  
+  updateKeycloakProfile(){
+    if (this.keycloakAvailable) {
+      this.keycloakOauthService.gotoKeycloakProfile().subscribe({
+        next: (keycloakProfileURL) => {
+              //nagigate to edit your profile
+              document.location.href = keycloakProfileURL;
+        },
+        error: (error) => {
+          if (error.statusCode == 502 || error.statusCode == 0) {
+            this.snackbarService.showError('No response from server');
+          } else {
+            this.snackbarService.showError('Error at profile redirection : ' + error.statusText);
+          }
+        }
+      });
+    }
+  }
 
   logout() {
-    this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe({
-      next: (keycloakAvailable) => {  
-        
-        if (!keycloakAvailable) {
-          this.deauthenticate();
-          
-        }
-        else{
-          this.keycloakOauthService.logout_url().subscribe({
-            next: (keycloakLogoutURL) => {
-              this.auth.deauthenticate().subscribe({
-                next: () => {
-                  // logout from keycloak
-                  document.location.href = keycloakLogoutURL;
-                },
-                error: (error) => {
-                  if (error.statusCode == 502 || error.statusCode == 0) {
-                    this.snackbarService.showError('No response from server');
-                  } else {
-                    this.snackbarService.showError('Error at logout : ' + error.statusText);
-                  }
-                }
-              });
+    if (!this.keycloakOauthService.keycloakAvailable) {
+      this.deauthenticate();
+    }
+    else{
+      this.keycloakOauthService.logout_url().subscribe({
+        next: (keycloakLogoutURL) => {
+          this.auth.deauthenticate().subscribe({
+            next: () => {
+              // logout from keycloak
+              document.location.href = keycloakLogoutURL;
             },
             error: (error) => {
               if (error.statusCode == 502 || error.statusCode == 0) {
@@ -380,17 +387,17 @@ export class HeaderComponent implements OnInit {
               }
             }
           });
-
+        },
+        error: (error) => {
+          if (error.statusCode == 502 || error.statusCode == 0) {
+            this.snackbarService.showError('No response from server');
+          } else {
+            this.snackbarService.showError('Error at logout : ' + error.statusText);
+          }
         }
-      },
-      error:  (error) => {
-        this.snackbarService.showError(error.description);
-        if (!error.redirect) {
-          this.router.navigate([Routing.LOGIN]);
-        }
-      }
+      });
 
-    });
+    }
   }
 
   deauthenticate(){

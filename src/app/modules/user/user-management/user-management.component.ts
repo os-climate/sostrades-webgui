@@ -13,6 +13,7 @@ import { UserProfile } from 'src/app/models/user-profile';
 import { MatSort } from '@angular/material/sort';
 import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
 import { DialogEditionName } from 'src/app/models/enumeration.model';
+import { KeycloakOAuthService } from 'src/app/services/keycloak-oauth/keycloak-oauth.service';
 
 
 class UpdateUserResponse {
@@ -35,6 +36,7 @@ export class UserManagementComponent implements OnInit {
   public usersList: User[];
   public usersProfilesList: UserProfile[];
   public userCount: number;
+  public keycloakAvailable: boolean;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -45,17 +47,29 @@ export class UserManagementComponent implements OnInit {
     private dialog: MatDialog,
     public userService: UserService,
     private snackbarService: SnackbarService,
+    private keycloakOauthService: KeycloakOAuthService,
     private loadingDialogService: LoadingDialogService) {
     this.usersList = [];
     this.usersProfilesList = [];
     this.columnsFilterSelected = 'All columns';
     this.isLoading = true;
-    this.userCount= 0
+    this.userCount= 0;
+    this.keycloakAvailable = false;
   }
 
   ngOnInit(): void {
     // Initialising filter with 'All columns'
     this.onFilterChange();
+    this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe(
+      response => {
+        this.keycloakAvailable = response
+        if(this.keycloakAvailable){
+          // Remove the NEW_VALUE column for export type
+        const indexToRemove = this.displayedColumns.indexOf('actions');
+        this.displayedColumns.splice(indexToRemove, 1);
+        }
+      }
+    )
 
     // Retrieving user list
     this.userService.loadAllUsers().subscribe({

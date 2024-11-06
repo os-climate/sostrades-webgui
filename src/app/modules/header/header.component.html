@@ -40,8 +40,18 @@
         (click)="onClickGroupManagement()">
         <mat-icon color="primary">group</mat-icon>
         Group Management</button>
+        <button 
+          id="manager-menu-button" 
+          mat-menu-item
+          [matMenuTriggerFor]="Manager"
+          *ngIf="hasAccessToStudyManager"
+          color="primary"
+          >
+          <i class="fa-solid fa-toolbox" style="margin-right: 11px; font-size: 23px;"></i>
+          Manager
+        </button>
+        
       </mat-menu>
-
       <mat-menu  #StudyManagement="matMenu">
           <button mat-menu-item id="study_management-menu-button" (click)="onClickStudyManagement()">Study Management</button>
           <button mat-menu-item id="reference-menu-button" (click)="onClickReferenceManagement()">Reference Management</button>
@@ -51,6 +61,28 @@
         <button mat-menu-item id="models-menu-button" (click)="onClickModelsStatus()">Models</button>
         <button mat-menu-item id="processes-menu-button" (click)="onClickOntologyProcesses()">Processes</button>
         <button mat-menu-item id="parameters-menu-button"(click)="onClickOntologyParameters()">Parameters</button>
+     </mat-menu>
+     <mat-menu #Manager="matMenu">
+        <button 
+          id="user-management-menu-button" 
+          mat-menu-item (click)="onClickUserManagement()" 
+          *ngIf="hasAccessToStudyManager"
+          >
+          <span>User Management</span>
+        </button>
+        <button 
+          id="process-management-menu-button" 
+          mat-menu-item (click)="onClickProcessesManagement()" 
+          *ngIf="hasAccessToStudyManager">
+          <span>Processes Management</span>
+        </button>
+        <button 
+          id="execution-dashbord-management-menu-button"
+          mat-menu-item 
+          (click)="onClickExecutionManagement()" 
+          *ngIf="hasAccessToStudyManager">
+          <span>Execution Dashboard</span>
+        </button>   
      </mat-menu>
     </div>
     <div
@@ -101,37 +133,23 @@
         </div> 
         <i *ngIf="hasGitInfo" class="fa-solid fa-ellipsis-vertical version-name"></i>
       </div> 
-      <div id="secondMenu" class="margin-right">
-        <button
-          *ngIf="hasAccessToStudyManager"
-          mat-button
-          [matMenuTriggerFor]="menuUser"
-          aria-label="user menu"
-          >
-          <span style="font-size: 13px;margin-right: 20px;">{{ username }}</span>
-          <i class="fa-solid fa-ellipsis-vertical"></i>
-        </button>
-        <span *ngIf="!hasAccessToStudyManager" style="font-size: 13px;margin-right: 20px;">{{ username }}</span>
-
-        <mat-menu #menuUser="matMenu">
-          <button mat-menu-item (click)="onClickUserManagement()" *ngIf="hasAccessToStudyManager">
-            <i class="fa-solid fa-user" style="padding-right: 10px;" aria-hidden="true">
-            </i>
-            <span>User Management</span>
-          </button>
-          <button mat-menu-item (click)="onClickProcessesManagement()" *ngIf="hasAccessToStudyManager">
-            <i class="fa-solid fa-gears" style="padding-right: 10px;" aria-hidden="true">
-            </i>
-            <span>Processes Management</span>
-          </button>
-          <button mat-menu-item (click)="onClickExecutionManagement()" *ngIf="hasAccessToStudyManager">
-            <i class="fa-solid fa-server" style="padding-right: 10px;" aria-hidden="true">
-            </i>
-            <span>Execution Dashboard</span>
-          </button>      
-        </mat-menu>
-      </div>
       <div>
+      <span style="font-size: 13px;margin-right: 20px;">{{ username }}</span>
+        <button 
+          *ngIf="keycloakAvailable"
+          mat-button 
+          (click)="updateKeycloakProfile()"
+          matTooltip="Edit your profile on keycloak"
+          class="margin-right"
+          
+          >
+          
+          <!-- <span style="margin-top: 30px;display: grid;"> <i class="fa-solid fa-user-pen"></i> 
+            <span>{{username}}</span>
+          </span> -->
+          <i class="fa-solid fa-user-pen"></i>
+        </button>
+        
         <button 
           mat-button  
           (click)="onClickOnContact()"
