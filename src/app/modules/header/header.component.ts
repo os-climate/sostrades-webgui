@@ -353,8 +353,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.keycloakAvailable) {
       this.keycloakOauthService.gotoKeycloakProfile().subscribe({
         next: (keycloakProfileURL) => {
-              //nagigate to edit your profile
-              document.location.href = keycloakProfileURL;
+              window.open(keycloakProfileURL, '_blank');
         },
         error: (error) => {
           if (error.statusCode == 502 || error.statusCode == 0) {
