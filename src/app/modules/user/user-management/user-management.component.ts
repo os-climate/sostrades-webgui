@@ -63,11 +63,6 @@ export class UserManagementComponent implements OnInit {
     this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe(
       response => {
         this.keycloakAvailable = response
-        if(this.keycloakAvailable){
-          // Remove the NEW_VALUE column for export type
-        const indexToRemove = this.displayedColumns.indexOf('actions');
-        this.displayedColumns.splice(indexToRemove, 1);
-        }
       }
     )
 
