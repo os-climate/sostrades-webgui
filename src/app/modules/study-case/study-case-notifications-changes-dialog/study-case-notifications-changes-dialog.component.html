@@ -24,7 +24,7 @@
           {{columnValuesDict.get(columnName.VARIABLE_ID)}}
         </th>
         <td mat-cell *matCellDef="let element" >
-          <span [matTooltip]=element.variableId>{{ element.variableId }}</span>
+          <span [matTooltip]=element.variableId>{{ element.variableId | truncate:100 }}</span>
         </td>
       </ng-container>
 
@@ -34,7 +34,7 @@
         <td mat-cell *matCellDef="let element">
           <div *ngIf="element.changeType === 'csv'">CSV file</div>
           <div *ngIf="element.changeType !== 'csv'" >
-            <span [matTooltip]=element.oldValue>{{ element.oldValue }}</span>
+            <span [matTooltip]=element.oldValue>{{ element.oldValue | truncate:100 }}</span>
           </div>
         </td>
       </ng-container>
@@ -45,7 +45,7 @@
         <td mat-cell *matCellDef="let element">
           <div *ngIf="element.changeType === 'csv'">CSV file</div>
           <div *ngIf="element.changeType !== 'csv'" >
-            <span [matTooltip]=element.newValue>{{ element.newValue }}</span>
+            <span [matTooltip]=element.newValue>{{ element.newValue | truncate:100 }}</span>
           </div>
         </td>
       </ng-container>
@@ -54,7 +54,7 @@
         <ng-container [matColumnDef]="columnName.DATASET_ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.DATASET_ID)}}</th>
           <td mat-cell *matCellDef="let element">
-              {{ element.datasetId }}
+            <span [matTooltip]=element.datasetId>{{ element.datasetId | truncate:100 }}</span>
           </td>
         </ng-container>
 

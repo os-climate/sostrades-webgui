@@ -68,8 +68,8 @@ export class LoadingStudyDialogComponent implements OnInit {
 
   setError(error:string){
     this.errorMessage = error;
-    if (error.length > 90) {
-        this.errorMessage = error.slice(0, 90) + '...';
+    if (error.length > 110) {
+        this.errorMessage = error.slice(0, 110) + '...';
         this.tooltipErrorMessage = error;  
     } 
     
