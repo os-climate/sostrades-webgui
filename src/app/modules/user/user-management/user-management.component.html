@@ -84,6 +84,7 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element" class="actions-hover-row">
         <button
+          *ngIf="!keycloakAvailable"
           mat-icon-button
           style="margin: 0 5px"
           color="primary"
@@ -101,7 +102,7 @@
         >
           <i class="fa-regular fa-trash-can"> </i>
         </button>
-        <button *ngIf="element.internalAccount"
+        <button *ngIf="element.internalAccount && !keycloakAvailable"
           mat-icon-button
           color="primary"
           matTooltip="Reset user password"
