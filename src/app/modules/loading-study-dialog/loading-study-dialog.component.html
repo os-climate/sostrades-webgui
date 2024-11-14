@@ -65,20 +65,25 @@
     <div mat-dialog-actions class="button-error" *ngIf="isInError">
       
       <div class="error-message">
-        <mat-icon class="icon-error-message">error</mat-icon>
-        <span [matTooltip]="tooltipErrorMessage.length > 0 ? tooltipErrorMessage :''">{{errorMessage}}</span>
+         <div>
+          <mat-icon class="icon-error-message">error</mat-icon>
+        </div>
+        <div>
+          <span *ngIf="errorMessage.length < 200">{{errorMessage}}</span>
+          <textarea matInput *ngIf="errorMessage.length > 200" readonly>
+            {{errorMessage}}
+          </textarea>
+        </div>
       </div>
-      <div style="text-align: center;"> 
+      <div style="text-align: center; margin-top: 10px;"> 
         <button
-        id="close"
-        mat-raised-button
-        color="primary" 
-        (click)="onCancelClick()" >
-        Close
-      </button>
-    </div>
-      
-      
+          id="close"
+          mat-raised-button
+          color="primary" 
+          (click)="onCancelClick()" >
+          Close
+        </button>
+      </div>
     </div>
 </div>
   

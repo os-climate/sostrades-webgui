@@ -68,16 +68,14 @@ export class LoadingStudyDialogComponent implements OnInit {
 
   setError(error:string){
     this.errorMessage = error;
-    if (error.length > 110) {
-        this.errorMessage = error.slice(0, 110) + '...';
-        this.tooltipErrorMessage = error;  
-    } 
+    if(this.errorMessage.length > 200) {
+      this.dialogRef.updateSize('600px','450px')
+    } else {
+      this.dialogRef.updateSize('260');
+    }
     
-    
-    this.dialogRef.updateSize('260');
     this.isInError = true;
   }
-  
 
   onCancelClick() {
     this.data.cancel = true;
