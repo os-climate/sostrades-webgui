@@ -15,6 +15,7 @@ import { GithubOAuthService } from 'src/app/services/github-oauth/github-oauth.s
 import { environment } from 'src/environments/environment';
 import { LogoPath } from 'src/app/models/logo-path.model';
 import { LoginInformationDialogComponent } from './login-information-dialog/login-information-dialog.component';
+import { KeycloakOAuthService } from 'src/app/services/keycloak-oauth/keycloak-oauth.service';
 
 
 @Component({
@@ -46,6 +47,7 @@ export class LoginComponent implements OnInit {
     private studyCaseLocalStorage: StudyCaseLocalStorageService,
     private samlService: SamlService,
     private githubOauthService: GithubOAuthService,
+    private keycloakOauthService: KeycloakOAuthService,
     private routingState: RoutingState,
     private appDataService: AppDataService,
     private router: Router,
@@ -75,59 +77,85 @@ export class LoginComponent implements OnInit {
 
     this.dialog.closeAll();
 
-    this.route.queryParams.subscribe(params => {
-      if (params.hasOwnProperty('autologon')) {
-        this.autoLogon = true;
-      }
-      this.loggerService.log(`autologon : ${this.autoLogon}`);
+    this.route.queryParams.subscribe({
+      next: (params) => {
+        if (params.hasOwnProperty('autologon')) {
+          this.autoLogon = true;
+        }
+        this.loggerService.log(`autologon : ${this.autoLogon}`);
 
+        
+        this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe({
+          next: (keycloakAvailable) => {  
+            
+            if (!keycloakAvailable) {
+              
+              this.showLogin = true;
+              this.samlService.getSSOUrl().subscribe(ssoUrl => {
+                this.ssoUrl = ssoUrl;
       
-      this.appDataService.getAppInfo().subscribe(platformInfo => {    
-          
-        this.platform = platformInfo.platform;
-        if (this.platform == 'Local'.toLocaleLowerCase()) {
-          this.isLocalPlatform = true;
-        }
+                if (this.autoLogon === true && this.ssoUrl !== '') {
+                  document.location.href = this.ssoUrl;
+                } else {
+      
+                  this.githubOauthService.getGithubOAuthAvailable().subscribe(response => {
+                    this.showGitHubLogin = response;
+                    if(!this.showGitHubLogin){
+                      this.loginWithCredential = true;
+                      this.isLocalPlatform = true;
+                    }
+                    this.showLogin = true;
+                  }, error => {
+                    this.showLogin = true;
+                  });
+                  this.showLogin = true;
+                }
+              },
+                error => {
+                  this.ssoUrl = '';
+                  this.showLogin = true;
+                });
+            }
+            else{
+              // go to keycloak login page
+              this.loadingLogin = true;
+              this.keycloakOauthService.getKeycloakOAuthUrl().subscribe({
+                next: (keycloakOauthUrl) => {
+                  this.snackbarService.closeSnackbarIfOpened();
+                  document.location.href = keycloakOauthUrl;
+                  this.loadingLogin = false;
+                },
+                error: (error) => {
+                  if (error.statusCode == 502) {
+                    this.router.navigate([Routing.NO_SERVER]);        
+                  } else {
+                    this.snackbarService.showError('Error at Keycloak login : ' + error.name);
+                  }
+                  this.loadingLogin = false;
+                }
+              });
+            }
 
-        this.samlService.getSSOUrl().subscribe(ssoUrl => {
-          this.ssoUrl = ssoUrl;
 
-          if (this.autoLogon === true && this.ssoUrl !== '') {
-            document.location.href = this.ssoUrl;
-          } else {
-
-            this.githubOauthService.getGithubOAuthAvailable().subscribe(response => {
-              this.showGitHubLogin = response;
-              if(!this.showGitHubLogin){
-                this.loginWithCredential = true;
+        
+          }, error: (errorReceived) => {
+              if (errorReceived.status == 502) {
+                this.router.navigate([Routing.NO_SERVER]);
+              } else {
+                this.snackbarService.showError('Error getting application info : ' + errorReceived.statusText);
               }
-              this.showLogin = true;
-            }, error => {
-              this.showLogin = true;
-            });
-            this.showLogin = true;
+            
           }
-        },
-          error => {
-            this.ssoUrl = '';
-            this.showLogin = true;
-          });
-      }, (errorReceived) => {
-        this.showLogin = true;
-        if (errorReceived.status == 502) {
-          this.router.navigate([Routing.NO_SERVER]);
-        } else {
-          this.snackbarService.showError('Error getting application info : ' + errorReceived.statusText);
-        }
-      });
-    },
-      error => {
+        });
+      },
+      error:  (error) => {
         this.loggerService.log(error);
         this.snackbarService.showError(error.description);
         if (!error.redirect) {
           this.router.navigate([Routing.LOGIN]);
         }
-      });
+      }
+    });
   }
 
   displayLoginWithCredential() {
