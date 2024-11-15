@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-
+import {MatPaginatorModule} from '@angular/material/paginator';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
@@ -62,7 +62,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     MatRadioModule,
     MatAutocompleteModule,
     NgxMatSelectSearchModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatPaginatorModule
   ],
   exports: [
     MatSliderModule,
@@ -93,7 +94,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     MatChipsModule,
     MatRadioModule,
     MatAutocompleteModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    MatPaginatorModule
   ],
   providers: [
     {

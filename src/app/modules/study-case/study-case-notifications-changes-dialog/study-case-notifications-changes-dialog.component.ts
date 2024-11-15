@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NotificationDialogData } from 'src/app/models/dialog-data.model';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
@@ -7,13 +7,14 @@ import { CoeditionType } from 'src/app/models/coedition-notification.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { MatSort } from '@angular/material/sort';
 import { ColumnName } from 'src/app/models/enumeration.model';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-coedition-dialog',
   templateUrl: './study-case-notifications-changes-dialog.component.html',
   styleUrls: ['./study-case-notifications-changes-dialog.component.scss']
 })
-export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
+export class StudyCaseNotificationsChangesDialogComponent implements OnInit, AfterViewInit  {
 
   public displayedColumns = [ColumnName.VARIABLE_ID, ColumnName.OLD_VALUE, ColumnName.NEW_VALUE];
   public columnValuesDict = new Map <ColumnName, string[]>();
@@ -22,10 +23,12 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
   public hasChangesFromDataset: boolean;
   public title: string;
   public columnName = ColumnName;
+  public showPaginator: boolean;
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
     this.dataSourceChanges.sort = v;
   }
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     public dialogRef: MatDialogRef<StudyCaseNotificationsChangesDialogComponent>,
@@ -36,6 +39,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
     this.hasChangesFromDataset = false;
     this.columnValuesDict.clear();
     this.colummnsDictForTitleSelection.clear();
+    this.showPaginator = false;
   }
 
   ngOnInit(): void {
@@ -58,8 +62,14 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit {
       this.configureDialogPage();
       this.initializeDataSource();
     }
+    this.showPaginator = this.dataSourceChanges.data.length > 500;
   }
-  
+
+  ngAfterViewInit() {
+    if (this.showPaginator) {
+      this.dataSourceChanges.paginator = this.paginator;
+    }
+  }
 
   // Set up column filters and values
   private setColumnValuesDict(): void {
