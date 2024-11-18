@@ -13,17 +13,20 @@ export class FilterBarComponent implements OnInit {
   @Input() dataSource: MatTableDataSource<any>;
   @Input() columnsName: Map <ColumnName, string[]>;
   @Input() columnsFilter: Map <ColumnName, string>;
+  @Input() element:string;
   @Output() filteredDataChange = new EventEmitter<MatTableDataSource<any>>();
 
   public selectedColumn: ColumnName;
   public numberElement: number
   public filterValue: string;
   private searchValues = new Subject<string>();
+  public elementName: string
 
   constructor() {
     this.selectedColumn = ColumnName.ALL_COLUMNS;
     this.filterValue = "";
     this.numberElement = 0;
+    this.elementName = ""
   }
 
   ngOnInit() {
@@ -32,6 +35,8 @@ export class FilterBarComponent implements OnInit {
     this.columnsFilter.set(ColumnName.ALL_COLUMNS, "All Columns")
     // Retrieve the number of element
     this.numberElement = this.dataSource.filteredData.length;
+
+    this.elementName = "Number of "+ this.element + " : "
 
 
     this.setupSearchObservable();

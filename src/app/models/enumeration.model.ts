@@ -85,7 +85,11 @@ export enum ColumnName {
     VARIABLE_ID = 'variableId', 
     OLD_VALUE = 'oldValue', 
     NEW_VALUE = 'newValue',
-    DATASET_ID = 'datasetId'
+    DATASET_ID = 'datasetId',
+    FIRST_NAME = "firstname",
+    LAST_NAME = 'lastname',
+    EMAIL = 'email',
+    USER_PROFILE_NAME = 'userprofilename'
 }
 
 export enum LabelFormName {

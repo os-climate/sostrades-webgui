@@ -1,28 +1,30 @@
 
 <div id="filters">
   <mat-label id="number-element">
-    <b>{{ numberElement }}</b> <span> element{{ numberElement > 1 ? 's' : '' }}</span>
+    {{elementName}} <b>{{ numberElement }}</b>
   </mat-label>
-  <mat-form-field id="select-column">
-    <mat-label>Filtered by</mat-label>
-    <mat-select
-      placeholder="Column(s) to filter"
-      [(ngModel)]="selectedColumn"
-      (selectionChange)="onColumnChange()"
-      [matTooltip]="selectedColumn"
-    >
-      <mat-option *ngFor="let entry of columnsFilter | keyvalue" [value]="entry.key" style='text-transform: capitalize;'>
-        {{ entry.value }}
-      </mat-option>
-  </mat-select>
-  </mat-form-field>
-    
-  <mat-form-field id="search-filter">
-    <input
-      matInput
-      (input)="onSearch($event.target.value)"
-      placeholder="Filter"
-      [(ngModel)]="filterValue"
-    />
-  </mat-form-field>
+  <div class="filterSectionV">
+    <mat-form-field id="select-column">
+      <mat-label>Filtered by</mat-label>
+      <mat-select
+        placeholder="Column(s) to filter"
+        [(ngModel)]="selectedColumn"
+        (selectionChange)="onColumnChange()"
+        [matTooltip]="selectedColumn"
+      >
+        <mat-option *ngFor="let entry of columnsFilter | keyvalue" [value]="entry.key" style='text-transform: capitalize;'>
+          {{ entry.value }}
+        </mat-option>
+    </mat-select>
+    </mat-form-field>
+      
+    <mat-form-field id="search-filter">
+      <input
+        matInput
+        (input)="onSearch($event.target.value)"
+        placeholder="Filter"
+        [(ngModel)]="filterValue"
+      />
+    </mat-form-field>
+  </div>
 </div>

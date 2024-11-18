@@ -7,80 +7,69 @@
   ></app-progress-bar>
 </div>
 
-<div class="container" *ngIf="!isLoading">
+<div class="" *ngIf="!isLoading">
   <div id="user-header">
-    <mat-label  class="number-users"> Number of users <b>{{ userCount }}</b></mat-label>
-    <div class="filterSection">
-      <mat-form-field class="filter-form-field">
-        <mat-label class="filter-label-size">Filtered by</mat-label>
-        <mat-select
-          placeholder="Column(s) filtered"
-          class="filter-label-size"
-          (selectionChange)="onFilterChange()"
-          style="text-align: left"
-          [(ngModel)]="columnsFilterSelected"
-          [matTooltip]="columnsFilterSelected"
-          #selectionModel="ngModel"
-        >
-          <mat-option *ngFor="let item of colummnsFilter" [value]="item">
-            {{ item }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="filter-bar">
-        <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
-      </mat-form-field>
+    <div class="filter">
+      <app-filter-bar 
+      [dataSource]="dataSourceUsers"
+      [columnsName]="columnValuesDict"
+      [columnsFilter]="colummnsDictForTitleSelection"
+      element="user"
+      >
+      </app-filter-bar>
     </div>
-    <button
-      mat-raised-button
-      id="create-user"
-      color="primary"
-      style="margin-left: 10px"
-      (click)="addUser()"
-    > Create User
-    <mat-icon>add</mat-icon>
-    </button>
+    <div>
+      <button
+        mat-raised-button
+        id="create-user"
+        color="primary"
+        style="margin-left: 10px"
+        (click)="addUser()"
+      > Create User
+      <mat-icon>add</mat-icon>
+      </button>
+    </div>
   </div>
   
-  <table mat-table class="table" #table [dataSource]="dataSourceUsers" matSort>
+  <table mat-table #table [dataSource]="dataSourceUsers" matSort>
     <!-- Username Column -->
-    <ng-container matColumnDef="username">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+    <ng-container [matColumnDef]="columnName.USERNAME">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.USERNAME)}}</th>
       <td mat-cell *matCellDef="let element">{{ element.username }}</td>
     </ng-container>
 
     <!-- First Name Column -->
-    <ng-container matColumnDef="firstname">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+    <ng-container [matColumnDef]="columnName.FIRST_NAME">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.FIRST_NAME)}}</th>
       <td mat-cell *matCellDef="let element">{{ element.firstname }}</td>
     </ng-container>
 
     <!-- Lastname Column -->
-    <ng-container matColumnDef="lastname">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
+    <ng-container [matColumnDef]="columnName.LAST_NAME">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.LAST_NAME)}}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.lastname }}
       </td>
     </ng-container>
 
     <!-- Email Column -->
-    <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+    <ng-container [matColumnDef]="columnName.EMAIL">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.EMAIL)}}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.email }}
       </td>
     </ng-container>
 
     <!-- Is Admin Column -->
-    <ng-container matColumnDef="userprofilename">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Profile</th>
+    <ng-container [matColumnDef]="columnName.USER_PROFILE_NAME">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.USER_PROFILE_NAME)}}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.userprofilename }}
       </td>
     </ng-container>
 
     <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
+    <ng-container [matColumnDef]="columnName.ACTION">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element" class="actions-hover-row">
         <button

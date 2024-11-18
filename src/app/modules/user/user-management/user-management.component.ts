@@ -12,8 +12,9 @@ import { CreateUserComponent } from '../user-creation/user-creation.component';
 import { UserProfile } from 'src/app/models/user-profile';
 import { MatSort } from '@angular/material/sort';
 import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
-import { DialogEditionName } from 'src/app/models/enumeration.model';
+import { ColumnName, DialogEditionName } from 'src/app/models/enumeration.model';
 import { KeycloakOAuthService } from 'src/app/services/keycloak-oauth/keycloak-oauth.service';
+import { FilterTableService } from 'src/app/services/filter-table/filter-table.service';
 
 
 class UpdateUserResponse {
@@ -29,14 +30,28 @@ class UpdateUserResponse {
 export class UserManagementComponent implements OnInit {
 
   public isLoading: boolean;
-  public displayedColumns = ['username', 'firstname', 'lastname', 'email', 'userprofilename', 'actions'];
-  public colummnsFilter = ['All columns', 'Username', 'First name', 'Last name', 'Email', 'Profile'];
-  public columnsFilterSelected: string;
+  public displayedColumns = [
+    ColumnName.USERNAME, 
+    ColumnName.FIRST_NAME, 
+    ColumnName.LAST_NAME,
+    ColumnName.EMAIL,
+    ColumnName.USER_PROFILE_NAME,
+    ColumnName.ACTION
+  ];
+  public colummnsFilter = [
+    ColumnName.USERNAME, 
+    ColumnName.FIRST_NAME, 
+    ColumnName.LAST_NAME,
+    ColumnName.EMAIL,
+    ColumnName.USER_PROFILE_NAME  
+  ];
+  public columnValuesDict = new Map <ColumnName, string[]>();
+  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
   public dataSourceUsers = new MatTableDataSource<User>();
   public usersList: User[];
   public usersProfilesList: UserProfile[];
-  public userCount: number;
   public keycloakAvailable: boolean;
+  public columnName = ColumnName;
 
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) {
@@ -48,18 +63,16 @@ export class UserManagementComponent implements OnInit {
     public userService: UserService,
     private snackbarService: SnackbarService,
     private keycloakOauthService: KeycloakOAuthService,
-    private loadingDialogService: LoadingDialogService) {
+    private loadingDialogService: LoadingDialogService,
+    private filterTableService: FilterTableService
+  ) {
     this.usersList = [];
     this.usersProfilesList = [];
-    this.columnsFilterSelected = 'All columns';
     this.isLoading = true;
-    this.userCount= 0;
     this.keycloakAvailable = false;
   }
 
   ngOnInit(): void {
-    // Initialising filter with 'All columns'
-    this.onFilterChange();
     this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe(
       response => {
         this.keycloakAvailable = response
@@ -82,16 +95,17 @@ export class UserManagementComponent implements OnInit {
                 user.userprofilename = this.usersProfilesList.filter((x) => x.id === user.userprofile)[0].name;
               }
             });
+            
             this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
+            this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumns);
+            this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForTitleSelection(this.colummnsFilter);
             this.dataSourceUsers.sortingDataAccessor = (item, property) =>
               typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
             this.dataSourceUsers.sort = this.sort;
-            this.userCount = this.usersList.length
             this.isLoading = false;
           },
           error: (errorReceived) => {
             this.isLoading = false;
-            this.userCount = 0;
             const error = errorReceived as SoSTradesError;
             if (error.redirect) {
               this.snackbarService.showError(error.description);
@@ -103,7 +117,6 @@ export class UserManagementComponent implements OnInit {
       },
       error: (errorReceived) => {
         this.isLoading = false;
-        this.userCount = 0;
         const error = errorReceived as SoSTradesError;
         if (error.redirect) {
           this.snackbarService.showError(error.description);
@@ -133,7 +146,7 @@ export class UserManagementComponent implements OnInit {
         if (validationData.cancel === false) {
           this.loadingDialogService.showLoading(`Deletion of user "${user.username}"`);
           this.userService.deleteUserFromAuthorizedList(user.id).subscribe({
-            next: (res) => {
+            next: () => {
               // Update table
               this.usersList = this.usersList.filter((x) => x.id !== user.id);
               this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
@@ -198,37 +211,6 @@ export class UserManagementComponent implements OnInit {
       }
     });
 
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceUsers.filter = filterValue.trim().toLowerCase();
-    this.userCount = this.dataSourceUsers.filteredData.length;
-  }
-
-  onFilterChange() {
-    this.dataSourceUsers.filterPredicate = (data: User, filter: string): boolean => {
-
-      switch (this.columnsFilterSelected) {
-        case 'Username':
-          return data.username.trim().toLowerCase().includes(filter);
-        case 'First name':
-          return data.firstname.trim().toLowerCase().includes(filter);
-        case 'Last name':
-          return data.lastname.trim().toLowerCase().includes(filter);
-        case 'Email':
-          return data.email.trim().toLowerCase().includes(filter);
-        case 'Profile':
-          return data.userprofilename.trim().toLowerCase().includes(filter);
-        default:
-          return data.username.trim().toLowerCase().includes(filter) ||
-            data.firstname.trim().toLowerCase().includes(filter) ||
-            data.lastname.trim().toLowerCase().includes(filter) ||
-            data.email.trim().toLowerCase().includes(filter) ||
-            data.userprofilename.trim().toLowerCase().includes(filter);
-      }
-    };
-    this.userCount = this.dataSourceUsers.filteredData.length;
   }
 
   addUser() {

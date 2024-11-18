@@ -1,15 +1,19 @@
 #filters {
     display: flex;
+    margin-left: 5px;
+    align-items: center;
 }
+
 #select-column {
     margin-right: 20px;
 }
 #search-filter {
-    width: 70%;
+    width: 100%;
     font-size: 14px;
 }
 #number-element {
-    margin-right: 20px;
-    margin-top: 10px;
-    width: 100px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    width: 8%;
+    font-size: 12px;
 }
