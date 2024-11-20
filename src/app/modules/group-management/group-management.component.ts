@@ -21,6 +21,7 @@ import { ColumnName, Routing } from 'src/app/models/enumeration.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { DialogEditionName } from 'src/app/models/enumeration.model';
 import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
+import { FilterTableService } from 'src/app/services/filter-table/filter-table.service';
 
 
 @Component({
@@ -51,8 +52,8 @@ export class GroupManagementComponent implements OnInit {
     ColumnName.NAME,
     ColumnName.DESCRIPTION
   ];
-
-  public groupCount: number;
+  public columnValuesDict = new Map <ColumnName, string[]>();
+  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
   public loadedGroups: LoadedGroup[];
   public dataSourceMyGroups = new MatTableDataSource<LoadedGroup>();
   private filterDialog = new FilterDialogData();
@@ -82,7 +83,9 @@ export class GroupManagementComponent implements OnInit {
     private entityRightService: EntityRightService,
     private userService: UserService,
     private loadingDialogService: LoadingDialogService,
-    private snackbarService: SnackbarService) {
+    private snackbarService: SnackbarService,
+    private filterTableService: FilterTableService
+  ) {
     this.isLoading = true;
     this.checkboxConfidential = false;
     this.setDefaultGroup = false;
@@ -114,20 +117,13 @@ export class GroupManagementComponent implements OnInit {
       next: (groups) => {
         this.loadedGroups = groups;
         this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
-        this.dataSourceMyGroups.sortingDataAccessor = (item, property) => {
-          switch (property) {
-            case 'name':
-              return typeof item.group.name === 'string' ? item.group.name.toLowerCase() : item.group.name;
-            case 'description':
-              return typeof item.group.description === 'string' ? item.group.description.toLowerCase() : item.group.name;
-            case 'confidential':
-              return typeof item.group.confidential;
-            default:
-              return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-          }
-        };
+        this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumnsMyGroups);
+        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForTitleSelection(this.colummnsFilter);
+        this.dataSourceMyGroups.sortingDataAccessor = (item, property) =>   
+          typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
         this.dataSourceMyGroups.sort = this.sort;
-        this.onFilterChange();
+        // this.onFilterChange();
+        
         this.isLoading = false;
       },
       error: (errorReceived) => {
@@ -135,7 +131,7 @@ export class GroupManagementComponent implements OnInit {
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.onFilterChange();
+          // this.onFilterChange();
           this.isLoading = false;
           this.snackbarService.showError('Error loading user groups list : ' + error.description);
         }
@@ -330,7 +326,6 @@ export class GroupManagementComponent implements OnInit {
           // Add a string only used to trigger filterPredicate
           this.dataSourceMyGroups.filter = ' ';
         }
-        this.groupCount = this.dataSourceMyGroups.filteredData.length;
       }
     });
   }
@@ -366,7 +361,6 @@ export class GroupManagementComponent implements OnInit {
     // Add a string only used to trigger filterPredicate
       this.dataSourceMyGroups.filter = ' ';
     }
-    this.groupCount = this.dataSourceMyGroups.filteredData.length;
   }
 
   applyFilterAfterReloading() {
@@ -379,7 +373,6 @@ export class GroupManagementComponent implements OnInit {
     // Add a string only used to trigger filterPredicate
       this.dataSourceMyGroups.filter = ' ';
     }
-  this.groupCount = this.dataSourceMyGroups.filteredData.length;
   }
 
   onFilterChange() {

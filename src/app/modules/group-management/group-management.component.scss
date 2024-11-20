@@ -79,54 +79,8 @@
   background-color: #f9f9f9;
 }
 
-th.mat-mdc-header-cell:last-of-type {
-  text-align: left !important;
-  padding-left: 3px;
-}
-
-th.mat-mdc-header-cell:last-of-type {
-  padding-right: 5px;
-}
-
-td:first-of-type {
-  padding-left: 24px;
-}
-
-.mat-column {
-  flex: 1;
-}
-
-th.mat-mdc-header-cell {
-  text-align: center;
-}
-
-th.mat-sort-header-sorted {
-  color: black;
-}
-
-td.mat-mdc-cell {
-  text-align: left;
-  padding: 3px;
-}
-
-.table td,
-.table th {
-  vertical-align: middle;
-}
-
-.mat-mdc-cell {
-  font-size: 12px;
-  color: unset;
-}
-
-tr.mat-mdc-row {
-  height: auto;
-  min-height: 0;
-}
-
-.table th,
-table td {
-  border-top: 0;
+.filter {
+  width: 90%;
 }
 
 .mat-mdc-table {
@@ -136,15 +90,10 @@ table td {
 }
 
 
-
 tr.table-row:hover {
   background-color: #f9f9f9;
 }
 
-.table th,
-table td {
-  border-top: 0;
-}
 
 /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 ::ng-deep.mat-radio-label {

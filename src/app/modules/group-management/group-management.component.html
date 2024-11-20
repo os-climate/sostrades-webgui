@@ -69,7 +69,7 @@
         <mat-panel-title> My Groups </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <div class="group-header">
+      <div class="group-header" *ngIf="!isLoading">
         <button
           mat-raised-button
           color="primary"
@@ -85,33 +85,16 @@
           </mat-icon>
           Refresh list
         </button>
-        <div class="filterSection">
-          <mat-form-field class="filter-form-field">
-            <mat-label class="filter-label-size">Filtered by</mat-label>
-            <mat-select
-              placeholder="Column(s) filtered"
-              class="filter-label-size"
-              (selectionChange)="onFilterChange()"
-              style="text-align: left"
-              [(ngModel)]="groupDataService.groupManagementColumnFiltered"
-              [matTooltip]="groupDataService.groupManagementColumnFiltered"
+          <div class="filter">
+            <app-filter-bar 
+            [dataSource]="dataSourceMyGroups"
+            [columnsName]="columnValuesDict"
+            [columnsFilter]="colummnsDictForTitleSelection"
+            [selectedValues]="groupDataService.groupSelectedValues"
+            element="group"
             >
-              <mat-option *ngFor="let item of colummnsFilter" [value]="item" style="text-transform: capitalize;">
-                {{ item }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field class="filter-bar">
-            <input
-              id="filter"
-              matInput
-              #filter
-              (keyup)="applyFilter($event)"
-              placeholder="Filter"
-              [(ngModel)]="groupDataService.groupManagementFilter"
-            />
-          </mat-form-field>
-        </div>
+            </app-filter-bar>
+          </div>
       </div>
 
       <div class="table-container">
