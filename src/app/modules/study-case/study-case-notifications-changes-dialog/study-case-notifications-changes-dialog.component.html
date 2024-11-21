@@ -3,57 +3,71 @@
   <div class="message-container">
     <div class="message">Done by {{ data.user }}</div>
   </div>
-  <div class="container-table">
+  <div class="filter">
+    <app-filter-bar 
+    [dataSource]="dataSourceChanges"
+    [columnsName]="columnValuesDict"
+    [columnsFilter]="colummnsDictForTitleSelection"
+    >
+    </app-filter-bar>
+  </div>
+  <div class="tables" id="table">
+    <mat-paginator
+      [pageSize]="500"
+      *ngIf="showPaginator"
+      showFirstLastButtons
+      >
+    </mat-paginator>
     <table
       mat-table
-      class="table"
       #table
       [dataSource]="dataSourceChanges"
       matSort
     >
       <!-- Name Column -->
-      <ng-container matColumnDef="name">
+      <ng-container [matColumnDef]="columnName.VARIABLE_ID">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Parameter name
+          {{columnValuesDict.get(columnName.VARIABLE_ID)}}
         </th>
         <td mat-cell *matCellDef="let element" >
-          <span [matTooltip]=element.variableId>{{ element.variableId }}</span>
+          <span>{{ element.variableId }}</span>
         </td>
       </ng-container>
 
       <!-- Group Column -->
-      <ng-container matColumnDef="oldValue">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Server value</th>
+      <ng-container [matColumnDef]="columnName.OLD_VALUE">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.OLD_VALUE)}}</th>
         <td mat-cell *matCellDef="let element">
           <div *ngIf="element.changeType === 'csv'">CSV file</div>
-          <div *ngIf="element.changeType !== 'csv'" matTooltip=element.oldValue>
-            {{ element.oldValue }}
+          <div *ngIf="element.changeType !== 'csv'" >
+            <span>{{ element.oldValue }}</span>
           </div>
         </td>
       </ng-container>
 
       <!-- Repository Column -->
-      <ng-container matColumnDef="newValue">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>New value</th>
+      <ng-container [matColumnDef]="columnName.NEW_VALUE">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.NEW_VALUE)}}</th>
         <td mat-cell *matCellDef="let element">
           <div *ngIf="element.changeType === 'csv'">CSV file</div>
-          <div *ngIf="element.changeType !== 'csv'" matTooltip=element.newValue>
-            {{ element.newValue }}
+          <div *ngIf="element.changeType !== 'csv'" >
+            <span>{{ element.newValue}}</span>
           </div>
         </td>
       </ng-container>
 
        <!-- Dataset Connector Id Column -->
-        <ng-container matColumnDef="datasetId">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Dataset ID</th>
+        <ng-container [matColumnDef]="columnName.DATASET_ID">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.DATASET_ID)}}</th>
           <td mat-cell *matCellDef="let element">
-              {{ element.datasetId }}
+            <span>{{ element.datasetId}}</span>
           </td>
         </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+    
   </div>
   <div mat-dialog-actions>
     <button mat-raised-button color="success" (click)="onOkClick()">

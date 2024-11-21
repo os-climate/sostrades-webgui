@@ -35,77 +35,18 @@
   text-align: left;
 }
 
-.mat-column {
-  flex: 1;
-}
-
-th.mat-mdc-header-cell {
-  text-align: center;
-}
-
-th.mat-sort-header-sorted {
-  color: black;
-}
-
-td.mat-mdc-cell {
-  text-align: left;
-  padding: 3px;
-}
-
-.table td,
-.table th {
-  vertical-align: middle;
-}
-
-.mat-mdc-cell {
-  min-height: 20px;
-  font-size: 12px;
-  color: unset;
-}
-
-tr.mat-mdc-row {
-  height: auto;
-}
-
-.table th,
-table td {
-  border-top: 0;
-}
-
 .filter {
-  width: calc(100% - 165px);
-}
-
-.mat-mdc-table {
-  border-collapse: separate;
   width: 100%;
-  margin-bottom: 0 !important;
-  table-layout: fixed;
+  padding: 10px 30px;
 }
 
-.container-table {
-  height: calc(100% - 150px);
-  padding-left: 5px;
-  padding-right: 5px;
-  width: 100%;
-  overflow: auto;
-}
-
-th.mat-mdc-header-cell:last-of-type {
-  text-align: left !important;
-  padding-left: 3px;
-}
-
-th.mat-mdc-header-cell:last-of-type {
-  padding-right: 5px;
-}
-
-.mat-column-name {
-  width: 30% !important;
+.mat-column-variableId {
+  width: 20% !important;
 }
 
 .mat-column-oldValue {
-  width: 20% !important;
+  width: 10% !important;
+  word-break: break-word;
 }
 
 .mat-column-newValue {
@@ -114,4 +55,10 @@ th.mat-mdc-header-cell:last-of-type {
 
 .mat-column-datasetId {
   width: 30% !important;
+}
+
+#table{
+  max-width: 1190px;
+  min-width: 700px;
+  height: 700px;
 }

@@ -45,7 +45,7 @@ export class LoadingStudyDialogComponent implements OnInit {
     this.title = this.data.title;
 
     // Transform title and add tooltip on title if lenght > 20
-    const prefixCreation = 'create study case '
+    const prefixCreation = 'Create study case '
     if (this.data.title.toLocaleLowerCase().startsWith(prefixCreation.toLocaleLowerCase())) {
       const remainingText = this.data.title.slice(prefixCreation.length); 
       if (remainingText.length > 20) {
@@ -68,16 +68,14 @@ export class LoadingStudyDialogComponent implements OnInit {
 
   setError(error:string){
     this.errorMessage = error;
-    if (error.length > 90) {
-        this.errorMessage = error.slice(0, 90) + '...';
-        this.tooltipErrorMessage = error;  
-    } 
+    if(this.errorMessage.length > 200) {
+      this.dialogRef.updateSize('600px','450px')
+    } else {
+      this.dialogRef.updateSize('260');
+    }
     
-    
-    this.dialogRef.updateSize('260');
     this.isInError = true;
   }
-  
 
   onCancelClick() {
     this.data.cancel = true;

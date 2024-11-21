@@ -233,7 +233,7 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  public checkPodStatusAndShowError(studyId:number, errorReceived: any, errorMessage:string="Error loading study", afterShowError=undefined){
+  public checkPodStatusAndShowError(studyId:number, errorReceived: any, errorMessage:string, afterShowError=undefined){
     ///Show error message and Close the loading. In case of error 502 the allocation pod status is checked
     ///param studyId = the ID of the study
     ///param errorReceived = the error that have been raised

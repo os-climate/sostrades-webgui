@@ -105,7 +105,7 @@ export class AppDataService extends DataHttpService {
                     },
                     error: (errorReceived) => {
                       
-                      this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study",()=> {
+                      this.studyCaseDataService.checkPodStatusAndShowError(loadedStudy.studyCase.id, errorReceived, "Error creating study: ",()=> {
                         this.onStudyCreated.emit(allocation.studyCaseId);
                         
                         isStudyCreated(false);
@@ -116,7 +116,7 @@ export class AppDataService extends DataHttpService {
               },
               error: (errorReceived) => {
                 
-                this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study",()=> {
+                this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, errorReceived, "Error creating study: ",()=> {
                   this.onStudyCreated.emit(allocation.studyCaseId);
                   
                   isStudyCreated(false);
@@ -125,7 +125,7 @@ export class AppDataService extends DataHttpService {
             });
           }
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study",()=> {
+          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ",()=> {
             this.onStudyCreated.emit(allocation.studyCaseId);
             
             isStudyCreated(false);
@@ -181,23 +181,23 @@ export class AppDataService extends DataHttpService {
                       }
                     },
                     error: (errorReceived) => {
-                      this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case",()=> isStudyCreated(false));
+                      this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived , "Error copying study case: ",()=> isStudyCreated(false));
                     }
                   });
                 }
               },
               error: (errorReceived) => {
-                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
+                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case: ",()=> isStudyCreated(false));
               }
             });
           }
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case" ,()=> isStudyCreated(false));
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case: " ,()=> isStudyCreated(false));
         }
       },
       error: (errorReceived) => {
         
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case",()=> isStudyCreated(false));
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case: ",()=> isStudyCreated(false));
       }
     });
   }
@@ -237,7 +237,7 @@ export class AppDataService extends DataHttpService {
                     },
                     error: (errorReceived) => {
                       isStudyLoaded(false);
-                      this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+                      this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: ");
                     }
                   });
                 }, 2000);
@@ -248,12 +248,12 @@ export class AppDataService extends DataHttpService {
         } else {
           
           isStudyLoaded(false);
-          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined);
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error loading study: ");
         }
       },
       error: (errorReceived) => {
         isStudyLoaded(false);
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: ");
       }
     });
   }    
@@ -311,16 +311,16 @@ export class AppDataService extends DataHttpService {
                 }
               },
               error: (errorReceived) => {
-                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: " );
               }
             });
           }
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined );
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined , "Error loading study: ");
         }
       },
       error: (errorReceived) => {
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: " );
       }
     });
   }    
@@ -367,7 +367,7 @@ export class AppDataService extends DataHttpService {
       error: (errorReceived) => {
        
         isStudyLoaded(false);
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived );
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: " );
       }
     });
 }
