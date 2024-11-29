@@ -115,6 +115,30 @@ private checkObjectAgainstMapRecursive(data: any, filterMap: Map<string, any[]>,
   }
   return list;
 }
+
+private checkObject(data: any, values: any) {
+  let isMatch = false
+  values.forEach( selectedValue => {
+    if (typeof(data) == 'object') {
+      Object.keys(data).forEach(key => {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+          this.checkObject(data[key], values) 
+        } 
+      })
+    }
+    else {
+      Object.values(data).forEach(value => {
+        if(selectedValue == value){
+          isMatch = true
+          return isMatch
+        }
+      })
+    }
+     
+  })
+  return isMatch
+}
+
 // Helper function to get nested values from an object
 private getNestedValue(data: any, key: string): any {
   // If the key exists directly in the object, return its value
@@ -153,6 +177,13 @@ private getNestedValue(data: any, key: string): any {
   applyFilter() {
     if (this.dataSource) {
       if(this.filterValue.trim().length == 0 && this.selectedValues && this.selectedValues.size > 0) {
+            this.selectedValues.forEach((values, key) => {
+            const object = this.checkObject(this.dataSource.data, values);
+            if(object){
+              this.dataSource.filteredData.push(object)
+              }
+            });
+            
         this.numberElement = this.dataSource.filteredData.length;
         this.filteredDataChange.emit(this.dataSource);
       } 
