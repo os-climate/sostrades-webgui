@@ -762,7 +762,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           });
         } else {
           // eslint-disable-next-line max-len
-          this.snackbarService.showWarning('Missing mandatory data before being able to execute study case (Node => ' + dataMissing[0] + ', ...)');
+          this.snackbarService.showWarning(`Missing mandatory data (${dataMissing.length}) before being able to execute study case (Node => ${dataMissing[0]}, ...)`);
         }
       }
     });

@@ -15,6 +15,7 @@ import { Routing } from 'src/app/models/enumeration.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
+import { OntologyService } from '../../ontology/ontology.service';
 
 
 @Injectable({
@@ -30,6 +31,7 @@ export class StudyCaseMainService extends MainHttpService {
     private router: Router,
     private studyCaseValidationService: StudyCaseValidationService,
     private studyCaseDataService: StudyCaseDataService,
+    private ontologyService: OntologyService,
     private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
     private location: Location) {
     super(location, 'study-case');
@@ -534,8 +536,9 @@ export class StudyCaseMainService extends MainHttpService {
       const url = `${this.apiRoute}/${studyId}/markdown-documentation`;
       return this.http.post<string>(url, formData).pipe(map(
         response => {
-          const documentation = new MardownDocumentation('', response);
-          return documentation;
+          const markdown = this.ontologyService.markdownDocumentations[discipline_key]
+          markdown.documentation = response
+          return markdown;
         }));
     
     
