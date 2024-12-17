@@ -36,8 +36,8 @@
               id="refresh"
               mat-raised-button
               style="text-align: right;"
-              matTooltip="Reload markdown from file"
-              (click)="refresh(documentItem)">
+              matTooltip="Reload markdown from file system"
+              (click)="refresh()">
               <i class="fa-solid fa-rotate fa-fw cursor-pointer"></i>
             </span>
             <span
@@ -69,7 +69,16 @@
     <div style="padding: 5px">
       <div class="missing-documentation">
         <div style="font-size: 12px; line-height: unset">
-          This discipline has no documentation provided yet
+          <span>This discipline has no documentation provided yet.</span>
+          <br>
+          <span
+              class="cursor-pointer"
+              mat-raised-button
+              matTooltip="Reload markdown from file system"
+              (click)="refresh()">
+              You can reload this markdown from file system if existing
+              <i class="fa-solid fa-rotate fa-fw "></i>
+          </span>
         </div>
       </div>
     </div>
