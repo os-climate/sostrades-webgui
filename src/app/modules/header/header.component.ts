@@ -391,7 +391,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           if (error.statusCode == 502 || error.statusCode == 0) {
             this.snackbarService.showError('No response from server');
           } else {
-            this.snackbarService.showError('Error at logout : ' + error.statusText);
+            this.snackbarService.showError('Error Keycloak logout : ' + error.description);
           }
         }
       });
