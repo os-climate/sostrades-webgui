@@ -293,10 +293,13 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     // Regex to replace reference by <img>
     const refRegex = /!\[.*?\](?:\[([^\]]+)\]|\(([^)]+)\))/g;
     markdown = markdown.replace(refRegex, (match, p1) => {
-      const imageName = p1.replace(/_/g, '-');
-      if (imageRefs[imageName]) {
-        return `<img src="${imageRefs[imageName]}" alt="${imageName}">`;
+      if (p1) {
+        const imageName = p1.replace(/_/g, '-');
+        if (imageRefs[imageName]) {
+          return `<img src="${imageRefs[imageName]}" alt="${imageName}">`;
+        }
       }
+      
       return match; // Return original text if not corresponding reference
     });
   
