@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
 
     this.route.queryParams.subscribe({
       next: (params) => {
-        if (params.hasOwnProperty('autologon')) {
+        if (Object.keys(params).includes('autologon')) {
           this.autoLogon = true;
         }
         this.loggerService.log(`autologon : ${this.autoLogon}`);
@@ -89,32 +89,7 @@ export class LoginComponent implements OnInit {
           next: (keycloakAvailable) => {  
             
             if (!keycloakAvailable) {
-              
-              this.showLogin = true;
-              this.samlService.getSSOUrl().subscribe(ssoUrl => {
-                this.ssoUrl = ssoUrl;
-      
-                if (this.autoLogon === true && this.ssoUrl !== '') {
-                  document.location.href = this.ssoUrl;
-                } else {
-      
-                  this.githubOauthService.getGithubOAuthAvailable().subscribe(response => {
-                    this.showGitHubLogin = response;
-                    if(!this.showGitHubLogin){
-                      this.loginWithCredential = true;
-                      this.isLocalPlatform = true;
-                    }
-                    this.showLogin = true;
-                  }, error => {
-                    this.showLogin = true;
-                  });
-                  this.showLogin = true;
-                }
-              },
-                error => {
-                  this.ssoUrl = '';
-                  this.showLogin = true;
-                });
+              this.checkGithubAvailable();
             }
             else{
               // go to keycloak login page
@@ -129,7 +104,7 @@ export class LoginComponent implements OnInit {
                   if (error.statusCode == 502) {
                     this.router.navigate([Routing.NO_SERVER]);        
                   } else {
-                    this.snackbarService.showError('Error at Keycloak login : ' + error.name);
+                    this.snackbarService.showError('Error during Keycloak redirection login : ' + error.description);
                   }
                   this.loadingLogin = false;
                 }
@@ -139,10 +114,11 @@ export class LoginComponent implements OnInit {
 
         
           }, error: (errorReceived) => {
-              if (errorReceived.status == 502) {
+              if (errorReceived.statusCode == 502) {
                 this.router.navigate([Routing.NO_SERVER]);
               } else {
-                this.snackbarService.showError('Error getting application info : ' + errorReceived.statusText);
+                this.snackbarService.showError('Error login with keycloak: ' + errorReceived.description);
+                this.router.navigate([Routing.NO_SERVER]);
               }
             
           }
@@ -156,6 +132,34 @@ export class LoginComponent implements OnInit {
         }
       }
     });
+  }
+
+  checkGithubAvailable() {
+    this.showLogin = true;
+    this.samlService.getSSOUrl().subscribe(ssoUrl => {
+      this.ssoUrl = ssoUrl;
+
+      if (this.autoLogon === true && this.ssoUrl !== '') {
+        document.location.href = this.ssoUrl;
+      } else {
+
+        this.githubOauthService.getGithubOAuthAvailable().subscribe(response => {
+          this.showGitHubLogin = response;
+          if(!this.showGitHubLogin){
+            this.loginWithCredential = true;
+            this.isLocalPlatform = true;
+          }
+          this.showLogin = true;
+        }, () => {
+          this.showLogin = true;
+        });
+        this.showLogin = true;
+      }
+    },
+      () => {
+        this.ssoUrl = '';
+        this.showLogin = true;
+      });
   }
 
   displayLoginWithCredential() {

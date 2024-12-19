@@ -61,12 +61,14 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
       
       try {
         const el   = document.getElementsByTagName('app-visualisation-interface-diagram')[0];
-        const rect = el.getBoundingClientRect();
-        width = rect.width - margin;
-        height = rect.height - margin;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          width = rect.width - margin;
+          height = rect.height - margin;
+        }
         
       } catch (error) {
-        console.error(error);
+        this.snackbarService.showError(error);
       }
 
     this.graph = graphviz('#graphviz-graph', {
