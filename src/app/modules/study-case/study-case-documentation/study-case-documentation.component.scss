@@ -56,3 +56,16 @@ ol li {
   list-style-type: decimal;
   margin-bottom: 5px;
 }
+#button-pdf-refresh {
+  position: fixed;
+  min-width: 50px;
+  max-width: 60px;
+  display: flex;
+  justify-content: space-between;
+  right: 40px;
+  margin-top: -40px;
+}
+
+#refresh, #download-pdf {
+  color: white;
+}

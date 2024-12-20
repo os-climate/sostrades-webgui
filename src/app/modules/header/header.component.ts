@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
@@ -18,6 +18,7 @@ import { ContactDialogComponent } from '../contact-dialog/contact-dialog.compone
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
 import { RepositoryTraceabilityDialogData } from 'src/app/models/dialog-data.model';
 import { RepositoryTraceabilityDialogComponent } from '../ontology/ontology-main/repository-traceability-dialog/repository-traceability-dialog.component';
+import { KeycloakOAuthService } from 'src/app/services/keycloak-oauth/keycloak-oauth.service';
 
 
 @Component({
@@ -25,7 +26,7 @@ import { RepositoryTraceabilityDialogComponent } from '../ontology/ontology-main
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
 
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
@@ -33,6 +34,7 @@ export class HeaderComponent implements OnInit {
   public versionDate: string;
   public platform: string;
   public title: string;
+  public keycloakAvailable: boolean
   environment = environment;
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;
@@ -48,6 +50,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private auth: AuthService,
+    private keycloakOauthService:KeycloakOAuthService,
     private headerService: HeaderService,
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
@@ -71,6 +74,7 @@ export class HeaderComponent implements OnInit {
     this.OOMKilledMessage = "";
     this.repositoriesGitInfo = undefined;
     this.hasGitInfo = false;
+    this.keycloakAvailable = false;
   }
 
   ngOnInit(): void {
@@ -82,6 +86,11 @@ export class HeaderComponent implements OnInit {
       }
 
     });
+    this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe(
+      response => {
+        this.keycloakAvailable = response
+      }
+    )
     this.username = this.userService.getFullUsernameWithNameInCapitalize();
     this.hasAccessToStudyManager = this.userService.hasAccessToStudyManager();
     this.hasAccessToStudy = this.userService.hasAccessToStudy();
@@ -170,7 +179,7 @@ export class HeaderComponent implements OnInit {
                 this.displayMessageNoStudyServer = !isLoaded;
              
             },
-            error:(error)=>{this.displayMessageNoStudyServer = false;}});
+            error:()=>{this.displayMessageNoStudyServer = !isLoaded;}});
         }  
         else{
           this.displayMessageNoStudyServer = !isLoaded;
@@ -184,7 +193,7 @@ export class HeaderComponent implements OnInit {
         
     });
     //if the study is closed, the header should not be visible
-    this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(closed=>{
+    this.onCloseStudySubscription = this.studyCaseMainService.onCloseStudy.subscribe(() =>{
       if(this.displayMessageNoStudyServer){
         this.displayMessageNoStudyServer = false;
       }
@@ -196,7 +205,7 @@ export class HeaderComponent implements OnInit {
 
   reloadStudy()
   {
-    let isInEditionMode = !this.studyCaseDataService.loadedStudy.readOnly;
+    const isInEditionMode = !this.studyCaseDataService.loadedStudy.readOnly;
     if (isInEditionMode){
       this.appDataService.loadStudyInEditionMode();
     }
@@ -321,23 +330,76 @@ export class HeaderComponent implements OnInit {
 
   openVersionTab(){
     // get repository git info
-    if (this.repositoriesGitInfo !==undefined){
-    
-      const dialogData: RepositoryTraceabilityDialogData = new RepositoryTraceabilityDialogData();
+    this.appDataService.getGitReposInfo().subscribe(gitInfo=>{
+      
+      if (gitInfo !== undefined && gitInfo !== null){
+        this.repositoriesGitInfo = gitInfo;
+        this.hasGitInfo = true;
+        const dialogData: RepositoryTraceabilityDialogData = new RepositoryTraceabilityDialogData();
 
-      dialogData.codeSourceTraceability = this.repositoriesGitInfo;
+        dialogData.codeSourceTraceability = this.repositoriesGitInfo;
 
-      const dialogRef = this.dialog.open(RepositoryTraceabilityDialogComponent, {
-        disableClose: false,
-        width: '1000px',
-        height: '400px',
-        data: dialogData
+        this.dialog.open(RepositoryTraceabilityDialogComponent, {
+          disableClose: false,
+          width: '1000px',
+          height: '400px',
+          data: dialogData
+        });
+      }
+    });    
+  }
+  
+  updateKeycloakProfile(){
+    if (this.keycloakAvailable) {
+      this.keycloakOauthService.gotoKeycloakProfile().subscribe({
+        next: (keycloakProfileURL) => {
+              window.open(keycloakProfileURL, '_blank');
+        },
+        error: (error) => {
+          if (error.statusCode == 502 || error.statusCode == 0) {
+            this.snackbarService.showError('No response from server');
+          } else {
+            this.snackbarService.showError('Error at profile redirection : ' + error.description);
+          }
+        }
       });
     }
   }
-    
 
   logout() {
+    if (!this.keycloakOauthService.keycloakAvailable) {
+      this.deauthenticate();
+    }
+    else{
+      this.keycloakOauthService.logout_url().subscribe({
+        next: (keycloakLogoutURL) => {
+          this.auth.deauthenticate().subscribe({
+            next: () => {
+              // logout from keycloak
+              document.location.href = keycloakLogoutURL;
+            },
+            error: (error) => {
+              if (error.statusCode == 502 || error.statusCode == 0) {
+                this.snackbarService.showError('No response from server');
+              } else {
+                this.snackbarService.showError('Error at logout : ' + error.statusText);
+              }
+            }
+          });
+        },
+        error: (error) => {
+          if (error.statusCode == 502 || error.statusCode == 0) {
+            this.snackbarService.showError('No response from server');
+          } else {
+            this.snackbarService.showError('Error Keycloak logout : ' + error.description);
+          }
+        }
+      });
+
+    }
+  }
+
+  deauthenticate(){
     this.auth.deauthenticate().subscribe({
       next: () => {
         this.router.navigate([Routing.LOGIN]);

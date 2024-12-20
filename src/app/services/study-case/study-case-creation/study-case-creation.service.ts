@@ -5,7 +5,7 @@ import { StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
 import { NodeData, ProcessBuilderAttribute, ProcessBuilderData } from 'src/app/models/node-data.model';
 import { Process } from 'src/app/models/process.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import { StudyCasePayload } from 'src/app/models/study.model';
+import { Study, StudyCasePayload } from 'src/app/models/study.model';
 import { StudyCaseCreationComponent } from 'src/app/modules/study-case/study-case-creation/study-case-creation.component';
 import { AppDataService } from '../../app-data/app-data.service';
 import { ProcessService } from '../../process/process.service';
@@ -31,9 +31,12 @@ export class StudyCaseCreationService {
   ) { }
 
 
-  showCreateStudyCaseDialog(process: Process) {
+  showCreateStudyCaseDialog(process: Process, usecase: Study) {
     const dialogData: StudyCaseCreateDialogData = new StudyCaseCreateDialogData();
     dialogData.process = process;
+    if (usecase !== null && usecase !== undefined && usecase.name.length > 0) {
+      dialogData.reference = usecase.name
+    }
 
     this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
       disableClose: true,

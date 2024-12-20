@@ -40,10 +40,7 @@ export class AppComponent implements OnInit {
 
         this.socketService.openConnection('');
 
-        const loadedAllGroups = this.groupDataService.getUserGroups(true);
-        const loadedAllUsers = this.userService.loadAllUsers();
-
-        combineLatest([loadedAllGroups, loadedAllUsers]).subscribe();
+        this.groupDataService.getUserGroups(true).subscribe();
 
         this.appDataService.startConnectionStatusTimer();
 

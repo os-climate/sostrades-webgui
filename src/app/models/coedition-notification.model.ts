@@ -62,6 +62,7 @@ export enum CoeditionType {
   DISCONNECTION = 'disconnection',
   SUBMISSION = 'submission',
   EXECUTION = 'execution',
+  EXECUTION_STOPPED = 'execution stopped',
   CLAIM = 'claim',
   RELOAD = 'reload',
   VALIDATION_CHANGE = 'validation_change',

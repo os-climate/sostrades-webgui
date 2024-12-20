@@ -79,7 +79,7 @@ export class EditionFormDialogComponent implements OnInit {
         });
         break;
         case DialogEditionName.EDITION_STUDY:
-          this.dialogRef.updateSize("400px", "400px");
+          this.dialogRef.updateSize("400px", "300px");
           this.idName = "study-name";
           this.labelName = LabelFormName.STUDY_NAME;
           this.editForm = new FormGroup({

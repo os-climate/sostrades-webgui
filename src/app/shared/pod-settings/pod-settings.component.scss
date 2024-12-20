@@ -4,10 +4,30 @@
   height: 100%;
   justify-content: center;
   align-items: center;
+  margin:10px;
 }
 
+.checkbox-container{
+  text-align: center;
+  align-items: end;
+  margin-top:20px;
 
+}
+
+::ng-deep.mat-mdc-checkbox label {
+  margin-bottom: 0 !important;
+}
+
+.checkbox{
+  display: flex;
+  align-items: center;
+}
 
 .mat-dialog-title {
   margin: 0 !important;
+}
+
+.pod-table {
+  max-height: 300px;
+  overflow: auto;
 }

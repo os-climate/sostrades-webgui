@@ -102,11 +102,7 @@
       >
         <!-- Selected Column -->
         <ng-container [matColumnDef]="columnName.SELECTED">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            style="padding: 0 6px; text-align: unset"
-          >
+          <th mat-header-cell *matHeaderCellDef>
             <mat-checkbox
               (change)="$event ? masterToggle() : null"
               [checked]="selection.hasValue() && isAllSelected()"
@@ -116,7 +112,7 @@
             </mat-checkbox>
           </th>
 
-          <td mat-cell *matCellDef="let element" style="padding: 0 6px">
+          <td mat-cell *matCellDef="let element" style="text-align: center;">
             <mat-checkbox
               [id]="'checkbox-study-management-' + element.name +'-' + element.groupName"
               (click)="$event.stopPropagation()"
@@ -163,7 +159,7 @@
             <a routerLink="/study/{{element.id}}"
               class="link-study-title"
               [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
-              [matTooltip]="element.name"
+              [matTooltip]="'/study/' + element.id"
               matTooltipPosition="right"
               >
               {{ element.name }}
@@ -191,17 +187,12 @@
             <i *ngIf="getFilter" id="filter-repository" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.REPOSITORY, $event)" ></i>
           </th>
-          <td
-            mat-cell
-            *matCellDef="let element"
-            
-          >
-            <span 
-              [matTooltip]="element.repository" 
-              matTooltipPosition="right"
-            >
-            {{ element.repositoryDisplayName }}
-            </span>
+          <td mat-cell *matCellDef="let element">
+            <div class="cell-content">
+              <span [matTooltip]="element.repository" matTooltipPosition="right">
+              {{ element.repositoryDisplayName }}
+              </span>
+            </div>
           </td>
         </ng-container>
 
@@ -212,12 +203,14 @@
             (click)="displayFilterDialog(columnName.PROCESS, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element" >
+            <div class="cell-content">
             <span 
               [matTooltip]="element.process"
               matTooltipPosition="right"
               >
               {{ element.processDisplayName }}
             </span>
+            </div>
           </td>
         </ng-container>
         <!-- Calculation Status Column -->
@@ -231,6 +224,17 @@
             <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="(element.creationStatus === 'IN ERROR' || element.creationStatus === 'CREATION IN ERROR') && element.error"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus !=='CREATION DONE' && element.creationStatus !=='DONE'"> {{ element.creationStatus }} </span>
             <!-- Show execution status if creation is done -->
             <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="(element.executionStatus === 'IN ERROR' || element.executionStatus === 'POD ERROR' || element.executionStatus === 'FAILED' || element.executionStatus === 'POD PENDING') && element.error"  [matTooltip]="element.error"></i> <span *ngIf="element.creationStatus ==='CREATION DONE' || element.creationStatus ==='DONE'"> {{ element.executionStatusLabel }} </span>
+          </td>
+        </ng-container>
+
+        <!-- Flavor Column -->
+        <ng-container [matColumnDef]="columnName.FLAVOR" *ngIf="showFlavors">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Study Pod size
+            <i *ngIf="getFilter" id="filter-flavor" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.FLAVOR) ? 'icon-filter-values':'icon-filter-any-values'" 
+            (click)="displayFilterDialog(columnName.FLAVOR, $event)" ></i>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.studyPodFlavor}}
           </td>
         </ng-container>
 
@@ -261,16 +265,7 @@
         <ng-container [matColumnDef]="columnName.ACTION">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
-            <button
-              style="margin: 0 5px"
-              [id]="'btn-study-management-load-' + element.groupName +'-' +element.name"
-              mat-icon-button
-              color="primary"
-              [matTooltip]="'Load ' + element.name"
-              (click)="loadStudy($event, element)"
-            >
-                <i class="fa-regular fa-folder-open fa-fw"></i>
-            </button>
+            
             <input
                 type="file"
                 #fileUpload
@@ -293,6 +288,19 @@
             >
             <i class="fa-solid fa-pen-to-square"></i>
             </button>
+
+            <button
+            [id]="'btn-study-management-edit-flavor-' + element.groupName + '-' + element.name"
+            style="margin-right: 5px"
+            mat-icon-button
+            color="primary"
+            *ngIf="element.isManager && showFlavors"
+            (click)="updateFlavor(element)"
+            [matTooltip]="'Change pod size of ' + element.name"
+            >
+            <i class="fa-solid fa-gear toolbar-icon"></i>
+            </button>
+
             <button
             [id]="'btn-study-management-copy-' + element.groupName + '-' + element.name"
             *ngIf="getCreateStudy"
