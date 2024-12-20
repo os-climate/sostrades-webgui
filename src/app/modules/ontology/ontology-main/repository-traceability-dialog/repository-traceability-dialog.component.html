@@ -33,7 +33,7 @@
                 mat-cell
                 *matCellDef="let element"
             >
-            <a [href]="element.url + '/tree/' + element.commit" target="_blank">{{element.commit}}</a>
+            <a [href]="element.url + '/commits/' + element.commit" target="_blank">{{element.commit}}</a>
             </td>
             </ng-container>
             <ng-container  matColumnDef='committedDate'>

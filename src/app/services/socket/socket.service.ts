@@ -163,6 +163,12 @@ export class SocketService {
       this.addNotificationToQueue(notification);
     });
 
+    this.socket.on('study-stopped', (data) => {
+        const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
+        this.addNewNotificationOnList(notification)
+        this.addNotificationToQueue(notification);
+    });
+
     this.socket.on('study-claimed', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
       this.addNewNotificationOnList(notification)
@@ -280,6 +286,13 @@ export class SocketService {
     }
   }
 
+  stopStudyExecution(studyCaseId: number, stopped: boolean) {
+    if (this.socket) {
+      this.loggerService.log(this.socket.io.opts.transportOptions.polling.extraHeaders.Authorization);
+      this.socket.emit('stopped', { study_case_id: studyCaseId, stopped });
+    }
+  }
+
   deleteStudy(studyCaseId: number) {
     if (this.socket) {
       this.socket.emit('delete', { study_case_id: studyCaseId });
@@ -301,7 +314,7 @@ export class SocketService {
       this.onNewNotification.emit(notification);
     } else {
       if (this.userService.getFullUsername() !== notification.author) {
-        if (notification.type === CoeditionType.EXECUTION) {
+        if (notification.type === CoeditionType.EXECUTION || notification.type === CoeditionType.EXECUTION_STOPPED) {
           this.notificationQueue.pop();
           this.notificationQueue.push(notification);
           this.onNewNotification.emit(notification);

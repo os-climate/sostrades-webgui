@@ -54,10 +54,9 @@
           progressText="Loading processes list"
         ></app-progress-bar>
       </div>
-      <div class="table">
+      <div class="tables">
         <table
           mat-table
-          class="table"
           *ngIf="!isLoading"
           #table
           [dataSource]="dataSourceProcess"

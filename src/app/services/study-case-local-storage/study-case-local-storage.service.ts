@@ -251,7 +251,7 @@ export class StudyCaseLocalStorageService {
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(parseInt(studyId), errorReceived,"Error saving study case changes" );
+          this.studyCaseDataService.checkPodStatusAndShowError(parseInt(studyId), errorReceived,"Error saving study case changes: " );
         }
         isStudySaved(false);
       }

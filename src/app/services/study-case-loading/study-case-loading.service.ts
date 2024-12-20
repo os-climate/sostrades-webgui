@@ -10,6 +10,8 @@ import { SnackbarService } from "../snackbar/snackbar.service";
 import { PostOntology } from "src/app/models/ontology.model";
 import { TreenodeTools } from "src/app/tools/treenode.tool";
 import { CoeditionNotification } from "src/app/models/coedition-notification.model";
+import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
+import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
 
 @Injectable({
   providedIn: "root",
@@ -24,7 +26,9 @@ export class StudyCaseLoadingService {
     private studyCaseDataService: StudyCaseDataService,
     private ontologyService: OntologyService,
     private snackbarService: SnackbarService,
-    private studyCaseExecutionObserverService: StudyCaseExecutionObserverService
+    private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
+    private loadingStudyDialogService:LoadingStudyDialogService
+
   ) {
     this.onLoadStudy = null;
     this.onLoadreadOnlyStudy = null;
@@ -45,13 +49,12 @@ export class StudyCaseLoadingService {
     loadOnlyOntology: boolean
   ): Observable<string> {
     const finalizedLoadedStudyCaseObservable = new Observable<string>(
-      (messageObserver) => {
+      () => {
         this._finalizeLoadedStudyCase(
           loadedStudy,
           isStudyCreated,
           isFromCreateStudy,
-          loadOnlyOntology,
-          messageObserver
+          loadOnlyOntology
         );
       }
     );
@@ -69,10 +72,10 @@ export class StudyCaseLoadingService {
     loadedStudy: LoadedStudy,
     isStudyCreated: any,
     isFromCreateStudy: boolean,
-    loadOnlyOntology: boolean,
-    messageObserver: Observer<string>
+    loadOnlyOntology: boolean
   ) {
     const studyId = loadedStudy.studyCase.id;
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_ONTOLOGY);
 
     // Assign study to data service
     this.updateStudyCaseDataService(loadedStudy);
@@ -85,48 +88,39 @@ export class StudyCaseLoadingService {
 
     if (loadOnlyOntology) {
       this.loadOntology(loadedStudy).subscribe(() => {
-        messageObserver.next("Loading ontology");
-
+        
         this.studyCaseDataService.updateParameterOntology(loadedStudy);
         //end loading
         this.terminateStudyCaseLoading(
           loadedStudy,
-          isStudyCreated,
-          messageObserver
+          isStudyCreated
         );
       });
     } else {
       // Load logs
 
-      messageObserver.next("Load study logs");
       this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
       this.studyCaseDataService.tradeScenarioList = [];
 
-      messageObserver.next(`Loading ontology and notifications`);
-      
       const loadedOntology$ = this.loadOntology(loadedStudy);
       const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
       const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
 
       combineLatest([loadedOntology$,loadedNotifications$, loadedValidations$]).subscribe({
         next: ([resultVoid, resultnotifications, resultValidation]) => {
-          messageObserver.next("Loading ontology");
           this.studyCaseDataService.updateParameterOntology(loadedStudy);
-          
-          messageObserver.next("Loading notifications");
           this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
           
-          messageObserver.next("Loading validation");
           this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
       
           // End loading
-          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
+          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
           this.onDisplayLogsNotifications.emit(true);
         },
         error: (errorReceived) => {
           // Notify user
           this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
-          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated, messageObserver);
+          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
         }
       });      
     }
@@ -174,11 +168,10 @@ export class StudyCaseLoadingService {
    */
   private terminateStudyCaseLoading(
     loadedStudy: LoadedStudy,
-    isStudyLoaded: any,
-    loadingObserver: Observer<string>
+    isStudyLoaded: any
   ) {
     const message = "Refreshing study case data";
-    loadingObserver.next(message);
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.READY);
     this.snackbarService.showInformation(message);
 
     // Notify components observing study case status
@@ -188,6 +181,6 @@ export class StudyCaseLoadingService {
     isStudyLoaded(true);
 
     // Complete observer for a further unsubscription
-    loadingObserver.complete();
+    this.loadingStudyDialogService.closeLoading();
   }
 }
