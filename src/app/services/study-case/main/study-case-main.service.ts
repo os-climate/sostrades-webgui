@@ -1,8 +1,8 @@
 import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { HttpClient, HttpHeaders, HttpEvent, HttpParams } from '@angular/common/http';
-import { Observable, Subscriber, of, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, Subscriber } from 'rxjs';
 import { Router } from '@angular/router';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { Location } from '@angular/common';
@@ -12,8 +12,6 @@ import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
 import { Routing } from 'src/app/models/enumeration.model';
-import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
-import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { OntologyService } from '../../ontology/ontology.service';
 
@@ -42,6 +40,94 @@ export class StudyCaseMainService extends MainHttpService {
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API MAIN          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
+
+  //#region Create study
+  createStudy(studyInformation: StudyCaseInitialSetupPayload, withEmit: boolean): Observable<LoadedStudy> {
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.createStudytimeout(studyInformation, withEmit, observer);
+    });
+    return loaderObservable;
+  }
+
+  private createStudytimeout(studyInformation: StudyCaseInitialSetupPayload, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>) {
+    const url = `${this.apiRoute}/${studyInformation.studyCaseIdentifier}`;
+    return this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
+      response => {
+        return LoadedStudy.Create(response);
+      })).subscribe({
+        next:(loadedStudy) => {
+
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+          setTimeout(() => {
+            this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
+          }, 2000);
+        } else {
+          // Add study case to study management list
+          this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+          loaderObservable.next(loadedStudy);
+        }
+      },
+      error:(error) => {
+        //just try another time to be sure server is not available
+        setTimeout(() => {
+          console.log("Try to create study after first failure")
+          this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
+            response => {
+              return LoadedStudy.Create(response);
+            })).subscribe({
+              next:(loadedStudy) => {
+                if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
+                  setTimeout(() => {
+                    this.loadStudyInReadOnlyModeIfNeededTimeout(loadedStudy.studyCase.id, false, loaderObservable, true);
+                  }, 2000);
+                } else {
+                  // Add study case to study management list
+                  this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+                  loaderObservable.next(loadedStudy);
+                }
+              },
+            error:(error) => {
+              loaderObservable.error(error);
+            }
+          });
+        }, 2000);
+      }
+    });
+  }
+
+  //#endregion create study
+
+  //#region copy study
+  copyStudy(sourceStudyCaseIdentifier: number, targetStudyCaseIdentifier: number): Observable<LoadedStudy> {
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.copyStudytimeout(sourceStudyCaseIdentifier, targetStudyCaseIdentifier, observer);
+    });
+    return loaderObservable;
+  }
+
+  private copyStudytimeout(
+                          sourceStudyCaseIdentifier: number,
+                          targetStudyCaseIdentifier: number,
+                          loaderObservable: Subscriber<LoadedStudy>) {
+    const request = {
+      source_study_case: sourceStudyCaseIdentifier
+    };
+    return this.http.post(`${this.apiRoute}/${targetStudyCaseIdentifier}/copy`, request, this.options).pipe(map(
+      response => {
+        return Study.Create(response);
+      })).subscribe({
+        next:(study) => {
+
+        setTimeout(() => {
+          this.loadStudyInReadOnlyModeIfNeededTimeout(study.id, false, loaderObservable, true);
+        }, 2000);
+      },
+        error:(error) => {
+          loaderObservable.error(error);
+        }
+      });
+  }
+  //#endregion copy study
 
   //#region Load study
   loadStudy(studyId: number, withEmit: boolean, withTimeout = true): Observable<LoadedStudy> {
@@ -100,27 +186,12 @@ export class StudyCaseMainService extends MainHttpService {
       }));
   }
 
-  loadStudyInReadOnlyModeIfNeeded(studyId: number, withEmit: boolean, withTimeout = true): Observable<LoadedStudy> {
-    if (withTimeout) {
-      const loaderObservable = new Observable<LoadedStudy>((observer) => {
-        // Start study case loading to other services
-        this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, observer);
-      });
-      return loaderObservable;
-
-    }
-    else {
-      return this.internalloadStudyInReadOnlyModeIfNeeded(studyId);
-    }
-
-  }
-
-  private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>) {
-    this.internalloadStudyInReadOnlyModeIfNeeded(studyId).subscribe(
+  private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
+    this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
       {next: (loadedStudy) => {
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
-            this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable);
+            this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
           }, 2000);
         } else {
           if(withEmit){
@@ -135,9 +206,9 @@ export class StudyCaseMainService extends MainHttpService {
           //just try another time to be sure server is not available
           setTimeout(() => {
             console.log("Try to load study in read only mode after first failure")
-            this.internalloadStudyInReadOnlyModeIfNeeded(studyId).subscribe(
+            this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
               {next: (loadedStudy) => {
-                this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable);
+                this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
               },
               error:(error) => {
                 loaderObservable.error(error);
@@ -149,7 +220,7 @@ export class StudyCaseMainService extends MainHttpService {
         
   }
 
-  private internalloadStudyInReadOnlyModeIfNeeded(studyId: number): Observable<LoadedStudy> {
+  public loadtudyInReadOnlyModeIfNeeded(studyId: number): Observable<LoadedStudy> {
     return this.http.get(`${this.apiRoute}/${studyId}/read-only-mode`).pipe(map(
       response => {
         if (response !== null && response !== undefined) {
@@ -171,12 +242,20 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   private reloadStudytimeout(studyid: number, loaderObservable: Subscriber<LoadedStudy>) {
-    return this.http.get(`${this.apiRoute}/${studyid}/reload`, this.options).subscribe(
-        { next:(isReloaded) => {
+    return this.http.get(`${this.apiRoute}/${studyid}/reload`, this.options).pipe(map(
+      response => {
+        return LoadedStudy.Create(response);
+      })).subscribe(
+        { next:(loadedStudy) => {
+        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
-            this.loadStudyTimeout(studyid, true, loaderObservable, true);
+            this.loadStudyTimeout(loadedStudy.studyCase.id, true, loaderObservable, true);
           }, 2000);
-        
+        } else {
+          this.updateStudyCaseDataService(loadedStudy);
+          this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+          loaderObservable.next(loadedStudy);
+        }
       },
       error:(error) => {
         loaderObservable.error(error);
@@ -354,6 +433,7 @@ export class StudyCaseMainService extends MainHttpService {
   }
 
   getStudyZip(studyId: string): Observable<Blob> {
+    // get study from zip
     const options: {
       headers?: HttpHeaders;
       observe?: 'body';
