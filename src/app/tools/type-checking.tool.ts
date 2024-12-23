@@ -5,10 +5,9 @@ export class TypeCheckingTools {
   static readonly EMAIL_REGEX = '^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$';
   static readonly TEXT_LETTER_NUMBER_REGEX = '^[A-Za-z0-9_-]*$';
 
-  constructor() { }
 
   public static isFloat(val: string): boolean {
-    const floatRegex = /^[+\-]?(?=.)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+\-]?\d+)?$/;
+    const floatRegex = /^[+-]?(?=.)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+-]?\d+)?$/;
     if (!floatRegex.test(val)) {
       return false;
     }
