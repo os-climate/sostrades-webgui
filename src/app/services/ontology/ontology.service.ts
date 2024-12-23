@@ -78,7 +78,7 @@ export class OntologyService extends DataHttpService {
   }
 
   loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
-    return this.http.post<{}>(`${this.apiRoute}/ontology-usages`, ontologyRequest).pipe(map(
+    return this.http.post<any>(`${this.apiRoute}/ontology-usages`, ontologyRequest).pipe(map(
       response => {
         this.ontology.studyCase.parameters = {};
         this.ontology.studyCase.disciplines = {};

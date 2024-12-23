@@ -27,7 +27,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   public hasCsvChanges: boolean;
   public isCsvEditable: boolean;
   public isLargeFile: boolean;
-  public columnsDef: {}[];
+  public columnsDef: any[];
   public rowData: { [colName: string]: JSpreadSheetRowData }[];
   public title: string;
   public contentHeight: number ;

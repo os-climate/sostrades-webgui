@@ -108,7 +108,7 @@ export class ProcessBuilderData {
    * Convert object to attended node data value dictionnary
    * @returns dictonary
    */
-   public toNodeDataValue(): {} {
+   public toNodeDataValue() {
     const result = {};
 
     result[ProcessBuilderAttribute.PROCESS_REPOSITORY] = this.processRepositoryIdentifier;

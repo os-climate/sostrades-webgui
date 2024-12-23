@@ -17,7 +17,7 @@ export class OntologyStudy {
 
   public parameters: { [id: string]: OntologyParameter };
   public disciplines: { [id: string]: OntologyDiscipline };
-  public n2: {};
+  public n2: any;
 
   constructor() {
     this.parameters = {};
