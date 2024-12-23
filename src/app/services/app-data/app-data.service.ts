@@ -64,7 +64,7 @@ export class AppDataService extends DataHttpService {
 
   createCompleteStudy(study: StudyCasePayload, isStudyCreated: any) {
     // Display loading message
-    let loadingCanceled: boolean = false;
+    let loadingCanceled= false;
 
     // Display loading message
     this.loadingStudyDialogService
@@ -147,7 +147,7 @@ export class AppDataService extends DataHttpService {
   ) {
 
     // Display loading message
-    let loadingCanceled: boolean = false;
+    let loadingCanceled = false;
 
     // Display loading message
     this.loadingStudyDialogService
@@ -202,7 +202,7 @@ export class AppDataService extends DataHttpService {
   }
 
   loadCompleteStudy(studyId: number, studyName: string, isStudyLoaded: any) {
-    let loadingCanceled: boolean = false;
+    let loadingCanceled = false;
 
     // Display loading message
     this.loadingStudyDialogService
@@ -281,7 +281,7 @@ export class AppDataService extends DataHttpService {
   loadStudyInEditionMode() {
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
     const isStudyLoaded = () => {};
-    let loadingCanceled: boolean = false;
+    let loadingCanceled = false;
 
     // // Display loading message
     this.loadingStudyDialogService

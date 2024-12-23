@@ -348,7 +348,7 @@ export class NodeData {
   }
 
   get hasConnectorData(): boolean{
-    let has_connector_data: boolean = false;
+    let has_connector_data = false;
     if (this.connector_data !== undefined) {
       has_connector_data = true;
     }
