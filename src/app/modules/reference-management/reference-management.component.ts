@@ -350,9 +350,10 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
         // Set our dictionnary with the value selected
         this.referenceDataService.referenceSelectedValues.set(columnName, filter.selectedStringValues);
         // Trigger the dataSourceModelStatus.filterPredicate
-        if (this.dataSourceReferences.filter.length > 0) {
+        const filterValue = this.dataSourceReferences.filter.trim();
+        if (filterValue.length > 0) {
           // Apply the previous filter
-          this.dataSourceReferences.filter = this.dataSourceReferences.filter;
+          this.dataSourceReferences.filter = filterValue;
         } else {
           // Add a string only used to trigger filterPredicate
           this.dataSourceReferences.filter = ' ';

@@ -250,10 +250,11 @@ export class OntologyParametersComponent implements OnInit, OnDestroy {
       if ( filter !== undefined && filter !== null  && filter.cancel !== true) {
         // Set our dictionnary with the value selected
         this.ontologyService.parametersSelectedValues.set(columnName, filter.selectedStringValues);
-        // Trigger the dataSourceModelStatus.filterPredicate
-        if (this.dataSourceParameters.filter.length > 0) {
+        // Trigger the dataSourceParameters.filterPredicate
+        const filterValue = this.dataSourceParameters.filter.trim();
+        if (filterValue.length > 0) {
           // Apply the previous filter
-          this.dataSourceParameters.filter = this.dataSourceParameters.filter;
+          this.dataSourceParameters.filter = filterValue;
         } else {
           // Add a string only used to trigger filterPredicate
           this.dataSourceParameters.filter = ' ';

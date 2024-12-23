@@ -144,7 +144,6 @@ public formatColumnName(columnName: string): string {
 
   submitForm() {
     this.datas.cancel = false;
-    this.datas.possibleStringValues = this.datas.possibleStringValues;
     this.datas.selectedStringValues = this.researchMultiCtrl.value;
     this.dialogRef.close(this.datas);
   }

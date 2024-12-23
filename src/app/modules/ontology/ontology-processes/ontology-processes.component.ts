@@ -251,9 +251,10 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
         // Set our dictionnary with the value selected
         this.ontologyService.processesSelectedValues.set(columnName, filter.selectedStringValues);
         // Trigger the dataSourceModelStatus.filterPredicate
-        if (this.dataSourceProcess.filter.length > 0) {
+        const filterValue = this.dataSourceProcess.filter.trim();
+        if (filterValue.length > 0) {
           // Apply the previous filter
-          this.dataSourceProcess.filter = this.dataSourceProcess.filter;
+          this.dataSourceProcess.filter = filterValue;
         } else {
           // Add a string only used to trigger filterPredicate
           this.dataSourceProcess.filter = ' ';
@@ -267,12 +268,12 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
     const possibleStringValues = [];
     switch (column) {
       case ColumnName.PROCESS:
-        this.processesForFilter.forEach(process => {
+        this.dataSourceProcess.filteredData.forEach(process => {
         possibleStringValues.push(process.processName);
           });
         return possibleStringValues;
       case ColumnName.REPOSITORY:
-        this.processesForFilter.forEach(process => {
+        this.dataSourceProcess.filteredData.forEach(process => {
           if (!possibleStringValues.includes(process.repositoryName)) {
 
             possibleStringValues.push(process.repositoryName);

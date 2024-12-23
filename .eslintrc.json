@@ -16,8 +16,6 @@
       ],
       "rules": {
         "@typescript-eslint/no-unused-vars": "error",
-        "no-mixed-spaces-and-tabs": "error",
-        "prefer-const": "error",
         "@angular-eslint/directive-selector": [
           "error",
           {

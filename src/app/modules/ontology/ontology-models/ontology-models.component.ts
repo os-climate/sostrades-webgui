@@ -170,9 +170,10 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
         // Set our dictionnary with the value selected
         this.ontologyService.modelStatusSelectedValues.set(columnName, filter.selectedStringValues);
         // Trigger the dataSourceModelStatus.filterPredicate
-        if (this.dataSourceModelStatus.filter.length > 0) {
+        const filterValue = this.dataSourceModelStatus.filter.trim();
+        if (filterValue.length > 0) {
           // Apply the previous filter
-          this.dataSourceModelStatus.filter = this.dataSourceModelStatus.filter;
+          this.dataSourceModelStatus.filter = filterValue;
         } else {
           // Add a string only used to trigger filterPredicate
           this.dataSourceModelStatus.filter = ' ';

@@ -320,10 +320,12 @@ export class GroupManagementComponent implements OnInit {
       if ( filter !== undefined && filter !== null && filter.cancel !== true) {
         // Set our dictionnary with the value selected
         this.groupDataService.groupSelectedValues.set(columnName, filter.selectedStringValues);
-        // Trigger the dataSourceModelStatus.filterPredicate
-        if (this.dataSourceMyGroups.filter.length > 0) {
-          // Apply the previous filter
-          this.dataSourceMyGroups.filter = this.dataSourceMyGroups.filter;
+
+        // Trigger the dataSourceMyGroups.filterPredicate
+        const filterValue = this.dataSourceMyGroups.filter.trim()
+        if (filterValue.length > 0) {
+          // Apply the both filters (by search and by selection)
+          this.dataSourceMyGroups.filter = filterValue;
         } else {
           // Add a string only used to trigger filterPredicate
           this.dataSourceMyGroups.filter = ' ';
