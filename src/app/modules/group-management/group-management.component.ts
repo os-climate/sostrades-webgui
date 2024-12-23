@@ -17,7 +17,7 @@ import { HostListener } from '@angular/core';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 import { UserService } from 'src/app/services/user/user.service';
 import { UserApplicationRight } from 'src/app/models/user.model';
-import { ColumnName, Routing } from 'src/app/models/enumeration.model';
+import { ColumnName } from 'src/app/models/enumeration.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { DialogEditionName } from 'src/app/models/enumeration.model';
 import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
@@ -150,9 +150,7 @@ export class GroupManagementComponent implements OnInit {
     this.loadingDialogService.showLoading(`Creation of the Group "${groupName}". Please wait.`);
     // eslint-disable-next-line max-len
     this.groupDataService.createGroup(this.createGroupForm.value.groupName, this.createGroupForm.value.groupDescription, this.checkboxConfidential).subscribe({
-      next: (res) => {
-        const newGroup: Group = res as Group;
-    
+      next: (res) => {    
         const newLoadedGroup = new LoadedGroup(res, true, false, false);
         this.loadedGroups.push(newLoadedGroup);
         this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
@@ -206,7 +204,7 @@ export class GroupManagementComponent implements OnInit {
           this.loadingDialogService.showLoading(`Updating group (${editGroupData.name}). Please wait`);
 
           this.groupDataService.updateGroup(loadedGroup.group.id, editGroupData.name, editGroupData.description).subscribe({
-            next: (_) => {
+            next: () => {
               this.loadingDialogService.closeLoading();
               this.snackbarService.showInformation(`Group (${editGroupData.name}) has been successfully updated `);
               this.loadGroupManagementData(true);
@@ -246,7 +244,7 @@ export class GroupManagementComponent implements OnInit {
         if (validationData.cancel === false) {
           this.loadingDialogService.showLoading(`Deletion of the Group (${group.name}). Please wait.`);
           this.groupDataService.deleteGroup(group.id).subscribe({
-            next: (res) => {
+            next: () => {
               this.loadedGroups = this.loadedGroups.filter(x => x.group.id !== group.id);
               this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
           
@@ -278,7 +276,7 @@ export class GroupManagementComponent implements OnInit {
     this.setDefaultGroup = false;
     const userId = this.userService.getCurrentUserId();
     this.userService.changeDefaultGroup(loadedGroup.group.id, userId).subscribe({
-      next: (_) => {
+      next: () => {
         this.user.user.default_group_id = loadedGroup.group.id;
         this.setDefaultGroup = true;
       },
@@ -424,7 +422,7 @@ export class GroupManagementComponent implements OnInit {
     updateProcessAccessDialogData.resourceType = EntityResourceRights.GROUP;
     updateProcessAccessDialogData.getEntitiesRightsFunction = this.entityRightService.getGroupEntitiesRights(loadedGroup.group.id);
 
-    const dialogRef = this.dialog.open(UpdateEntityRightComponent, {
+    this.dialog.open(UpdateEntityRightComponent, {
       disableClose: true,
       data: updateProcessAccessDialogData
     });

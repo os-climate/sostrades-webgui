@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import * as Plotly from 'plotly.js-dist-min';
@@ -87,7 +87,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
        }
       
       if (this.plotData.logo_notvalidated || forceNotOfficialWatermark) {
-      	const logo_notvalidated ={
+        const logo_notvalidated = {
         source:"assets/NOTVALIDATED.PNG",
         xref:"paper", yref:"paper",
         x:0, y:1,
@@ -98,7 +98,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
       this.plotData.layout.images.push(logo_notvalidated);
         }
       if (this.plotData.logo_work_in_progress) {
-      	const logo_work_in_progress ={
+        const logo_work_in_progress ={
         source:"assets/WORKINPROGRESS.PNG",
         xref:"paper", yref:"paper",
         x:0, y:1,

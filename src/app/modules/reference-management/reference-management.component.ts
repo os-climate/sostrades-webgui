@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { ColumnName } from 'src/app/models/enumeration.model';
-import { FilterDialogData, PodSettingsDialogData, StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
+import { FilterDialogData, PodSettingsDialogData } from 'src/app/models/dialog-data.model';
 import { ProcessGenerationStatus } from 'src/app/models/reference-generation-status-observer.model';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
@@ -21,7 +21,6 @@ import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialo
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 import { Process } from 'src/app/models/process.model';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
-import { StudyCaseCreationComponent } from '../study-case/study-case-creation/study-case-creation.component';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 
 @Component({
@@ -227,7 +226,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
     this.referenceDataService
       .stopReferenceGeneration(study.regenerationId)
       .subscribe(
-        { next: (result) => {
+        { next: () => {
           this.snackbarService.showInformation(`Reference regeneration stopped for ${study.process}.${study.name}`);
           this.referenceGenerationObserverService.removeReferenceGenerationObserver(study.regenerationId);
           study.isRegeneratingReference = false;
@@ -258,16 +257,17 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
           const podData: PodSettingsDialogData = result as PodSettingsDialogData;
           if (podData !== null && podData !== undefined) {
             if (podData.cancel === false) {
-              this.referenceDataService.updateGenerateReferenceFlavor(study.regenerationId, podData.flavor).subscribe(
-                studyIsUpdated => {
-                    study.generationPodFlavor = podData.flavor;
+              this.referenceDataService.updateGenerateReferenceFlavor(study.regenerationId, podData.flavor).subscribe({
+                next: () => {
+                  study.generationPodFlavor = podData.flavor;
                     this.snackbarService.showInformation(`Reference ${study.name} has been succesfully updated.`);
-                  }, errorReceived => {
-                    this.snackbarService.showError('Error updating reference\n' + errorReceived.description);
-                  });
+                }, error: (error) => {
+                  this.snackbarService.showError('Error updating reference\n' + error.description);
                 }
-              }
-            });
+              });
+            } 
+          }
+        });
     });
   }
 

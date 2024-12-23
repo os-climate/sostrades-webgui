@@ -1,13 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { Subscription } from 'rxjs';
-import { LoadedStudy } from 'src/app/models/study.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { NodeData } from 'src/app/models/node-data.model';
 
-const POLLING_DELAY = 1000;
 
 @Component({
   selector: 'app-search-panel',

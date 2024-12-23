@@ -67,10 +67,9 @@ export class StudyCaseMainService extends MainHttpService {
           loaderObservable.next(loadedStudy);
         }
       },
-      error:(error) => {
+      error:() => {
         //just try another time to be sure server is not available
         setTimeout(() => {
-          console.log("Try to create study after first failure")
           this.http.post(url, JSON.stringify(studyInformation), this.options).pipe(map(
             response => {
               return LoadedStudy.Create(response);
@@ -161,12 +160,11 @@ export class StudyCaseMainService extends MainHttpService {
           loaderObservable.next(loadedStudy);
         }
       },
-      error:(error) => {
+      error:() => {
         //just try another time to be sure server is not available
         setTimeout(() => {
-          console.log("Try to load study after first failure")
           this.internalLoadStudy(studyId).subscribe(
-            {next: (loadedStudy) => {
+            {next: () => {
               this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
             },
             error:(error) => {
@@ -202,12 +200,12 @@ export class StudyCaseMainService extends MainHttpService {
           loaderObservable.next(loadedStudy);
         }
       },
-        error:(error) => {
+        error:() => {
           //just try another time to be sure server is not available
           setTimeout(() => {
             console.log("Try to load study in read only mode after first failure")
             this.loadtudyInReadOnlyModeIfNeeded(studyId).subscribe(
-              {next: (loadedStudy) => {
+              {next: () => {
                 this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
               },
               error:(error) => {
@@ -277,7 +275,7 @@ export class StudyCaseMainService extends MainHttpService {
       body: JSON.stringify({ studies: studiesIdList })
     };
     return this.http.delete(`${this.apiRoute}`, deleteOptions).pipe(map(
-      response => {
+      () => {
         // Check user removed currentLoadedStudy
         if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
           if (studies.filter(x => x.id === this.studyCaseDataService.loadedStudy.studyCase.id).length > 0) {
@@ -488,7 +486,7 @@ export class StudyCaseMainService extends MainHttpService {
     // save the date of the last user activity on the study
     const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-active`;
     return this.http.post(url,{}).subscribe({
-      next: (sOK) => {
+      next: () => {
       }, error: (error) => {
         console.log(error);
       }

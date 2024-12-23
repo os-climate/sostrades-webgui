@@ -300,7 +300,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
     updateProcessAccessDialogData.resourceType = EntityResourceRights.PROCESS;
     updateProcessAccessDialogData.getEntitiesRightsFunction = this.entityRightService.getProcessEntitiesRights(process.id);
 
-    const dialogRef = this.dialog.open(UpdateEntityRightComponent, {
+    this.dialog.open(UpdateEntityRightComponent, {
       disableClose: true,
       data: updateProcessAccessDialogData
     });

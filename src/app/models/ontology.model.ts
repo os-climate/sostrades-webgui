@@ -1,5 +1,4 @@
 import { OntologyDiscipline } from './ontology-discipline.model';
-import { OntologyModelStatus } from './ontology-model-status.model';
 import { OntologyParameter } from './ontology-parameter.model';
 
 export class Ontology {

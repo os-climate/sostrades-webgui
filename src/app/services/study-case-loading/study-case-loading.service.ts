@@ -1,6 +1,6 @@
 import { LoadedStudy } from "src/app/models/study.model";
 import { Injectable, EventEmitter } from "@angular/core";
-import { combineLatest, Observable, Observer, Subscriber } from "rxjs";
+import { combineLatest, Observable} from "rxjs";
 import { StudyCaseValidationService } from "../study-case-validation/study-case-validation.service";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
 import { StudyCaseValidation} from "src/app/models/study-case-validation.model";
@@ -74,7 +74,7 @@ export class StudyCaseLoadingService {
     isFromCreateStudy: boolean,
     loadOnlyOntology: boolean
   ) {
-    const studyId = loadedStudy.studyCase.id;
+    
     this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_ONTOLOGY);
 
     // Assign study to data service
@@ -107,7 +107,7 @@ export class StudyCaseLoadingService {
       const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
 
       combineLatest([loadedOntology$,loadedNotifications$, loadedValidations$]).subscribe({
-        next: ([resultVoid, resultnotifications, resultValidation]) => {
+        next: ([, resultnotifications]) => {
           this.studyCaseDataService.updateParameterOntology(loadedStudy);
           this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
           

@@ -21,8 +21,8 @@ export class PostProcessingBundle {
     let name = '';
     let disciplineName = '';
     let filters = [];
-    let plotly = [];
-    let plotlyParetoFront = [];
+    const plotly = [];
+    const plotlyParetoFront = [];
 
     if (jsonData !== undefined && jsonData !== null) {
 

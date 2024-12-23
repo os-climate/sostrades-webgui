@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, EventEmitter, LOCALE_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
 import { Subscription } from 'rxjs';

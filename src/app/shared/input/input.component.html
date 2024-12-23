@@ -12,7 +12,7 @@
     [attr.disabled]="nodeData.editable"
     style="text-align: right"
     (focus)="$event.target.select()"
-    (blur)="onBlur($event)"
+    (blur)="onBlur()"
   />
   <ng-template #nonFloatManagement>
     <input
@@ -27,7 +27,7 @@
       [attr.disabled]="nodeData.editable"
       style="text-align: right"
       (focus)="$event.target.select()"
-      (blur)="onBlur($event)"
+      (blur)="onBlur()"
     />
   </ng-template>
 

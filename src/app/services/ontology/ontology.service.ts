@@ -12,7 +12,7 @@ import { OntologyGeneralInformation } from 'src/app/models/ontology-general-info
 import { Router } from '@angular/router';
 import { HeaderService } from '../hearder/header.service';
 import { DataHttpService } from '../http/data-http/data-http.service';
-import { ColumnName, Routing } from 'src/app/models/enumeration.model';
+import { ColumnName } from 'src/app/models/enumeration.model';
 
 
 @Injectable({

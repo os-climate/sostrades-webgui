@@ -184,10 +184,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         // retreive the new study
         this.studyCaseDataService.getStudy(studyId).subscribe({
-        next:(study)=>{
+        next:()=>{
           this.isLoading = false;
         },
-        error:(error)=>{
+        error:()=>{
           this.isLoading = false;
         }
     })});
@@ -245,7 +245,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
   } else {
-    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe({
+    this.studyCaseDataService.removeFavoriteStudy(study.id).subscribe({
     next: () => {
         study.isFavorite = false;
         this.isFavorite = true;
@@ -939,7 +939,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     updateProcessAccessDialogData.resourceType = EntityResourceRights.STUDYCASE;
     updateProcessAccessDialogData.getEntitiesRightsFunction = this.entityRightService.getStudyCaseEntitiesRights(study.id);
 
-    const dialogRef = this.dialog.open(UpdateEntityRightComponent, {
+    this.dialog.open(UpdateEntityRightComponent, {
       disableClose: true,
       data: updateProcessAccessDialogData
     });
@@ -1035,7 +1035,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.loadingDialogService.showLoading(`Upload study case data "${study.name}"`);
 
       this.studyCaseMainService.uploadStudyRaw(study.id.toString(), event.target.files).subscribe({
-        next: (_) => {
+        next: () => {
           this.loadingDialogService.closeLoading();
           this.snackbarService.showInformation('Upload successful');
           if (event.target.files) {

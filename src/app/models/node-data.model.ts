@@ -327,7 +327,7 @@ export class NodeData {
     this.modified = true;
 
     if (this.parent !== null) {
-      this.parent.nodeDataValueChange(this);
+      this.parent.nodeDataValueChange();
     }
   }
 

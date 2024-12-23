@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
-import { Ontology } from 'src/app/models/ontology.model';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 
 

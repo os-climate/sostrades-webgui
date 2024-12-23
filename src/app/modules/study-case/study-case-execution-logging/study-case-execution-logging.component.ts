@@ -111,11 +111,11 @@ export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, Af
       const sco = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseId);
       if (sco !== null && sco !== undefined) {
         // Start calculation timeout to get logs
-        this.executionStartedSubscription = sco.executionUpdate.subscribe(_ => {
+        this.executionStartedSubscription = sco.executionUpdate.subscribe(() => {
           this.startTimeOut();
         });
         // Stop calculation timeout to get logs
-        this.executionStoppedSubscription = sco.executionStopped.subscribe(_ => {
+        this.executionStoppedSubscription = sco.executionStopped.subscribe(() => {
           this.stopTimeOut();
         });
       }
