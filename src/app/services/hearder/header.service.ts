@@ -4,18 +4,15 @@ import { EventEmitter, Injectable, Output } from '@angular/core';
   providedIn: 'root'
 })
 export class HeaderService {
-  @Output() onChangeIndexTab = new EventEmitter<number>();
-  @Output() onChangeTitle = new EventEmitter<string>()
-  
-  constructor() { }
-
+  @Output() changeIndexTabEvent = new EventEmitter<number>();
+  @Output() changeTitleEvent = new EventEmitter<string>();
   
   changeIndexTab( index :number){
-    this.onChangeIndexTab.emit(index)
+    this.changeIndexTabEvent.emit(index)
   }
 
   changeTitle(title : string){
-    this.onChangeTitle.emit(title)
+    this.changeTitleEvent.emit(title)
   }
 
 }
