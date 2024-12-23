@@ -13,7 +13,7 @@ export class PostProcessing {
     const result = new PostProcessing([]);
 
     if (jsonData !== undefined && jsonData !== null) {
-      if (jsonData.hasOwnProperty(PostProcessingAttributes.PLOTLY) &&
+      if (PostProcessingAttributes.PLOTLY in jsonData &&
         jsonData[PostProcessingAttributes.PLOTLY] !== undefined &&
         jsonData[PostProcessingAttributes.PLOTLY] !== null) {
         result.plotly = jsonData[PostProcessingAttributes.PLOTLY];

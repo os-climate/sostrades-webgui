@@ -174,7 +174,7 @@ export class NodeData {
   public static Create(key: string, jsonData: any, parent: TreeNode, isDataDisc: boolean): NodeData {
     // Remove parameter without type key
     let result: NodeData = null;
-    if (jsonData.hasOwnProperty(NodeDataAttributes.TYPE)) {
+    if (NodeDataAttributes.TYPE in jsonData) {
       result = new NodeData(
         key,
         jsonData[NodeDataAttributes.DEFAULT],

@@ -89,7 +89,7 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
       this.routerSubscription = this.route.queryParams.subscribe(params => {
 
         // If model is defined has query parameter then we filter and mount the model model information
-        if (params.hasOwnProperty('model')) {
+        if ('model' in params) {
           if (params.model !== null && params.model !== undefined) {
             this.fromProcessInformation = true;
             this.modelToShowAtStartup = params.model;

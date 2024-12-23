@@ -129,7 +129,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       if (this.studyCaseDataService.loadedStudy === null) {
         this.routerSubscription = this.route.queryParams.subscribe(params => {
           // If study is defined has query parameter then we reload the study
-          if (params.hasOwnProperty('studyId')) {
+          if ('studyId' in params) {
             if (params.studyId !== null && params.studyId !== undefined) {
                 this.appDataService.loadCompleteStudy(params.studyId, '', isStudyLoaded => {
                   if (isStudyLoaded) {

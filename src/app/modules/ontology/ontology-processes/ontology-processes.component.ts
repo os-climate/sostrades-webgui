@@ -102,7 +102,7 @@ export class OntologyProcessesComponent implements OnInit, OnDestroy {
       this.routerSubscription = this.route.queryParams.subscribe(params => {
 
         // If process is defined has query parameter then we filter and mount the process model information
-        if (params.hasOwnProperty('process')) {
+        if ('process' in params) {
           if (params.process !== null && params.process !== undefined) {
             this.fromModelInformation = true;
             this.processToShowAtStartup = params.process;

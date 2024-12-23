@@ -28,7 +28,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
   ngOnInit() {
     if (this.plotData !== null && this.plotData !== undefined) {
       if (this.studyCaseValidationService.studyValidationDict !== null && this.studyCaseValidationService.studyValidationDict !== undefined) {
-        if (this.studyCaseValidationService.studyValidationDict.hasOwnProperty(`${this.fullNamespace}`)) {
+        if (`${this.fullNamespace}` in this.studyCaseValidationService.studyValidationDict) {
           this.studyCaseValidation =this.studyCaseValidationService.studyValidationDict[`${this.fullNamespace}`][0];
         }
       }

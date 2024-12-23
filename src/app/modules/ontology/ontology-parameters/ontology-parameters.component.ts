@@ -72,7 +72,7 @@ export class OntologyParametersComponent implements OnInit, OnDestroy {
       this.routerSubscription = this.route.queryParams.subscribe(params => {
 
         // If parameter is defined has query parameter then we filter and mount the parameter model information
-        if (params.hasOwnProperty('parameter')) {
+        if ('parameter' in params) {
           if (params.parameter !== null && params.parameter !== undefined) {
             this.fromParameterInformation = true;
             this.parameterToShowAtStartup = params.parameter;

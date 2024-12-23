@@ -26,25 +26,25 @@ export class PostProcessingBundle {
 
     if (jsonData !== undefined && jsonData !== null) {
 
-      if (jsonData.hasOwnProperty(PostProcessingBundleAttributes.NAME) &&
+      if (PostProcessingBundleAttributes.NAME in jsonData &&
         jsonData[PostProcessingBundleAttributes.NAME] !== undefined &&
         jsonData[PostProcessingBundleAttributes.NAME] !== null) {
         name = jsonData[PostProcessingBundleAttributes.NAME];
       }
 
-      if (jsonData.hasOwnProperty(PostProcessingBundleAttributes.DISCIPLINE_NAME) &&
+      if (PostProcessingBundleAttributes.DISCIPLINE_NAME in jsonData &&
         jsonData[PostProcessingBundleAttributes.DISCIPLINE_NAME] !== undefined &&
         jsonData[PostProcessingBundleAttributes.DISCIPLINE_NAME] !== null) {
           disciplineName = jsonData[PostProcessingBundleAttributes.DISCIPLINE_NAME];
       }
 
-      if (jsonData.hasOwnProperty(PostProcessingBundleAttributes.FILTERS) &&
+      if (PostProcessingBundleAttributes.FILTERS in jsonData &&
         jsonData[PostProcessingBundleAttributes.FILTERS] !== undefined &&
         jsonData[PostProcessingBundleAttributes.FILTERS] !== null) {
         filters = jsonData[PostProcessingBundleAttributes.FILTERS].map(f => PostProcessingFilter.Create(f));
       }
 
-      if (jsonData.hasOwnProperty(PostProcessingBundleAttributes.POST_PROCESSINGS) &&
+      if (PostProcessingBundleAttributes.POST_PROCESSINGS in jsonData &&
         jsonData[PostProcessingBundleAttributes.POST_PROCESSINGS] !== undefined &&
         jsonData[PostProcessingBundleAttributes.POST_PROCESSINGS] !== null) {
         const plots = jsonData[PostProcessingBundleAttributes.POST_PROCESSINGS];
