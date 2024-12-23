@@ -187,7 +187,7 @@ body {
 
 
 .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: transparent
+  background-color: transparent !important
 }
 
 .mat-mdc-snack-bar-container {

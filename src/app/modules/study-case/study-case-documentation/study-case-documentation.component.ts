@@ -19,7 +19,7 @@ import * as html2pdf from 'html2pdf.js';
 })
 export class DocumentationComponent implements OnChanges, AfterViewInit  {
 
-  @Input('identifiers') identifiers: string[];
+  @Input() identifiers: string[];
  
   public documentation: MardownDocumentation[];
   public loading: boolean;
@@ -27,6 +27,8 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   public showBookmarks: boolean;
   private hasDocumentationSubject = new BehaviorSubject<boolean>(false);
   public isPDFGenerating: boolean;
+  public updateMarkdown: boolean;
+  private identifier: string;
 
   public options: KatexOptions = {
     delimiters: [
@@ -52,97 +54,43 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     this.showBookmarks = false;
     this.documentation = [];
     this.isPDFGenerating = false;
+    this.updateMarkdown = true;
+    this.identifier = "";
   }
 
   ngOnChanges (): void {
     
     this.updateDocumentation();  
     setTimeout(() => {
-      this.hasDocumentationSubject.next(true);  // Émettre la valeur true pour indiquer que la documentation est prête
-    }, 1000);  
+      this.hasDocumentationSubject.next(true);  // Emit the value true to indicate that the documentation is ready
+    }, 1000);
   }
 
   ngAfterViewInit() {
-    this.insertAttributOnReference();
-  }
-
-    /**
-   * This function has been created because there are not plugin footnote for ngx-markdown v15. marked-footnote V1.0.0 will be available with marked v.7.0.0 with ngx-markdown v17.0.0. with angular v17. 
-   * This function is triggered when the documentation is ready. 
-   * It performs several tasks:
-   * - Adds unique IDs to footnote references and sets up smooth scrolling for footnote navigation.
-   * - Adds unique IDs to list items of footnotes and sets up smooth scrolling for back references.
-   * - Hides paragraphs that contain base64 image references.
-   */
-  private insertAttributOnReference() {
-    this.hasDocumentationSubject
-      .pipe(filter(hasDoc => hasDoc))
-      .subscribe(() => {
-        // Add IDs to footnote reference elements and set up smooth scrolling
-        this.el.nativeElement.querySelectorAll('.footnote-ref a').forEach((element: HTMLElement) => {
-            const href = element.getAttribute('href');
-            const classRef = element.getAttribute('class');
-            if (href && classRef) {
-                element.setAttribute('id', classRef);
-                element.removeAttribute('class');
-                // Add an event listener for smooth scrolling to the target
-                element.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    const targetId = href.substring(1);
-                    const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });  
-                    }
-                });
-            }
-        });
-
-        // Add unique IDs to footnote list items and set up smooth scrolling for back references
-        this.el.nativeElement.querySelectorAll('li.footnote-item').forEach((element: HTMLElement, index) => {
-            const id = `fn${index + 1}`;
-            element.setAttribute('id', id);
-            // Add an event listener for smooth scrolling back to the footnote reference
-            element.querySelectorAll('.footnote-backref').forEach((backrefElement: HTMLElement) => {
-                const backHref = backrefElement.getAttribute('href');
-                if (backHref) {
-                    backrefElement.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        const targetId = backHref.substring(1);
-                        const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
-                        if (targetElement) {
-                            targetElement.scrollIntoView();
-                        }
-                    });
-                }
-            });
-        });
-
-        // Hide paragraphs that contain base64 image references
-        const base64ImageReferenceRegex = /\[.*?\]:\s*data:image\/(PNG|png|jpg|jpeg|gif);base64,.*?(\r?\n|$)/g;
-        this.el.nativeElement.querySelectorAll('p').forEach((element: HTMLElement) => {
-            if (base64ImageReferenceRegex.test(element.innerHTML)) {
-              console.log(element)
-                this.renderer.setStyle(element, 'display', 'none');
-            }
-        });
-        // Target element .katex-display > .katex et supprimer white-space: nowrap
-        const katexElements = this.el.nativeElement.querySelectorAll('.katex-display > .katex');
-        katexElements.forEach((element: HTMLElement) => {
-          this.renderer.setStyle(element, 'white-space', 'normal');
-        });
-      });
+    this.insertAttributeOnMarkdown();
   }
 
   private updateDocumentation() {
     this.documentation = [];
     this.loading = true;
     let documentationRetrieved = 0;
+    
     this.identifiers.forEach(identifier => {
+      const markdown = this.ontologyService.markdownDocumentations[identifier];
+      this.identifier = identifier
+      if (markdown && markdown.documentation) {
+        this.updateMarkdown = false;
+      }
       this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe({
         next: (response) => {
           if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
             response.name = identifier;
-            response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+
+            // Transform markdown only if this documentation has not been already transformed
+            if(this.updateMarkdown) {
+              response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+            }
+
             this.documentation.push(response);
             this.hasDocumentation = true;
           } else if (this.documentation.length == 0) {
@@ -167,144 +115,42 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     });
   }
 
-  refresh(documentationItem:MardownDocumentation){
+  refresh() {
+    // Get the current study ID
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-    this.studyCaseMainService.getMarkdowndocumentation(studyId, documentationItem.name).subscribe((response)=>{
-      if ((response.documentation !== null) && (response.documentation !== undefined)) {
-        documentationItem.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+  
+    // Fetch the markdown documentation for the given study and documentation item
+    this.studyCaseMainService.getMarkdowndocumentation(studyId, this.identifier).subscribe((response) => {
+      // Check if the response contains valid documentation
+      if (response.documentation) {
+        // Transform the documentation content (footnotes, KaTeX equations, and images)
+        if(this.documentation.length == 0){
+          response.name = this.identifier
+          this.ngOnChanges();
+        } else {
+          response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+        }
+        
+        
+       
+        
+        // Use setTimeout to defer the execution of insertAttributeOnMarkdown
+        // This allows the DOM to update with the new documentation content before we manipulate it
+        // It's a way to ensure that the content is rendered before we try to modify it
+        setTimeout(() => {
+          this.insertAttributeOnMarkdown();
+        });
+  
+        // Set flag to indicate that documentation is available
         this.hasDocumentation = true;
       } else if (this.documentation.length == 0) {
+        // If documentation is empty, set flag to indicate no documentation
         this.hasDocumentation = false;
       }
-    })
-
+    });
   }
 
-
-/**
- * This function has been created because there are not plugin footnote for ngx-markdown v15. marked-footnote V1.0.0 will be available with marked v.7.0.0 with ngx-markdown v17.0.0. with angular v17. 
- * This function processes footnotes within the provided markdown content.
- * It performs the following tasks:
- * - Identifies and stores footnotes in a dictionary.
- * - Replaces inline footnote references with links.
- * - Builds a list of footnotes with back reference links.
- * - Adds a hidden class to elements containing base64 image references.
- * 
- * @param markdown - The input markdown string containing footnotes and base64 image references.
- * @returns The processed markdown string with footnote links and a footnote list.
- */
-  private transformFootnotesAndEquationKatexAndImages(markdown: string): string {
-    // const footnoteRegex = /\[\^(\d+)\]:\s((?:.|\n)+?)(?=\n\[\^|\n*$)/gs;
-    const footnoteRegex = /\[\^(\d+)\]:\s*((?:.|\n(?!\[\^))*)(?=\n\[\^|$)/gm;
-
-    // const footnoteRegex = /\[\^(\d+)\]:\s*(.*)/g;
-    const inlineFootnoteRegex = /\[\^(\d+)\]/g;
-    const katexEquationRegex = /\$\$([^\$]+)\$\$/g;
-    const katex2ndEquationRegex = /(?<![^\s\(])\$(?![\/\\])([^\$]+?)\$/g;
-
-    const base64ImageReferenceRegex = /!\[\]\[*.*\]/g;
-      
-    let footnoteList = '<ol>';
-    const footnoteMap: { [id: string]: { content: string, backrefs: string[] } } = {};
-    const footnoteOccurrences: { [id: string]: number } = {};
-    let match;
-    
-    // Display undescore on equations
-    markdown = markdown.replace(katexEquationRegex, (match, equation) => {
-      const escapedEquation = equation.replace(/_/g, '\\_');
-      return `$$${escapedEquation}$$`;
-      });
-    
-    // Display undescore on equations
-    markdown = markdown.replace(katex2ndEquationRegex, (match, equation) => {
-      const escapedEquation = equation.replace(/_/g, '\\_');
-      return `$${escapedEquation}$`;
-    });
-   
-    // Regex to retrieve images base64 
-    const imageRefs = {};
-    const base64Regex = /\[([^\]]+)\]:\s*data:image\/([a-zA-Z]+);base64,([^\s]+)/g;
-    markdown = markdown.replace(base64Regex, (match, p1, p2, p3) => {
-      imageRefs[p1.replace(/_/g, '-')] = `data:image/${p2};base64,${p3}`;
-      return ''; // Delete reference of marldown
-    });
-
-    // Regex to replace reference by <img>
-    const refRegex = /!\[\]\[([^\]]+)\]/g;
-    markdown = markdown.replace(refRegex, (match, p1) => {
-      const imageName = p1.replace(/_/g, '-');
-      if (imageRefs[imageName]) {
-        return `<img src="${imageRefs[imageName]}" alt="${imageName}">`;
-      }
-      return match; // Return original text if not corresponding reference
-    });
-  
-    // Find all footnotes and store them in a dictionary  
-    const sectionRegex = /^(#+\s*Sources|#+\s*References)/mi;
-    const sectionMatch = markdown.match(sectionRegex);
-
-    if (sectionMatch) {
-      const referenceIndex = sectionMatch.index;
-      const beforeReferences = markdown.slice(0, referenceIndex);
-      let references = markdown.slice(referenceIndex);
-    
-      // Extract footnotes from the references section
-      while ((match = footnoteRegex.exec(references)) !== null) {
-        const id = match[1];
-        const content = match[2];
-        if (!footnoteMap[id]) {
-          footnoteMap[id] = { content, backrefs: [] };
-        }
-      }
-
-      // Apply replacement only on the references part
-      references = references.replace(footnoteRegex, '');
-
-      // Rebuild the markdown
-      markdown = beforeReferences + references;
-    }
-    markdown =  markdown = markdown.replace(base64ImageReferenceRegex, (match, equation) => {
-      return match
-    });
-  
-    // Replace inline footnote references and add back reference links
-    markdown = markdown.replace(inlineFootnoteRegex, (match, id) => {
-      if (!footnoteOccurrences[id]) {
-        footnoteOccurrences[id] = 0;
-      }
-      footnoteOccurrences[id]++;
-      const occurrence = footnoteOccurrences[id];
-      const displayId = occurrence === 1 ? id : `${id}-${occurrence - 1}`;
-  
-      if (footnoteMap[id]) {
-         footnoteMap[id].backrefs.push(`<a href="#fnref${displayId}" class="footnote-backref">↩︎</a>`);
-      }
-  
-      return `<sup class="footnote-ref"><a href="#fn${id}" class="fnref${displayId}">[${displayId}]</a></sup>`;
-    });
-  
-    // Build the footnote list with back reference links
-    for (const id in footnoteMap) {
-      const { content, backrefs } = footnoteMap[id];
-      const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g;
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-
-      const formattedContent = content
-        .replace(markdownLinkRegex, (match, text, url) => {
-          return `<a href="${url}" target="_blank">${text}</a>`;
-        })
-        .replace(urlRegex, (match) => {
-          // Check if this URL was already processed as part of a Markdown link
-          const isProcessed = content.includes(`](${match})`);
-          return isProcessed ? match : `<a href="${match}" target="_blank">${match}</a>`;
-        });
-      footnoteList += `<li class="footnote-item"><span>${formattedContent} ${backrefs.join(' ')}</span></li>`;
-    }
-    footnoteList += '</ol>';
-    
-    return markdown + footnoteList
-  }
-
+  // Generate documentation into pdf
   async generatePDF(disciplineName: string) {
     // Display the loading page
     this.loadingDialogService.showLoading(`Generating pdf`);
@@ -404,5 +250,229 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     const element = document.getElementById(identifier);
     element.scrollIntoView();
   }
+
+  /**
+ * This function has been created because there are not plugin footnote for ngx-markdown v15. marked-footnote V1.0.0 will be available with marked v.7.0.0 with ngx-markdown v17.0.0. with angular v17. 
+ * This function processes footnotes within the provided markdown content.
+ * It performs the following tasks:
+ * - Identifies and stores footnotes in a dictionary.
+ * - Replaces inline footnote references with links.
+ * - Builds a list of footnotes with back reference links.
+ * - Adds a hidden class to elements containing base64 image references.
+ * 
+ * @param markdown - The input markdown string containing footnotes and base64 image references.
+ * @returns The processed markdown string with footnote links and a footnote list.
+ */
+  private transformFootnotesAndEquationKatexAndImages(markdown: string): string {
+    // Regex list
+    const footnoteRegex = /\[\^(\d+)\]:\s*((?:.|\n(?!\[\^))*)(?=\n\[\^|$)/gm;
+    const inlineFootnoteRegex = /\[\^(\d+)\]/g;
+    const katexEquationRegex = /\$\$([^$]+)\$\$/g;
+    const katex2ndEquationRegex = /(?<![^\s(])\$(?![/\\])([^$]+?)\$/g;
+    
+    // Allow to display undescore in equations with $$
+    markdown = markdown.replace(katexEquationRegex, (match) => {
+      const escapedEquation = match.replace(/_/g, '\\_');
+      return escapedEquation;
+    });
+    
+    // Allow to display undescore on equations with $
+    markdown = markdown.replace(katex2ndEquationRegex, (match) => {
+      const escapedEquation = match.replace(/_/g, '\\_');
+      return `${escapedEquation}`;
+    });
+
+    // Regex to retrieve images base64 
+    const imageRefs = {};
+    const base64Regex = /\[([^\]]+)\]:\s*data:image\/([a-zA-Z]+);base64,([^\s]+)/g;
+    markdown = markdown.replace(base64Regex, (match, p1, p2, p3) => {
+      imageRefs[p1.replace(/_/g, '-')] = `data:image/${p2};base64,${p3}`;
+      return ''; // Delete reference of markdown
+    });
+
+    // Regex to replace reference by <img>
+    const refRegex = /!\[.*?\](?:\[([^\]]+)\]|\(([^)]+)\))/g;
+    markdown = markdown.replace(refRegex, (match, p1) => {
+      if (p1) {
+        const imageName = p1.replace(/_/g, '-');
+        if (imageRefs[imageName]) {
+          return `<img src="${imageRefs[imageName]}" alt="${imageName}">`;
+        }
+      }
+      
+      return match; // Return original text if not corresponding reference
+    });
+
+  
+    // Find all footnotes and store them in a dictionary  
+    const sectionRegex = /^(#+\s*Sources|#+\s*References)/mi;
+    const sectionMatch = markdown.match(sectionRegex);
+    
+    const footnoteMap: { [id: string]: { content: string, backrefs: string[] } } = {};
+   
+    let match;
+    if (sectionMatch) {
+      const referenceIndex = sectionMatch.index;
+      const beforeReferences = markdown.slice(0, referenceIndex);
+      let references = markdown.slice(referenceIndex);
+    
+      // Extract footnotes from the references section
+      while ((match = footnoteRegex.exec(references)) !== null) {
+        const id = match[1];
+        const content = match[2];
+        if (!footnoteMap[id]) {
+          footnoteMap[id] = { content, backrefs: [] };
+        }
+      }
+
+      // Apply replacement only on the references part
+      references = references.replace(footnoteRegex, '');
+
+      // Rebuild the markdown
+      markdown = beforeReferences + references;
+    }
+    
+    // Replace inline footnote references and add back reference links
+    const footnoteOccurrences: { [id: string]: number } = {};
+    markdown = markdown.replace(inlineFootnoteRegex, (match, id) => {
+      if (!footnoteOccurrences[id]) {
+        footnoteOccurrences[id] = 0;
+      }
+      footnoteOccurrences[id]++;
+      const occurrence = footnoteOccurrences[id];
+      const displayId = occurrence === 1 ? id : `${id}-${occurrence - 1}`;
+  
+      if (footnoteMap[id]) {
+         footnoteMap[id].backrefs.push(`<a href="#fnref${displayId}" class="footnote-backref">↩︎</a>`);
+      }
+  
+      return `<sup class="footnote-ref"><a href="#fn${id}" class="fnref${displayId}">[${displayId}]</a></sup>`;
+    });
+  
+    // Build the footnote list with back reference links
+    let footnoteList = '<ol>';
+    for (const id in footnoteMap) {
+      const { content, backrefs } = footnoteMap[id];
+      const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g;
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+      const formattedContent = content
+        .replace(markdownLinkRegex, (match, text, url) => {
+          return `<a href="${url}" target="_blank">${text}</a>`;
+        })
+        .replace(urlRegex, (match) => {
+          // Check if this URL was already processed as part of a Markdown link
+          const isProcessed = content.includes(`](${match})`);
+          return isProcessed ? match : `<a href="${match}" target="_blank">${match}</a>`;
+        });
+      footnoteList += `<li class="footnote-item"><span>${formattedContent} ${backrefs.join(' ')}</span></li>`;
+    }
+    footnoteList += '</ol>';
+    
+    return markdown + footnoteList
+  }
+
+      /**
+   * This function has been created because there are not plugin footnote for ngx-markdown v15. marked-footnote V1.0.0 will be available with marked v.7.0.0 with ngx-markdown v17.0.0. with angular v17. 
+   * This function is triggered when the documentation is ready. 
+   * It performs several tasks:
+   * - Adds unique IDs to footnote references and sets up smooth scrolling for footnote navigation.
+   * - Adds unique IDs to list items of footnotes and sets up smooth scrolling for back references.
+   * - Adds unique IDS to title if there are table of contents
+   * - Hides paragraphs that contain base64 image references.
+   */
+      private insertAttributeOnMarkdown() {
+        this.hasDocumentationSubject
+          .pipe(filter(hasDoc => hasDoc))
+          .subscribe(() => {
+            // Add IDs to footnote reference elements and set up smooth scrolling
+            this.el.nativeElement.querySelectorAll('.footnote-ref a').forEach((element: HTMLElement) => {
+                const href = element.getAttribute('href');
+                const classRef = element.getAttribute('class');
+                if (href && classRef) {
+                    element.setAttribute('id', classRef);
+                    element.removeAttribute('class');
+                    // Add an event listener for smooth scrolling to the target
+                    element.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const targetId = href.substring(1);
+                        const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });  
+                        }
+                    });
+                }
+            });
+    
+            // Add unique IDs to footnote list items and set up smooth scrolling for back references
+            this.el.nativeElement.querySelectorAll('li.footnote-item').forEach((element: HTMLElement, index) => {
+                const id = `fn${index + 1}`;
+                element.setAttribute('id', id);
+                // Add an event listener for smooth scrolling back to the footnote reference
+                element.querySelectorAll('.footnote-backref').forEach((backrefElement: HTMLElement) => {
+                    const backHref = backrefElement.getAttribute('href');
+                    if (backHref) {
+                        backrefElement.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const targetId = backHref.substring(1);
+                            const targetElement = this.el.nativeElement.querySelector(`#${targetId}`);
+                            if (targetElement) {
+                                targetElement.scrollIntoView();
+                            }
+                        });
+                    }
+                });
+            });
+    
+    
+            // Add id on title if there are a "Interactive Table of Contents"
+            const titleNavigation = new Map();
+            const headers = this.el.nativeElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            
+            headers.forEach((header: HTMLElement) => {
+              const title = header.textContent.trim();
+              const id = title.toLowerCase().replace(/[^\w]+/g, '-');
+              titleNavigation.set(title, id);
+              header.setAttribute('id', id);
+            });
+            
+            // Add links on targeted title in "Interactive Table of Contents"
+            const linkElements = this.el.nativeElement.querySelectorAll('a[href^="#"]');
+            linkElements.forEach((link: HTMLAnchorElement) => {
+              const linkText = link.textContent.trim();
+              if (titleNavigation.has(linkText)) {
+                const href = `#${titleNavigation.get(linkText)}`;
+                link.setAttribute('href', href);
+              }
+            });
+          
+            // Navigate on the targeted title on click on link in the "Interactive Table of Contents"
+            const navigationlinks = this.el.nativeElement.querySelectorAll('a[href^="#"]');
+            navigationlinks.forEach((link: HTMLAnchorElement) => {
+              link.addEventListener('click', (event: Event) => {
+                event.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                  targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+              });
+            });
+    
+            // Hide paragraphs that contain base64 image references
+            const base64ImageReferenceRegex = /\[.*?\]:\s*data:image\/(PNG|png|jpg|jpeg|gif);base64,.*?(\r?\n|$)/g;
+            this.el.nativeElement.querySelectorAll('p').forEach((element: HTMLElement) => {
+                if (base64ImageReferenceRegex.test(element.innerHTML)) {
+
+                    this.renderer.setStyle(element, 'display', 'none');
+                }
+            });
+            // Target element .katex-display > .katex et supprimer white-space: nowrap
+            const katexElements = this.el.nativeElement.querySelectorAll('.katex-display > .katex');
+            katexElements.forEach((element: HTMLElement) => {
+              this.renderer.setStyle(element, 'white-space', 'normal');
+            });
+          });
+      }
 
 }

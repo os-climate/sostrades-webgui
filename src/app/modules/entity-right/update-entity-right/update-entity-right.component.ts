@@ -130,6 +130,7 @@ export class UpdateEntityRightComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent) {
+  
     const entityAddDialogData = new UpdateEntityRightAddPeopleDialogData();
     entityAddDialogData.ressourceId = this.data.ressourceId;
     entityAddDialogData.resourceType = this.data.resourceType;
@@ -171,7 +172,10 @@ export class UpdateEntityRightComponent implements OnInit {
     let filteredList: EntityRight[] = [];
 
     if (typeof (itemSearched) === 'string') {
-      filteredList = this.entitiesAvailable.filter(x => x.entityObject.search(itemSearched));
+      filteredList = this.entitiesAvailable.filter(x =>{
+        const isMatch = x.entityObject.search(itemSearched);
+        return isMatch;
+      } );
       this._sortAlphaList(filteredList);
       return filteredList;
 
