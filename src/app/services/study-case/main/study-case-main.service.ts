@@ -486,8 +486,7 @@ export class StudyCaseMainService extends MainHttpService {
     // save the date of the last user activity on the study
     const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-active`;
     return this.http.post(url,{}).subscribe({
-      next: () => {
-      }, error: (error) => {
+       error: (error) => {
         console.log(error);
       }
     });

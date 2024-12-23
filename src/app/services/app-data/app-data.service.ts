@@ -280,7 +280,9 @@ export class AppDataService extends DataHttpService {
    */
   loadStudyInEditionMode() {
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-    const isStudyLoaded = () => {};
+    const isStudyLoaded = () => {
+      // This function is intentionally empty, it will be overwritten later
+    };
     let loadingCanceled = false;
 
     // // Display loading message

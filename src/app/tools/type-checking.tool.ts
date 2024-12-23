@@ -1,6 +1,6 @@
 export class TypeCheckingTools {
 
-  static readonly FLOAT_SCIENTIFIC_REGEX = '^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$';
+  static readonly FLOAT_SCIENTIFIC_REGEX = '^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$';
   static readonly INTEGER_REGEX = '^[0-9]+$';
   static readonly EMAIL_REGEX = '^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$';
   static readonly TEXT_LETTER_NUMBER_REGEX = '^[A-Za-z0-9_-]*$';

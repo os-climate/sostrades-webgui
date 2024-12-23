@@ -479,7 +479,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   setExpandForDisciplinePanel(TreeNodeOrPanelId: string) {
     this.studyCaseDataService.loadedStudy.userStudyPreferences.expandedData[TreeNodeOrPanelId] = true;
     this.studyCaseDataService.setUserStudyPreference(TreeNodeOrPanelId, true).subscribe({
-      next: () => {},
       error: (error) => {
         this.snackbarService.showError(error);
       }
@@ -501,7 +500,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     const isExpanded = this.treeControl.isExpanded(node);
     const panelId = `${node.fullNamespace}.${PanelSection.TREEVIEW_SECTION}`
     this.studyCaseDataService.setUserStudyPreference(panelId, isExpanded).subscribe({
-      next: () => {},
       error: (error) => {
         this.snackbarService.showError(error);
       }
@@ -1050,6 +1048,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
   saveAndSynchronise() {
     this.saveData(() => {
+       // This function is intentionally empty, it will be overwritten later
     });
   }
 
