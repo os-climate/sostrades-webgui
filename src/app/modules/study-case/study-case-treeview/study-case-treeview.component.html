@@ -273,7 +273,7 @@
               mat-button
               [matTooltip]=" node.modelsFullPathList  | ontologyDisciplineConverter"
               matTooltipPosition="right"
-              [ngClass]="node == currentSelectedNode ? 'active' : null"
+              [ngClass]="node === currentSelectedNode ? 'active' : null"
               class="node-fullnamespace"
             >
               <i
@@ -352,7 +352,7 @@
               mat-button
               [matTooltip]="node.modelsFullPathList | ontologyDisciplineConverter"
               matTooltipPosition="right"
-              [ngClass]="node == currentSelectedNode ? 'active' : null"
+              [ngClass]="node === currentSelectedNode ? 'active' : null"
               class="node-fullnamespace"
             >
               <i
