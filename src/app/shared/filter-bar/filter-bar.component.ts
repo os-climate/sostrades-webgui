@@ -70,15 +70,15 @@ export class FilterBarComponent<T> implements OnInit {
         this.selectedValues.forEach((values, key) => {
           if(filter.trim()) {
             const objects = [];
-            const object = this.checkObjectAgainstMapRecursive(data, this.selectedValues, objects);
+            const object = this.recursivelyFilterObjectByMapCriteria(data, this.selectedValues, objects);
             if(object.length > 0){
-              isMatch = this.getNestedValue(data, key).toLowerCase().trim().includes(searchStr);
+              isMatch = this.recursivelySearchObjectForKey(data, key).toLowerCase().trim().includes(searchStr);
               return isMatch;
             }
           } else {
             if (values.length > 0) {
               values.some(value => {
-                isMatch = String(this.getNestedValue(data, key)).toLowerCase().trim().includes(value.toLowerCase().trim());
+                isMatch = String(this.recursivelySearchObjectForKey(data, key)).toLowerCase().trim().includes(value.toLowerCase().trim());
                 return isMatch;
               });
             }
@@ -91,8 +91,8 @@ export class FilterBarComponent<T> implements OnInit {
           const filteredColumns = new Map(this.columnsFilter);
           filteredColumns.delete(ColumnName.ALL_COLUMNS);
           isMatch = Array.from(filteredColumns.values()).some(columnValues => {
-              const key = this.getKeyByValue(filteredColumns, columnValues);
-              isMatch = String(this.getNestedValue(data, key)).toLowerCase().trim().includes(searchStr);
+              const key = this.findColumnNameByValue(filteredColumns, columnValues);
+              isMatch = String(this.recursivelySearchObjectForKey(data, key)).toLowerCase().trim().includes(searchStr);
               return isMatch;
             });
         } else {        
@@ -111,26 +111,26 @@ export class FilterBarComponent<T> implements OnInit {
   }
 
   /**
-   * Recursively checks if an object matches the criteria in the filter map
-   * @param data Object to check
+   * Recursively filters an object based on criteria specified in a Map
+   * @param data Object to filter
    * @param filterMap Map containing filter criteria
-   * @param list List to store matching objects
+   * @param matchingList List to store matching objects
    * @returns List of matching objects
    */
-  private checkObjectAgainstMapRecursive(data: any, filterMap: Map<string, any[]>, list: any) {
+  private recursivelyFilterObjectByMapCriteria(data: any, filterMap: Map<string, any[]>, matchingList: any[]): any[] {
     for (const [key, values] of filterMap.entries()) {
       if (key in data && values.includes(data[key])) {
-        list.push(data);
+        matchingList.push(data);
       }
-      if (typeof(data) == 'object') {
-        Object.keys(data).forEach(key => {
-          if (typeof data[key] === 'object' && data[key] !== null) {
-            this.checkObjectAgainstMapRecursive(data[key], filterMap, list);
+      if (typeof(data) === 'object' && data !== null) {
+        Object.keys(data).forEach(objKey => {
+          if (typeof data[objKey] === 'object' && data[objKey] !== null) {
+            this.recursivelyFilterObjectByMapCriteria(data[objKey], filterMap, matchingList);
           } 
         });
       }  
     }
-    return list;
+    return matchingList;
   }
 
   /**
@@ -193,21 +193,21 @@ export class FilterBarComponent<T> implements OnInit {
     return objects.filter(obj => checkObject(obj));
   }
   
-  /**
-   * Retrieves a nested value from an object
-   * @param data Object to traverse
+    /**
+   * Recursively searches for a key in an object and returns its value
+   * @param data Object to search through
    * @param key Key to search for
-   * @returns Found value or undefined
+   * @returns Found value or undefined if not found
    */
-  private getNestedValue(data: any, key: string): any {
+  private recursivelySearchObjectForKey(data: any, key: string): any {
     // If the key exists directly in the object, return its value
     if (key.toLowerCase() in data) {
       return data[key.toLowerCase()];
     }
     // Recursively search for the key in nested objects
     for (const prop in data) {
-      if (data[prop] && typeof data[prop] === 'object' ) {
-        const result = this.getNestedValue(data[prop], key);
+      if (data[prop] && typeof data[prop] === 'object') {
+        const result = this.recursivelySearchObjectForKey(data[prop], key);
         if (result !== undefined) {
           return result;
         }
@@ -217,16 +217,16 @@ export class FilterBarComponent<T> implements OnInit {
     return undefined;
   }
 
-  /**
-   * Retrieves the key corresponding to a value in the columns map
-   * @param columnsMap Map of columns
-   * @param searchValue Value to search for
-   * @returns Corresponding key or undefined
+    /**
+   * Finds the column name (key) corresponding to a value in the columns map
+   * @param columnsMap Map of column names to their values
+   * @param searchValue Display value to search for
+   * @returns Corresponding ColumnName or undefined if not found
    */
-  private getKeyByValue(columnsMap: Map<ColumnName, string>, searchValue: string): ColumnName {
-    for (const [key, value] of columnsMap.entries()) {
+  private findColumnNameByValue(columnsMap: Map<ColumnName, string>, searchValue: string): ColumnName | undefined {
+    for (const [columnName, value] of columnsMap.entries()) {
       if (value === searchValue) {
-        return key;
+        return columnName;
       }
     }
   }
