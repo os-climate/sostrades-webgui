@@ -68,11 +68,11 @@ export class FilterBarComponent<T> implements OnInit {
       // Filtering logic based on selected values
       if (this.selectedValues && this.selectedValues.size > 0) {
         this.selectedValues.forEach((values, key) => {
-          if(filter.trim()) {
-            const objects = [];
-            const object = this.recursivelyFilterObjectByMapCriteria(data, this.selectedValues, objects);
-            if(object.length > 0){
-              isMatch = this.recursivelySearchObjectForKey(data, key).toLowerCase().trim().includes(searchStr);
+          if(filter) {
+            // combine both filter options (filter-bar and filter by selectValues)
+            const matchingObjects = this.recursivelyFilterObjectByMapCriteria(data, this.selectedValues, []);
+            if (matchingObjects.length > 0) {
+              isMatch = this.isSearchStringInObject(matchingObjects[0], searchStr);
               return isMatch;
             }
           } else {
@@ -92,7 +92,8 @@ export class FilterBarComponent<T> implements OnInit {
           filteredColumns.delete(ColumnName.ALL_COLUMNS);
           isMatch = Array.from(filteredColumns.values()).some(columnValues => {
               const key = this.findColumnNameByValue(filteredColumns, columnValues);
-              isMatch = String(this.recursivelySearchObjectForKey(data, key)).toLowerCase().trim().includes(searchStr);
+              const value = String(this.recursivelySearchObjectForKey(data, key))
+              isMatch = value.toLowerCase().trim().includes(searchStr);
               return isMatch;
             });
         } else {        
@@ -106,6 +107,7 @@ export class FilterBarComponent<T> implements OnInit {
           }
         }
       }
+      this.numberElement = this.dataSource.filteredData.length;
       return isMatch;
     };   
   }
@@ -229,5 +231,26 @@ export class FilterBarComponent<T> implements OnInit {
         return columnName;
       }
     }
+  }
+    /**
+   * Checks if the search string is present in any string value of the object
+   * @param obj Object to search through
+   * @param searchStr String to search for
+   * @returns True if searchStr is found in any string value, false otherwise
+   */
+  private isSearchStringInObject(obj: any, searchStr: string): boolean {
+    const lowerSearchStr = searchStr.toLowerCase();
+
+    function searchInValue(value: any): boolean {
+      if (typeof value === 'string') {
+        return value.toLowerCase().includes(lowerSearchStr);
+      }
+      if (typeof value === 'object' && value !== null) {
+        return Object.values(value).some(searchInValue);
+      }
+      return false;
+    }
+
+    return Object.values(obj).some(searchInValue);
   }
 }
