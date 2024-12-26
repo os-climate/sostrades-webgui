@@ -36,6 +36,7 @@ import { DialogEditionName } from 'src/app/models/enumeration.model';
 import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
+import { FilterTableService } from 'src/app/services/filter-table/filter-table.service';
 
 
 @Component({
@@ -63,7 +64,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     ColumnName.GROUP,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
-    ColumnName.STATUS,
+    ColumnName.EXECUTION_STATUS,
     ColumnName.CREATION_DATE,
     ColumnName.MODIFICATION_DATE,
     ColumnName.ACTION
@@ -74,12 +75,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     ColumnName.GROUP,
     ColumnName.REPOSITORY,
     ColumnName.PROCESS,
-    ColumnName.STATUS,
+    ColumnName.EXECUTION_STATUS,
     ColumnName.FLAVOR
   ];
   public selection = new SelectionModel<Study>(true, []);
   public columnName = ColumnName;
-  public studyCount: number;
   public dataSourceStudies = new MatTableDataSource<Study>();
   public showFlavors:boolean;
   @ViewChild(MatSort, { static: false })
@@ -87,6 +87,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.dataSourceStudies.sort = v;
   }
   private filterDialog = new FilterDialogData();
+  public columnValuesDict = new Map <ColumnName, string[]>();
+  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
 
 
   public onCurrentStudyEditedSubscription: Subscription;
@@ -107,7 +109,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    private location: Location,
     private elementRef: ElementRef,
     private entityRightService: EntityRightService,
     public studyCaseDataService: StudyCaseDataService,
@@ -115,7 +116,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private socketService: SocketService,
     private appDataService: AppDataService,
-    private studyCasePostProcessingService: StudyCasePostProcessingService,
     public groupDataService: GroupDataService,
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
@@ -123,11 +123,12 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private processService: ProcessService,
     private userService: UserService,
     private studyCreationService: StudyCaseCreationService,
-    private flavorService: FlavorsService
+    private flavorService: FlavorsService,
+    private filterTableService: FilterTableService
+    
   ) {
     this.isFavorite = true;
     this.isLoading = true;
-    this.studyCount = 0;
     this.onCurrentStudyDeletedSubscription = null;
     this.onCurrentStudyEditedSubscription = null;
     this.showFlavors = false;
@@ -135,10 +136,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.flavorService.checkIfHasFlavors().subscribe(hasFlavors=>{
       //had the column flavor if there is flavors
       if (hasFlavors){
-        const index = this.displayedColumns.indexOf(ColumnName.STATUS); // Trouver l'index de l'élément de référence
+        const index = this.displayedColumns.indexOf(ColumnName.EXECUTION_STATUS); // Trouver l'index de l'élément de référence
 
         if (index !== -1) {
           this.displayedColumns.splice(index+1, 0, ColumnName.FLAVOR); // Insérer l'élément à l'index trouvé
@@ -286,22 +288,23 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         } else {
           this.dataSourceStudies = new MatTableDataSource<Study>(studies);
         }
+        this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumns);
+        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForTitleSelection(this.colummnsFilter);
         this.dataSourceStudies.sortingDataAccessor = (item, property) => {
           return typeof item[property] === 'string'
             ? item[property].toLowerCase()
             : item[property];
         };
         this.dataSourceStudies.sort = this.sort;
-        this.onFilterChange();
+        // this.onFilterChange();
         this.isLoading = false;
       },
       error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
-        this.studyCount = 0;
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.onFilterChange();
+          // this.onFilterChange();
           this.isLoading = false;
           this.snackbarService.showError(
             'Error loading study case list\n' + error.description
@@ -738,7 +741,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           // Add a string only used to trigger filterPredicate
           this.dataSourceStudies.filter = ' ';
         }
-        this.studyCount = this.dataSourceStudies.filteredData.length;
       }
     });
   }
@@ -788,7 +790,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 }
             });
           return possibleStringValues;
-        case ColumnName.STATUS:
+        case ColumnName.EXECUTION_STATUS:
         this.studyCaseDataService.studyManagementData.forEach(study => {
           
           if (study.creationStatus !== CreationStatus.CREATION_DONE &&
@@ -822,7 +824,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     // Add a string only used to trigger filterPredicate
       this.dataSourceStudies.filter = ' ';
     }
-    this.studyCount = this.dataSourceStudies.filteredData.length;
   }
 
 
@@ -836,7 +837,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     // Add a string only used to trigger filterPredicate
         this.dataSourceStudies.filter = ' ';
       }
-    this.studyCount = this.dataSourceStudies.filteredData.length;
   }
 
   onFilterChange() {
@@ -864,7 +864,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           case ColumnName.FLAVOR:
             isMatch = data.studyPodFlavor.trim().toLowerCase().includes(filter) || data.studyPodFlavor.trim().toLowerCase().includes(filter);
             break;
-          case ColumnName.STATUS:
+          case ColumnName.EXECUTION_STATUS:
             if (data.creationStatus !== CreationStatus.CREATION_DONE)
             {
               isMatch = data.creationStatus.trim().toLowerCase().includes(filter);
@@ -910,7 +910,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 isMatch = isMatch && (values.includes(data.studyPodFlavor)
                 || values.includes(data.studyPodFlavor));
                 break;
-              case ColumnName.STATUS:
+              case ColumnName.EXECUTION_STATUS:
                 if (data.creationStatus !== CreationStatus.CREATION_DONE){
                   isMatch = isMatch && values.includes(data.creationStatus);
                 }

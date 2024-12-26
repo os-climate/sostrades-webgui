@@ -27,21 +27,28 @@ export class FilterTableService {
   }
 
   private formatColumnName(column: ColumnName): string {
-    
     const columnString = column.toString()
     switch (column) {
+      // User Management
       case ColumnName.LAST_NAME:
         return 'Last name';
       case ColumnName.FIRST_NAME:
         return 'First name';
       case ColumnName.USER_PROFILE_NAME:
         return 'Profile'
+      // Study management
+      case ColumnName.FLAVOR:
+        return 'Study pod Flavor'
+      case ColumnName.GROUP:
+        return 'Group'
+      case ColumnName.EXECUTION_STATUS:
+        return 'Status'
     }
     
-    // Convertir camelCase ou snake_case en mots séparés
+    // Convert in camelCase or snake_case in separeted word
     const words = columnString.split(/(?=[A-Z])|_/).map(word => word.toLowerCase());
     
-    // Capitaliser chaque mot et les joindre
+    // Capitalize each word and join them
     return words.map(word => this.capitalizeFirstLetter(word)).join(' ');
   }
 
