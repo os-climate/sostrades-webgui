@@ -649,54 +649,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  downloadStudy(event: MouseEvent, study: Study) {
-
-    this.loadingDialogService.showLoading(`Retrieving study case data"${study.name}"`);
-
-    if ((event.ctrlKey === true) && (event.altKey === true)) {
-      this.studyCaseMainService.getStudyRaw(study.id.toString()).subscribe({
-        next: (result) => {
-          this.loadingDialogService.closeLoading();
-          const downloadLink = document.createElement('a');
-          downloadLink.href = window.URL.createObjectURL(result);
-          downloadLink.setAttribute('download', study.name);
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-        },
-        error: (errorReceived) => {
-          const error = errorReceived as SoSTradesError;
-          this.loadingDialogService.closeLoading();
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError(`Error downloading study case "${study.name}" : ${error.description}`);
-          }
-        }
-      });
-    } else {
-
-      this.studyCaseMainService.getStudyZip(study.id.toString()).subscribe({
-        next: (result) => {
-          this.loadingDialogService.closeLoading();
-          const downloadLink = document.createElement('a');
-          downloadLink.href = window.URL.createObjectURL(result);
-          downloadLink.setAttribute('download', `${study.name}.zip`);
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-        },
-        error: (errorReceived) => {
-          const error = errorReceived as SoSTradesError;
-          this.loadingDialogService.closeLoading();
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.snackbarService.showError(`Error downloading study case "${study.name}" : ${error.description}`);
-          }
-        }
-      });
-    }
-  }
-
   public hasFilter(column: ColumnName): boolean {
     const bool = this.studyCaseDataService.studySelectedValues.get(column) !== undefined
                 && this.studyCaseDataService.studySelectedValues.get(column) !== null
