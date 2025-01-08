@@ -86,7 +86,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   public studyCanReload: boolean;
   public showStudyRefreshing: boolean;
   public filterTreeInput: string;
-  public loadedStudyForTreeview : LoadedStudy
+  public loadedStudyForTreeview : LoadedStudy;
 
   public isStudyNoData: boolean;
   public isStudyReadOnly: boolean;
@@ -1467,6 +1467,53 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
                 bdl);
             });
           }
+      });
+    }
+  }
+downloadStudy(event: MouseEvent) {
+
+    this.loadingDialogService.showLoading(`Retrieving study case data"${this.studyCaseDataService.loadedStudy.studyCase.name}"`);
+
+    if ((event.ctrlKey === true) && (event.altKey === true)) {
+      this.studyCaseMainService.getStudyRaw(this.studyCaseDataService.loadedStudy.studyCase.id.toString()).subscribe({
+        next: (result) => {
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', this.studyCaseDataService.loadedStudy.studyCase.name);
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError(`Error downloading study case "${this.studyCaseDataService.loadedStudy.studyCase.name}" : ${error.description}`);
+          }
+        }
+      });
+    } else {
+
+      this.studyCaseMainService.getStudyZip(this.studyCaseDataService.loadedStudy.studyCase.id.toString()).subscribe({
+        next: (result) => {
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', `${this.studyCaseDataService.loadedStudy.studyCase.name}.zip`);
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+        },
+        error: (errorReceived) => {
+          const error = errorReceived as SoSTradesError;
+          this.loadingDialogService.closeLoading();
+          if (error.redirect) {
+            this.snackbarService.showError(error.description);
+          } else {
+            this.snackbarService.showError(`Error downloading study case "${this.studyCaseDataService.loadedStudy.studyCase.name}" : ${error.description}`);
+          }
+        }
       });
     }
   }
