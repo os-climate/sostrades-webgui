@@ -15,11 +15,11 @@ export class FilterTableService {
 
   public setColumnValuesDict(columns: ColumnName[]) {
     columns.forEach(column => {
-      this.columnValuesDict.set(column, [this.formatColumnName(column)]);
+      this.columnValuesDict.set(column, [column]);
     });
     return this.columnValuesDict
   }
-  public setcolummnsDictForTitleSelection(columns: ColumnName[]) {
+  public setcolummnsDictForFilteredColumn(columns: ColumnName[]) {
     columns.forEach(column => {
       this.colummnsDictForTitleSelection.set(column, this.formatColumnName(column));
     });
@@ -38,22 +38,22 @@ export class FilterTableService {
         return 'Profile'
       // Study management
       case ColumnName.FLAVOR:
-        return 'Study pod Flavor'
+        return 'Pod size'
       case ColumnName.GROUP:
         return 'Group'
       case ColumnName.EXECUTION_STATUS:
         return 'Status'
     }
     
-    // Convert in camelCase or snake_case in separeted word
-    const words = columnString.split(/(?=[A-Z])|_/).map(word => word.toLowerCase());
+       // Convert in camelCase or snake_case in separeted word
+       const words = columnString.split(/(?=[A-Z])|_/).map(word => word.toLowerCase());
     
-    // Capitalize each word and join them
-    return words.map(word => this.capitalizeFirstLetter(word)).join(' ');
-  }
-
-  private capitalizeFirstLetter(str: string): string {
-    const columnName = str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    return columnName;
+       // Capitalize each word and join them
+       return words.map(word => this.capitalizeFirstLetter(word)).join(' ');
+     }
+   
+     private capitalizeFirstLetter(str: string): string {
+       const columnName = str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+       return columnName;
   }
 }

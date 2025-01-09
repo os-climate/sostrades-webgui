@@ -131,7 +131,7 @@
 
         <!-- Name Column -->
         <ng-container [matColumnDef]="columnName.NAME">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name
             <i *ngIf="getFilter" id="filter-name" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
@@ -209,7 +209,7 @@
 
         <!-- Flavor Column -->
         <ng-container [matColumnDef]="columnName.FLAVOR" *ngIf="showFlavors">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Study Pod size
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Pod size
             <i *ngIf="getFilter" id="filter-flavor" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.FLAVOR) ? 'icon-filter-values':'icon-filter-any-values'" 
             (click)="displayFilterDialog(columnName.FLAVOR, $event)" ></i>
           </th>

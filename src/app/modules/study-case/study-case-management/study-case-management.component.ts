@@ -289,7 +289,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.dataSourceStudies = new MatTableDataSource<Study>(studies);
         }
         this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumns);
-        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForTitleSelection(this.colummnsFilter);
+        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
         this.dataSourceStudies.sortingDataAccessor = (item, property) => {
           return typeof item[property] === 'string'
             ? item[property].toLowerCase()

@@ -12,7 +12,7 @@
         (selectionChange)="onColumnChange()"
         [matTooltip]="selectedColumn"
       >
-        <mat-option *ngFor="let entry of columnsFilter | keyvalue" [value]="entry.key" style='text-transform: capitalize;'>
+        <mat-option *ngFor="let entry of columnsFilter | keyvalue" [value]="entry.key">
           {{ entry.value }}
         </mat-option>
     </mat-select>

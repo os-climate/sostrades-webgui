@@ -118,7 +118,7 @@ export class GroupManagementComponent implements OnInit {
         this.loadedGroups = groups;
         this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
         this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumnsMyGroups);
-        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForTitleSelection(this.colummnsFilter);
+        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
         this.dataSourceMyGroups.sortingDataAccessor = (item, property) =>   
           typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
         this.dataSourceMyGroups.sort = this.sort;

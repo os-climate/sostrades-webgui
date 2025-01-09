@@ -55,7 +55,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit, Aft
       );
      
       this.setColumnValuesDict();
-      this.setcolummnsDictForTitleSelection();
+      this.setcolummnsDictForFilteredColumn();
       if (this.hasChangesFromDataset) {
         this.setupDatasetColumns();
       }
@@ -79,7 +79,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit, Aft
   }
   
   // Set up column filters and values
-  private setcolummnsDictForTitleSelection(): void {
+  private setcolummnsDictForFilteredColumn(): void {
     this.colummnsDictForTitleSelection.set(ColumnName.VARIABLE_ID, 'Parameter name');
     this.colummnsDictForTitleSelection.set(ColumnName.NEW_VALUE, "New value");
     this.colummnsDictForTitleSelection.set(ColumnName.OLD_VALUE, "Server value");
