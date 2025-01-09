@@ -70,7 +70,7 @@ export class FilterBarComponent<T> implements OnInit {
         this.selectedValues.forEach((values, key) => {
           if(filter) {
             // combine both filter options (filter-bar and filter by selectValues)
-            const matchingObjects = this.recursivelyFilterObjectByMapCriteria(data, this.selectedValues, []);
+            const matchingObjects = this.recursivelyFilterObjectByMapCriteria(data, []);
             if (matchingObjects.length > 0) {
               isMatch = this.isSearchStringInObject(matchingObjects[0], searchStr);
               return isMatch;
@@ -115,26 +115,55 @@ export class FilterBarComponent<T> implements OnInit {
   /**
    * Recursively filters an object based on criteria specified in a Map
    * @param data Object to filter
-   * @param filterMap Map containing filter criteria
    * @param matchingList List to store matching objects
    * @returns List of matching objects
    */
-  private recursivelyFilterObjectByMapCriteria(data: any, filterMap: Map<string, any[]>, matchingList: any[]): any[] {
-    for (const [key, values] of filterMap.entries()) {
-      if (key in data && values.includes(data[key])) {
-        matchingList.push(data);
+  private recursivelyFilterObjectByMapCriteria(data: any, matchingList: any[]): any[] {
+    // Check if the object matches all selected criteria
+    let matchesAllCriteria = true;
+
+    // Check each criteria in selectedValues
+    for (const [key, values] of this.selectedValues.entries()) {
+      const ontologyKey = this.getDisplayNameKey(key);
+      
+      // If the object doesn't match current criteria, mark as false and break
+      if (!(key in data && (values.includes(data[key]) || (ontologyKey && values.includes(data[ontologyKey]))))) {
+        matchesAllCriteria = false;
+        break;
       }
-      if (typeof(data) === 'object' && data !== null) {
-        Object.keys(data).forEach(objKey => {
-          if (typeof data[objKey] === 'object' && data[objKey] !== null) {
-            this.recursivelyFilterObjectByMapCriteria(data[objKey], filterMap, matchingList);
-          } 
-        });
-      }  
     }
+
+    // Only add the object if it matches all criteria
+    if (matchesAllCriteria && this.selectedValues.size > 0) {
+      matchingList.push(data);
+    }
+
+    // Continue searching in nested objects
+    if (typeof(data) === 'object' && data !== null) {
+      Object.keys(data).forEach(objKey => {
+        if (typeof data[objKey] === 'object' && data[objKey] !== null) {
+          this.recursivelyFilterObjectByMapCriteria(data[objKey], matchingList);
+        } 
+      });
+    }
+    
     return matchingList;
   }
 
+  /**
+ * Maps specific keys to their corresponding display name keys
+ * @param key Original key to check
+ * @returns Corresponding display name key or empty string
+ */
+  private getDisplayNameKey(key: string): string {
+    switch (key) {
+      case 'process': return 'processDisplayName';
+      case 'repository': return 'repositoryDisplayName';
+      default: return null;
+    }
+  }
+
+  
   /**
    * Handles the search event
    * @param value Search value
