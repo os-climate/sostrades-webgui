@@ -6,11 +6,11 @@ import { ColumnName } from 'src/app/models/enumeration.model';
 })
 export class FilterTableService {
   public columnValuesDict = new Map <ColumnName, string[]>();
-  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
+  public colummnsDictForFilteredColumn = new Map <ColumnName, string>();
   constructor(
   ) { 
     this.columnValuesDict.clear();
-    this.colummnsDictForTitleSelection.clear();
+    this.colummnsDictForFilteredColumn.clear();
   }
 
   public setColumnValuesDict(columns: ColumnName[]) {
@@ -21,9 +21,9 @@ export class FilterTableService {
   }
   public setcolummnsDictForFilteredColumn(columns: ColumnName[]) {
     columns.forEach(column => {
-      this.colummnsDictForTitleSelection.set(column, this.formatColumnName(column));
+      this.colummnsDictForFilteredColumn.set(column, this.formatColumnName(column));
     });
-    return this.colummnsDictForTitleSelection
+    return this.colummnsDictForFilteredColumn
   }
 
   private formatColumnName(column: ColumnName): string {

@@ -88,7 +88,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
   private filterDialog = new FilterDialogData();
   public columnValuesDict = new Map <ColumnName, string[]>();
-  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
+  public colummnsDictForFilteredColumn = new Map <ColumnName, string>();
 
 
   public onCurrentStudyEditedSubscription: Subscription;
@@ -289,7 +289,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.dataSourceStudies = new MatTableDataSource<Study>(studies);
         }
         this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumns);
-        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
+        this.colummnsDictForFilteredColumn = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
         this.dataSourceStudies.sortingDataAccessor = (item, property) => {
           return typeof item[property] === 'string'
             ? item[property].toLowerCase()

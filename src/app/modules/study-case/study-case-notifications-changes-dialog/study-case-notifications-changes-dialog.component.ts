@@ -18,7 +18,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit, Aft
 
   public displayedColumns = [ColumnName.VARIABLE_ID, ColumnName.OLD_VALUE, ColumnName.NEW_VALUE];
   public columnValuesDict = new Map <ColumnName, string[]>();
-  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
+  public colummnsDictForFilteredColumn = new Map <ColumnName, string>();
   public dataSourceChanges = new MatTableDataSource<StudyUpdateParameter>();
   public hasChangesFromDataset: boolean;
   public title: string;
@@ -38,7 +38,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit, Aft
   ) { 
     this.hasChangesFromDataset = false;
     this.columnValuesDict.clear();
-    this.colummnsDictForTitleSelection.clear();
+    this.colummnsDictForFilteredColumn.clear();
     this.showPaginator = false;
   }
 
@@ -80,20 +80,20 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit, Aft
   
   // Set up column filters and values
   private setcolummnsDictForFilteredColumn(): void {
-    this.colummnsDictForTitleSelection.set(ColumnName.VARIABLE_ID, 'Parameter name');
-    this.colummnsDictForTitleSelection.set(ColumnName.NEW_VALUE, "New value");
-    this.colummnsDictForTitleSelection.set(ColumnName.OLD_VALUE, "Server value");
+    this.colummnsDictForFilteredColumn.set(ColumnName.VARIABLE_ID, 'Parameter name');
+    this.colummnsDictForFilteredColumn.set(ColumnName.NEW_VALUE, "New value");
+    this.colummnsDictForFilteredColumn.set(ColumnName.OLD_VALUE, "Server value");
   }
   
   // Set up additional columns for dataset changes
   private setupDatasetColumns(): void {
     this.displayedColumns.push(ColumnName.DATASET_ID);
-    this.colummnsDictForTitleSelection.set(ColumnName.DATASET_ID, "Dataset ID");
+    this.colummnsDictForFilteredColumn.set(ColumnName.DATASET_ID, "Dataset ID");
     this.columnValuesDict.set(ColumnName.DATASET_ID, ['Dataset ID']);
   
     if (this.data.type === CoeditionType.EXPORT) {
       this.removeColumn([ColumnName.NEW_VALUE]);
-      this.colummnsDictForTitleSelection.set(ColumnName.OLD_VALUE, "Parameter value");
+      this.colummnsDictForFilteredColumn.set(ColumnName.OLD_VALUE, "Parameter value");
       this.columnValuesDict.set(ColumnName.OLD_VALUE, ["Parameter value"]);
     }
   }
@@ -103,7 +103,7 @@ export class StudyCaseNotificationsChangesDialogComponent implements OnInit, Aft
     columnsName.forEach(column => {
       const indexToRemove = this.displayedColumns.indexOf(column);
       this.displayedColumns.splice(indexToRemove, 1);
-      this.colummnsDictForTitleSelection.delete(column);
+      this.colummnsDictForFilteredColumn.delete(column);
       this.columnValuesDict.delete(column);
     })
     

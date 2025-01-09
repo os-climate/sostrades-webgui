@@ -46,7 +46,7 @@ export class UserManagementComponent implements OnInit {
     ColumnName.USER_PROFILE_NAME  
   ];
   public columnValuesDict = new Map <ColumnName, string[]>();
-  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
+  public colummnsDictForFilteredColumn = new Map <ColumnName, string>();
   public dataSourceUsers = new MatTableDataSource<User>();
   public usersList: User[];
   public usersProfilesList: UserProfile[];
@@ -98,7 +98,7 @@ export class UserManagementComponent implements OnInit {
             
             this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);
             this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumns);
-            this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
+            this.colummnsDictForFilteredColumn = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
             this.dataSourceUsers.sortingDataAccessor = (item, property) =>
               typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
             this.dataSourceUsers.sort = this.sort;

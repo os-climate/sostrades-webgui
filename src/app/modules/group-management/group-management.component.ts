@@ -53,7 +53,7 @@ export class GroupManagementComponent implements OnInit {
     ColumnName.DESCRIPTION
   ];
   public columnValuesDict = new Map <ColumnName, string[]>();
-  public colummnsDictForTitleSelection = new Map <ColumnName, string>();
+  public colummnsDictForFilteredColumn = new Map <ColumnName, string>();
   public loadedGroups: LoadedGroup[];
   public dataSourceMyGroups = new MatTableDataSource<LoadedGroup>();
   private filterDialog = new FilterDialogData();
@@ -118,7 +118,7 @@ export class GroupManagementComponent implements OnInit {
         this.loadedGroups = groups;
         this.dataSourceMyGroups = new MatTableDataSource<LoadedGroup>(this.loadedGroups);
         this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumnsMyGroups);
-        this.colummnsDictForTitleSelection = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
+        this.colummnsDictForFilteredColumn = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
         this.dataSourceMyGroups.sortingDataAccessor = (item, property) =>   
           typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
         this.dataSourceMyGroups.sort = this.sort;

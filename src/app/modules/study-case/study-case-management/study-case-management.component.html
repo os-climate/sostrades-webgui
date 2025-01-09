@@ -1,5 +1,6 @@
 <div class="container">
   <div class="study-header" *ngIf="!isLoading">
+    <div>
     <button
       mat-raised-button
       color="primary"
@@ -14,7 +15,8 @@
       refresh
     </mat-icon>
       Refresh list
-    </button>   
+    </button> 
+  </div>  
     <h2 *ngIf="getTitle" id="favorite-studies-title">Last opened and favorite studies 
         <button
           id="button-info"
@@ -32,12 +34,13 @@
         <app-filter-bar 
         [dataSource]="dataSourceStudies"
         [columnsName]="columnValuesDict"
-        [columnsFilter]="colummnsDictForTitleSelection"
+        [columnsFilter]="colummnsDictForFilteredColumn"
         [selectedValues]="studyCaseDataService.studySelectedValues"
         element="study"
         >
         </app-filter-bar>
       </div>
+    <div>
     <button
     *ngIf="getCreateStudy"
     mat-raised-button
@@ -50,6 +53,7 @@
   <mat-icon style="margin-left: -10px;">add</mat-icon>
    Create study
   </button>
+  </div>
   </div>
 
   <div class="action-button-bar" *ngIf="selection.hasValue()">
