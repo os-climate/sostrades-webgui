@@ -184,15 +184,9 @@ export class AppDataService extends DataHttpService {
    * Load the current study without read only mode (open in normal mode)
    */
   loadStudyInEditionMode() {
-    const studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
     let loadingCanceled: boolean = false;
-     // at the end of the loading, set the post processings of the read only mode to not load them again
-    const isStudyLoaded = (isloadedStudy: boolean) => {
-    if (isloadedStudy){
-      this.postProcessingService.addPostProcessingAfterSwitchEditionMode(this.studyCaseDataService.loadedStudy);
-    }
-
+    const isStudyLoaded = (isLoaded: boolean) => {};
     // Display loading message
     this.loadingStudyDialogService
       .showLoadingWithCancelobserver(`Switching to edition mode`)
@@ -210,6 +204,7 @@ export class AppDataService extends DataHttpService {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
           if(!loadingCanceled){ 
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
+            this.postProcessingService.addPostProcessingAfterSwitchEditionMode(this.studyCaseDataService.loadedStudy);
             //load study
             this.launchLoadStudy(studyId, true, false, isStudyLoaded, false);
           }
@@ -221,19 +216,14 @@ export class AppDataService extends DataHttpService {
         this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: " );
       }
     });
-  }
 }    
 
   
   /**
    * launch the Loading of the study if needed, and in parallel launch the loading of post processings then
    * finalize the loading with logs, ontology, validation...
-   * @param isstudyNeedLoaded : if the study needs to be loaded
-   * @param loadedStudy : the study to end loading
    * @param studyId : study to load
    * @param readOnlyMode : if the study needs to open in read-only mode
-   * @param getNotification : if the notifications should be loading (no notifications at the creation)
-   * @param isStudyLoaded : function to be executed at the end of the loading or creation
    * @param functionToDoAfterLoading : function to be executed at the end of the loading or creation
    * @param isFromCreateStudy : we are in creation mode
    */
