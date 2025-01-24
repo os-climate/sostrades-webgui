@@ -1,4 +1,4 @@
-import { Study, LoadedStudy, StudyCaseInitialSetupPayload, LoadStatus } from 'src/app/models/study.model';
+import { Study, LoadedStudy, LoadStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { Location } from '@angular/common';
 import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
-import { StudyCaseValidationService } from '../../study-case-validation/study-case-validation.service';
 import { MainHttpService } from '../../http/main-http/main-http.service';
 import { StudyCaseDataService } from '../data/study-case-data.service';
 import { StudyCaseExecutionObserverService } from 'src/app/services/study-case-execution-observer/study-case-execution-observer.service';
@@ -27,7 +26,6 @@ export class StudyCaseMainService extends MainHttpService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private studyCaseValidationService: StudyCaseValidationService,
     private studyCaseDataService: StudyCaseDataService,
     private ontologyService: OntologyService,
     private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
