@@ -96,9 +96,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
 
 
   public onInputChange(value) {
-    let updateItem: StudyUpdateParameter;
-
-    updateItem = new StudyUpdateParameter(
+    const updateItem = new StudyUpdateParameter(
       this.nodeData.identifier,
       this.nodeData.type.toString(),
       UpdateParameterType.SCALAR,

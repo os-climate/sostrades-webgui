@@ -78,7 +78,7 @@ import { OntologyGeneralInformation } from "src/app/models/ontology-general-info
         const request = {
             'study_ontology_request':ontologyRequest.ontology_request
         };
-        return this.http.post<{}>(`${this.apiRoute}/v1/study`, request).pipe(map(
+        return this.http.post<any>(`${this.apiRoute}/v1/study`, request).pipe(map(
           response => {
             this.ontology.studyCase.parameters = {};
             this.ontology.studyCase.disciplines = {};

@@ -26,18 +26,18 @@
 
           <!-- check circles gray or done + title-->
           <div class="bullet-container">
-            <mat-icon *ngIf="step.step != currentStep"
+            <mat-icon *ngIf="step.step !== currentStep"
               [ngClass]="{'iconValid':true,
                         'color-success':step.step < currentStep, 
                         'color-before': step.step > currentStep,
                       }"
               >check_circle
             </mat-icon>
-            <mat-icon *ngIf="!isInError && step.step == currentStep"
+            <mat-icon *ngIf="!isInError && step.step === currentStep"
               [ngClass]="{'iconValid':true}"
               >check_circle
             </mat-icon>
-            <mat-icon *ngIf="isInError && step.step == currentStep"
+            <mat-icon *ngIf="isInError && step.step === currentStep"
               [ngClass]="{'color-error': true}"
               >error
             </mat-icon>

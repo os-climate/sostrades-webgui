@@ -275,10 +275,7 @@ export class CouplingGraphComponent implements OnInit {
           const targetY = d.target.y - (1.3 * targetPadding * normY);
 
           const r = Math.hypot(deltaX, deltaY);
-          const theta = Math.atan2(deltaY, deltaX);
-
-          const targetX2 = (r - targetPadding) * Math.cos(theta) + d.source.x;
-          const targetY2 = (r - targetPadding) * Math.sin(theta) + d.source.y;
+       
 
           if (d['Type'] === 'parameterExchange') {
             // arc path
@@ -343,7 +340,7 @@ export class CouplingGraphComponent implements OnInit {
           .attr('marker-end', (d: any) => `url(#end-arrow-hover-${d['Type']})`);
         this.tooltip(d, true);
       })
-      .on('mouseout', (event: any, d: any) => {
+      .on('mouseout', (event: any) => {
         this.tooltipDiv
           .style('display', 'none');
         d3.select(event.currentTarget).select('.link')
@@ -679,9 +676,8 @@ export class CouplingGraphComponent implements OnInit {
         }
       });
       // we hide the parameters nodes concerned
-      let index = 0;
       concernedParameterNodes.forEach(id => {
-        index = this.links.findIndex(l => l.id === id);
+       this.links.findIndex(l => l.id === id);
         // this.links[index].active = 0;
       });
 
@@ -927,8 +923,8 @@ export class CouplingGraphComponent implements OnInit {
       .transition()
       .duration(750)
       .ease(d3.easeLinear)
-      .style('text-decoration', (d: any) => state === 0 ? 'line-through' : '')
-      .style('color', (d: any) => state === 0 ? 'lightgrey' : 'black');
+      .style('text-decoration', () => state === 0 ? 'line-through' : '')
+      .style('color', () => state === 0 ? 'lightgrey' : 'black');
 
     this.nodes.forEach(node => {
       if ('Type' in node) {

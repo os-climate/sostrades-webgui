@@ -77,7 +77,6 @@
       </mat-expansion-panel-header>
       <div
         *ngIf="disciplineData.numericalParameters"
-        [ngClass]="setCalculationCss(isCalculationRunning)"
         style="height: 100%; width: 100%"
       >
         <app-widget-container
@@ -122,7 +121,6 @@
       </div>
       <div
         *ngIf="disciplineData.disciplinaryInputs"
-        [ngClass]="setCalculationCss(isCalculationRunning)"
         style="height: 100%; width: 100%"
       >
         <app-widget-container
@@ -130,7 +128,6 @@
           [nodeDataList]="disciplinaryInputsOrdered"
           [discipline]="disciplineData.modelNameFullPath[0]"
           [namespace]="disciplineData.namespace"
-          [ngClass]="setCalculationCss(isCalculationRunning)"
         >
         </app-widget-container>
       </div>
@@ -168,7 +165,6 @@
       </div>
       <div
         *ngIf="disciplineData.disciplinaryOutputs"
-        [ngClass]="setCalculationCss(isCalculationRunning)"
         style="height: 100%; width: 100%"
       >
         <app-widget-container

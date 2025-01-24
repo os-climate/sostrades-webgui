@@ -7,7 +7,6 @@ import {
 } from "src/app/models/study.model";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
-import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
 import { StudyUpdateParameter } from "src/app/models/study-update.model";
 import { HttpClient } from "@angular/common/http";
 import { Location } from "@angular/common";
@@ -26,6 +25,7 @@ import { map } from "rxjs/operators";
 import { Routing } from "src/app/models/enumeration.model";
 import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
 import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
+import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
 
 @Injectable({
   providedIn: "root",
@@ -65,12 +65,12 @@ export class AppDataService extends DataHttpService {
 
   createCompleteStudy(study: StudyCasePayload, isStudyCreated: any) {
     // Display loading message
-    let loadingCanceled: boolean = false;
+    let loadingCanceled= false;
 
     // Display loading message
     this.loadingStudyDialogService
       .showLoadingWithCancelobserver(`Create study case ${study.name}`)
-      .subscribe((isCancel) => {
+      .subscribe(() => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
         );
@@ -84,13 +84,8 @@ export class AppDataService extends DataHttpService {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
           if (!loadingCanceled){
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
-            const studyInformation = new StudyCaseInitialSetupPayload(
-              allocation.studyCaseId,
-              study.reference,
-              study.type
-            );
-      
-          this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true); 
+            new StudyCaseInitialSetupPayload(allocation.studyCaseId, study.reference, study.type);
+            this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true); 
           }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ",()=> {
@@ -115,17 +110,14 @@ export class AppDataService extends DataHttpService {
     isStudyCreated: any
   ) {
 
-    // Display loading message
-    let loadingCanceled: boolean = false;
 
     // Display loading message
     this.loadingStudyDialogService
       .showLoadingWithCancelobserver(`Creating copy of study case : "${newName}"`)
-      .subscribe((isCancel) => {
+      .subscribe(() => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
         );
-        loadingCanceled = true;
         this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
     this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
@@ -145,12 +137,12 @@ export class AppDataService extends DataHttpService {
   }
 
   loadCompleteStudy(studyId: number, studyName: string, isStudyLoaded: any) {
-    let loadingCanceled: boolean = false;
+    let loadingCanceled = false;
 
     // Display loading message
     this.loadingStudyDialogService
       .showLoadingWithCancelobserver(`Loading study case ${studyName}`)
-      .subscribe((isCancel) => {
+      .subscribe(() => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
         );
@@ -185,12 +177,14 @@ export class AppDataService extends DataHttpService {
    */
   loadStudyInEditionMode() {
     const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-    let loadingCanceled: boolean = false;
-    const isStudyLoaded = (isLoaded: boolean) => {};
+    let loadingCanceled = false;
+    const isStudyLoaded = () => {
+      // This function is intentionally empty, it will be overwritten later
+    };
     // Display loading message
     this.loadingStudyDialogService
       .showLoadingWithCancelobserver(`Switching to edition mode`)
-      .subscribe((isCancel) => {
+      .subscribe(() => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
         );
@@ -239,7 +233,7 @@ export class AppDataService extends DataHttpService {
       next: (message: string) =>
         this.loadingDialogService.updateMessage(message),
       complete: () => this.loadingDialogService.closeLoading(),
-    };;
+    };
     
     let loadedStudy$ = new Observable<LoadedStudy>((observer) => observer.next(null));
     if (readOnlyMode) {
@@ -251,7 +245,7 @@ export class AppDataService extends DataHttpService {
     loadedStudy$.subscribe({
       next: (resultLoadedStudy) => {
 
-        let loadedStudyCase = resultLoadedStudy as LoadedStudy;
+        const loadedStudyCase = resultLoadedStudy as LoadedStudy;
 
         // in case of read only mode, set post processings of the loaded study case
         const isReadOnlyMode = loadedStudyCase.loadStatus == LoadStatus.READ_ONLY_MODE
@@ -269,13 +263,13 @@ export class AppDataService extends DataHttpService {
           const isLoaded = loadedStudyCase.loadStatus == LoadStatus.LOADED
           
           //load post processings if the study is loaded
-          let loadPostProc$ = new Observable<Boolean>((observer) => observer.next(null));
+          let loadPostProc$ = new Observable<boolean>((observer) => observer.next(null));
           if (isLoaded){
             loadPostProc$ = this.studyCasePostProcessingService.loadStudy(studyId, false);
           }
 
           loadPostProc$.subscribe({
-            next: (isLoaded) => {
+            next: () => {
               
               this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);
               if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
@@ -306,7 +300,7 @@ export class AppDataService extends DataHttpService {
 
     this.connectionStatusTimer = setTimeout(() => {
       this.userService.getCurrentUser().subscribe({
-        next: (_) => {
+        next: () => {
           this.startConnectionStatusTimer();
           if (this.hasNoServerAvailable) {
             this.hasNoServerAvailable = false;

@@ -122,7 +122,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
     }
   }
 
-  private createCommonModeBarButtons(showLegend: boolean, plotDiv: any) {
+  private createCommonModeBarButtons(showLegend: boolean) {
     return [
       {
         name: 'Show/hide legend',
@@ -202,7 +202,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
               }
             }]
           : []),
-        ...this.createCommonModeBarButtons(currentLayout.showlegend, container)
+        ...this.createCommonModeBarButtons(currentLayout.showlegend)
         .filter(button => 
           typeof button === 'string' || 
           (typeof button === 'object' && button.name !== 'Enlarge plot')
@@ -255,7 +255,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
   }
 
   private initializePlot() {
-    let modeBarButtons = [[
+    const modeBarButtons = [[
       ...(this.plotData.csv_data?.length > 0 
         ? [{
             name: 'Download data as csv file',
@@ -265,7 +265,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
             }
           }]
         : []),
-      ...this.createCommonModeBarButtons(true, null)
+      ...this.createCommonModeBarButtons(true)
     ]];
 
     setTimeout(() => {

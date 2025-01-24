@@ -119,7 +119,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
     
 
-    this.headerService.onChangeTitle.subscribe(result => {
+    this.headerService.changeTitleEvent.subscribe(result => {
       this.title = result;
     });
     switch (this.router.url !== '') {

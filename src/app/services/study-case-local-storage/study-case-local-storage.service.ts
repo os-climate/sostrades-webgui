@@ -116,8 +116,7 @@ export class StudyCaseLocalStorageService {
   }
 
   removeStudyParametersFromLocalStorage(studyId: string) {
-    let studiesContainer: StudyUpdateContainer;
-    studiesContainer = this.getStudiesParametersFromLocalStorage();
+    const studiesContainer = this.getStudiesParametersFromLocalStorage();
     // Studies container exist in local storage
     if (studiesContainer !== null && studiesContainer !== undefined) {
       delete studiesContainer.studies[studyId];
@@ -134,8 +133,7 @@ export class StudyCaseLocalStorageService {
   studyHaveUnsavedChanges(studyId: string): boolean {
     let haveUnsavedChanges = false;
 
-    let studiesContainer: StudyUpdateContainer;
-    studiesContainer = this.getStudiesParametersFromLocalStorage();
+    const studiesContainer = this.getStudiesParametersFromLocalStorage();
 
     if (studiesContainer !== null && studiesContainer !== undefined) {
       if (studiesContainer.studies[studyId] !== null && studiesContainer.studies[studyId] !== undefined) {
@@ -151,8 +149,7 @@ export class StudyCaseLocalStorageService {
   studiesHaveUnsavedChanges(): boolean {
     let haveUnsavedChanges = false;
 
-    let studiesContainer: StudyUpdateContainer;
-    studiesContainer = this.getStudiesParametersFromLocalStorage();
+    const studiesContainer = this.getStudiesParametersFromLocalStorage();
 
     if (studiesContainer !== null && studiesContainer !== undefined) {
       if (Object.keys(studiesContainer.studies).length > 0) {
@@ -172,8 +169,7 @@ export class StudyCaseLocalStorageService {
   getStudyIdWithUnsavedChanges(): number {
     let studyId: number = null;
     if (this.studiesHaveUnsavedChanges) {
-      let studiesContainer: StudyUpdateContainer;
-      studiesContainer = this.getStudiesParametersFromLocalStorage();
+      const studiesContainer = this.getStudiesParametersFromLocalStorage();
       Object.keys(studiesContainer.studies).forEach(key => {
         if (Object.keys(studiesContainer.studies[key]).length > 0) {
           // eslint-disable-next-line radix

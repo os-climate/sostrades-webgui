@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import { ReferenceGenerationStatus } from 'src/app/models/reference-generation-status.model';
 import { DataHttpService } from '../../http/data-http/data-http.service';
-import { ColumnName, Routing } from 'src/app/models/enumeration.model';
+import { ColumnName } from 'src/app/models/enumeration.model';
 
 
 @Injectable({

@@ -3,7 +3,7 @@ export class UserStudyPreferences {
   //contains the treeNode ID of each nodes and a dict for each node with id of the node 
   //and its isExpanded and id of each panel and its isExpanded
   public expandedData :{[treeNodeID: string]:boolean}
-  constructor(preference : {}) {
+  constructor(preference : any) {
     this.expandedData = {};
       if(preference !== null && preference  !== undefined)
       {

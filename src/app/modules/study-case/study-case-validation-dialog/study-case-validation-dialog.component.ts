@@ -6,7 +6,6 @@ import { MatTableDataSource } from "@angular/material/table";
 import { TreeNodeDialogData } from "src/app/models/dialog-data.model";
 import { SoSTradesError } from "src/app/models/sos-trades-error.model";
 import {StudyCaseValidation,ValidationTreeNodeState} from "src/app/models/study-case-validation.model";
-import { TreeNode } from "src/app/models/tree-node.model";
 import { LoadingDialogService } from "src/app/services/loading-dialog/loading-dialog.service";
 import { SnackbarService } from "src/app/services/snackbar/snackbar.service";
 import { SocketService } from "src/app/services/socket/socket.service";

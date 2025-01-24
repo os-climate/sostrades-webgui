@@ -49,7 +49,7 @@
           <ng-container matColumnDef="validationState">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
             <td mat-cell *matCellDef="let element">
-              {{ element.validationState == validationStates.VALIDATED
+              {{ element.validationState === validationStates.VALIDATED
                 ? "Validation"
                 : "Invalidation"  }}
             </td>

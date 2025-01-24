@@ -184,10 +184,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         // retreive the new study
         this.studyCaseDataService.getStudy(studyId).subscribe({
-        next:(study)=>{
+        next:()=>{
           this.isLoading = false;
         },
-        error:(error)=>{
+        error:()=>{
           this.isLoading = false;
         }
     })});
@@ -245,7 +245,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
   } else {
-    this.studyCaseDataService.removeFavoriteStudy(study.id, userId).subscribe({
+    this.studyCaseDataService.removeFavoriteStudy(study.id).subscribe({
     next: () => {
         study.isFavorite = false;
         this.isFavorite = true;
@@ -683,9 +683,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         // Set our dictionnary with the value selected
         this.studyCaseDataService.studySelectedValues.set(columnName, filter.selectedStringValues);
         // Trigger the dataSourceModelStatus.filterPredicate
-        if (this.dataSourceStudies.filter.length > 0) {
-          // Apply the previous filter
-          this.dataSourceStudies.filter = this.dataSourceStudies.filter;
+        const filterValue =  this.dataSourceStudies.filter.trim()
+        if (filterValue.length > 0) {
+          // Apply the both filters (by search and by selection)
+          this.dataSourceStudies.filter = filterValue;
         } else {
           // Add a string only used to trigger filterPredicate
           this.dataSourceStudies.filter = ' ';
@@ -891,7 +892,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     updateProcessAccessDialogData.resourceType = EntityResourceRights.STUDYCASE;
     updateProcessAccessDialogData.getEntitiesRightsFunction = this.entityRightService.getStudyCaseEntitiesRights(study.id);
 
-    const dialogRef = this.dialog.open(UpdateEntityRightComponent, {
+    this.dialog.open(UpdateEntityRightComponent, {
       disableClose: true,
       data: updateProcessAccessDialogData
     });
@@ -987,7 +988,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.loadingDialogService.showLoading(`Upload study case data "${study.name}"`);
 
       this.studyCaseMainService.uploadStudyRaw(study.id.toString(), event.target.files).subscribe({
-        next: (_) => {
+        next: () => {
           this.loadingDialogService.closeLoading();
           this.snackbarService.showInformation('Upload successful');
           if (event.target.files) {

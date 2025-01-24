@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, EventEmitter, LOCALE_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
 import { Subscription } from 'rxjs';
@@ -71,9 +71,9 @@ export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
 
     // Handle submission or execution
     if (this.userService.getFullUsername() !== notification.author) {
+      const executionDialogData = new ExecutionDialogData();
       switch (notification.type) {
         case CoeditionType.SUBMISSION:
-          const executionDialogData = new ExecutionDialogData();
           executionDialogData.message = notification.author + ' just submitted study case to execution, please wait.';
 
           this.dialogRef = this.dialog.open(StudyCaseExecutionDialogComponent, {

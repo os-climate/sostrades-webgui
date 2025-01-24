@@ -125,7 +125,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     if (this.nodeData.type.includes('float')) {
-      let cleanedValue = value.toString().replace(',', '.');
+      const cleanedValue = value.toString().replace(',', '.');
       this.dataArray[index] = cleanedValue;
     } else {
       this.dataArray[index] = value;

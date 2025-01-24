@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { StudyCaseCreateDialogData } from 'src/app/models/dialog-data.model';
-import { NodeData, ProcessBuilderAttribute, ProcessBuilderData } from 'src/app/models/node-data.model';
+import { ProcessBuilderData } from 'src/app/models/node-data.model';
 import { Process } from 'src/app/models/process.model';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { Study, StudyCasePayload } from 'src/app/models/study.model';

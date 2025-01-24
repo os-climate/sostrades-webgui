@@ -120,7 +120,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.showSearch = false;
     this.setDiplayableItems();
     
-    this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
+    this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(() => {
       this.setDiplayableItems();
     });
 
@@ -129,7 +129,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       if (this.studyCaseDataService.loadedStudy === null) {
         this.routerSubscription = this.route.queryParams.subscribe(params => {
           // If study is defined has query parameter then we reload the study
-          if (params.hasOwnProperty('studyId')) {
+          if ('studyId' in params) {
             if (params.studyId !== null && params.studyId !== undefined) {
                 this.appDataService.loadCompleteStudy(params.studyId, '', isStudyLoaded => {
                   if (isStudyLoaded) {
@@ -145,10 +145,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     }
     this.selectedUserlevel = this.userLevelList[this.filterService.filters.userLevel - 1];
 
-    this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(searchVariable => {
+    this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(() => {
       this.showSearch = true;
     });
-    this.onShowDataManagementSubscription = this.studyCaseDataService.onShowDataManagementContent.subscribe({next:(showData)=>{
+    this.onShowDataManagementSubscription = this.studyCaseDataService.onShowDataManagementContent.subscribe({
+      next:()=>{
       //show the data management tab
       this.showSearch = false;
       this.selectedTabIndex = 0;
