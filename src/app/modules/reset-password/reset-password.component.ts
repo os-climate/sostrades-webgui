@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormGroupDirective, NgForm } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl, ValidationErrors} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
@@ -52,8 +52,8 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   checkPasswords: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
-    let pass = group.get('password').value;
-    let confirmPass = group.get('confirmPassword').value
+    const pass = group.get('password').value;
+    const confirmPass = group.get('confirmPassword').value
     return pass === confirmPass ? null : { notSame: true }
   }
 
@@ -99,10 +99,8 @@ export class ResetPasswordComponent implements OnInit {
 }
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const invalidCtrl = !!(control?.invalid && control?.parent?.dirty);
-    const invalidParent = !!(control?.parent?.invalid && control?.parent?.dirty);
-
+  isErrorState(control: FormControl | null): boolean {
+    
     return control.parent.errors && control.parent.errors['notSame']
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -6,12 +6,9 @@ import { MatDialogRef } from '@angular/material/dialog';
   templateUrl: './study-case-status-information.component.html',
   styleUrls: ['./study-case-status-information.component.scss']
 })
-export class StudyCaseStatusInformationComponent implements OnInit {
+export class StudyCaseStatusInformationComponent {
 
   constructor(public dialogRef: MatDialogRef<StudyCaseStatusInformationComponent>) { }
-
-  ngOnInit(): void {
-  }
 
   okClick() {
     this.dialogRef.close();

@@ -18,7 +18,7 @@ import { LinkCreateOrEditComponent } from '../link-create-or-edit/link-create-or
 export class LinkComponent implements OnInit {
 
   public links: Link[];
-  public isLoading: Boolean;
+  public isLoading: boolean;
   public hasAccessToStudyManager: boolean;
 
   constructor(private dialog: MatDialog,
@@ -112,7 +112,7 @@ export class LinkComponent implements OnInit {
           if (validationData.validate === true) {
               this.loadingDialogService.showLoading(`Delete link (${link.label}). Please wait.`);
               this.linkService.deleteLink(link).subscribe({
-              next: (_) => {
+              next: () => {
                 const linkIndex = this.links.findIndex((currentLink) => currentLink.id == link.id);
                 if ((linkIndex >= 0) && (linkIndex < this.links.length)) {
                   this.links.splice(linkIndex, 1);
@@ -137,7 +137,7 @@ export class LinkComponent implements OnInit {
     });
   }
 
-  onCreate(event:any) {
+  onCreate() {
     const dialogData: LinkDialogData = new LinkDialogData();
 
     const dialogRef = this.dialog.open(LinkCreateOrEditComponent, {

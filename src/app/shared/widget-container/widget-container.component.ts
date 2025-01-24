@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NodeData } from 'src/app/models/node-data.model';
 
 @Component({
@@ -6,18 +6,12 @@ import { NodeData } from 'src/app/models/node-data.model';
   templateUrl: './widget-container.component.html',
   styleUrls: ['./widget-container.component.scss']
 })
-export class WidgetContainerComponent implements OnInit {
+export class WidgetContainerComponent {
 
   @Input() nodeDataList: NodeData[];
   @Input() namespace: string;
   @Input() discipline: string;
 
   public objectKey = Object.keys;
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-  }
 
 }

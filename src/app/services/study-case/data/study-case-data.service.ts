@@ -1,12 +1,11 @@
-import { Study, LoadedStudy, StudyCasePayload, StudyCaseAllocationPayload } from 'src/app/models/study.model';
+import { Study, LoadedStudy, StudyCasePayload } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { BehaviorSubject, Observable, Observer, Subscriber, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
-import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
 import { Scenario } from 'src/app/models/scenario.model';
 import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
@@ -153,7 +152,7 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  removeFavoriteStudy(studyId: number, userId: number) {
+  removeFavoriteStudy(studyId: number) {
     return this.http.delete(`${this.apiRoute}/${studyId}/favorite`);
   }
 
@@ -518,7 +517,7 @@ export class StudyCaseDataService extends DataHttpService {
     };
     const url = `${this.apiRoute}/delete`;
     return this.http.delete(url, deleteOptions).pipe(map(
-      response => {
+      () => {
         // Check user removed currentLoadedStudy
         if (this.loadedStudy !== null && this.loadedStudy !== undefined) {
           if (studies.filter(x => x.id === this.loadedStudy.studyCase.id).length > 0) {

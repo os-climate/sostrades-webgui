@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -6,12 +6,10 @@ import { MatDialogRef } from '@angular/material/dialog';
   templateUrl: './data-management-information.component.html',
   styleUrls: ['./data-management-information.component.scss']
 })
-export class DataManagementInformationComponent implements OnInit {
+export class DataManagementInformationComponent  {
 
   constructor(public dialogRef: MatDialogRef<DataManagementInformationComponent>) { }
 
-  ngOnInit(): void {
-  }
 
   okClick() {
     this.dialogRef.close();

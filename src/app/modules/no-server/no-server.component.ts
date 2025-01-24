@@ -81,7 +81,7 @@ export class NoServerComponent implements OnInit {
         }
         this.isLoading = false;
       },
-      error: (error) => {
+      error: () => {
         this.snackbarService.showWarning(`The platform is still down, you will be redirected to the Login page in a few minutes.`);
         this.isLoading = false;
       }

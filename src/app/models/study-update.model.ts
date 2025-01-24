@@ -91,7 +91,5 @@ export enum UpdateParameterType {
 
 export class StudyUpdateContainer {
   studies: { [studyId: string]: { [paramName: string]: StudyUpdateParameter } };
-  constructor() {
-  }
 
 }

@@ -133,7 +133,7 @@ export class UserManagementComponent implements OnInit {
         if (validationData.cancel === false) {
           this.loadingDialogService.showLoading(`Deletion of user "${user.username}"`);
           this.userService.deleteUserFromAuthorizedList(user.id).subscribe({
-            next: (res) => {
+            next: () => {
               // Update table
               this.usersList = this.usersList.filter((x) => x.id !== user.id);
               this.dataSourceUsers = new MatTableDataSource<User>(this.usersList);

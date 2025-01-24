@@ -89,7 +89,7 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
       this.routerSubscription = this.route.queryParams.subscribe(params => {
 
         // If model is defined has query parameter then we filter and mount the model model information
-        if (params.hasOwnProperty('model')) {
+        if ('model' in params) {
           if (params.model !== null && params.model !== undefined) {
             this.fromProcessInformation = true;
             this.modelToShowAtStartup = params.model;
@@ -170,9 +170,10 @@ export class OntologyModelsComponent implements OnInit, OnDestroy {
         // Set our dictionnary with the value selected
         this.ontologyService.modelStatusSelectedValues.set(columnName, filter.selectedStringValues);
         // Trigger the dataSourceModelStatus.filterPredicate
-        if (this.dataSourceModelStatus.filter.length > 0) {
+        const filterValue = this.dataSourceModelStatus.filter.trim();
+        if (filterValue.length > 0) {
           // Apply the previous filter
-          this.dataSourceModelStatus.filter = this.dataSourceModelStatus.filter;
+          this.dataSourceModelStatus.filter = filterValue;
         } else {
           // Add a string only used to trigger filterPredicate
           this.dataSourceModelStatus.filter = ' ';

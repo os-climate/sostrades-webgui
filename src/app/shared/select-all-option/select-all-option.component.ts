@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { EventEmitter } from '@angular/core';
@@ -8,17 +8,13 @@ import { EventEmitter } from '@angular/core';
   templateUrl: './select-all-option.component.html',
   styleUrls: ['./select-all-option.component.scss']
 })
-export class SelectAllOptionComponent implements OnInit {
+export class SelectAllOptionComponent {
 
   @Input() model: NgModel;
   @Input() values = [];
   @Input() text = 'Select All';
   @Output() changeEvent = new EventEmitter<boolean>();
 
-  constructor() { }
-
-  ngOnInit() {
-  }
 
   isChecked(): boolean {
     return this.model.value && this.values.length

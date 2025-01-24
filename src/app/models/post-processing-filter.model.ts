@@ -22,7 +22,7 @@ export class PostProcessingFilter {
     return result;
   }
 
-  public toServerDTO(): {} {
+  public toServerDTO() {
     const result = {};
     result[ChartFilterAttributes.FILTERNAME] = this.filterName;
     result[ChartFilterAttributes.FILTERVALUES] = this.filterValues;

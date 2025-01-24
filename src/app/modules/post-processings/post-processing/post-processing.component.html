@@ -61,7 +61,7 @@
   </div>
 
   <div #PlotsContainer class="plot-body" (scroll)="scrollPlots()">
-    <div class="plot-resize-zone" #Plots (resized)="onResizePlotZone($event)">
+    <div class="plot-resize-zone" #Plots (resized)="onResizePlotZone()">
       <app-post-processing-bundle
         [postProcessingBundle]="bundle"
         [fullNamespace]="treeNode.fullNamespace"

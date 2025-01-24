@@ -98,8 +98,8 @@
                     [matTooltip]="element.numerical"
                     matTooltipClass="custom-tooltip-class"
                   >
-                  <i class="fa-solid fa-check fa-fw mat-icon-success"*ngIf="element.numerical == 'True'"></i>
-                  <i class="fa-solid fa-xmark fa-fw mat-icon-danger"*ngIf="element.numerical == 'False'"></i>
+                  <i class="fa-solid fa-check fa-fw mat-icon-success"*ngIf="element.numerical === 'True'"></i>
+                  <i class="fa-solid fa-xmark fa-fw mat-icon-danger"*ngIf="element.numerical === 'False'"></i>
                   </td>
                 </ng-container>
         
@@ -110,7 +110,7 @@
                     mat-cell
                     *matCellDef="let element"
                   >
-                  <span *ngIf="element.range != '' && element.range != ' '">[{{ element.range }}]</span>
+                  <span *ngIf="element.range !== '' && element.range !== ' '">[{{ element.range }}]</span>
                   </td>
                 </ng-container>
         
@@ -123,8 +123,8 @@
                     [matTooltip]="element.optional"
                     matTooltipClass="custom-tooltip-class"
                   >
-                  <i class="fa-solid fa-check fa-fw mat-icon-success"*ngIf="element.optional == 'True'"></i>
-                  <i class="fa-solid fa-xmark fa-fw mat-icon-danger"*ngIf="element.optional == 'False'"></i>
+                  <i class="fa-solid fa-check fa-fw mat-icon-success"*ngIf="element.optional === 'True'"></i>
+                  <i class="fa-solid fa-xmark fa-fw mat-icon-danger"*ngIf="element.optional === 'False'"></i>
                   </td>
                 </ng-container>
         

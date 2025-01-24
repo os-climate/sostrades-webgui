@@ -37,7 +37,7 @@
       <mat-header-cell *matHeaderCellDef>Changes</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <button
-          *ngIf="element.changes != null"
+          *ngIf="element.changes !== null"
           mat-icon-button
           color="primary"
           (click)="seeNotificationChanges(element)"
