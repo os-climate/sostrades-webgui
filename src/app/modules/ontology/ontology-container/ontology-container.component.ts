@@ -37,7 +37,7 @@ export class OntologyContainerComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit(): void {
-    this.subscription = this.headerService.onChangeIndexTab.subscribe(result => {
+    this.subscription = this.headerService.changeIndexTabEvent.subscribe(result => {
       this.index = result;
     });
     if (this.router.url.includes(Routing.MODELS)) {

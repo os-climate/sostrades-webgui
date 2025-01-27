@@ -1,18 +1,18 @@
-<div class="container-dialog" *ngIf="isLoading && data.editionDialogName == dialogEditionName.EDITION_STUDY">
+<div class="container-dialog" *ngIf="isLoading && data.editionDialogName === dialogEditionName.EDITION_STUDY">
     <app-progress-bar
       progressMode="indeterminate"
       progressText="Loading form information"
     ></app-progress-bar>
   </div>
 
-<div class="edit-form" *ngIf="!isLoading || data.editionDialogName != dialogEditionName.EDITION_STUDY">
+<div class="edit-form" *ngIf="!isLoading || data.editionDialogName !== dialogEditionName.EDITION_STUDY">
     <br>
     <h1>
         {{data.editionDialogName}}
     </h1>
     <br>
     <div class="edit-form" [formGroup]="editForm">
-        <div id="name" *ngIf="data.editionDialogName != dialogEditionName.EDITION_USER">   
+        <div id="name" *ngIf="data.editionDialogName !== dialogEditionName.EDITION_USER">   
             <mat-form-field class="form-field">
                 <mat-label>{{labelName}}</mat-label>
                 <input
@@ -35,10 +35,10 @@
                 >
             </mat-form-field>
         </div>
-        <br *ngIf="data.editionDialogName != dialogEditionName.EDITION_USER">
+        <br *ngIf="data.editionDialogName !== dialogEditionName.EDITION_USER">
         
         <!-- Group Edition -->
-        <div id="description" *ngIf="data.editionDialogName == dialogEditionName.EDITION_GROUP">
+        <div id="description" *ngIf="data.editionDialogName === dialogEditionName.EDITION_GROUP">
             <mat-form-field class="form-field">
                 <mat-label>{{labelFormName.GROUP_DESCRIPTION}}</mat-label>
                 <input
@@ -55,7 +55,7 @@
             </mat-form-field>
         </div>
         <!-- Study Edition -->
-        <div id="group-list" *ngIf="data.editionDialogName == dialogEditionName.EDITION_STUDY">
+        <div id="group-list" *ngIf="data.editionDialogName === dialogEditionName.EDITION_STUDY">
             <mat-form-field class="form-field">
                 <mat-select 
                     id='group' 
@@ -76,7 +76,7 @@
             </mat-form-field>
         </div>
         <!-- User Edition -->
-        <div id="username" *ngIf="data.editionDialogName == dialogEditionName.EDITION_USER">
+        <div id="username" *ngIf="data.editionDialogName === dialogEditionName.EDITION_USER">
             <mat-form-field class="form-field">
                 <input
                 matInput
@@ -92,7 +92,7 @@
                 >
             </mat-form-field>
         </div>
-        <div id="firstname" *ngIf="data.editionDialogName == dialogEditionName.EDITION_USER">
+        <div id="firstname" *ngIf="data.editionDialogName === dialogEditionName.EDITION_USER">
             <mat-form-field class="form-field">
                 <input
                 matInput
@@ -108,7 +108,7 @@
                 >
             </mat-form-field>
         </div>
-        <div id="lastname" *ngIf="data.editionDialogName == dialogEditionName.EDITION_USER">
+        <div id="lastname" *ngIf="data.editionDialogName === dialogEditionName.EDITION_USER">
             <mat-form-field class="form-field">
                 <input
                 matInput
@@ -124,7 +124,7 @@
                 >
             </mat-form-field>
         </div>
-        <div id="email" *ngIf="data.editionDialogName == dialogEditionName.EDITION_USER">
+        <div id="email" *ngIf="data.editionDialogName === dialogEditionName.EDITION_USER">
             <mat-form-field class="form-field">
                 <input
                 matInput
@@ -140,7 +140,7 @@
                 >
             </mat-form-field>
         </div>
-        <div id="profile" *ngIf="data.editionDialogName == dialogEditionName.EDITION_USER">
+        <div id="profile" *ngIf="data.editionDialogName === dialogEditionName.EDITION_USER">
             <mat-form-field class="form-field">
                 <mat-select
                 placeholder="Select a user profile"

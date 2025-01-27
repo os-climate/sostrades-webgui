@@ -87,7 +87,7 @@ export class UserService extends DataHttpService {
     return this.http.post(`${this.apiRoute}/default-group/${group_id}`, modifyData)
   }
 
-  changePassword(password: String, token: String): Observable<void> {
+  changePassword(password: string, token: string): Observable<void> {
 
     const changeOptions = {
       headers: this.httpHeaders

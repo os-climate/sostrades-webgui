@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { DataHttpService } from '../http/data-http/data-http.service';
 
 @Injectable({

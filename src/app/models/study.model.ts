@@ -87,14 +87,14 @@ export class LoadedStudy {
     public studyCase: Study,
     public treeview: TreeView,
     public refList: StudyReference[],
-    public n2Diagram: {},
+    public n2Diagram: any,
     public userIdExecutionAuthorized: number,
     public noData: boolean,
     public readOnly: boolean,
     public userStudyPreferences: UserStudyPreferences,
     public canReload: boolean,
     public loadStatus: LoadStatus,
-    public dashboard: {}
+    public dashboard: any
   ) { }
 
   public static Create(jsonData: any): LoadedStudy {

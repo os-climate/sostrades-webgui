@@ -64,7 +64,7 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
     }
   }
 
-  onResizePlotZone(event) {
+  onResizePlotZone() {
 
     if (this.Plots.nativeElement.scrollHeight > this.PlotContainer.nativeElement.clientHeight) {
       this.isMoreContentAvailable = true;

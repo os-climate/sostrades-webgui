@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { throwError, BehaviorSubject, Observable } from 'rxjs';
-import { catchError, map, mergeMap, finalize } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UserApplicationRight } from '../models/user.model';
 import { StudyCaseDataService } from './study-case/data/study-case-data.service';
@@ -15,10 +15,9 @@ import { StudyCaseLocalStorageService } from './study-case-local-storage/study-c
 import { OntologyService } from './ontology/ontology.service';
 import { ReferenceDataService } from './reference/data/reference-data.service';
 import { StudyCaseValidationService } from './study-case-validation/study-case-validation.service';
-import { SoSTradesError } from '../models/sos-trades-error.model';
 import { DataHttpService } from './http/data-http/data-http.service';
 import { Location } from '@angular/common';
-import { Routing } from '../models/enumeration.model';import { PostProcessingService } from './post-processing/post-processing.service';
+import { PostProcessingService } from './post-processing/post-processing.service';
 
 class LoginResponse {
   accessToken: string;
@@ -101,11 +100,9 @@ export class AuthService extends DataHttpService {
           this.userService.mailSend = response.mailSend;
 
           // now get user info
-          const opts = {
-            headers: new HttpHeaders({
+          new HttpHeaders({
               'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // eslint-disable-line quote-props
-            })
-          };
+            });
 
           return this.userService.getCurrentUser().pipe(
             map(user => {
@@ -126,11 +123,9 @@ export class AuthService extends DataHttpService {
     localStorage.setItem('refreshToken', refreshToken);
 
     // now get user info
-    const opts = {
-      headers: new HttpHeaders({
+    new HttpHeaders({
         'Authorization': 'Bearer ' + localStorage.getItem('accessToken')  // eslint-disable-line quote-props
       })
-    };
 
     return this.userService.getCurrentUser().pipe(
       map(user => {

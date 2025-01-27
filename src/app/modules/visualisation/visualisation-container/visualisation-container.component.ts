@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-visualisation-container',
   templateUrl: './visualisation-container.component.html',
   styleUrls: ['./visualisation-container.component.scss']
 })
-export class VisualisationContainerComponent implements OnInit {
+export class VisualisationContainerComponent  {
 
   public showCouplingGraphContent: boolean;
   public showExecutionSequenceContent: boolean;
@@ -20,9 +20,6 @@ export class VisualisationContainerComponent implements OnInit {
 
   constructor() {
     this.showInterfaceDiagramContent = true;
-  }
-
-  ngOnInit(): void {
   }
 
   onChipClick(visualisationName: string) {
