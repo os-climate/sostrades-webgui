@@ -7,7 +7,7 @@ export class JSpreadSheetProperties {
   public oninsertrow: any;
   public ondeleterow: any;
   public onbeforedeletecolumn:any;
-  public plugins: {}[];
+  public plugins: any;
 
   constructor(
     public data: any,

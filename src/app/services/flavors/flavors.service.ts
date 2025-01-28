@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { DataHttpService } from '../http/data-http/data-http.service';
-import { News } from 'src/app/models/news.models';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Flavor } from 'src/app/models/flavor.model';

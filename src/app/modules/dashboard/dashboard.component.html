@@ -23,14 +23,14 @@
             *ngFor="let block of row"
           >
             <div class="widget-cell">
-              <div *ngIf="block['content_type'] == 'TEXT'" [className]="block['style'] ? block['style'] : ''">
+              <div *ngIf="block['content_type'] === 'TEXT'" [className]="block['style'] ? block['style'] : ''">
                 {{block['content']}}
               </div>
-              <div *ngIf="block['content_type'] == 'SCALAR'">
+              <div *ngIf="block['content_type'] === 'SCALAR'">
                 <strong>{{block['content']['var_name']}} :</strong>
                 {{block['content']['value']}}
               </div>
-              <div *ngIf="block['content_type'] == 'POST_PROCESSING'" class="plot-resize-zone">
+              <div *ngIf="block['content_type'] === 'POST_PROCESSING'" class="plot-resize-zone">
                 <app-post-processing-plotly
                   *ngFor="let plot of [block['content']]"
                   [class]="

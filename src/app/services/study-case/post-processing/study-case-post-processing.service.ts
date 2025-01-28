@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscriber } from 'rxjs';
@@ -15,10 +15,6 @@ export class StudyCasePostProcessingService extends PostProcessingHttpService {
     private http: HttpClient,
     private location: Location) {
     super(location, 'study-case');
-  }
-
-  clearCache() {
-
   }
 
 

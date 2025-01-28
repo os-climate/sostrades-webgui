@@ -146,9 +146,9 @@
                   word-wrap: break-word;
                 "
               >
-              <i class="fa-solid fa-check fa-fw mat-icon-success" *ngIf="attr[1] == 'True'"></i>
-              <i class="fa-solid fa-xmark fa-fw mat-icon-danger" *ngIf="attr[1] == 'False'"></i>
-              <span   *ngIf="attr[1] != 'True' && attr[1] != 'False'"> {{ attr[1] }}</span>
+              <i class="fa-solid fa-check fa-fw mat-icon-success" *ngIf="attr[1] === 'True'"></i>
+              <i class="fa-solid fa-xmark fa-fw mat-icon-danger" *ngIf="attr[1] === 'False'"></i>
+              <span   *ngIf="attr[1] !== 'True' && attr[1] !== 'False'"> {{ attr[1] }}</span>
               </td>
             </tr>
           </ng-container>

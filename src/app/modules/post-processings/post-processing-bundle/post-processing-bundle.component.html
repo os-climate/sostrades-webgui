@@ -109,14 +109,45 @@
     "
     class="plot-resize-zone"
   >
+  <div *ngIf="postProcessingKeyCharts.length" style="width: 100%;background-color: #f4f4f4;">
+    <div class="section-panel key-charts">
+      <mat-expansion-panel id="key_charts_section" style="margin-bottom: 2px;" 
+      [expanded]="isExpand('key_charts', true)"
+      (opened)="setIsExpand('key_charts', true)"
+      (closed)="setIsExpand('key_charts', false)">
+        <mat-expansion-panel-header>
+          
+          <mat-panel-title style="color: #0b78b8;">
+            <span style="width: 15px; margin-right: 5px;">
+              <i class="fa-solid fa-star toolbar-icon" style="color: #0b78b8;"></i>
+            </span> 
+            Key Charts
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-post-processing-plotly 
+          [class]="
+            plot.data && plot.data[0] && plot.data[0].type === 'table'
+              ? 'table'
+              : 'plot'
+             "
+          
+          *ngFor="let plot of postProcessingKeyCharts"
+          [plotData]="plot"
+          [fullNamespace]="fullNamespace"
+        >
+        </app-post-processing-plotly>
+      </mat-expansion-panel>
+    </div>
+  </div>
     <div *ngIf="postProcessingWithSection.length" style="width: 100%;background-color: #f4f4f4;">
       <div *ngFor="let section of postProcessingWithSection" class="section-panel">
-        <mat-expansion-panel style="margin-bottom: 2px;"
-        [expanded]="isExpand(section.post_processing_section_name)"
+        <mat-expansion-panel [id]="section.post_processing_section_name + '_section'" style="margin-bottom: 2px;"
+        [expanded]="isExpand(section.post_processing_section_name, section.post_processing_section_is_opened)"
         (opened)="setIsExpand(section.post_processing_section_name, true)"
         (closed)="setIsExpand(section.post_processing_section_name, false)">
           <mat-expansion-panel-header>
-            <mat-panel-title>
+            <mat-panel-title >
+              <span style="width: 24px;"></span>
               {{ section.post_processing_section_name }}
             </mat-panel-title>
           </mat-expansion-panel-header>

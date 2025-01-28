@@ -3,8 +3,6 @@ import { PostOntology } from '../models/ontology.model';
 
 export class TreenodeTools {
 
-  constructor() { }
-
   public static recursiveTreenodeExtract(treenode: TreeNode, ontologyRequest: PostOntology) {
 
     if (treenode !== undefined && treenode !== null) {

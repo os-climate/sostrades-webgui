@@ -20,7 +20,7 @@ export class SamlComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      if (params.hasOwnProperty('token')) {
+      if ('token' in params) {
         this.loggerService.log(params);
         this.loggerService.log(decodeURIComponent(params.token));
         const tokens = params.token.split('###');

@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket/socket.service';
 
 import { UserService } from 'src/app/services/user/user.service';
-import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
+import { CoeditionType } from 'src/app/models/coedition-notification.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 
 @Component({
@@ -52,7 +52,6 @@ export class UserRoomDialogComponent implements OnInit, OnDestroy {
     });
 
     this.onNewNotificationSubscription = this.socketService.onNewNotification.subscribe(notification => {
-      const notif = notification as CoeditionNotification;
 
       if (notification.type === CoeditionType.CLAIM) {
         this.dataSourceUsers = new MatTableDataSource<User>(this.dataSourceUsers.data);

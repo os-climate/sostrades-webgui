@@ -102,7 +102,7 @@ export class InputComponent implements OnInit {
     }
   }
 
-  onBlur(event) {
+  onBlur() {
     let emitChange = false;
 
     if (this.inputFormControl && this.inputFormControl.valid) {
@@ -132,7 +132,7 @@ export class InputComponent implements OnInit {
 
   }
 
-  onFocus(event) {
+  onFocus() {
     this.innerValue = this.nodeData.value;
   }
 }

@@ -59,7 +59,6 @@ export class ScientificNotationPipe implements PipeTransform {
 
     if ((innerValue < (Math.pow(10, decimals))) && (stringForm.indexOf('.') !== -1)) {
       const splittedValue = stringForm.split(".");
-      const integer = splittedValue[0];
       const mantissa = splittedValue[1];
 
       if ((mantissa.length > decimals) || (stringForm.length > (decimals * 2))) {

@@ -36,11 +36,20 @@ export class User implements AccessRightItem {
   }
 
   search(itemSearched: string): boolean {
-    return this.firstname.toUpperCase().includes(itemSearched.toUpperCase())
-      || this.lastname.toUpperCase().includes(itemSearched.toUpperCase());
+    const searchTerm = itemSearched.toLowerCase();
+    
+    // Check if the last name is null, undefined, or an empty string
+    if (this.lastname === null || this.lastname === undefined || this.lastname === '') {
+      // If the last name is null/empty, check the first name or the title
+      return this.firstname.toLowerCase().includes(searchTerm) || 
+             this.title.toLowerCase().includes(searchTerm);
+    } else {
+      // If the last name is not null/empty, keep the original logic
+      return this.firstname.toLowerCase().includes(searchTerm) || 
+             this.lastname.toLowerCase().includes(searchTerm);
+    }
   }
 }
-
 
 
 export class UserApplicationRight {

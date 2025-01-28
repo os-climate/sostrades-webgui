@@ -27,10 +27,10 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   public hasCsvChanges: boolean;
   public isCsvEditable: boolean;
   public isLargeFile: boolean;
-  public columnsDef: {}[];
+  public columnsDef: any[];
   public rowData: { [colName: string]: JSpreadSheetRowData }[];
   public title: string;
-  public contentHeight: number = 56;
+  public contentHeight: number ;
   public columnsToDeleted : string[];
 
   @ViewChild("spreadsheet") spreadsheet: ElementRef;
@@ -49,6 +49,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     this.isTableLoaded = false;
     this.isLargeFile = false;
     this.title = null;
+    this.contentHeight == 56;
     this.columnsDef = [];
     this.rowData = [];
     this.hasCsvChanges = false;
@@ -86,7 +87,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     if (this.data.nodeData.type.includes('list') ) {
       const listValue = this.data.nodeData.value;
       if (listValue !== undefined && listValue !== null && listValue.length > 0) {
-        let valueList = [];
+        const valueList = [];
         // Create column value
         listValue.forEach(el => {
           valueList.push({ 'value': el });
@@ -117,7 +118,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       }
       else {
         const options = {
-          chunk: (results, parser) => {
+          chunk: (results) => {
             this.addRowsByChunk(results);
           },
           complete: () => {
@@ -136,10 +137,10 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
   {
     // Create empty array
     let emptyList = [];
-    let columns = Object.keys(this.data.nodeData.dataframeDescriptor.columns);
+    const columns = Object.keys(this.data.nodeData.dataframeDescriptor.columns);
     if (columns.length > 0){
       columns.forEach(column_name => {
-        let row = {};
+        const row = {};
         row[column_name] = '';
         emptyList.push(row);
       });
@@ -259,7 +260,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
   onCellAfterChanges(instance, records) {
 
-    let errorRecords: { [colName: string]: JSpreadSheetValueError } = {};
+    const errorRecords: { [colName: string]: JSpreadSheetValueError } = {};
 
     if (records !== null && records !== undefined && records.length > 0) {
       records.forEach(rec => {
@@ -309,7 +310,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
 
             //check value array and float format in it
             if (columnDataFrameDescriptor.columnType.includes('array')) {
-              let array_data = rec.newValue;
+              const array_data = rec.newValue;
               if (rec.newValue !== undefined && rec.newValue !== null) {
                 let array_data_str = array_data.toString().trim();
                 if (array_data_str.startsWith("[")){
@@ -318,7 +319,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
                 if (array_data_str.endsWith("]")){
                   array_data_str = array_data_str.replace("]", "");
                 }
-                let array_data_check = array_data_str.split(",");
+                const array_data_check = array_data_str.split(",");
                 for(let i = 0;i<array_data_check.length;i++){
                   array_data_check[i] = array_data_check[i].trim();
                   if (!TypeCheckingTools.isFloat(array_data_check[i])) {
@@ -390,9 +391,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         }
       });
 
-      let updateItem: StudyUpdateParameter;
-
-      updateItem = new StudyUpdateParameter(
+      const updateItem = new StudyUpdateParameter(
         this.data.nodeData.identifier,
         this.data.nodeData.type.toString(),
         UpdateParameterType.SCALAR,
@@ -429,8 +428,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
         // Saving dataframe, array or dict type
         this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.data.nodeData.displayName}.csv`);
         // Generate string b64 file for local storage
-        let updateItem: StudyUpdateParameter;
-        updateItem = new StudyUpdateParameter(
+        const updateItem = new StudyUpdateParameter(
           this.data.nodeData.identifier,
           UpdateParameterType.CSV,
           UpdateParameterType.CSV,

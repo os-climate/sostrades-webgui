@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { BaseHttpService } from '../http/base-http/base-http.service';
 import { environment } from 'src/environments/environment';

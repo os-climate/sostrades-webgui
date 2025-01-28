@@ -20,7 +20,7 @@ export class StudyCaseExecutionDialogComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.onStudySubmissionEndSubscription = this.socketService.onStudySubmissionEnd.subscribe(submitted => {
+    this.onStudySubmissionEndSubscription = this.socketService.onStudySubmissionEnd.subscribe(() => {
       this.dialogRef.close();
     });
 

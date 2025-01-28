@@ -41,14 +41,14 @@ export class ProcessBuilderComponent implements OnInit, OnDestroy {
   }
 
   onClickShow() {
-    this.openProcessBuilderEditor(true);
+    this.openProcessBuilderEditor();
   }
 
   onClickEdit() {
-    this.openProcessBuilderEditor(false);
+    this.openProcessBuilderEditor();
   }
 
-  openProcessBuilderEditor(readOnly: boolean) {
+  openProcessBuilderEditor() {
     let name = '';
 
     // Handle data naming

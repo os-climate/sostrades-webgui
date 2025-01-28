@@ -9,9 +9,6 @@ export class TreeNodeDataService {
   private treeNodeDataSource: BehaviorSubject<TreeNode> = new BehaviorSubject(null);
   currentTreeNodeData = this.treeNodeDataSource.asObservable();
 
-  constructor() {
-  }
-
   send_tree_node(data: TreeNode) {
     this.treeNodeDataSource.next(data);
   }

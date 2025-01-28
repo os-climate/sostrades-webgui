@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { LogoPath } from 'src/app/models/logo-path.model';
 import { environment } from 'src/environments/environment';
 
@@ -7,12 +7,8 @@ import { environment } from 'src/environments/environment';
   templateUrl: './user-app-loading.component.html',
   styleUrls: ['./user-app-loading.component.scss']
 })
-export class UserAppLoadingComponent implements OnInit {
+export class UserAppLoadingComponent {
   public environment = environment;
   public logoPath = LogoPath;
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }
