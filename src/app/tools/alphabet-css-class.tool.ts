@@ -1,7 +1,5 @@
 export class AlhpabetCssClassTools {
 
-  constructor() { }
-
   public static getCssClassForLetter(letter: string): string {
     let cssClass = '';
     if (letter.length > 0) {

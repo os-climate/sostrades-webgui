@@ -320,21 +320,6 @@
             </button>
             <button
               style="margin-right: 5px"
-              *ngIf="
-                !element.groupConfidential &&
-                (element.isManager ||
-                  element.isContributor ||
-                  element.isCommenter)
-              "
-              mat-icon-button
-              color="primary"
-              [matTooltip]="'Download ' + element.name + ' data'"
-              (click)="downloadStudy($event, element)"
-            >
-              <i class="fa-solid fa-download fa-fw"> </i>
-            </button>
-            <button
-              style="margin-right: 5px"
               mat-icon-button
               *ngIf="element.isManager"
               color="primary"

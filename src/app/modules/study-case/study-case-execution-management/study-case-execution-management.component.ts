@@ -84,7 +84,7 @@ export class StudyCaseExecutionManagementComponent implements OnInit {
           // Stop Execution
           this.loadingDialogService.showLoading(`Stopping execution of study case "${calculation.name}"`);
           this.calculationService.stop(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe({
-            next: (res) => {
+            next: () => {
               calculation.executionStatus = "STOPPED";
               this.loadingDialogService.closeLoading();
               this.snackbarService.showInformation(`Execution of study case ${calculation.name} execution n° ${calculation.studyCaseExecutionId} has been successfully stopped`);
@@ -139,7 +139,7 @@ export class StudyCaseExecutionManagementComponent implements OnInit {
 
       const message = logs.map(log => log.message).join('\n');
 
-      const dialogRef = this.dialog.open(StudyCaseExecutionExceptionDialogComponent, {
+      this.dialog.open(StudyCaseExecutionExceptionDialogComponent, {
         disableClose: false,
         width: '80vw',
         height: '80vh',
@@ -176,7 +176,7 @@ export class StudyCaseExecutionManagementComponent implements OnInit {
   deleteStudyExecution(calculation: CalculationDashboard) {
 
     this.calculationService.deleteStudycaseExecutionEntry(calculation.studyCaseId, calculation.studyCaseExecutionId).subscribe({
-      next: (_) => {
+      next: () => {
         this.calculationDashboardList = this.calculationDashboardList.filter(x => x.studyCaseExecutionId !== calculation.studyCaseExecutionId);
         this.dataSourceDashboard = new MatTableDataSource<CalculationDashboard>(this.calculationDashboardList);
         this.snackbarService.showInformation('Entry successfully deleted');

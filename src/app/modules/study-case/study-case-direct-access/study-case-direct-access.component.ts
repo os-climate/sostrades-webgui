@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Routing } from 'src/app/models/enumeration.model';
@@ -13,7 +13,7 @@ import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
   templateUrl: './study-case-direct-access.component.html',
   styleUrls: ['./study-case-direct-access.component.scss']
 })
-export class StudyCaseDirectAccessComponent implements OnInit {
+export class StudyCaseDirectAccessComponent implements OnInit, OnDestroy {
 
   private routeSubSubscription: Subscription;
 

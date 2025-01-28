@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConnectorDialogData } from 'src/app/models/dialog-data.model';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
@@ -24,16 +24,15 @@ export class ConnectorDataComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    for (let key of this.objectKey(this.data.connectorData)){
+    for (const key of this.objectKey(this.data.connectorData)){
       this.innerConnectorData[key] = this.data.connectorData[key];
     }
   }
 
   saveDataClick() {
     if(this.checkValueChanged()){
-      let updateItem: StudyUpdateParameter;
 
-      updateItem = new StudyUpdateParameter(
+      const updateItem = new StudyUpdateParameter(
         this.data.nodeData.identifier,
         this.data.nodeData.type.toString(),
         UpdateParameterType.CONNECTOR_DATA,
@@ -64,7 +63,7 @@ export class ConnectorDataComponent implements OnInit {
 
   checkValueChanged():boolean{
     let isDifferent = false;
-    for(let key of this.objectKey(this.innerConnectorData)){
+    for(const key of this.objectKey(this.innerConnectorData)){
       if (this.innerConnectorData[key] !== this.data.connectorData[key]){
           isDifferent = true;
       }

@@ -113,7 +113,7 @@ export class UpdateEntityRightComponent implements OnInit {
     const loadedAllUsers = this.userService.getUserListForSharing();
 
 
-    combineLatest([loadedGroups, loadedAllUsers]).subscribe(res => {
+    combineLatest([loadedGroups, loadedAllUsers]).subscribe(() => {
       this.groupDataService.loadedGroups.forEach(grp => {
         if (this.entitiesSelected.filter(x => x.entityObject.id === grp.group.id && x.entityType === EntityType.GROUP).length === 0) {
           if(this.data.ressourceId !== grp.group.id)
@@ -210,7 +210,7 @@ export class UpdateEntityRightComponent implements OnInit {
     this.loadingDialogService.showLoading(`Updating users and groups rights. Please wait.`);
 
     this.entityRightService.applyEntitiesChanges(updatedEntityRight).subscribe({
-      next: (res) => {
+      next: () => {
         this.loadingDialogService.closeLoading();
         this.snackbarService.showInformation(`Users and groups rights have been successfully updated.`);
       },

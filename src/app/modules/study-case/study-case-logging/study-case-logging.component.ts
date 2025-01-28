@@ -1,11 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { SocketService } from 'src/app/services/socket/socket.service';
-import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { UserService } from 'src/app/services/user/user.service';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execution-exception-dialog/study-case-execution-exception-dialog.component';
 

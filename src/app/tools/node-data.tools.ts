@@ -2,9 +2,6 @@ import { NodeData, ValueType } from "../models/node-data.model";
 
 export class NodeDataTools {
 
-
-  constructor() { }
-
   public static countDisplayableItemsInNodeDataDict(dict: { [id: string]: NodeData; }, userLevel: number, showReadOnly: boolean): number {
     let count = 0;
     Object.keys(dict).forEach(key => {

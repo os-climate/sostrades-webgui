@@ -123,12 +123,14 @@ export class UpdateEntityRightAddPeopleComponent implements OnInit {
       updatedEntityRight.entitiesRights.push(entity);
     });
 
-    this.entityRightService.applyEntitiesChanges(updatedEntityRight).subscribe(res => {
-      this.loadingDialogService.closeLoading();
-      this.snackbarService.showInformation(`Adding Users and groups rights has been successfully done.`);
-    }, errorReceived => {
-      this.loadingDialogService.closeLoading();
-      this.snackbarService.showError(errorReceived.description);
+    this.entityRightService.applyEntitiesChanges(updatedEntityRight).subscribe({
+      next: () => {
+        this.loadingDialogService.closeLoading();
+        this.snackbarService.showInformation(`Adding Users and groups rights has been successfully done.`);
+      }, error: (error) => {
+        this.loadingDialogService.closeLoading();
+        this.snackbarService.showError(error.description);
+      }
     });
   }
   onCancelClick() {

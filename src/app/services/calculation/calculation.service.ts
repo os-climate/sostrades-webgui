@@ -39,7 +39,7 @@ export class CalculationService extends DataHttpService {
   execute(loadedstudy: LoadedStudy): Observable<void> {
     return this.http.post(this.apiRoute + '/execute/' + loadedstudy.studyCase.id, null)
       .pipe(map(
-        response => {
+        () => {
           // TODO : Implement model calculation and return
           // this.loggerService.log(response);
         }));
@@ -55,7 +55,7 @@ export class CalculationService extends DataHttpService {
 
     return this.http.post(route, null)
       .pipe(map(
-        response => {
+        () => {
           // TODO : Implement model calculation and return
           // this.loggerService.log(response);
         }));
@@ -119,7 +119,7 @@ export class CalculationService extends DataHttpService {
    */
    getExecutionRawLogs(studyCaseId: number, studyCaseExecutionId: number): Observable<Blob> {
 
-    let route = `${this.apiRoute}/raw-logs/${studyCaseId}/${studyCaseExecutionId}`;
+    const route = `${this.apiRoute}/raw-logs/${studyCaseId}/${studyCaseExecutionId}`;
 
     const options: {
       headers?: HttpHeaders;
@@ -166,7 +166,7 @@ export class CalculationService extends DataHttpService {
    */
   getLog(studyCaseId: number) {
 
-    let route = `${this.apiRoute}/logs/${studyCaseId}`;
+    const route = `${this.apiRoute}/logs/${studyCaseId}`;
 
     this.http.get<StudyCaseExecutionLogging[]>(route)
       .pipe(map(logs => {

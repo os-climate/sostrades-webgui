@@ -108,7 +108,7 @@ export class ProcessBuilderData {
    * Convert object to attended node data value dictionnary
    * @returns dictonary
    */
-   public toNodeDataValue(): {} {
+   public toNodeDataValue() {
     const result = {};
 
     result[ProcessBuilderAttribute.PROCESS_REPOSITORY] = this.processRepositoryIdentifier;
@@ -174,7 +174,7 @@ export class NodeData {
   public static Create(key: string, jsonData: any, parent: TreeNode, isDataDisc: boolean): NodeData {
     // Remove parameter without type key
     let result: NodeData = null;
-    if (jsonData.hasOwnProperty(NodeDataAttributes.TYPE)) {
+    if (NodeDataAttributes.TYPE in jsonData) {
       result = new NodeData(
         key,
         jsonData[NodeDataAttributes.DEFAULT],
@@ -327,7 +327,7 @@ export class NodeData {
     this.modified = true;
 
     if (this.parent !== null) {
-      this.parent.nodeDataValueChange(this);
+      this.parent.nodeDataValueChange();
     }
   }
 
@@ -348,7 +348,7 @@ export class NodeData {
   }
 
   get hasConnectorData(): boolean{
-    let has_connector_data: boolean = false;
+    let has_connector_data = false;
     if (this.connector_data !== undefined) {
       has_connector_data = true;
     }

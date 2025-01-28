@@ -13,7 +13,7 @@ export class ModelStatus {
     public validated: string,
     public discipline: string,
     public processesUsingModel: number,
-    public processesUsingModelList: {},
+    public processesUsingModelList: any,
     public inputsParametersQuantity: number,
     public outputsParametersQuantity: number) {
   }

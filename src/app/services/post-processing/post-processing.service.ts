@@ -1,6 +1,6 @@
-import { ElementRef, Injectable, ViewChild } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { LoadedStudy, Study } from 'src/app/models/study.model';
+import { LoadedStudy } from 'src/app/models/study.model';
 import { Observable, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PostProcessingFilter } from 'src/app/models/post-processing-filter.model';
@@ -107,7 +107,7 @@ export class PostProcessingService extends PostProcessingHttpService {
   private executePostProcessingRequest(requestData: PendingPostProcessingRequest) {
 
     if (requestData !== undefined && requestData !== null) {
-      const req = this.getPostProcessing(
+      this.getPostProcessing(
         true,
         requestData.loadedStudy,
         requestData.disciplineKey,
