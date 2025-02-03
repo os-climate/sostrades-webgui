@@ -28,6 +28,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   private hasDocumentationSubject = new BehaviorSubject<boolean>(false);
   public isPDFGenerating: boolean;
   public updateMarkdown: boolean;
+  public canUpdate: boolean;
   private identifier: string;
 
   public options: KatexOptions = {
@@ -56,6 +57,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     this.isPDFGenerating = false;
     this.updateMarkdown = true;
     this.identifier = "";
+    this.canUpdate = false;
   }
 
   ngOnChanges (): void {
@@ -74,7 +76,9 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     this.documentation = [];
     this.loading = true;
     let documentationRetrieved = 0;
-    
+    // If study is in readonly mode, the documentation cannot be updated
+    this.canUpdate = !this.studyCaseDataService.loadedStudy.readOnly;
+
     this.identifiers.forEach(identifier => {
       const markdown = this.ontologyService.markdownDocumentations[identifier];
       this.identifier = identifier
@@ -116,38 +120,37 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   }
 
   refresh() {
-    // Get the current study ID
-    const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-  
-    // Fetch the markdown documentation for the given study and documentation item
-    this.studyCaseMainService.getMarkdowndocumentation(studyId, this.identifier).subscribe((response) => {
-      // Check if the response contains valid documentation
-      if (response.documentation) {
-        // Transform the documentation content (footnotes, KaTeX equations, and images)
-        if(this.documentation.length == 0){
-          response.name = this.identifier
-          this.ngOnChanges();
-        } else {
-          response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+    if(this.canUpdate){
+      // Get the current study ID
+      const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
+      
+      // Fetch the markdown documentation for the given study and documentation item
+      this.studyCaseMainService.getMarkdowndocumentation(studyId, this.identifier).subscribe((response) => {
+        // Check if the response contains valid documentation
+        if (response.documentation) {
+          // Transform the documentation content (footnotes, KaTeX equations, and images)
+          if(this.documentation.length == 0){
+            response.name = this.identifier
+            this.ngOnChanges();
+          } else {
+            response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+          }
+        
+          // Use setTimeout to defer the execution of insertAttributeOnMarkdown
+          // This allows the DOM to update with the new documentation content before we manipulate it
+          // It's a way to ensure that the content is rendered before we try to modify it
+          setTimeout(() => {
+            this.insertAttributeOnMarkdown();
+          });
+    
+          // Set flag to indicate that documentation is available
+          this.hasDocumentation = true;
+        } else if (this.documentation.length == 0) {
+          // If documentation is empty, set flag to indicate no documentation
+          this.hasDocumentation = false;
         }
-        
-        
-       
-        
-        // Use setTimeout to defer the execution of insertAttributeOnMarkdown
-        // This allows the DOM to update with the new documentation content before we manipulate it
-        // It's a way to ensure that the content is rendered before we try to modify it
-        setTimeout(() => {
-          this.insertAttributeOnMarkdown();
-        });
-  
-        // Set flag to indicate that documentation is available
-        this.hasDocumentation = true;
-      } else if (this.documentation.length == 0) {
-        // If documentation is empty, set flag to indicate no documentation
-        this.hasDocumentation = false;
-      }
-    });
+      });
+    }
   }
 
   // Generate documentation into pdf

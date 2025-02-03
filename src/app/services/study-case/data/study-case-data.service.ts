@@ -19,6 +19,7 @@ import { LoggerService } from '../../logger/logger.service';
 import { SnackbarService } from '../../snackbar/snackbar.service';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { LoadingStudyDialogService } from '../../loading-study-dialog/loading-study-dialog.service';
+import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
 
 @Injectable({
   providedIn: 'root'
@@ -396,6 +397,14 @@ export class StudyCaseDataService extends DataHttpService {
       }
     }
     return defaultValue;
+  }
+
+  public loadUserStudyPreferences(studyID: number): Observable<any> {
+    // retreive study user preference
+    return this.http.get(`${this.apiRoute}/${studyID}/preference`).pipe(map(
+      response => {
+        return UserStudyPreferences.Create(response);
+      }));
   }
 
   private saveUserStudyPreferences(studyID: number, panelId: string, panelOpened ): Observable<any> {

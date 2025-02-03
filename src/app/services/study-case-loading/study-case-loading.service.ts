@@ -86,15 +86,21 @@ export class StudyCaseLoadingService {
       });
     }
 
+    const updateUserPreferences$ = this.studyCaseDataService.loadUserStudyPreferences(loadedStudy.studyCase.id);
+    const loadedOntology$ = this.loadOntology(loadedStudy);
+
     if (loadOnlyOntology) {
-      this.loadOntology(loadedStudy).subscribe(() => {
-        
-        this.studyCaseDataService.updateParameterOntology(loadedStudy);
-        //end loading
-        this.terminateStudyCaseLoading(
-          loadedStudy,
-          isStudyCreated
-        );
+      combineLatest([loadedOntology$, updateUserPreferences$]).subscribe({
+        next:([, preferences]) => {
+
+          loadedStudy.userStudyPreferences = preferences;
+          this.studyCaseDataService.updateParameterOntology(loadedStudy);
+          //end loading
+          this.terminateStudyCaseLoading(
+            loadedStudy,
+            isStudyCreated
+          );
+        }
       });
     } else {
       // Load logs
@@ -102,12 +108,13 @@ export class StudyCaseLoadingService {
       this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
       this.studyCaseDataService.tradeScenarioList = [];
 
-      const loadedOntology$ = this.loadOntology(loadedStudy);
       const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
       const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
 
-      combineLatest([loadedOntology$,loadedNotifications$, loadedValidations$]).subscribe({
-        next: ([, resultnotifications]) => {
+      combineLatest([loadedOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
+        next: ([,preferences, resultnotifications]) => {
+          
+          loadedStudy.userStudyPreferences = preferences;
           this.studyCaseDataService.updateParameterOntology(loadedStudy);
           this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
           

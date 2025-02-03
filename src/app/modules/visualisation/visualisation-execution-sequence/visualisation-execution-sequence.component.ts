@@ -6,6 +6,7 @@ import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { VisualizationDiagrams } from 'src/app/models/study.model';
 
 
 @Component({
@@ -46,20 +47,38 @@ export class ExecutionSequenceComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.visualisationService.getExecutionSequenceData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-      next: (res: any) => {
-        // this.dotString = res['dotString'];
-        this.nodes = res['nodes_list'];
-        this.links = res['links_list'];
-        this.setMinMax();
-        this.initGraph();
-      },
-      error: (err: any) => {  
-        this.isLoading = false;
-        this.snackbarService.showError(err.description);
+    const loadedStudy = this.studyCaseDataService.loadedStudy;
+
+    if (loadedStudy !== null && loadedStudy !== undefined) {
+
+      if (Object.keys(loadedStudy.n2Diagram).length === 0 
+        ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)) {
+        this.visualisationService.getExecutionSequenceData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
+          next: (res: any) => {
+            // this.dotString = res['dotString'];
+            this.nodes = res['nodes_list'];
+            this.links = res['links_list'];
+            this.setMinMax();
+            this.initGraph();
+          },
+          error: (err: any) => {  
+            this.isLoading = false;
+            this.snackbarService.showError(err.description);
+          }
+        });
+      } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)){
+        // if diagram already exists, add a timeout, if not the graphiz has an error
+        setTimeout(() => {
+          this.nodes = loadedStudy.n2Diagram[VisualizationDiagrams.EXECUTION_SEQUENCE]['nodes_list'];
+          this.links = loadedStudy.n2Diagram[VisualizationDiagrams.EXECUTION_SEQUENCE]['links_list'];
+          this.setMinMax();
+          this.initGraph();
+        }, 2000);
+          
       }
-    });
+    }
   }
+  
 
   initGraph(): void {
     d3.select(this.el.nativeElement).selectAll('svg').remove();
