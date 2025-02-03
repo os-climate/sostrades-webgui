@@ -207,6 +207,21 @@ tr:hover .actions-hover-row {
 .mat-column-name{
   width: 10% !important;
 }
-.filter {
-  width: 85%;
+
+// Adjust size of search filter according to the screen size
+@media screen and (min-width: 1023px) {
+  .search-filter {
+    width: 72%;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .search-filter {
+    width: 77%;
+  }
+}
+@media screen and (min-width: 1920px) {
+  .search-filter {
+    width: 85%;
+  }
 }
