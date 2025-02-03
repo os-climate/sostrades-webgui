@@ -34,11 +34,13 @@ export class FilterBarComponent<T> implements OnInit {
     // Add "All Columns" option to the column filter
     this.columnsFilter.set(ColumnName.ALL_COLUMNS, "All Columns");
     
-    // Initialize the element count with the number of filtered items in the data source
-    this.numberElement = this.dataSource.filteredData.length;
-
     // Set the element name for display
     this.elementName = "Number of " + this.element + " : ";
+    
+    // Initialize the element count with the number of filtered items in the data source
+    this.dataSource.connect().subscribe(data => {
+      this.numberElement = data.length;
+    });
 
     // Set up the search observable and filter predicate
     this.setupSearchObservable();
@@ -58,89 +60,147 @@ export class FilterBarComponent<T> implements OnInit {
   }
 
   /**
-   * Sets up the filter predicate for the data source
+   * Configures the filtering behavior for the data source by setting up a custom filter predicate
+   * This predicate handles both selected value filtering and search string filtering
    */
   private setupFilterPredicate() {
     this.dataSource.filterPredicate = (data: T, filter: string): boolean => {
       const searchStr = filter.toLowerCase();
       let isMatch = false;
 
-      // Filtering logic based on selected values
+      // Handle filtering when we have selected values in our filter criteria
       if (this.selectedValues && this.selectedValues.size > 0) {
         this.selectedValues.forEach((values, key) => {
-          if(filter) {
-            // combine both filter options (filter-bar and filter by selectValues)
-            const matchingObjects = this.recursivelyFilterObjectByMapCriteria(data, []);
-            if (matchingObjects.length > 0) {
-              isMatch = this.isSearchStringInObject(matchingObjects[0], searchStr);
-              return isMatch;
+          // Clean up selectedValues by removing empty arrays
+          Array.from(this.selectedValues.entries()).forEach(([key, values]) => {
+            if (values.length === 0) {
+              this.selectedValues.delete(key);
             }
+          });
+
+          // If no filter criteria remain after cleanup, accept all data
+          if (this.selectedValues.size === 0) {
+            isMatch = true
+            return isMatch;
           } else {
-            if (values.length > 0) {
-              values.some(value => {
-                isMatch = String(this.recursivelySearchObjectForKey(data, key)).toLowerCase().trim().includes(value.toLowerCase().trim());
-                return isMatch;
-              });
+            // Handle active search filter combined with selected values
+            if(filter) {
+              if (values.length > 0) {
+                // First filter by selected values, then by search string
+                const matchingObjects = this.recursivelyFilterObjectByMapCriteria(data, []);
+                if (matchingObjects.length > 0) {
+                  // Check if any matching object contains the search string
+                  isMatch = this.isSearchStringInObject(matchingObjects[0], searchStr);
+                  return isMatch;
+                }
+              }
+            } else {
+              // Handle selected values filtering without search string
+              if (values.length > 0) {
+                // Check if any selected value matches the data
+                values.some(value => {
+                  isMatch = String(this.recursivelySearchObjectForKey(data, key)).toLowerCase().trim().includes(value.toLowerCase().trim());
+                  return isMatch;
+                });
+              }
             }
           }
         });
+        
       } else {
-        // Filtering logic for all columns or a specific column
-        if (this.selectedColumn === ColumnName.ALL_COLUMNS) {
-          // Create a copy of the columnsFilter without ALL_COLUMNS
-          const filteredColumns = new Map(this.columnsFilter);
-          filteredColumns.delete(ColumnName.ALL_COLUMNS);
-          isMatch = Array.from(filteredColumns.values()).some(columnValues => {
-              const key = this.findColumnNameByValue(filteredColumns, columnValues);
-              const value = String(this.recursivelySearchObjectForKey(data, key))
-              isMatch = value.toLowerCase().trim().includes(searchStr);
-              return isMatch;
-            });
-        } else {        
-          const keys = this.columnsName.keys();
-          const keysArray = Array.from(keys);
-          const selectedKey = keysArray.find(key => key === this.selectedColumn);
-          if (!selectedKey) {
-            isMatch = false;
-          } else {
-             isMatch = String(data[selectedKey]).trim().toLowerCase().includes(searchStr);
-          }
+        if (filter.trim()) {
+          // Handle basic search filtering without selected values
+          if (this.selectedColumn === ColumnName.ALL_COLUMNS) {
+            // When "All Columns" is selected, search across all columns except the ALL_COLUMNS option
+            const filteredColumns = new Map(this.columnsFilter);
+            filteredColumns.delete(ColumnName.ALL_COLUMNS);
+            
+            // Search through each column's values
+            isMatch = Array.from(filteredColumns.values()).some(columnValues => {
+                const key = this.findColumnNameByValue(filteredColumns, columnValues);
+                const value = String(this.recursivelySearchObjectForKey(data, key));
+                isMatch = value.toLowerCase().trim().includes(searchStr);
+                return isMatch;
+              });
+          } else {        
+            // When a specific column is selected, only search in that column
+            const keys = this.columnsName.keys();
+            const keysArray = Array.from(keys);
+            const selectedKey = keysArray.find(key => key === this.selectedColumn);
+            
+            if (!selectedKey) {
+              isMatch = false;
+            } else {
+              isMatch = String(data[selectedKey]).trim().toLowerCase().includes(searchStr);
+            }
+          } 
+        } else {
+          // If there are no filter return true
+          isMatch = true
+          return isMatch;
         }
       }
-      this.numberElement = this.dataSource.filteredData.length;
       return isMatch;
-    };   
+    }; 
   }
 
   /**
-   * Recursively filters an object based on criteria specified in a Map
-   * @param data Object to filter
-   * @param matchingList List to store matching objects
-   * @returns List of matching objects
+   * Recursively searches and filters objects based on multiple criteria from selectedValues map
+   * @param data The object to examine (can be nested)
+   * @param matchingList Accumulator array to store objects that match all criteria
+   * @returns Array of all matching objects found in the object tree
    */
   private recursivelyFilterObjectByMapCriteria(data: any, matchingList: any[]): any[] {
-    // Check if the object matches all selected criteria
+    // Track if current object matches all filter criteria
     let matchesAllCriteria = true;
 
-    // Check each criteria in selectedValues
+    // Examine each filter criteria from selectedValues map
     for (const [key, values] of this.selectedValues.entries()) {
+      // Get alternative key name if exists (e.g. 'processDisplayName' for 'process')
       const ontologyKey = this.getDisplayNameKey(key);
-      
-      // If the object doesn't match current criteria, mark as false and break
-      if (!(key in data && (values.includes(data[key]) || (ontologyKey && values.includes(data[ontologyKey]))))) {
+      let matchFound = false;
+
+      // First attempt: Check if any filter value matches the main key's value
+      if (key in data) {
+        matchFound = values.some(value => {
+          const dataValue = String(data[key]).toLowerCase().trim();
+          const searchValue = String(value).toLowerCase().trim();
+          if (dataValue) {
+            // Match if either value contains the other (bidirectional partial match)
+            return dataValue.includes(searchValue) || searchValue.includes(dataValue);
+          } else {
+            return false
+          }
+         
+        });
+      }
+
+      // Second attempt: If no match found and ontology key exists, try matching against it
+      if (!matchFound && ontologyKey && ontologyKey in data) {
+        matchFound = values.some(value => {
+          const dataValue = String(data[ontologyKey]).toLowerCase().trim();
+          const searchValue = String(value).toLowerCase().trim();
+          // Same bidirectional matching logic for ontology key
+          return dataValue.includes(searchValue) || searchValue.includes(dataValue);
+        });
+      }
+
+      // If neither key matched any values, this object fails the criteria
+      if (!matchFound) {
         matchesAllCriteria = false;
-        break;
+        break; // No need to check other criteria since one failure disqualifies the object
       }
     }
 
-    // Only add the object if it matches all criteria
+    // If object matched all criteria and we had criteria to check, add it to results
     if (matchesAllCriteria && this.selectedValues.size > 0) {
       matchingList.push(data);
     }
 
-    // Continue searching in nested objects
+    // Recursively search through all nested objects
     if (typeof(data) === 'object' && data !== null) {
       Object.keys(data).forEach(objKey => {
+        // Only recurse into actual objects (not null and is object type)
         if (typeof data[objKey] === 'object' && data[objKey] !== null) {
           this.recursivelyFilterObjectByMapCriteria(data[objKey], matchingList);
         } 
@@ -232,13 +292,13 @@ export class FilterBarComponent<T> implements OnInit {
    */
   private recursivelySearchObjectForKey(data: any, key: string): any {
     // If the key exists directly in the object, return its value
-    if (key.toLowerCase() in data) {
-      return data[key.toLowerCase()];
+    if (key in data) {
+      return data[key];
     }
     // Recursively search for the key in nested objects
-    for (const prop in data) {
-      if (data[prop] && typeof data[prop] === 'object') {
-        const result = this.recursivelySearchObjectForKey(data[prop], key);
+    for (const attribut in data) {
+      if (data[attribut] && typeof data[attribut] === 'object') {
+        const result = this.recursivelySearchObjectForKey(data[attribut], key);
         if (result !== undefined) {
           return result;
         }

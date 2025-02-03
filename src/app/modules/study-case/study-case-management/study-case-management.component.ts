@@ -18,7 +18,6 @@ import { HostListener } from '@angular/core';
 import { EntityResourceRights } from 'src/app/models/entity-right.model';
 import { UpdateEntityRightComponent } from '../../entity-right/update-entity-right/update-entity-right.component';
 import { EntityRightService } from 'src/app/services/entity-right/entity-right.service';
-import { Location } from '@angular/common';
 import { StudyDialogService } from 'src/app/services/study-dialog/study-dialog.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -26,7 +25,6 @@ import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
-import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
 import { ColumnName } from 'src/app/models/enumeration.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { ProcessService } from 'src/app/services/process/process.service';
@@ -176,6 +174,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.onFilterChange();
         this.isLoading = false;
       }
+      this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumns);
+      this.colummnsDictForFilteredColumn = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
     }
     this.onCurrentStudyDeletedSubscription = this.socketService.onCurrentStudyDeleted.subscribe(refreshList => {
     if (refreshList) {
@@ -288,8 +288,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         } else {
           this.dataSourceStudies = new MatTableDataSource<Study>(studies);
         }
-        this.columnValuesDict = this.filterTableService.setColumnValuesDict(this.displayedColumns);
-        this.colummnsDictForFilteredColumn = this.filterTableService.setcolummnsDictForFilteredColumn(this.colummnsFilter);
+        
         this.dataSourceStudies.sortingDataAccessor = (item, property) => {
           return typeof item[property] === 'string'
             ? item[property].toLowerCase()
