@@ -7,6 +7,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { VisualizationDiagrams } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-visualisation-coupling-graph',
@@ -71,8 +72,8 @@ export class CouplingGraphComponent implements OnInit {
         this.visualisationService.getDiagramN2Data(loadedStudy.studyCase.id).subscribe({
           next: (res: any) => {
             if (Object.keys(res).length > 0) {
-              loadedStudy.n2Diagram = res;
-              this.data = loadedStudy.n2Diagram;
+              loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM] = res;
+              this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
               this.initGraph();
             }
            
@@ -83,8 +84,8 @@ export class CouplingGraphComponent implements OnInit {
             this.snackbarService.showError(err.description);
           }
         });
-      } else {
-        this.data = loadedStudy.n2Diagram;
+      } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.N2DIAGRAM)){
+        this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
         this.initGraph();
         this.isLoading = false;
       }

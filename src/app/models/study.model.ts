@@ -201,6 +201,12 @@ export enum LoadedStudyAttributes {
   DASHBOARD = 'dashboard'
 }
 
+export enum VisualizationDiagrams {
+  N2DIAGRAM = 'n2_diagram',
+  EXECUTION_SEQUENCE = 'execution_sequence',
+  INTERFACE = 'interface_diagram'
+}
+
 export enum LoadStatus {
   NONE = 'none',
   IN_PROGESS = 'in_progress',

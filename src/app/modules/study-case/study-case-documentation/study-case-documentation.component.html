@@ -36,9 +36,10 @@
               id="refresh"
               mat-raised-button
               style="text-align: right;"
-              matTooltip="Reload markdown from file system"
-              (click)="refresh()">
-              <i class="fa-solid fa-rotate fa-fw cursor-pointer"></i>
+              [matTooltip]="canUpdate?'Reload markdown from file system': 'No reload possible in read only mode'"
+              (click)="canUpdate && refresh()"
+              [class.disabled]="!canUpdate">
+              <i class="fa-solid fa-rotate fa-fw" [class.cursor-pointer]="canUpdate"></i>
             </span>
             <span
               id="download-pdf"
@@ -72,13 +73,16 @@
           <span>This discipline has no documentation provided from ontology yet.</span>
           <br>
           <span
-              class="cursor-pointer"
+              [class.cursor-pointer]="canUpdate"
+              [class.disabled]="!canUpdate"
               mat-raised-button
-              matTooltip="Reload markdown from file system"
-              (click)="refresh()">
-              You can reload this markdown from file system if existing
+              [matTooltip]="canUpdate?'Reload markdown from file system':'Switch to read only mode to reload markdown'"
+              (click)="canUpdate && refresh()">
+              <span *ngIf="canUpdate">You can reload this markdown from file system if existing</span>
+              <span *ngIf="!canUpdate">No reload available</span>
               <i class="fa-solid fa-rotate fa-fw "></i>
           </span>
+          
         </div>
       </div>
     </div>
