@@ -30,7 +30,7 @@
         
     </h2>
       
-     <div class="filter" *ngIf="getFilter">
+     <div class="filter" *ngIf="getFilter && !isLoading">
         <app-filter-bar 
         [dataSource]="dataSourceStudies"
         [columnsName]="columnValuesDict"
