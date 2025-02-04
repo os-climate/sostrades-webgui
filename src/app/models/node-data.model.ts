@@ -1,9 +1,6 @@
 import { DataframeDescriptor } from './dataframe-descriptor.model';
 import { TreeNode } from './tree-node.model';
 
-export interface INodeDataValueChange {
-  nodeDataValueChange(nodeData: NodeData);
-}
 export enum WidgetType {
   TABLE_WIDGET = 'table',
   SELECT_WIDGET = 'select',
@@ -325,10 +322,6 @@ export class NodeData {
   set value(data: any) {
     this._value = data;
     this.modified = true;
-
-    if (this.parent !== null) {
-      this.parent.nodeDataValueChange();
-    }
   }
 
   get valueType(): ValueType {
