@@ -1,4 +1,4 @@
-import { NodeData, ValueType, INodeDataValueChange, IoType } from './node-data.model';
+import { NodeData, ValueType, IoType } from './node-data.model';
 import { BehaviorSubject } from 'rxjs';
 import { DisciplineStatus } from './study-case-execution-observer.model';
 import { PostProcessingBundle } from './post-processing-bundle.model';
@@ -72,7 +72,7 @@ export enum MardownDocumentationAttributes {
   DOCUMENTATION = 'documentation'
 }
 
-export class TreeNode implements INodeDataValueChange {
+export class TreeNode {
 
   isVisible: boolean;
   children: BehaviorSubject<TreeNode[]>;
@@ -86,6 +86,7 @@ export class TreeNode implements INodeDataValueChange {
   postProcessingBundle: PostProcessingBundle[];
   private _isRoot: boolean;
   isValidated: boolean;
+  public chevronColor: string;
 
   constructor(
     public name: string,
@@ -106,6 +107,7 @@ export class TreeNode implements INodeDataValueChange {
     this.isLastChild = true;
     this.isConfigured = false;
     this._isRoot = isRoot;
+    this.chevronColor = "#000000"
 
     if (this.isValidated == undefined || this.isValidated == null){
       this.isValidated =false;
@@ -210,9 +212,6 @@ export class TreeNode implements INodeDataValueChange {
     return result;
   }
 
-  public nodeDataValueChange() {
-    this.checkConfigured();
-  }
 
   public checkConfigured() {
 
