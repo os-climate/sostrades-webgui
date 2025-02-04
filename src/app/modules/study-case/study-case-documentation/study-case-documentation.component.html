@@ -76,7 +76,7 @@
               [class.cursor-pointer]="canUpdate"
               [class.disabled]="!canUpdate"
               mat-raised-button
-              [matTooltip]="canUpdate?'Reload markdown from file system':'Switch to read only mode to reload markdown'"
+              [matTooltip]="canUpdate?'Reload markdown from file system':'Switch to edition mode to reload markdown'"
               (click)="canUpdate && refresh()">
               <span *ngIf="canUpdate">You can reload this markdown from file system if existing</span>
               <span *ngIf="!canUpdate">No reload available</span>

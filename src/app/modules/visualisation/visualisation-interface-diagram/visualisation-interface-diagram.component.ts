@@ -36,7 +36,7 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
     if (loadedStudy !== null && loadedStudy !== undefined) {
 
       if (Object.keys(loadedStudy.n2Diagram).length === 0 
-            ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)) {
+            ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.INTERFACE)) {
             
         this.visualisationService.getInterfaceDiagramData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
           next: (res: any) => {
