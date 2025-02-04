@@ -1532,7 +1532,7 @@ downloadStudy(event: MouseEvent) {
         // Traverse up through parents until we reach the root
         while (currentNode.treeNodeParent) {
             // Color the parent node's chevron in error red
-            currentNode.treeNodeParent.chevronColor = '#e4002b'; // Error red color
+            currentNode.treeNodeParent.chevronColor = '#e4002b';
             
             // Move up to the parent node
             currentNode = currentNode.treeNodeParent;
