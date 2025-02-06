@@ -23,6 +23,7 @@ import { OntologyContainerComponent } from './modules/ontology/ontology-containe
 import { OntologyModelsComponent } from './modules/ontology/ontology-models/ontology-models.component';
 import { NoServerComponent } from './modules/no-server/no-server.component';
 import { Routing } from './models/enumeration.model';
+import { AuthenticationErrorComponent } from './modules/authentication-error/authentication-error.component';
 
 
 const routes: Routes = [
@@ -148,6 +149,10 @@ const routes: Routes = [
   {
     path: Routing.NO_SERVER,
     component: NoServerComponent
+  },
+  {
+    path: Routing.AUTHENTICATION_ERROR,
+    component: AuthenticationErrorComponent
   }
 ];
 

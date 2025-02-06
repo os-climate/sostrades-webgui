@@ -1,0 +1,111 @@
+.flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background-color: #f8f8f8;
+  }
+  
+  .login-form {
+    align-self: center;
+  }
+  
+  .mat-mdc-card {
+    padding: 0;
+    border-radius: 5px;
+  }
+  
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+  mat-card-content {
+    padding: 10px;
+  }
+  
+  .mat-mdc-card-title {
+    background-color: #00205b;
+    color: white;
+    padding: 10px 0 20px 0;
+    margin-bottom: 20px;
+    border-radius: 5px 5px 0 0;
+  }
+  
+  .mat-mdc-form-field {
+    width: 100%;
+    min-width: 300px;
+  }
+  
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+  mat-card-title,
+  mat-card-content {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .error {
+    padding: 16px;
+    width: 300px;
+    color: white;
+    background-color: #E4002B;
+    border-radius: 5px;
+  }
+  
+  #logos {
+    justify-content: space-evenly;
+    align-items: center;
+    display: flex;
+    margin-right: 20px;
+  }
+  
+  .logo-header {
+    margin-left: 20px;
+  }
+  
+  #icon {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  #logos-box {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .login-logos {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  #icon-login {
+    cursor: pointer;
+    font-size: 20px;
+  }
+  
+  .logos-information {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .margin-bottom {
+    margin-bottom: 10px;
+  }
+  
+  .or-bar {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.35);
+    margin: 8px 0px;
+  }
+  
+  .or-bar::before,
+  .or-bar::after {
+    content: "";
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.35);
+    height: 1px;
+    font-size: 0px;
+    line-height: 0px;
+    margin: 0px 8px;
+  }

@@ -34,7 +34,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public versionDate: string;
   public platform: string;
   public title: string;
-  public keycloakAvailable: boolean
+  public keycloakAvailable: boolean;
   environment = environment;
   public hasAccessToStudyManager: boolean;
   public hasAccessToStudy: boolean;

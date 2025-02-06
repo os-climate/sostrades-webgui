@@ -120,6 +120,7 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { LoadingStudyDialogComponent } from './modules/loading-study-dialog/loading-study-dialog.component';
 import { FilterBarComponent } from './shared/filter-bar/filter-bar.component';
 import { TruncatePipe } from './pipes/truncate/truncate.pipe';
+import { AuthenticationErrorComponent } from './modules/authentication-error/authentication-error.component';
 
 registerLocaleData(fr);
 
@@ -218,6 +219,7 @@ registerLocaleData(fr);
         LoadingStudyDialogComponent,
         FilterBarComponent,
         TruncatePipe,
+        AuthenticationErrorComponent,
     ],
     imports: [
         BrowserModule,
