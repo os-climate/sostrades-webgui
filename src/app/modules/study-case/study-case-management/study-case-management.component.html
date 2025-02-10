@@ -156,14 +156,27 @@
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element">
-            <a routerLink="/study/{{element.id}}"
-              class="link-study-title"
-              [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
-              [matTooltip]="'/study/' + element.id"
-              matTooltipPosition="right"
-              >
-              {{ element.name }}
+            <div style="display: flex; justify-content: space-between;">
+              <a 
+                (click)="loadStudy($event, element)"
+                class="link-study-title"
+                [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
+                [matTooltip]="'/study/' + element.id"
+                matTooltipPosition="right"
+                >
+                {{ element.name }}
             </a>
+              <button
+                [id]="'btn-study-management-read-only-' + element.groupName + '-' + element.name"
+                mat-icon-button
+                color="primary"
+                [disabled]="!element.hasReadOnlyFile"
+                [matTooltip]="'Load ' + element.name + ' in read only mode'" 
+                (click)="loadStudyInReadOnly(element)"
+              >
+                <i class="fa-regular fa-file"></i>
+              </button>
+            </div>
           </td>
         </ng-container>
 
@@ -177,7 +190,9 @@
             mat-cell
             *matCellDef="let element"
           >
-              {{ element.groupName }}
+              <span 
+              [matTooltip]="element.groupId"
+              >{{ element.groupName }}</span>
           </td>
         </ng-container>
 

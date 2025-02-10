@@ -190,8 +190,15 @@ tr:hover .actions-hover-row {
   font-size: 19px;
 }
 
-.link-study-title:hover {
-  text-decoration: underline;
+.link-study-title {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
 }
 
 .mat-column-process .cell-content,
