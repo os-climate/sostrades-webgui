@@ -176,7 +176,7 @@ export class AppDataService extends DataHttpService {
       if (read_only_mode) {
           this.handleReadOnlyAccess(studyId, isStudyLoaded);
       } else {
-          this.launchLoadStudy(studyId, false, false, isStudyLoaded, false);
+          this.handleRegularAccess(studyId, isStudyLoaded, loadingCanceled);
       }
       return;
   }
