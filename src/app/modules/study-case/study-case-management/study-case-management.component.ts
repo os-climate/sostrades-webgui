@@ -335,11 +335,28 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
                 this.studyCaseDataService.loadedStudy.studyCase.id
               );
             }
-          });
+          }, false);
         }
       });
     }
   }
+
+  loadStudyInReadOnly(study: Study) { 
+    this.handleUnsavedChanges((changeHandled) => {
+      if (changeHandled) {
+        // Check user was in an another study before this one and leave room
+        if (
+          this.studyCaseDataService.loadedStudy !== null &&
+          this.studyCaseDataService.loadedStudy !== undefined
+        ) {
+          this.socketService.leaveRoom(
+            this.studyCaseDataService.loadedStudy.studyCase.id
+          );
+        }
+        this.appDataService.loadStudyInReadOnlyMode(study.id);
+      }
+    });
+}
 
   createStudy() {
     this.handleUnsavedChanges(changeHandled => {

@@ -20,6 +20,7 @@ import { SnackbarService } from '../../snackbar/snackbar.service';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
 import { LoadingStudyDialogService } from '../../loading-study-dialog/loading-study-dialog.service';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
+import { StudyCaseExecutionObserverService } from '../../study-case-execution-observer/study-case-execution-observer.service';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +44,7 @@ export class StudyCaseDataService extends DataHttpService {
   public studyManagementFilter: string;
   public studyManagementColumnFiltered: string;
   public studySelectedValues = new Map <ColumnName, string[]>();
-
+  public preRequisiteReadOnlyDict: any;
 
   public dataSearchResults: NodeData[];
   public dataSearchInput: string;
@@ -66,6 +67,7 @@ export class StudyCaseDataService extends DataHttpService {
     private loadingStudyDialogService: LoadingStudyDialogService,
     private loggerService: LoggerService,
     private snackbarService:SnackbarService,
+    private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
     private router: Router) {
     super(location, 'study-case');
     this.studyLoaded = null;
@@ -79,6 +81,7 @@ export class StudyCaseDataService extends DataHttpService {
     this.tradeScenarioList = [];
     this.dataSearchResults = [];
     this.dataSearchInput = '';
+    this.preRequisiteReadOnlyDict = null;
   }
 
 
@@ -127,6 +130,15 @@ export class StudyCaseDataService extends DataHttpService {
         this.studyManagementData.splice(0,0, study)
         return study;
       }));
+  }
+
+  getPreRequisiteForReadOnly(studyId: number) {
+    return this.http.get(`${this.apiRoute}/${studyId}/pre-requisite-read-only-mode`).pipe(map(
+      response => {
+        this.preRequisiteReadOnlyDict = response
+        return this.preRequisiteReadOnlyDict;
+      }
+    )); 
   }
 
   check_study_already_exist(studyName: string, groupId: number) {
@@ -497,6 +509,36 @@ export class StudyCaseDataService extends DataHttpService {
         });
       });
     });
+  }
+  
+  public getStudyInReadOnlyModeUsingDataServer(studyId: number): Observable<LoadedStudy> {
+    return this.http.get(`${this.apiRoute}/${studyId}/read-only-mode`).pipe(map(
+      response => {
+        if (response !== null && response !== undefined) {
+          return LoadedStudy.Create(response);
+        } else {
+          return undefined;
+        }
+      }));
+  }
+
+  getFile(parameterKey: string): Observable<ArrayBuffer> {
+
+    const options: {
+      headers?: HttpHeaders;
+      observe?: 'body';
+      params?: HttpParams;
+      reportProgress?: boolean;
+      responseType: 'arraybuffer';
+    } = {
+      responseType: 'arraybuffer'
+    };
+    const url = `${this.apiRoute}/${this.loadedStudy.studyCase.id}/parameter/download`;
+    const data = {
+      parameter_key: parameterKey
+    };
+
+    return this.http.post(url, data, options);
   }
 
   private GetOntologyParameterLabel(ontology: OntologyParameter) {
