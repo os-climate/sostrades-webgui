@@ -26,7 +26,6 @@ import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { GroupDataService } from 'src/app/services/group/group-data.service';
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
-import { StudyCasePostProcessingService } from 'src/app/services/study-case/post-processing/study-case-post-processing.service';
 import { ColumnName } from 'src/app/models/enumeration.model';
 import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialog.component';
 import { ProcessService } from 'src/app/services/process/process.service';
@@ -115,7 +114,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private socketService: SocketService,
     private appDataService: AppDataService,
-    private studyCasePostProcessingService: StudyCasePostProcessingService,
     public groupDataService: GroupDataService,
     private snackbarService: SnackbarService,
     private loadingDialogService: LoadingDialogService,
@@ -353,7 +351,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             this.studyCaseDataService.loadedStudy.studyCase.id
           );
         }
-        this.appDataService.loadStudyInReadOnlyMode(study.id);
+        this.appDataService.loadStudyInReadOnlyMode(study.id, study.name);
       }
     });
 }
