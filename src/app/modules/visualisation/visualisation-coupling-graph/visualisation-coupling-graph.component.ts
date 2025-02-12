@@ -7,7 +7,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { VisualizationDiagrams } from 'src/app/models/study.model';
+import { LoadStatus, VisualizationDiagrams } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-visualisation-coupling-graph',
@@ -67,28 +67,36 @@ export class CouplingGraphComponent implements OnInit {
     const loadedStudy = this.studyCaseDataService.loadedStudy;
 
     if (loadedStudy !== null && loadedStudy !== undefined) {
-
-      if (Object.keys(loadedStudy.n2Diagram).length === 0) {
-        this.visualisationService.getDiagramN2Data(loadedStudy.studyCase.id).subscribe({
-          next: (res: any) => {
-            if (Object.keys(res).length > 0) {
-              loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM] = res;
-              this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
-              this.initGraph();
-            }
-           
+      if (loadedStudy.loadStatus == LoadStatus.READ_ONLY_MODE) {
+          if (Object.keys(loadedStudy.n2Diagram).length === 0 || !Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.N2DIAGRAM)) {
+            if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
+              this.visualisationService.getDiagramN2Data(loadedStudy.studyCase.id).subscribe({
+                next: (res: any) => {
+                  if (Object.keys(res).length > 0) {
+                    loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM] = res;
+                    this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
+                    this.initGraph();
+                  }
+                  
+                  this.isLoading = false;
+                },
+                error: (err) => {
+                  this.isLoading = false;
+                  this.snackbarService.showError(err.description);
+                }
+              });
+            } else {
+              this.snackbarService.showError(`This coupling graph is not available for this study. To show it, please switch to edition mode`);
+              this.isLoading = false;
+            } 
+          } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.N2DIAGRAM)){
+            this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
+            this.initGraph();
             this.isLoading = false;
-          },
-          error: (err) => {
-            this.isLoading = false;
-            this.snackbarService.showError(err.description);
           }
-        });
-      } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.N2DIAGRAM)){
-        this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
-        this.initGraph();
-        this.isLoading = false;
+          
       }
+      
     }
   }
 

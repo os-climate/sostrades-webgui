@@ -50,22 +50,26 @@ export class ExecutionSequenceComponent implements OnInit {
     const loadedStudy = this.studyCaseDataService.loadedStudy;
 
     if (loadedStudy !== null && loadedStudy !== undefined) {
-
       if (Object.keys(loadedStudy.n2Diagram).length === 0 
         ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)) {
-        this.visualisationService.getExecutionSequenceData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-          next: (res: any) => {
-            // this.dotString = res['dotString'];
-            this.nodes = res['nodes_list'];
-            this.links = res['links_list'];
-            this.setMinMax();
-            this.initGraph();
-          },
-          error: (err: any) => {  
-            this.isLoading = false;
-            this.snackbarService.showError(err.description);
-          }
-        });
+        if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
+          this.visualisationService.getExecutionSequenceData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
+            next: (res: any) => {
+              // this.dotString = res['dotString'];
+              this.nodes = res['nodes_list'];
+              this.links = res['links_list'];
+              this.setMinMax();
+              this.initGraph();
+            },
+            error: (err: any) => {  
+              this.isLoading = false;
+              this.snackbarService.showError(err.description);
+            }
+          });
+        } else {
+          this.snackbarService.showError(`This execution sequence is not available for this study. To show it, please switch to edition mode`);
+          this.isLoading = false;
+        }  
       } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)){
         // if diagram already exists, add a timeout, if not the graphiz has an error
         setTimeout(() => {
@@ -74,8 +78,7 @@ export class ExecutionSequenceComponent implements OnInit {
           this.setMinMax();
           this.initGraph();
         }, 2000);
-          
-      }
+      }      
     }
   }
   
