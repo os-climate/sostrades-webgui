@@ -90,7 +90,7 @@ export class AppDataService extends DataHttpService {
           if (!loadingCanceled){
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
             new StudyCaseInitialSetupPayload(allocation.studyCaseId, study.reference, study.type);
-              this.launchLoadStudy(allocation.studyCaseId, false, false, isStudyCreated, true); 
+              this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true); 
           }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ",()=> {
@@ -196,7 +196,7 @@ export class AppDataService extends DataHttpService {
 */
 private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void): void {
   this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe(response => {
-      if (response.has_read_only) {
+      if (response.has_read_only) {       
           // Launch study with appropriate server running status
           this.launchLoadStudy(
               studyId, 
@@ -205,7 +205,7 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
               isStudyLoaded, 
               false, 
               response.has_read_only,
-              response.server_is_running
+              response.allocation_is_running
           );
       } else {
           // Handle case where read-only is not available
@@ -222,7 +222,6 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
 */
 private handleRegularAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void, 
   loadingCanceled: boolean): void {
-  
   this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
       next: (allocation) => {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {
@@ -293,14 +292,14 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
   /**
    * Load the current study in read only mode (open in read only mode)
    */
-  loadStudyInReadOnlyMode(studyId: number) {
+  loadStudyInReadOnlyMode(studyId: number, studyName: string) {
     let loadingCanceled = false;
     const isStudyLoaded = () => {
       // This function is intentionally empty, it will be overwritten later
     };
     // Display loading message
     this.loadingStudyDialogService
-      .showLoadingWithCancelobserver(`Loading in RO `)
+      .showLoadingWithCancelobserver(`Loading ${studyName} in read only mode`)
       .subscribe(() => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
@@ -310,7 +309,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
       if(!loadingCanceled){
       //load study
       this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe(response => {
-        this.launchLoadStudy(studyId, false, true, isStudyLoaded, false, response.has_read_only, response.server_is_running);
+        this.launchLoadStudy(studyId, false, true, isStudyLoaded, false, response.has_read_only, response.allocation_is_running);
       });
        
     }
@@ -321,8 +320,8 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
    * launch the Loading of the study if needed, and in parallel launch the loading of post processings then
    * finalize the loading with logs, ontology, validation...
    * @param studyId : study to load
-   * @param readOnlyMode : if the study needs to open in read-only mode
    * @param functionToDoAfterLoading : function to be executed at the end of the loading or creation
+   * @param readOnlyMode : if the study needs to open in read-only mode
    * @param isFromCreateStudy : we are in creation mode
    * @param hasReadOnly: if stufy has file for the read-only mode
    * @param serverIsRunningForReadOnly: Check if server is already running for read-only mode
@@ -346,21 +345,16 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
     let loadedStudy$ = new Observable<LoadedStudy>((observer) => observer.next(null));
     if(readOnlyMode) {
         if (hasReadOnly) {
-            let useDataServer = false;
-            if (serverIsRunningForReadOnly) {
-              loadedStudy$ = this.getStudyInReadOnlyMode(studyId,withEmit, useDataServer);
-            } else {
-              useDataServer = true
-              loadedStudy$ = this.getStudyInReadOnlyMode(studyId, withEmit, useDataServer);
-            }
+          // Use data server if server main is not running
+          this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY)
+          loadedStudy$ = this.getStudyInReadOnlyMode(studyId,withEmit, !serverIsRunningForReadOnly);
         }
         else {
-          this.snackbarService.showWarning("The read only is not existing, you will load study in edition mode");
-          loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit);
+          loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit, readOnlyMode);
         }
     }
     else {
-      loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit);
+      loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit, readOnlyMode);
     }
     
     loadedStudy$.subscribe({
@@ -433,7 +427,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
               this.studyCaseDataService.loadedStudy !== null &&
               this.studyCaseDataService.loadedStudy !== undefined
             ) {
-              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE && (this.studyCaseDataService.preRequisiteReadOnlyDict && !this.studyCaseDataService.preRequisiteReadOnlyDict.server_is_running)) {
+              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE && (this.studyCaseDataService.preRequisiteReadOnlyDict && !this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running)) {
                 this.studyCaseMainService.checkStudyIsUpAndLoaded();
               }
             }
