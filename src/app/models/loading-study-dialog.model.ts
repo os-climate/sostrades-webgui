@@ -5,3 +5,45 @@ export enum LoadingDialogStep{
   LOADING_ONTOLOGY = 3,
   READY = 4
 }
+
+export class DialogStep {
+  step: LoadingDialogStep;
+  labelBefore: string;
+  labelAfter: string;
+}
+
+export const DEFAULT_DIALOG_STEPS: DialogStep[] = [
+  {
+    step: LoadingDialogStep.ACCESSING_STUDY_SERVER,
+    labelBefore: 'Accessing Study server',
+    labelAfter: 'Study Server Running'
+  },
+  {
+    step: LoadingDialogStep.LOADING_STUDY,
+    labelBefore: 'Loading Study',
+    labelAfter: 'Study loaded'
+  },
+  {
+    step: LoadingDialogStep.LOADING_ONTOLOGY,
+    labelBefore: 'Loading ontology',
+    labelAfter: 'Study Ready'
+  }
+];
+
+export const READONLY_DIALOG_STEPS: DialogStep[] = [
+  {
+    step: LoadingDialogStep.ACCESSING_STUDY_SERVER,
+    labelBefore: 'Accessing Read-only',
+    labelAfter: 'Read only mode received'
+  },
+  {
+    step: LoadingDialogStep.LOADING_STUDY,
+    labelBefore: 'Loading Read only',
+    labelAfter: 'Read Only loaded'
+  },
+  {
+    step: LoadingDialogStep.LOADING_ONTOLOGY,
+    labelBefore: 'Loading ontology',
+    labelAfter: 'Study Ready'
+  }
+];
