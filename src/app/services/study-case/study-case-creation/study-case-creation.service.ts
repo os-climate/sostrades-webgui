@@ -52,6 +52,7 @@ export class StudyCaseCreationService {
           if (resultCreateStudyRef.studyType === 'Study') {
             this.createStudyCaseByCopy(
               resultCreateStudyRef.studyId,
+              dialogData.reference,
               resultCreateStudyRef.studyName,
               resultCreateStudyRef.groupId,
               resultCreateStudyRef.selectedFlavor);
@@ -89,9 +90,9 @@ export class StudyCaseCreationService {
     });
   }
 
-  private createStudyCaseByCopy(studyId: number, studyName: string, groupId: number, flavor: string) {
+  private createStudyCaseByCopy(studyId: number, studyNameSource: string, studyName: string, groupId: number, flavor: string) {
 
-    this.appDataService.copyCompleteStudy(studyId, studyName, groupId, flavor, isStudyCreated => {
+    this.appDataService.copyCompleteStudy(studyId, studyNameSource ,studyName, groupId, flavor, isStudyCreated => {
       if (isStudyCreated) {
         // Joining room
         this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);

@@ -109,6 +109,7 @@ export class AppDataService extends DataHttpService {
 
   copyCompleteStudy(
     studyId: number,
+    studyNameSource: string,
     newName: string,
     groupId: number,
     flavor:string,
@@ -118,7 +119,7 @@ export class AppDataService extends DataHttpService {
 
     // Display loading message
     this.loadingStudyDialogService
-      .showLoadingWithCancelobserver(`Creating copy of study case : "${newName}"`)
+      .showLoadingWithCancelobserver(`Creating "${newName}" copy of study case "${studyNameSource}"`)
       .subscribe(() => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
@@ -196,7 +197,8 @@ export class AppDataService extends DataHttpService {
 */
 private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void): void {
   this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe(response => {
-      if (response.has_read_only) {       
+      if (response.has_read_only) {
+              
           // Launch study with appropriate server running status
           this.launchLoadStudy(
               studyId, 
@@ -307,7 +309,10 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
         loadingCanceled = true;
       });
       if(!loadingCanceled){
-      //load study
+      
+      // Update loading step using read only step
+      this.loadingStudyDialogService.setSteps(true)   
+      // load study
       this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe(response => {
         this.launchLoadStudy(studyId, false, true, isStudyLoaded, false, response.has_read_only, response.allocation_is_running);
       });
