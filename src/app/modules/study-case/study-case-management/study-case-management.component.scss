@@ -156,23 +156,18 @@ tr:hover .actions-hover-row {
 
 .favoriteOnStudyManagementPage {
   cursor: pointer;
-  margin-top: 5px;
-  margin-left: 10px;
+
   font-size: 15px;
   color: gold;
 }
 
 .notFavoriteOnStudyManagementPage {
   cursor: pointer;
-  margin-top: 5px;
-  margin-left: 10px;
   font-size: 15px;
 }
 
 .favoriteOnWelcomePage {
   cursor: default;
-  margin-top: 5px;
-  margin-left: 10px;
   font-size: 15px;
   color: gold;
 }
@@ -209,7 +204,7 @@ tr:hover .actions-hover-row {
 
 .mat-column-process,
 .mat-column-repository{
-  width: 20% !important;
+  width: 15% !important;
 }
 .mat-column-name{
   width: 10% !important;
