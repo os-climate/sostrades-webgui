@@ -33,13 +33,13 @@ export const DEFAULT_DIALOG_STEPS: DialogStep[] = [
 export const READONLY_DIALOG_STEPS: DialogStep[] = [
   {
     step: LoadingDialogStep.ACCESSING_STUDY_SERVER,
-    labelBefore: 'Accessing Read-only',
-    labelAfter: 'Read only mode received'
+    labelBefore: 'Accessing read-only',
+    labelAfter: 'Read only mode recieved'
   },
   {
     step: LoadingDialogStep.LOADING_STUDY,
-    labelBefore: 'Loading Read only',
-    labelAfter: 'Read Only loaded'
+    labelBefore: 'Loading read only',
+    labelAfter: 'Read only loaded'
   },
   {
     step: LoadingDialogStep.LOADING_ONTOLOGY,
