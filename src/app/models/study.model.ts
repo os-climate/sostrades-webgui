@@ -80,7 +80,7 @@ export class Study {
   }
 
   get executionStatusLabel():string {
-    return 'EXECUTION ' + this.executionStatus;
+    return this.executionStatus;
   }
 }
 
