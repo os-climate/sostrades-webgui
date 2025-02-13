@@ -74,62 +74,63 @@ export class StudyCaseLoadingService {
     isFromCreateStudy: boolean,
     loadOnlyOntology: boolean
   ) {
-    
-    this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_ONTOLOGY);
+    if(this.loadingStudyDialogService.isLoadingOpen()) {
+      this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_ONTOLOGY);
 
-    // Assign study to data service
-    this.updateStudyCaseDataService(loadedStudy);
+      // Assign study to data service
+      this.updateStudyCaseDataService(loadedStudy);
 
-    if (isFromCreateStudy) {
-      this.studyCaseDataService.getStudies().subscribe((studies) => {
-        this.studyCaseDataService.studyManagementData = studies;
-      });
-    }
+      if (isFromCreateStudy) {
+        this.studyCaseDataService.getStudies().subscribe((studies) => {
+          this.studyCaseDataService.studyManagementData = studies;
+        });
+      }
 
-    const updateUserPreferences$ = this.studyCaseDataService.loadUserStudyPreferences(loadedStudy.studyCase.id);
-    const loadedOntology$ = this.loadOntology(loadedStudy);
+      const updateUserPreferences$ = this.studyCaseDataService.loadUserStudyPreferences(loadedStudy.studyCase.id);
+      const loadedOntology$ = this.loadOntology(loadedStudy);
 
-    if (loadOnlyOntology) {
-      combineLatest([loadedOntology$, updateUserPreferences$]).subscribe({
-        next:([, preferences]) => {
+      if (loadOnlyOntology) {
+        combineLatest([loadedOntology$, updateUserPreferences$]).subscribe({
+          next:([, preferences]) => {
 
-          loadedStudy.userStudyPreferences = preferences;
-          this.studyCaseDataService.updateParameterOntology(loadedStudy);
-          //end loading
-          this.terminateStudyCaseLoading(
-            loadedStudy,
-            isStudyCreated
-          );
-        }
-      });
-    } else {
-      // Load logs
+            loadedStudy.userStudyPreferences = preferences;
+            this.studyCaseDataService.updateParameterOntology(loadedStudy);
+            //end loading
+            this.terminateStudyCaseLoading(
+              loadedStudy,
+              isStudyCreated
+            );
+          }
+        });
+      } else {
+        // Load logs
 
-      this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
-      this.studyCaseDataService.tradeScenarioList = [];
+        this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
+        this.studyCaseDataService.tradeScenarioList = [];
 
-      const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
-      const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
+        const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
+        const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
 
-      combineLatest([loadedOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
-        next: ([,preferences, resultnotifications]) => {
-          
-          loadedStudy.userStudyPreferences = preferences;
-          this.studyCaseDataService.updateParameterOntology(loadedStudy);
-          this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
-          
-          this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
-      
-          // End loading
-          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
-          this.onDisplayLogsNotifications.emit(true);
-        },
-        error: (errorReceived) => {
-          // Notify user
-          this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
-          this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
-        }
-      });      
+        combineLatest([loadedOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
+          next: ([,preferences, resultnotifications]) => {
+            
+            loadedStudy.userStudyPreferences = preferences;
+            this.studyCaseDataService.updateParameterOntology(loadedStudy);
+            this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
+            
+            this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
+        
+            // End loading
+            this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
+            this.onDisplayLogsNotifications.emit(true);
+          },
+          error: (errorReceived) => {
+            // Notify user
+            this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
+            this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
+          }
+        });      
+      }
     }
   }
 

@@ -17,7 +17,7 @@ export class LoadingStudyDialogComponent implements OnInit {
   public tootipTitle: string;
   public tooltipErrorMessage: string;
 
-  public steps: any;
+  public steps: any;  
 
   constructor(
     public dialogRef: MatDialogRef<LoadingStudyDialogData>,
@@ -75,6 +75,7 @@ export class LoadingStudyDialogComponent implements OnInit {
   onCancelClick() {
     this.data.cancel = true;
     this.dialogRef.close(this.data);
+    this.dialogRef = null;
   }
 }
 
