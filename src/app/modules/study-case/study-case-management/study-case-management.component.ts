@@ -314,28 +314,47 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       const fileUploadElement = this.fileUpload.nativeElement;
       fileUploadElement.click();
     } else {
-      this.handleUnsavedChanges((changeHandled) => {
-        if (changeHandled) {
-          // Check user was in an another study before this one and leave room
-          if (
-            this.studyCaseDataService.loadedStudy !== null &&
-            this.studyCaseDataService.loadedStudy !== undefined
-          ) {
-            this.socketService.leaveRoom(
-              this.studyCaseDataService.loadedStudy.studyCase.id
-            );
-          }
+        const validationDialogData = new ValidationDialogData();
+        validationDialogData.message = `Do you want to load "${study.name}" in edition mode.`;
+        validationDialogData.title = ' ';
+        validationDialogData.buttonOkText = 'Ok';
+        validationDialogData.showCancelButton = true;
+        validationDialogData.secondaryActionConfirmationNeeded = false;
 
-          this.appDataService.loadCompleteStudy(study.id, study.name, (isStudyLoaded) => {
-            if (isStudyLoaded) {
-              // Joining room
-              this.socketService.joinRoom(
-                this.studyCaseDataService.loadedStudy.studyCase.id
-              );
-            }
-          }, false);
-        }
-      });
+        const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+          disableClose: true,
+          width: '400px',
+          height: '170px',
+          data: validationDialogData,
+        });
+        dialogRefValidate.afterClosed().subscribe(result => {
+          const validationData: ValidationDialogData = result as ValidationDialogData;
+          if (validationData !== null && validationData !== undefined && !validationData.cancel) {
+            this.handleUnsavedChanges((changeHandled) => {
+              if (changeHandled) {
+                // Check user was in an another study before this one and leave room
+                if (
+                  this.studyCaseDataService.loadedStudy !== null &&
+                  this.studyCaseDataService.loadedStudy !== undefined
+                ) {
+                  this.socketService.leaveRoom(
+                    this.studyCaseDataService.loadedStudy.studyCase.id
+                  );
+                }
+      
+                this.appDataService.loadCompleteStudy(study.id, study.name, (isStudyLoaded) => {
+                  if (isStudyLoaded) {
+                    // Joining room
+                    this.socketService.joinRoom(
+                      this.studyCaseDataService.loadedStudy.studyCase.id
+                    );
+                  }
+                }, false);
+              }
+            });
+          }
+        });
+      
     }
   }
 
