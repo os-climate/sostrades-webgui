@@ -51,7 +51,7 @@ export class LoadingStudyDialogService {
   }
 
   isLoadingOpen() {
-    return this.dialogRef !== null;
+    return this.dialogRef.componentInstance !== null;
   }
 
   updateStep(step: LoadingDialogStep) {
