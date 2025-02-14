@@ -324,7 +324,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
           width: '400px',
-          height: '170px',
+          height: '200px',
           data: validationDialogData,
         });
         dialogRefValidate.afterClosed().subscribe(result => {
