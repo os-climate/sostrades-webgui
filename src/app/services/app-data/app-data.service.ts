@@ -94,10 +94,9 @@ export class AppDataService extends DataHttpService {
           }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ",()=> {
-            this.onStudyCreated.emit(allocation.studyCaseId);
-            
             isStudyCreated(false);
           });
+          this.onStudyCreated.emit(allocation.studyCaseId);
         }
       },
       error: (errorReceived) => {
@@ -136,6 +135,7 @@ export class AppDataService extends DataHttpService {
           } else {
             this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case: " ,()=> isStudyCreated(false));
           }
+          this.onStudyCreated.emit(allocation.studyCaseId);
         }
       },
       error: (errorReceived) => {
@@ -148,8 +148,8 @@ export class AppDataService extends DataHttpService {
  * Handles study loading process with different scenarios
  * @param studyId ID of the study to load
  * @param studyName Name of the study
- * @param read_only_mode Whether to load in read-only mode when refreshing studyCase (this information is provided by the url)
  * @param isStudyLoaded Callback function for load completion
+ * @param read_only_mode Whether to load in read-only mode when refreshing studyCase (this information is provided by the url)
  */
   loadCompleteStudy(studyId: number, studyName: string, isStudyLoaded: any, read_only_mode?: boolean) {
     let loadingCanceled = false;
