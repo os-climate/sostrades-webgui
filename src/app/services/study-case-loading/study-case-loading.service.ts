@@ -132,7 +132,7 @@ export class StudyCaseLoadingService {
         });      
       }
       // Update information of study loaded in the studymanagement page
-      const index = this.studyCaseDataService.studyManagementData.findIndex(study => study.id === 512);
+      const index = this.studyCaseDataService.studyManagementData.findIndex(study => study.id === loadedStudy.studyCase.id);
       if (index !== -1) {
         this.studyCaseDataService.studyManagementData[index] = loadedStudy.studyCase;
       }
