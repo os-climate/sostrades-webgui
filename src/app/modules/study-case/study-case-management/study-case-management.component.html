@@ -147,7 +147,7 @@
                 mat-icon-button
                 color="primary"
                 [matTooltip]="'Load ' + element.name + ' in edition mode'" 
-                (click)="loadStudy($event, element)"
+                (click)="loadStudy($event, element, false, true)"
               >
                 <i class="fa-solid fa-file-pen"></i>
               </button>
@@ -157,7 +157,7 @@
                 color="primary"
                 [disabled]="!element.hasReadOnlyFile"
                 [matTooltip]="'Load ' + element.name + ' in read only mode'" 
-                (click)="loadStudyInReadOnly(element)"
+                (click)="loadStudy($event, element, true, false)"
               >
               <i class="fa-solid fa-eye"></i>
               </button>
@@ -175,7 +175,7 @@
           </th>
           <td mat-cell *matCellDef="let element">
               <a 
-                (click)="loadStudyInReadOnly(element)"
+                (click)="loadStudy($event, element, false, false)"
                 class="link-study-title"
                 [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
                 [matTooltip]="'/study/' + element.id"

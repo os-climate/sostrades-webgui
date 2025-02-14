@@ -308,72 +308,104 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
   }
+ 
+  /**
+   * Loads a study based on specified mode
+   * @param event Mouse event to check for ctrl+alt
+   * @param study Study to load
+   * @param loadDirectInReadOnly Flag for direct read-only loading
+   * @param loadDirectInEdition Flag for direct edition loading
+   */
+  loadStudy(event: MouseEvent, study: Study, loadDirectInReadOnly: boolean, loadDirectInEdition: boolean): void {
+    if (event.ctrlKey && event.altKey) {
+      this.fileUpload.nativeElement.click();
 
-  loadStudy(event: MouseEvent, study: Study) {
-    if ((event.ctrlKey === true) && (event.altKey === true)) {
-      const fileUploadElement = this.fileUpload.nativeElement;
-      fileUploadElement.click();
+    } else if (loadDirectInReadOnly) {
+      this.loadStudyInReadOnlyMode(study);
+
+    } else if (loadDirectInEdition) {
+      this.loadStudyInEditionMode(study);
+
     } else {
-        const validationDialogData = new ValidationDialogData();
-        validationDialogData.message = `Do you want to load "${study.name}" in edition mode.`;
-        validationDialogData.title = ' ';
-        validationDialogData.buttonOkText = 'Ok';
-        validationDialogData.showCancelButton = true;
-        validationDialogData.secondaryActionConfirmationNeeded = false;
-
-        const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
-          disableClose: true,
-          width: '400px',
-          height: '200px',
-          data: validationDialogData,
-        });
-        dialogRefValidate.afterClosed().subscribe(result => {
-          const validationData: ValidationDialogData = result as ValidationDialogData;
-          if (validationData !== null && validationData !== undefined && !validationData.cancel) {
-            this.handleUnsavedChanges((changeHandled) => {
-              if (changeHandled) {
-                // Check user was in an another study before this one and leave room
-                if (
-                  this.studyCaseDataService.loadedStudy !== null &&
-                  this.studyCaseDataService.loadedStudy !== undefined
-                ) {
-                  this.socketService.leaveRoom(
-                    this.studyCaseDataService.loadedStudy.studyCase.id
-                  );
-                }
-      
-                this.appDataService.loadCompleteStudy(study.id, study.name, (isStudyLoaded) => {
-                  if (isStudyLoaded) {
-                    // Joining room
-                    this.socketService.joinRoom(
-                      this.studyCaseDataService.loadedStudy.studyCase.id
-                    );
-                  }
-                }, false);
-              }
-            });
-          }
-        });
-      
+      this.loadStudyUsingReadOnlyByDefault(study);
     }
   }
 
-  loadStudyInReadOnly(study: Study) { 
+  /**
+   * Loads study in read-only mode
+   */
+  private loadStudyInReadOnlyMode(study: Study): void {
     this.handleUnsavedChanges((changeHandled) => {
       if (changeHandled) {
-        // Check user was in an another study before this one and leave room
-        if (
-          this.studyCaseDataService.loadedStudy !== null &&
-          this.studyCaseDataService.loadedStudy !== undefined
-        ) {
-          this.socketService.leaveRoom(
-            this.studyCaseDataService.loadedStudy.studyCase.id
-          );
-        }
+        this.leaveCurrentStudyRoom();
         this.appDataService.loadStudyInReadOnlyMode(study.id, study.name);
       }
     });
-}
+  }
+
+  /**
+   * Shows confirmation dialog for edition mode
+   */
+  private loadStudyInEditionMode(study: Study): void {
+    const validationDialogData = new ValidationDialogData();
+    validationDialogData.message = `Do you want to load "${study.name}" in edition mode ?`;
+    validationDialogData.title = ' ';
+    validationDialogData.buttonOkText = 'Ok';
+    validationDialogData.showCancelButton = true;
+    validationDialogData.secondaryActionConfirmationNeeded = false;
+
+    const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+      disableClose: true,
+      width: '400px',
+      height: '200px',
+      data: validationDialogData,
+    });
+    dialogRefValidate.afterClosed().subscribe(result => {
+      const validationData: ValidationDialogData = result as ValidationDialogData;
+      if (validationData !== null && validationData !== undefined && !validationData.cancel) {
+          this.loadStudyWithCallback(study, false);
+        }
+      });
+  }
+
+  /**
+   * Loads study in normal mode
+   */
+  private loadStudyUsingReadOnlyByDefault(study: Study): void {
+    this.loadStudyWithCallback(study, study.hasReadOnlyFile);
+  }
+
+  /**
+   * Common method to load study with callback
+   */
+  private loadStudyWithCallback(study: Study, useReadOnlyFile: boolean): void {
+    this.handleUnsavedChanges((changeHandled) => {
+      if (changeHandled) {
+        this.leaveCurrentStudyRoom();
+        this.appDataService.loadCompleteStudy(study.id,study.name,(isStudyLoaded) => {
+            if (isStudyLoaded) {
+              this.socketService.joinRoom(
+                this.studyCaseDataService.loadedStudy.studyCase.id
+              );
+            }
+          },
+          useReadOnlyFile
+        );
+      }
+    });
+  }
+
+  /**
+   * Leaves current study room if one is loaded
+   */
+  private leaveCurrentStudyRoom(): void {
+    if (this.studyCaseDataService.loadedStudy) {
+      this.socketService.leaveRoom(
+        this.studyCaseDataService.loadedStudy.studyCase.id
+      );
+    }
+  }
+
 
   createStudy() {
     this.handleUnsavedChanges(changeHandled => {
