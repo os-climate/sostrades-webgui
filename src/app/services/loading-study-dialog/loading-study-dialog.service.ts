@@ -50,7 +50,10 @@ export class LoadingStudyDialogService {
     });
   }
 
-  isLoadingOpen() {
+  isLoadingOpen(): boolean {
+    if (!this.dialogRef) {
+      return true;
+    }
     return this.dialogRef.componentInstance !== null;
   }
 
