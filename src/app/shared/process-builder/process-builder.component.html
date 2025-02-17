@@ -1,6 +1,7 @@
 <div class="container">
   <div class="box">
     <button
+      [id]="'show-button-' + nodeData.identifier"
       mat-raised-button
       *ngIf="isReadOnly"
       aria-label="Show data"
