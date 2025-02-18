@@ -53,7 +53,7 @@ export class LoadingStudyDialogComponent implements OnInit {
 
   }
 
-  setSteps(read_only_step: boolean) {
+  setReadOnlySteps(read_only_step: boolean) {
     if (read_only_step) {
       this.steps = READONLY_DIALOG_STEPS
     } else {

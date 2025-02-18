@@ -347,6 +347,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
    * Shows confirmation dialog for edition mode
    */
   private loadStudyInEditionMode(study: Study): void {
+    this.displayValidationDialog(study);
+  }
+  private displayValidationDialog(study){
     const validationDialogData = new ValidationDialogData();
     validationDialogData.message = `Do you want to load "${study.name}" in edition mode ?`;
     validationDialogData.title = ' ';
@@ -372,7 +375,12 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
    * Loads study in normal mode
    */
   private loadStudyUsingReadOnlyByDefault(study: Study): void {
-    this.loadStudyWithCallback(study, study.hasReadOnlyFile);
+    // Display read only mode
+    if (!study.hasReadOnlyFile) {
+      this.displayValidationDialog(study);
+    } else {
+      this.loadStudyWithCallback(study, study.hasReadOnlyFile);
+    }
   }
 
   /**
