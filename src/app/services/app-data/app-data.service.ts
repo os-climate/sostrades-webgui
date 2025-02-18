@@ -310,7 +310,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
     };
     // Display loading message
     this.loadingStudyDialogService
-      .showLoadingWithCancelobserver(`Loading ${studyName} in read only mode`)
+      .showLoadingWithCancelobserver(`Loading study case ${studyName}`)
       .subscribe(() => {
         this.loggerService.log(
           `Loading has been canceled, redirecting to study management component from ${this.router.url} `
