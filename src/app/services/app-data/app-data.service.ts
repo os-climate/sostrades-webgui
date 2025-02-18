@@ -165,8 +165,6 @@ export class AppDataService extends DataHttpService {
         this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
   
-  // Update loading dialog to show accessing server step
-  this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
   if (!loadingCanceled) {
     // Handle direct access link case
     if (studyName === "requested") {
@@ -179,7 +177,7 @@ export class AppDataService extends DataHttpService {
         if (read_only_mode) {
             this.handleReadOnlyAccess(studyId, isStudyLoaded, loadingCanceled);
         } else {
-            this.handleRegularAccess(studyId, isStudyLoaded, loadingCanceled);
+            this.handleEditionModeAccess(studyId, isStudyLoaded, loadingCanceled);
         }
         return;
     }
@@ -188,7 +186,7 @@ export class AppDataService extends DataHttpService {
     if (read_only_mode) {
         this.handleReadOnlyAccess(studyId, isStudyLoaded, loadingCanceled);
     } else {
-        this.handleRegularAccess(studyId, isStudyLoaded, loadingCanceled);
+        this.handleEditionModeAccess(studyId, isStudyLoaded, loadingCanceled);
     } 
   }
 }
@@ -204,7 +202,7 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
     next: (response) => {
       if(!loadingCanceled) {
         if (response.has_read_only) {
-      
+          this.loadingStudyDialogService.setReadOnlySteps(true);
           // Launch study with appropriate server running status
           this.launchLoadStudy(
               studyId, 
@@ -217,7 +215,7 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
           );
         } else {
             // Handle case where read-only is not available
-            this.handleRegularAccess(studyId, isStudyLoaded, false);
+            this.handleEditionModeAccess(studyId, isStudyLoaded, false);
         }
       }
     },
@@ -231,8 +229,10 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
 * @param isStudyLoaded Callback function
 * @param loadingCanceled Whether loading was canceled
 */
-private handleRegularAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void, 
+private handleEditionModeAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void, 
   loadingCanceled: boolean): void {
+  // Update loading dialog to show accessing server step
+  this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
   this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
       next: (allocation) => {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {
@@ -320,7 +320,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
       });
       if(!loadingCanceled){
         // Update loading step using read only step
-        this.loadingStudyDialogService.setSteps(true)   
+        this.loadingStudyDialogService.setReadOnlySteps(true)   
         // load study
         this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe({
         next: (response) => { 

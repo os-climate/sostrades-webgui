@@ -68,14 +68,14 @@ export class LoadingStudyDialogService {
     }
   }
 
-  setSteps(read_only_step: boolean) {
+  setReadOnlySteps(read_only_step: boolean) {
     if (
       this.dialogRef !== null &&
       this.dialogRef !== undefined &&
       this.dialogRef.componentInstance !== null &&
       this.dialogRef.componentInstance !== undefined
     ) {
-      this.dialogRef.componentInstance.setSteps(read_only_step);
+      this.dialogRef.componentInstance.setReadOnlySteps(read_only_step);
     }
   }
 
