@@ -333,6 +333,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   /**
    * Loads study in read-only mode
+   * @param study Study to load
    */
   private loadStudyInReadOnlyMode(study: Study): void {
     this.handleUnsavedChanges((changeHandled) => {
@@ -345,13 +346,20 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
 
   /**
    * Shows confirmation dialog for edition mode
+   * @param study Study to load
    */
   private loadStudyInEditionMode(study: Study): void {
-    this.displayValidationDialog(study);
+    this.loadStudyWithCallback(study, false);
   }
-  private displayValidationDialog(study){
+
+  /**
+   * Display dialog before launch the loading study in edition mode (if study has no read only mode)
+   * @param study Study to load
+
+   */
+  private displayValidationDialog(study: Study){
     const validationDialogData = new ValidationDialogData();
-    validationDialogData.message = `Do you want to load "${study.name}" in edition mode ?`;
+    validationDialogData.message = `The read only is not available for this study. Do you want to load "${study.name}" in edition mode ?`;
     validationDialogData.title = ' ';
     validationDialogData.buttonOkText = 'Ok';
     validationDialogData.showCancelButton = true;
@@ -366,7 +374,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     dialogRefValidate.afterClosed().subscribe(result => {
       const validationData: ValidationDialogData = result as ValidationDialogData;
       if (validationData !== null && validationData !== undefined && !validationData.cancel) {
-          this.loadStudyWithCallback(study, false);
+        this.loadStudyWithCallback(study, false);
         }
       });
   }
