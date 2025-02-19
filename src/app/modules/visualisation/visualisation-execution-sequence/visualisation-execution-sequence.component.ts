@@ -290,7 +290,7 @@ export class ExecutionSequenceComponent implements OnInit {
         d3.select(event.currentTarget).select('ellipse')
           .style('fill', darker);
       })
-      .on('mouseout', (event: any, d: any) => {
+      .on('mouseout', (event: any,) => {
         this.tooltipDiv
           .style('display', 'none');
         const nodeId = d3.select(event.currentTarget).selectAll('title').text().trim();
@@ -301,11 +301,11 @@ export class ExecutionSequenceComponent implements OnInit {
         d3.select(event.currentTarget).select('ellipse')
           .style('fill', nodeColor);
       })
-      .on('click', (event: any, d: any) => this.expand(event, d))
-      .on('contextmenu', (event: any, d: any) => {
+      .on('click', (event: any) => this.expand(event))
+      .on('contextmenu', (event: any) => {
         event.preventDefault();
         // react on right-clicking
-        this.collapse(event, d);
+        this.collapse(event);
       });
 
     const drawnEdges = d3.selectAll('.edge');
@@ -317,7 +317,7 @@ export class ExecutionSequenceComponent implements OnInit {
         d3.select(event.currentTarget).select('path')
           .style('stroke', this.pathColorHover);
       })
-      .on('mouseout', (event: any, d: any) => {
+      .on('mouseout', (event: any) => {
         this.tooltipDiv
           .style('display', 'none');
         d3.select(event.currentTarget).select('path')
@@ -326,7 +326,7 @@ export class ExecutionSequenceComponent implements OnInit {
     this.isLoading = false;
   }
 
-  expand(event: any, d: any): void {
+  expand(event: any): void {
     const nodeId = d3.select(event.currentTarget).selectAll('title').text().trim();
     const nodeIndex = this.nodes.findIndex((node: any) => (node['id'] === nodeId));
     if (nodeIndex > -1) {
@@ -352,7 +352,7 @@ export class ExecutionSequenceComponent implements OnInit {
     }
   }
 
-  collapse(event: any, d: any): void {
+  collapse(event: any): void {
     const nodeId = d3.select(event.currentTarget).selectAll('title').text().trim();
     const nodeIndex = this.nodes.findIndex((node: any) => (node['id'] === nodeId));
     if (nodeIndex > -1) {

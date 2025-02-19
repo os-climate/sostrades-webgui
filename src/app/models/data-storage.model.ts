@@ -44,7 +44,7 @@ export class DataStorage implements Storage {
   }
 
   hasKey(key: string): boolean {
-    return this.innerDictionary.hasOwnProperty(key);
+    return key in this.innerDictionary;
   }
 
 

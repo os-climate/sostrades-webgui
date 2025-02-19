@@ -23,7 +23,7 @@ import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/vali
 import { SocketService } from 'src/app/services/socket/socket.service';
 import { User } from 'src/app/models/user.model';
 import { UserRoomDialogComponent } from '../../user/user-room-dialog/user-room-dialog.component';
-import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
+import { StudyUpdateParameter } from 'src/app/models/study-update.model';
 import { CoeditionNotification, CoeditionType } from 'src/app/models/coedition-notification.model';
 import { UserService } from 'src/app/services/user/user.service';
 import { StudyCaseModificationDialogComponent } from '../study-case-modification-dialog/study-case-modification-dialog.component';
@@ -250,6 +250,10 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudyForTreeview)
 
       }
+      Object.keys(this.root.rootDict).forEach(treenodeKey => {
+        this.colorChevronIfErrorOnParameters(treenodeKey);
+      });
+      
     });
 
     this.onRoomUserUpdateSubscription = this.socketService.onRoomUserUpdate.subscribe(users => {
@@ -479,7 +483,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   setExpandForDisciplinePanel(TreeNodeOrPanelId: string) {
     this.studyCaseDataService.loadedStudy.userStudyPreferences.expandedData[TreeNodeOrPanelId] = true;
     this.studyCaseDataService.setUserStudyPreference(TreeNodeOrPanelId, true).subscribe({
-      next: (_) => {},
       error: (error) => {
         this.snackbarService.showError(error);
       }
@@ -501,7 +504,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     const isExpanded = this.treeControl.isExpanded(node);
     const panelId = `${node.fullNamespace}.${PanelSection.TREEVIEW_SECTION}`
     this.studyCaseDataService.setUserStudyPreference(panelId, isExpanded).subscribe({
-      next: (_) => {},
       error: (error) => {
         this.snackbarService.showError(error);
       }
@@ -630,9 +632,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           if (podData.cancel === false) {
             // Close study if the loaded study is the same that the study edited
             if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-              let study_case = this.studyCaseDataService.loadedStudy.studyCase;
+              const study_case = this.studyCaseDataService.loadedStudy.studyCase;
               this.studyCaseDataService.updateExecutionFlavor(study_case.id, podData.flavor).subscribe(
-              studyIsEdited => {
+              () => {
                   this.snackbarService.showInformation(`Study ${study_case.name} has been succesfully updated, changes will be taken into account at the next execution. `);
                 }, errorReceived => {
                   this.snackbarService.showError('Error updating study\n' + errorReceived.description);
@@ -663,7 +665,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       if (this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized !== this.userService.getCurrentUserId()) {
         const validationDialogData = new ValidationDialogData();
 
-        let userWithExecAuth = this.userService.allUsers.filter(x => x.id === this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized)
+        const userWithExecAuth = this.userService.allUsers.filter(x => x.id === this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized)
         if (userWithExecAuth !== null && userWithExecAuth !== undefined && userWithExecAuth.length > 0) {
           validationDialogData.message = `${userWithExecAuth[0].firstname}  ${userWithExecAuth[0].lastname} has execution right, do you want to claim it now and start execution ?`;
         } else {
@@ -725,7 +727,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
           const studyCase = this.studyCaseDataService.loadedStudy.studyCase;
           this.calculationService.execute(this.studyCaseDataService.loadedStudy).subscribe({
-            next: (response) => {
+            next: () => {
               // Send socket notification
               this.socketService.executeStudy(studyCase.id, true);
           
@@ -775,7 +777,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       if (this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized !== this.userService.getCurrentUserId()) {
         const validationDialogData = new ValidationDialogData();
 
-        let userWithExecAuth = this.userService.allUsers.filter(x => x.id === this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized)
+        const userWithExecAuth = this.userService.allUsers.filter(x => x.id === this.studyCaseDataService.loadedStudy.userIdExecutionAuthorized)
         if (userWithExecAuth !== null && userWithExecAuth !== undefined && userWithExecAuth.length > 0) {
           validationDialogData.message = `${userWithExecAuth[0].firstname}  ${userWithExecAuth[0].lastname} has started study case execution, do you want to stop it now ?`;
         } else {
@@ -812,7 +814,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     const studyCaseObserver = this.studyCaseExecutionObserverService.getStudyCaseObserver(this.studyCaseDataService.loadedStudy.studyCase.id);
 
     this.calculationService.stop(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-      next: (response) => {
+      next: () => {
         this.setStatusOnRootNode(StudyCalculationStatus.STATUS_STOPPED);
 
         this.socketService.stopStudyExecution(this.studyCaseDataService.loadedStudy.studyCase.id, true);
@@ -841,7 +843,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     // Start of the execution
     this.studyExecutionStartedSubscription = studyCaseObserver.
-      executionStarted.subscribe(d => {
+      executionStarted.subscribe(() => {
         this.executionStarted = true;
         this.onShowHideStatus(true);
         // Resetting cpu and memory value before run
@@ -897,8 +899,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         // Reload the study in order to get all post postprocessing data
         const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe({
           next: (resultLoadedStudy) => {
-            let loadedstudyCase = resultLoadedStudy as LoadedStudy;
-            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, (isStudyLoaded)=>{
+            const loadedstudyCase = resultLoadedStudy as LoadedStudy;
+            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, ()=>{
                   studySubscription.unsubscribe();
                   // Cleaning old subscriptions
                   this.cleanExecutionSubscriptions();
@@ -929,12 +931,12 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.loadingDialogService.showLoading('Requesting study case reloading');
 
     this.studyCaseMainService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe(response => {
-      let loadedStudy = response as LoadedStudy;
+      const loadedStudy = response as LoadedStudy;
       this.studyCaseLoadingService.updateStudyCaseDataService(loadedStudy);
       this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
       //reload study for post processing
       this.studyCasePostProcessingService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false).subscribe({
-        next: (response) => {
+        next: () => {
           //send coedition reload
           this.socketService.reloadStudy(this.studyCaseDataService.loadedStudy.studyCase.id);
       
@@ -1049,7 +1051,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   saveAndSynchronise() {
-    this.saveData(saveDone => {
+    this.saveData(() => {
+       // This function is intentionally empty, it will be overwritten later
     });
   }
 
@@ -1133,7 +1136,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       this.studyCaseDataService.addNewStudyNotificationForDatasetExport(currentStudyId).subscribe({
         next: (notification_id) => {
           this.studyCaseMainService.exportDatasetFromJsonFile(currentStudyId, formData, notification_id).subscribe({
-            next: (loadedStudy) => {
+            next: () => {
                 const parameterChange$ =  this.studyCaseDataService.getStudyParemeterChanges(currentStudyId, notification_id);
               const datasetExportStatus$ = this.studyCaseMainService.getDatasetExportErrorMessage(currentStudyId, notification_id);
 
@@ -1318,7 +1321,6 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     let currentNodeDeleted = false;
     this.showStudyRefreshing = true;
-    const oldTreeView = this.root;
     const oldCurrentSelectedNode = this.currentSelectedNode;
 
     this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false).subscribe(loadedStudy => {
@@ -1517,5 +1519,24 @@ downloadStudy(event: MouseEvent) {
       });
     }
   }
-
+  /**
+ * Recursively colors the chevrons of all parent nodes in red if a node has unconfigured parameters
+ * @param treenodeKey The key of the node to check and process its parents
+ */
+  private colorChevronIfErrorOnParameters(treenodeKey: string) {
+    // Check if the current node is not configured
+    if(!this.root.rootDict[treenodeKey].isConfigured) {
+        // Get the current node
+        let currentNode = this.root.rootDict[treenodeKey];
+        
+        // Traverse up through parents until we reach the root
+        while (currentNode.treeNodeParent) {
+            // Color the parent node's chevron in error red
+            currentNode.treeNodeParent.chevronColor = '#e4002b';
+            
+            // Move up to the parent node
+            currentNode = currentNode.treeNodeParent;
+        }    
+    }
+  }
 }

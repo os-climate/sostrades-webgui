@@ -1,8 +1,7 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { StudyCaseDataService } from './services/study-case/data/study-case-data.service';
 import { AuthService } from './services/auth.service';
 import { SocketService } from './services/socket/socket.service';
-import { combineLatest } from 'rxjs';
 import { AuthGuard } from './services/auth.guard';
 import { GroupDataService } from './services/group/group-data.service';
 import { UserService } from './services/user/user.service';

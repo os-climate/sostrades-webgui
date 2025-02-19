@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { CanActivate, Router } from '@angular/router';
 import { UserService } from './user/user.service';
 import { SnackbarService } from './snackbar/snackbar.service';
 
@@ -12,7 +12,7 @@ export class StudyGuard implements CanActivate {
   constructor(private userService: UserService, private router: Router, private snackbarService: SnackbarService) {
   }
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  canActivate(): boolean {
     if (this.userService.hasAccessToStudy()) {
       return true;
     } else {

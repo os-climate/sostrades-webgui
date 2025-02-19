@@ -4,7 +4,6 @@ import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { OntologyGeneralInformation } from 'src/app/models/ontology-general-information.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
-import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 import { RepositoryTraceabilityDialogData } from 'src/app/models/dialog-data.model';
 import { MatDialog } from '@angular/material/dialog';
 import { RepositoryTraceabilityDialogComponent } from './repository-traceability-dialog/repository-traceability-dialog.component';
@@ -93,7 +92,7 @@ export class OntologyMainComponent implements OnInit {
 
     dialogData.codeSourceTraceability = codeReposity;
 
-    const dialogRef = this.dialog.open(RepositoryTraceabilityDialogComponent, {
+    this.dialog.open(RepositoryTraceabilityDialogComponent, {
       disableClose: false,
       width: '800px',
       height: '400px',

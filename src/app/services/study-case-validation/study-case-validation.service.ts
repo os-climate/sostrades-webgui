@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Location } from "@angular/common";
 import { StudyCaseValidation, ValidationTreeNodeState } from "src/app/models/study-case-validation.model";
-import { Observable, of } from "rxjs";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { DataHttpService } from "../http/data-http/data-http.service";
 import { TreeView } from "src/app/models/tree-node.model";

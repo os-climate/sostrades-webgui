@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.treeNodeDataSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(data => {
+    this.treeNodeDataSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(() => {
       this.loadedStudy = this.studyCaseDataService.loadedStudy;
       if (this.loadedStudy.dashboard !== null &&
           this.loadedStudy.dashboard !== undefined &&

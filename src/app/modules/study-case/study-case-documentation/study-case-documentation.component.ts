@@ -302,6 +302,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       
       return match; // Return original text if not corresponding reference
     });
+
   
     // Find all footnotes and store them in a dictionary  
     const sectionRegex = /^(#+\s*Sources|#+\s*References)/mi;

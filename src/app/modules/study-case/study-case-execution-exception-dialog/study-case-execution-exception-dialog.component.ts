@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -6,14 +6,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   templateUrl: './study-case-execution-exception-dialog.component.html',
   styleUrls: ['./study-case-execution-exception-dialog.component.scss']
 })
-export class StudyCaseExecutionExceptionDialogComponent implements OnInit {
+export class StudyCaseExecutionExceptionDialogComponent {
 
   constructor(public dialogRef: MatDialogRef<StudyCaseExecutionExceptionDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public message: string) {
   }
 
-  ngOnInit(): void {
-  }
 
   close() {
     this.dialogRef.close();

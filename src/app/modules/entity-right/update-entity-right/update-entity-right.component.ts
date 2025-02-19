@@ -113,7 +113,7 @@ export class UpdateEntityRightComponent implements OnInit {
     const loadedAllUsers = this.userService.getUserListForSharing();
 
 
-    combineLatest([loadedGroups, loadedAllUsers]).subscribe(res => {
+    combineLatest([loadedGroups, loadedAllUsers]).subscribe(() => {
       this.groupDataService.loadedGroups.forEach(grp => {
         if (this.entitiesSelected.filter(x => x.entityObject.id === grp.group.id && x.entityType === EntityType.GROUP).length === 0) {
           if(this.data.ressourceId !== grp.group.id)
@@ -130,6 +130,7 @@ export class UpdateEntityRightComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent) {
+  
     const entityAddDialogData = new UpdateEntityRightAddPeopleDialogData();
     entityAddDialogData.ressourceId = this.data.ressourceId;
     entityAddDialogData.resourceType = this.data.resourceType;
@@ -171,7 +172,10 @@ export class UpdateEntityRightComponent implements OnInit {
     let filteredList: EntityRight[] = [];
 
     if (typeof (itemSearched) === 'string') {
-      filteredList = this.entitiesAvailable.filter(x => x.entityObject.search(itemSearched));
+      filteredList = this.entitiesAvailable.filter(x =>{
+        const isMatch = x.entityObject.search(itemSearched);
+        return isMatch;
+      } );
       this._sortAlphaList(filteredList);
       return filteredList;
 
@@ -206,7 +210,7 @@ export class UpdateEntityRightComponent implements OnInit {
     this.loadingDialogService.showLoading(`Updating users and groups rights. Please wait.`);
 
     this.entityRightService.applyEntitiesChanges(updatedEntityRight).subscribe({
-      next: (res) => {
+      next: () => {
         this.loadingDialogService.closeLoading();
         this.snackbarService.showInformation(`Users and groups rights have been successfully updated.`);
       },

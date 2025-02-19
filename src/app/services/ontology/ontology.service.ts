@@ -12,7 +12,7 @@ import { OntologyGeneralInformation } from 'src/app/models/ontology-general-info
 import { Router } from '@angular/router';
 import { HeaderService } from '../hearder/header.service';
 import { DataHttpService } from '../http/data-http/data-http.service';
-import { ColumnName, Routing } from 'src/app/models/enumeration.model';
+import { ColumnName } from 'src/app/models/enumeration.model';
 
 
 @Injectable({
@@ -78,7 +78,7 @@ export class OntologyService extends DataHttpService {
   }
 
   loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
-    return this.http.post<{}>(`${this.apiRoute}/ontology-usages`, ontologyRequest).pipe(map(
+    return this.http.post<any>(`${this.apiRoute}/ontology-usages`, ontologyRequest).pipe(map(
       response => {
         this.ontology.studyCase.parameters = {};
         this.ontology.studyCase.disciplines = {};

@@ -55,7 +55,7 @@ export class DataManagementDiscipline {
 
   private GetAllDataDict() : { [id: string]: NodeData; }
   {
-    let nodeDataDict = {}
+    const nodeDataDict = {}
     Object.keys(this.numericalParameters).forEach(key => {
       nodeDataDict[this.numericalParameters[key].identifier] = this.numericalParameters[key];
     });

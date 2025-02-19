@@ -35,8 +35,9 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   calculationChangeSubscription: Subscription;
   validationChangeSubscription: Subscription;
   studyStatusChangeSubscription: Subscription;
-  postProcessingWithSection: any[] = [];
   postProcessingWithoutSection: any[] = [];
+  postProcessingWithSection: any[] = [];
+  postProcessingKeyCharts: any[] = [];
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
@@ -141,9 +142,13 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   private addSectionInPostProcessing(postProcessing: any, needToUpdate:boolean ) {
     
     const postProcessingWithoutSectionWithFilter: PostProcessingBundle[] = [];
+    const postProcessingKeyCharts: PostProcessingBundle[] = [];
     // Create a dictionnary to section the post_processing by a name
     const postProcessingBundleSectionned = new Map<string, PostProcessingBundle[]>();
-    postProcessing.forEach(plotly => {     
+    postProcessing.forEach(plotly => { 
+      if (plotly.post_processing_is_key_chart){
+        postProcessingKeyCharts.push(plotly);
+      } 
       if (plotly.post_processing_section_name) {
         // Check if key "post_processing_section_name" already exist
         if (!postProcessingBundleSectionned.has(plotly.post_processing_section_name)) {
@@ -161,23 +166,24 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Replace the key charts
+    if (postProcessingKeyCharts.length > 0){
+      this.postProcessingKeyCharts = postProcessingKeyCharts;
+    }
     // Replace the new array with filter on postProcessingWithoutSection
     if (postProcessingWithoutSectionWithFilter.length > 0) {
-      this.postProcessingWithoutSection = postProcessingWithoutSectionWithFilter
+      this.postProcessingWithoutSection = postProcessingWithoutSectionWithFilter;
     }  
     // Create a array with post_processing sectionned
-    this.postProcessingWithSection = Array.from(postProcessingBundleSectionned, ([post_processing_section_name, plots]) => ({ post_processing_section_name, plots }));
-    if (this.postProcessingWithSection.length > 0) {
-      this.postProcessingWithSection.sort((a: any, b: any) => {
-        if (a.post_processing_section_name < b.post_processing_section_name) {
-            return -1;
-        } else if (a.post_processing_section_name > b.post_processing_section_name) {
-            return 1;
-        } else {
-            return 0;
-        }
-      });
-    }
+    this.postProcessingWithSection = Array.from(postProcessingBundleSectionned, 
+      ([post_processing_section_name, plots]) => ({ 
+        post_processing_section_name, 
+        plots}));
+    //add section is opened by checking 'post_processing_section_is_opened' of each chart of the section
+    this.postProcessingWithSection.forEach(postProcBundle => {
+      postProcBundle.post_processing_section_is_opened = postProcBundle.plots.some(plot => plot.post_processing_section_is_opened);
+      
+    })
     // Listen for search field value changes
     this.chartsFiltered.valueChanges.pipe(takeUntil(this.onDestroy))
     .subscribe((value) => {
@@ -190,14 +196,14 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     this.filter = filter
   }
 
-  public isExpand(section: string) {
+  public isExpand(section: string, is_opened_by_default:boolean) {
       const id = `${this.postProcessingBundle.disciplineName}.${PanelSection.POST_PROCESSING_SECTION}.${section}`;
-    return this.studyCaseDataService.getUserStudyPreference(id, false);
+    return this.studyCaseDataService.getUserStudyPreference(id, is_opened_by_default);
 
   }
 
   public setIsExpand(section: string, isExpand: boolean) {
-    if (this.isExpand(section) != isExpand)//save data only if necessary
+    if (this.isExpand(section, false) != isExpand)//save data only if necessary
     {
       const id = `${this.postProcessingBundle.disciplineName}.${PanelSection.POST_PROCESSING_SECTION}.${section}`;
       this.studyCaseDataService.setUserStudyPreference(id, isExpand).subscribe();

@@ -1,4 +1,4 @@
-import { NodeData, CreateNodeDataDictionary, ValueType, INodeDataValueChange, IoType } from './node-data.model';
+import { NodeData, ValueType, IoType } from './node-data.model';
 import { BehaviorSubject } from 'rxjs';
 import { DisciplineStatus } from './study-case-execution-observer.model';
 import { PostProcessingBundle } from './post-processing-bundle.model';
@@ -22,7 +22,7 @@ export class TreeView {
       if (jsonPostProcessings !== undefined && jsonPostProcessings !== null) {
         Object.keys(result.rootDict[treenodeKey].dataManagementDisciplineDict).forEach(disciplineKey => {
           if (disciplineKey in jsonPostProcessings) {
-            let postProc = (jsonPostProcessings[disciplineKey].map(cf => PostProcessingBundle.Create(cf)));
+            const postProc = (jsonPostProcessings[disciplineKey].map(cf => PostProcessingBundle.Create(cf)));
             postProc.forEach(element => {
               // indicate if the discipline name must be shown on bundle (in case if there are 2 or more discipline with the same model and thus the same name at the same node)
               element.showDisciplineName = result.rootDict[treenodeKey].dataManagementDisciplineDict[disciplineKey].showLabel;
@@ -32,7 +32,7 @@ export class TreeView {
         });
         // Add namespaced post processing in treenode
         if (treenodeKey in jsonPostProcessings && !(treenodeKey in result.rootDict[treenodeKey].dataManagementDisciplineDict)){
-          let postProc = (jsonPostProcessings[treenodeKey].map(cf => PostProcessingBundle.Create(cf)));
+          const postProc = (jsonPostProcessings[treenodeKey].map(cf => PostProcessingBundle.Create(cf)));
           postProc.forEach(element => {
             result.rootDict[treenodeKey].postProcessingBundle.push(element);
           });
@@ -72,7 +72,7 @@ export enum MardownDocumentationAttributes {
   DOCUMENTATION = 'documentation'
 }
 
-export class TreeNode implements INodeDataValueChange {
+export class TreeNode {
 
   isVisible: boolean;
   children: BehaviorSubject<TreeNode[]>;
@@ -86,6 +86,7 @@ export class TreeNode implements INodeDataValueChange {
   postProcessingBundle: PostProcessingBundle[];
   private _isRoot: boolean;
   isValidated: boolean;
+  public chevronColor: string;
 
   constructor(
     public name: string,
@@ -106,6 +107,7 @@ export class TreeNode implements INodeDataValueChange {
     this.isLastChild = true;
     this.isConfigured = false;
     this._isRoot = isRoot;
+    this.chevronColor = "#000000"
 
     if (this.isValidated == undefined || this.isValidated == null){
       this.isValidated =false;
@@ -182,7 +184,7 @@ export class TreeNode implements INodeDataValueChange {
 
     if (nodeDataDict !== null) {
       Object.keys(result.dataManagementDisciplineDict).forEach(disciplineKey => {
-        let dataDict = result.dataManagementDisciplineDict[disciplineKey].allDataDict;
+        const dataDict = result.dataManagementDisciplineDict[disciplineKey].allDataDict;
           Object.keys(dataDict).forEach(key => {
             nodeDataDict[dataDict[key].identifier] = dataDict[key];
           });
@@ -210,9 +212,6 @@ export class TreeNode implements INodeDataValueChange {
     return result;
   }
 
-  public nodeDataValueChange(nodeData: NodeData) {
-    this.checkConfigured();
-  }
 
   public checkConfigured() {
 
@@ -229,7 +228,7 @@ export class TreeNode implements INodeDataValueChange {
     // Check all treenode data is configured
     if (this.dataManagementDisciplineDict !== null && this.dataManagementDisciplineDict !== undefined && Object.keys(this.dataManagementDisciplineDict).length > 0) {
       Object.keys(this.dataManagementDisciplineDict).forEach(disciplineKey => {
-        let dataDict = this.dataManagementDisciplineDict[disciplineKey].allDataDict;
+        const dataDict = this.dataManagementDisciplineDict[disciplineKey].allDataDict;
         Object.keys(dataDict).forEach(key => {
           if (dataDict[key].valueType === ValueType.EMPTY && dataDict[key].ioType !== IoType.OUT) { // Missing values
             treeNodeConfigured = false;
