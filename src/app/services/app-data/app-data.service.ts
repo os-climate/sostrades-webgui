@@ -447,7 +447,9 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
               this.studyCaseDataService.loadedStudy !== null &&
               this.studyCaseDataService.loadedStudy !== undefined
             ) {
-              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE && (this.studyCaseDataService.preRequisiteReadOnlyDict && !this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running)) {
+              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE || 
+                (this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE && 
+                 this.studyCaseDataService.preRequisiteReadOnlyDict?.allocation_is_running)) {
                 this.studyCaseMainService.checkStudyIsUpAndLoaded();
               }
             }
