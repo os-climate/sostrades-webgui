@@ -17,6 +17,7 @@ import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/vali
 import { MatDialog } from '@angular/material/dialog';
 import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
+import { LoadedStudy, LoadStatus } from 'src/app/models/study.model';
 
 
 @Injectable({
@@ -31,6 +32,7 @@ export class SocketService {
   public onCurrentStudyDeleted: EventEmitter<boolean>;
   public onCurrentStudyEdited: EventEmitter<boolean>;
   public onNodeValidatationChange: EventEmitter<StudyCaseValidation>;
+  public onParameterUpdated: EventEmitter<LoadedStudy>;
 
 
   private notificationQueue: CoeditionNotification[];
@@ -53,6 +55,7 @@ export class SocketService {
     this.onCurrentStudyDeleted = new EventEmitter<boolean>();
     this.onCurrentStudyEdited = new EventEmitter<boolean>();
     this.onNodeValidatationChange = new EventEmitter<StudyCaseValidation>();
+    this.onParameterUpdated = new EventEmitter<LoadedStudy>();
     this.notificationQueue = [];
   }
 
@@ -141,8 +144,14 @@ export class SocketService {
 
     this.socket.on('study-saved', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, data.changes, false);
-      this.addNewNotificationOnList(notification)
+      this.addNewNotificationOnList(notification);
       this.addNotificationToQueue(notification);
+      if (this.userService.getFullUsername() !== data.author) {
+        if (this.studyCaseDataService.loadedStudy.loadStatus == LoadStatus.READ_ONLY_MODE) {
+          this.snackbarService.showWarning(`${data.author} has updated this study. This read only is obsolete. You will redirect to the edition mode`);
+        }
+      }
+      this.onParameterUpdated.emit(this.studyCaseDataService.loadedStudy);
     });
 
     this.socket.on('study-exported', (data) => {

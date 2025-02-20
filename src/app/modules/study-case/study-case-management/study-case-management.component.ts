@@ -35,6 +35,7 @@ import { DialogEditionName } from 'src/app/models/enumeration.model';
 import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/edition-form-dialog.component';
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -91,6 +92,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   public onCurrentStudyEditedSubscription: Subscription;
   public onCurrentStudyDeletedSubscription: Subscription;
   onUpdateStudyManagement: Subscription;
+  private onParameterUpdateSubscription: Subscription;
+  private routerSubscription: Subscription;
 
   @ViewChild('filter', { static: true }) private filterElement: ElementRef;
 
@@ -108,6 +111,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private location: Location,
     private elementRef: ElementRef,
+    private router: Router,
+    private route: ActivatedRoute,
     private entityRightService: EntityRightService,
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
@@ -128,6 +133,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.studyCount = 0;
     this.onCurrentStudyDeletedSubscription = null;
     this.onCurrentStudyEditedSubscription = null;
+    this.onParameterUpdateSubscription = null;
+    this.routerSubscription = null;
     this.showFlavors = false;
 
   }
@@ -194,6 +201,37 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.loadStudyManagementData();
       }
     });
+
+    this.routerSubscription = this.route.queryParams.subscribe(params => {
+      // If study is defined has query parameter then we reload the study
+        if ('studyId' in params && 'mode' in params) {
+          if (params.studyId !== null && params.studyId !== undefined) {
+            this.studyCaseDataService.getStudy(params.studyId).subscribe(study => {
+              if(params.mode && params.mode == "readOnly") {
+                // Load study in read only
+                this.loadStudyInReadOnlyMode(study)
+              }
+              else if (params.mode && params.mode == 'edition' ) {
+                // load study in edition
+                this.loadStudyInEditionMode(study);
+              }
+              else {
+                this.loadStudyUsingReadOnlyByDefault(study);
+              }
+            });
+          }
+        }
+    });
+
+    // Update study case targeted in study list because a parameter has been updated 
+    this.onParameterUpdateSubscription = this.socketService.onParameterUpdated.subscribe(loadedStudy => {
+      if (loadedStudy) {
+        const index = this.studyCaseDataService.studyManagementData.findIndex(study => study.id === loadedStudy.studyCase.id);
+        if(index !== -1) {
+          this.studyCaseDataService.studyManagementData[index] = loadedStudy.studyCase;
+        }
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -209,7 +247,14 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.onUpdateStudyManagement.unsubscribe();
       this.onUpdateStudyManagement = null;
     }
-    
+    if (this.onParameterUpdateSubscription !== null) {
+      this.onParameterUpdateSubscription.unsubscribe();
+      this.onParameterUpdateSubscription = null;
+    }
+    if (this.routerSubscription !== null) {
+      this.routerSubscription.unsubscribe();
+      this.routerSubscription = null;
+    }
   }
 
   isAllSelected() {
@@ -319,8 +364,17 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   loadStudy(event: MouseEvent, study: Study, loadDirectInReadOnly: boolean, loadDirectInEdition: boolean): void {
     if (event.ctrlKey && event.altKey) {
       this.fileUpload.nativeElement.click();
+    } 
 
-    } else if (loadDirectInReadOnly) {
+    // Open a new tab
+    else if (event.ctrlKey) {
+      const url = new URL(window.location.href);
+      url.searchParams.append('studyId', study.id.toString());
+      url.searchParams.append('mode', loadDirectInReadOnly ? 'readOnly' : loadDirectInEdition ? 'edition' : 'default');
+      window.open(url, '_blank');
+    }
+
+    else if (loadDirectInReadOnly) {
       this.loadStudyInReadOnlyMode(study);
 
     } else if (loadDirectInEdition) {
