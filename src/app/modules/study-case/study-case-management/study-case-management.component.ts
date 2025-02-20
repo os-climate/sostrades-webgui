@@ -372,6 +372,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       url.searchParams.append('studyId', study.id.toString());
       url.searchParams.append('mode', loadDirectInReadOnly ? 'readOnly' : loadDirectInEdition ? 'edition' : 'default');
       window.open(url, '_blank');
+      return;
     }
 
     else if (loadDirectInReadOnly) {
