@@ -132,9 +132,8 @@ export class StudyCaseLoadingService {
         });      
       }
       // Add new study loaded in the studymanagement page without refreshing list
-      const index = this.studyCaseDataService.studyManagementData.findIndex(study => study.id === loadedStudy.studyCase.id);
-      if (index === -1) {
-        this.studyCaseDataService.studyManagementData.unshift(loadedStudy.studyCase);
+      if(this.studyCaseDataService.studyManagementData.length > 0) {
+       this.studyCaseDataService.updateStudyInList(loadedStudy);
       }
     }
   }

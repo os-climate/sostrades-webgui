@@ -16,7 +16,6 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { ProcessService } from 'src/app/services/process/process.service';
 import { Routing } from 'src/app/models/enumeration.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { LoadStatus } from 'src/app/models/study.model';
 
 
 
@@ -51,7 +50,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
   private onShowDataManagementSubscription: Subscription;
-  private onParameterUpdateSubscription: Subscription;
 
   public modelsFullPathList: string[];
   public hasAccessToStudy: boolean;
@@ -99,7 +97,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.studyIsLoaded = false;
     this.onTreeNodeChangeSubscription = null;
     this.onShowDataManagementSubscription = null;
-    this.onParameterUpdateSubscription = null;
     this.tabNameSelected = '';
     this.isFullScreenOn = false;
     this.showDocumentation = false;
@@ -153,17 +150,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(() => {
       this.showSearch = true;
     });
-    this.onParameterUpdateSubscription = this.socketService.onParameterUpdated.subscribe(LoadedStudy => {
-      if (LoadedStudy.loadStatus == LoadStatus.READ_ONLY_MODE) {
-        this.appDataService.loadStudyInEditionMode();
-      }
-    });
     this.onShowDataManagementSubscription = this.studyCaseDataService.onShowDataManagementContent.subscribe({
       next:()=>{
       //show the data management tab
       this.showSearch = false;
       this.selectedTabIndex = 0;
-    }})
+    }});
   }
 
   setDiplayableItems() {
@@ -275,10 +267,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     if (this.routerSubscription !== null) {
       this.routerSubscription.unsubscribe();
       this.routerSubscription = null;
-    }
-    if (this.onParameterUpdateSubscription !== null) {
-      this.onParameterUpdateSubscription.unsubscribe();
-      this.onParameterUpdateSubscription = null;
     }
   }
 
