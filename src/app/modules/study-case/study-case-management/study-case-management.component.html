@@ -110,24 +110,42 @@
 
         <!-- Favorite Column -->
         <ng-container [matColumnDef]=" columnName.FAVORITE">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Favorite</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
           <td mat-cell *matCellDef="let element">
-          <i
-          id='favorite-study-management-page'
-          *ngIf="!getOnlyFavoriteStudy"
-          style="border: none; background-color: transparent;"
-          [ngClass]="element.isFavorite ? 'fa-solid fa-star favoriteOnStudyManagementPage':'fa-regular fa-star notFavoriteOnStudyManagementPage'"
-          (click)="addOrRemoveFavoriteStudy(element)"
-          [matTooltip]="element.isFavorite ? 'Favorite' : 'Not favorite'"
-          >
-          </i>
-
-          <i
-          id='favorite-welcome-page'
-          class="fa-solid fa-star favoriteOnWelcomePage"
-          *ngIf="element.isFavorite && getOnlyFavoriteStudy"
-          >
-          </i>
+            <div>
+              <button
+                mat-icon-button
+                [id]="getOnlyFavoriteStudy ? 'favorite-welcome-page' : 'favorite-study-management-page'"
+                *ngIf="!getOnlyFavoriteStudy || (getOnlyFavoriteStudy && element.isFavorite)"
+                (click)="!getOnlyFavoriteStudy && addOrRemoveFavoriteStudy(element)"
+                [matTooltip]="element.isFavorite ? 'Favorite' : 'Not favorite'">
+                <i  
+                  [class]="'fa-star ' + (getOnlyFavoriteStudy ? 'fa-solid favoriteOnWelcomePage' : 
+                  (element.isFavorite ? 'fa-solid favoriteOnStudyManagementPage' : 'fa-regular notFavoriteOnStudyManagementPage'))" 
+                  style="border: none; background-color: transparent">
+                </i>
+              </button>
+             
+              <button
+                [id]="'btn-study-management-edition-' + element.groupName + '-' + element.name"
+                mat-icon-button
+                color="primary"
+                [matTooltip]="'Load ' + element.name + ' in edition mode'" 
+                (click)="loadStudy($event, element, false, true)"
+              >
+                <i class="fa-solid fa-file-pen"></i>
+              </button>
+              <button
+                [id]="'btn-study-management-read-only-' + element.groupName + '-' + element.name"
+                mat-icon-button
+                color="primary"
+                [disabled]="!element.hasReadOnlyFile"
+                [matTooltip]="'Load ' + element.name + ' in read only mode'" 
+                (click)="loadStudy($event, element, true, false)"
+              >
+              <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
           </td>
         </ng-container>
 
@@ -140,13 +158,14 @@
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element">
-            <a routerLink="/study/{{element.id}}"
-              class="link-study-title"
-              [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
-              [matTooltip]="'/study/' + element.id"
-              matTooltipPosition="right"
-              >
-              {{ element.name }}
+              <a 
+                (click)="loadStudy($event, element, false, false)"
+                class="link-study-title"
+                [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
+                [matTooltip]="'/study/' + element.id"
+                matTooltipPosition="right"
+                >
+                {{ element.name }}
             </a>
           </td>
         </ng-container>
@@ -161,7 +180,9 @@
             mat-cell
             *matCellDef="let element"
           >
-              {{ element.groupName }}
+              <span 
+              [matTooltip]="element.groupId"
+              >{{ element.groupName }}</span>
           </td>
         </ng-container>
 

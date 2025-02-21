@@ -35,6 +35,7 @@ import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/e
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 import { FilterTableService } from 'src/app/services/filter-table/filter-table.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -92,6 +93,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   public onCurrentStudyEditedSubscription: Subscription;
   public onCurrentStudyDeletedSubscription: Subscription;
   onUpdateStudyManagement: Subscription;
+  private routerSubscription: Subscription;
 
   @ViewChild('filter', { static: true }) private filterElement: ElementRef;
 
@@ -108,6 +110,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private elementRef: ElementRef,
+    private router: Router,
+    private route: ActivatedRoute,
     private entityRightService: EntityRightService,
     public studyCaseDataService: StudyCaseDataService,
     public studyCaseMainService: StudyCaseMainService,
@@ -129,6 +133,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.onCurrentStudyDeletedSubscription = null;
     this.onCurrentStudyEditedSubscription = null;
+    this.routerSubscription = null;
     this.showFlavors = false;
 
   }
@@ -198,6 +203,27 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         this.loadStudyManagementData();
       }
     });
+
+    this.routerSubscription = this.route.queryParams.subscribe(params => {
+      // If study is defined has query parameter then we reload the study
+        if ('studyId' in params && 'mode' in params) {
+          if (params.studyId !== null && params.studyId !== undefined) {
+            this.studyCaseDataService.getStudy(params.studyId).subscribe(study => {
+              if(params.mode && params.mode == "readOnly") {
+                // Load study in read only
+                this.loadStudyInReadOnlyMode(study)
+              }
+              else if (params.mode && params.mode == 'edition' ) {
+                // load study in edition
+                this.loadStudyInEditionMode(study);
+              }
+              else {
+                this.loadStudyUsingReadOnlyByDefault(study);
+              }
+            });
+          }
+        }
+    });
   }
 
   ngOnDestroy() {
@@ -213,7 +239,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       this.onUpdateStudyManagement.unsubscribe();
       this.onUpdateStudyManagement = null;
     }
-    
+    if (this.routerSubscription !== null) {
+      this.routerSubscription.unsubscribe();
+      this.routerSubscription = null;
+    }
   }
 
   isAllSelected() {
@@ -233,33 +262,32 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   addOrRemoveFavoriteStudy(study: Study) {
-  const userId = this.userService.getCurrentUserId();
-  this.isFavorite = false;
-  if (!study.isFavorite) {
-    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe({
-      next: () => {
-        study.isFavorite = true;
-        this.isFavorite = true;
-      },
-      error: (error) => {
-        this.snackbarService.showWarning(error.description);
-        this.isFavorite = true;
-      }
-    });
-  } else {
-    this.studyCaseDataService.removeFavoriteStudy(study.id).subscribe({
-    next: () => {
-        study.isFavorite = false;
-        this.isFavorite = true;
-      },
-      error: (error) => {
-        this.snackbarService.showWarning(error.description);
-        this.isFavorite = true;
-      }
-    });
+    const userId = this.userService.getCurrentUserId();
+    this.isFavorite = false;
+    if (!study.isFavorite) {
+      this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe({
+        next: () => {
+          study.isFavorite = true;
+          this.isFavorite = true;
+        },
+        error: (error) => {
+          this.snackbarService.showWarning(error.description);
+          this.isFavorite = true;
+        }
+      });
+    } else {
+        this.studyCaseDataService.removeFavoriteStudy(study.id).subscribe({
+        next: () => {
+            study.isFavorite = false;
+            this.isFavorite = true;
+          },
+          error: (error) => {
+            this.snackbarService.showWarning(error.description);
+            this.isFavorite = true;
+          }
+        });
+    }
   }
-}
-
 
 
   loadStudyManagementData() {
@@ -312,36 +340,130 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
   }
+ 
+  /**
+   * Loads a study based on specified mode
+   * @param event Mouse event to check for ctrl+alt
+   * @param study Study to load
+   * @param loadDirectInReadOnly Flag for direct read-only loading
+   * @param loadDirectInEdition Flag for direct edition loading
+   */
+  loadStudy(event: MouseEvent, study: Study, loadDirectInReadOnly: boolean, loadDirectInEdition: boolean): void {
+    if (event.ctrlKey && event.altKey) {
+      this.fileUpload.nativeElement.click();
+    } 
 
-  loadStudy(event: MouseEvent, study: Study) {
-    if ((event.ctrlKey === true) && (event.altKey === true)) {
-      const fileUploadElement = this.fileUpload.nativeElement;
-      fileUploadElement.click();
+    // Open a new tab
+    else if (event.ctrlKey) {
+      const url = new URL(window.location.href);
+      url.searchParams.append('studyId', study.id.toString());
+      url.searchParams.append('mode', loadDirectInReadOnly ? 'readOnly' : loadDirectInEdition ? 'edition' : 'default');
+      window.open(url, '_blank');
+      return;
+    }
+
+    else if (loadDirectInReadOnly) {
+      this.loadStudyInReadOnlyMode(study);
+
+    } else if (loadDirectInEdition) {
+      this.loadStudyInEditionMode(study);
+
     } else {
-      this.handleUnsavedChanges((changeHandled) => {
-        if (changeHandled) {
-          // Check user was in an another study before this one and leave room
-          if (
-            this.studyCaseDataService.loadedStudy !== null &&
-            this.studyCaseDataService.loadedStudy !== undefined
-          ) {
-            this.socketService.leaveRoom(
-              this.studyCaseDataService.loadedStudy.studyCase.id
-            );
-          }
+      this.loadStudyUsingReadOnlyByDefault(study);
+    }
+  }
 
-          this.appDataService.loadCompleteStudy(study.id, study.name, (isStudyLoaded) => {
+  /**
+   * Loads study in read-only mode
+   * @param study Study to load
+   */
+  private loadStudyInReadOnlyMode(study: Study): void {
+    this.handleUnsavedChanges((changeHandled) => {
+      if (changeHandled) {
+        this.leaveCurrentStudyRoom();
+        this.appDataService.loadStudyInReadOnlyMode(study.id, study.name);
+      }
+    });
+  }
+
+  /**
+   * Shows confirmation dialog for edition mode
+   * @param study Study to load
+   */
+  private loadStudyInEditionMode(study: Study): void {
+    this.loadStudyWithCallback(study, false);
+  }
+
+  /**
+   * Display dialog before launch the loading study in edition mode (if study has no read only mode)
+   * @param study Study to load
+
+   */
+  private displayValidationDialog(study: Study){
+    const validationDialogData = new ValidationDialogData();
+    validationDialogData.message = `The read only is not available for this study. Do you want to load "${study.name}" in edition mode ?`;
+    validationDialogData.title = ' ';
+    validationDialogData.buttonOkText = 'Ok';
+    validationDialogData.showCancelButton = true;
+    validationDialogData.secondaryActionConfirmationNeeded = false;
+
+    const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+      disableClose: true,
+      width: '400px',
+      height: '200px',
+      data: validationDialogData,
+    });
+    dialogRefValidate.afterClosed().subscribe(result => {
+      const validationData: ValidationDialogData = result as ValidationDialogData;
+      if (validationData !== null && validationData !== undefined && !validationData.cancel) {
+        this.loadStudyWithCallback(study, false);
+        }
+      });
+  }
+
+  /**
+   * Loads study in normal mode
+   */
+  private loadStudyUsingReadOnlyByDefault(study: Study): void {
+    // Display read only mode
+    if (!study.hasReadOnlyFile) {
+      this.displayValidationDialog(study);
+    } else {
+      this.loadStudyWithCallback(study, study.hasReadOnlyFile);
+    }
+  }
+
+  /**
+   * Common method to load study with callback
+   */
+  private loadStudyWithCallback(study: Study, useReadOnlyFile: boolean): void {
+    this.handleUnsavedChanges((changeHandled) => {
+      if (changeHandled) {
+        this.leaveCurrentStudyRoom();
+        this.appDataService.loadCompleteStudy(study.id,study.name,(isStudyLoaded) => {
             if (isStudyLoaded) {
-              // Joining room
               this.socketService.joinRoom(
                 this.studyCaseDataService.loadedStudy.studyCase.id
               );
             }
-          });
-        }
-      });
+          },
+          useReadOnlyFile
+        );
+      }
+    });
+  }
+
+  /**
+   * Leaves current study room if one is loaded
+   */
+  private leaveCurrentStudyRoom(): void {
+    if (this.studyCaseDataService.loadedStudy) {
+      this.socketService.leaveRoom(
+        this.studyCaseDataService.loadedStudy.studyCase.id
+      );
     }
   }
+
 
   createStudy() {
     this.handleUnsavedChanges(changeHandled => {
