@@ -151,7 +151,6 @@ export class SocketService {
           this.snackbarService.showWarning(`${data.author} has updated this study. This read only is obsolete. You will redirect to the edition mode`);
         }
       }
-      this.onParameterUpdated.emit(this.studyCaseDataService.loadedStudy);
     });
 
     this.socket.on('study-exported', (data) => {
@@ -168,7 +167,7 @@ export class SocketService {
 
     this.socket.on('study-executed', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
-      this.addNewNotificationOnList(notification)
+      this.addNewNotificationOnList(notification);
       this.addNotificationToQueue(notification);
     });
 

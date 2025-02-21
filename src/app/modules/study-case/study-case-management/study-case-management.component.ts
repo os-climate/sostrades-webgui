@@ -92,7 +92,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   public onCurrentStudyEditedSubscription: Subscription;
   public onCurrentStudyDeletedSubscription: Subscription;
   onUpdateStudyManagement: Subscription;
-  private onParameterUpdateSubscription: Subscription;
   private routerSubscription: Subscription;
 
   @ViewChild('filter', { static: true }) private filterElement: ElementRef;
@@ -133,7 +132,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.studyCount = 0;
     this.onCurrentStudyDeletedSubscription = null;
     this.onCurrentStudyEditedSubscription = null;
-    this.onParameterUpdateSubscription = null;
     this.routerSubscription = null;
     this.showFlavors = false;
 
@@ -222,16 +220,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           }
         }
     });
-
-    // Update study case targeted in study list because a parameter has been updated 
-    this.onParameterUpdateSubscription = this.socketService.onParameterUpdated.subscribe(loadedStudy => {
-      if (loadedStudy) {
-        const index = this.studyCaseDataService.studyManagementData.findIndex(study => study.id === loadedStudy.studyCase.id);
-        if(index !== -1) {
-          this.studyCaseDataService.studyManagementData[index] = loadedStudy.studyCase;
-        }
-      }
-    })
   }
 
   ngOnDestroy() {
@@ -246,10 +234,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     if (this.onUpdateStudyManagement !== null) {
       this.onUpdateStudyManagement.unsubscribe();
       this.onUpdateStudyManagement = null;
-    }
-    if (this.onParameterUpdateSubscription !== null) {
-      this.onParameterUpdateSubscription.unsubscribe();
-      this.onParameterUpdateSubscription = null;
     }
     if (this.routerSubscription !== null) {
       this.routerSubscription.unsubscribe();
@@ -274,33 +258,32 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   addOrRemoveFavoriteStudy(study: Study) {
-  const userId = this.userService.getCurrentUserId();
-  this.isFavorite = false;
-  if (!study.isFavorite) {
-    this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe({
-      next: () => {
-        study.isFavorite = true;
-        this.isFavorite = true;
-      },
-      error: (error) => {
-        this.snackbarService.showWarning(error.description);
-        this.isFavorite = true;
-      }
-    });
-  } else {
-    this.studyCaseDataService.removeFavoriteStudy(study.id).subscribe({
-    next: () => {
-        study.isFavorite = false;
-        this.isFavorite = true;
-      },
-      error: (error) => {
-        this.snackbarService.showWarning(error.description);
-        this.isFavorite = true;
-      }
-    });
+    const userId = this.userService.getCurrentUserId();
+    this.isFavorite = false;
+    if (!study.isFavorite) {
+      this.studyCaseDataService.addFavoriteStudy(study.id, userId).subscribe({
+        next: () => {
+          study.isFavorite = true;
+          this.isFavorite = true;
+        },
+        error: (error) => {
+          this.snackbarService.showWarning(error.description);
+          this.isFavorite = true;
+        }
+      });
+    } else {
+        this.studyCaseDataService.removeFavoriteStudy(study.id).subscribe({
+        next: () => {
+            study.isFavorite = false;
+            this.isFavorite = true;
+          },
+          error: (error) => {
+            this.snackbarService.showWarning(error.description);
+            this.isFavorite = true;
+          }
+        });
+    }
   }
-}
-
 
 
   loadStudyManagementData() {

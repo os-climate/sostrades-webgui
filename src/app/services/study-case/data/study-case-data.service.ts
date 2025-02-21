@@ -781,6 +781,10 @@ export class StudyCaseDataService extends DataHttpService {
     }));
   }
 
-
-  //#endregion allocations
+  public updateStudyInList(loadedStudy: LoadedStudy){
+    const index = this.studyManagementData.findIndex(study => study.id === loadedStudy.studyCase.id);
+    if(index !== -1) {
+      this.studyManagementData[index] = loadedStudy.studyCase;
+    }
+  }
 }

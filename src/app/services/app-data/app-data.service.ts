@@ -173,21 +173,13 @@ export class AppDataService extends DataHttpService {
     }
 
     // Handle named study case. When you click to load study from studyManagement page
-    if (studyName) {
-        if (read_only_mode) {
-            this.handleReadOnlyAccess(studyId, isStudyLoaded, loadingCanceled);
-        } else {
-            this.handleEditionModeAccess(studyId, isStudyLoaded, loadingCanceled);
-        }
-        return;
-    }
-
-    // Handle refresh case. We have previously checked if in url there is the param "ReadOnly".
+    // or
+    // Handle refresh case. We have previously checked if in url there is the param "ReadOnly"
     if (read_only_mode) {
         this.handleReadOnlyAccess(studyId, isStudyLoaded, loadingCanceled);
     } else {
         this.handleEditionModeAccess(studyId, isStudyLoaded, loadingCanceled);
-    } 
+    }
   }
 }
 
