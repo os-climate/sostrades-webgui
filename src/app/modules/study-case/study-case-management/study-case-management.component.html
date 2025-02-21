@@ -175,7 +175,7 @@
           </th>
           <td mat-cell *matCellDef="let element">
               <a 
-                (click)="loadStudy($event, element, false, false)"
+                routerLink="/study/{{element.id}}"
                 class="link-study-title"
                 [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
                 [matTooltip]="'/study/' + element.id"

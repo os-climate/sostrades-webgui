@@ -208,12 +208,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
               if(params.mode && params.mode == "readOnly") {
                 // Load study in read only
                 this.loadStudyInReadOnlyMode(study)
-              }
-              else if (params.mode && params.mode == 'edition' ) {
-                // load study in edition
-                this.loadStudyInEditionMode(study);
-              }
-              else {
+              } else {
                 this.loadStudyUsingReadOnlyByDefault(study);
               }
             });
@@ -348,16 +343,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     if (event.ctrlKey && event.altKey) {
       this.fileUpload.nativeElement.click();
     } 
-
-    // Open a new tab
-    else if (event.ctrlKey) {
-      const url = new URL(window.location.href);
-      url.searchParams.append('studyId', study.id.toString());
-      url.searchParams.append('mode', loadDirectInReadOnly ? 'readOnly' : loadDirectInEdition ? 'edition' : 'default');
-      window.open(url, '_blank');
-      return;
-    }
-
     else if (loadDirectInReadOnly) {
       this.loadStudyInReadOnlyMode(study);
 
