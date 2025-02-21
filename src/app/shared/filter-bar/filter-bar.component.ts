@@ -131,7 +131,8 @@ export class FilterBarComponent<T> implements OnInit {
             if (!selectedKey) {
               isMatch = false;
             } else {
-              isMatch = String(data[selectedKey]).trim().toLowerCase().includes(searchStr);
+              const value = String(this.recursivelySearchObjectForKey(data, selectedKey));
+              isMatch = value.trim().toLowerCase().includes(searchStr);
             }
           } 
         } else {
