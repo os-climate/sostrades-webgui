@@ -1,0 +1,60 @@
+<div class="flex-container">
+    <div style="display:flex">
+      <mat-card appearance="outlined" class="login-form" style="text-align: center; min-width: 360px ">
+        <mat-card-title style=" display:block"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
+          <div id="logos">
+    
+          <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
+          [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
+          [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
+          class="logo-header"
+          >
+    
+          <img *ngIf="environment.SOS_TRADES_LOGO_SECOND.PATH !== ''"
+          [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
+          [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
+          class="logo-header"
+          >   
+    
+          <img *ngIf="environment.SOS_TRADES_LOGO_THIRD.PATH !== ''"
+          [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
+          [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
+          class="logo-header"
+          >
+    
+          <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH.PATH !== ''"
+          [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
+          [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
+          class="logo-header"
+          >  
+        </div>
+        
+        </mat-card-title>
+        <mat-card-content style="display: flex; flex-direction: column; margin-bottom: 20px;">
+          <div>
+            <h2>
+                
+                You do not have the rights to connect to the platform
+                <br>
+                SoSTrades {{ platform }}
+            </h2>
+          </div>
+          <div *ngIf="keycloakAvailable">
+          <div class="margin-bottom">Please logout from keycloak first to access the login page again
+            
+          </div>
+            <button 
+                mat-button 
+                (click)="logout()"
+                matTooltip="Logout"
+                class="margin-right"
+                >
+                <i class="fa-solid fa-right-from-bracket" style="font-size: xx-large;"></i>
+            </button>
+            </div>
+                  
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  
