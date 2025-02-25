@@ -250,6 +250,10 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         this.studyCaseDataService.isLoadedStudyForTreeview(this.loadedStudyForTreeview)
 
       }
+      Object.keys(this.root.rootDict).forEach(treenodeKey => {
+        this.colorChevronIfErrorOnParameters(treenodeKey);
+      });
+      
     });
 
     this.onRoomUserUpdateSubscription = this.socketService.onRoomUserUpdate.subscribe(users => {
@@ -1515,5 +1519,24 @@ downloadStudy(event: MouseEvent) {
       });
     }
   }
-
+  /**
+ * Recursively colors the chevrons of all parent nodes in red if a node has unconfigured parameters
+ * @param treenodeKey The key of the node to check and process its parents
+ */
+  private colorChevronIfErrorOnParameters(treenodeKey: string) {
+    // Check if the current node is not configured
+    if(!this.root.rootDict[treenodeKey].isConfigured) {
+        // Get the current node
+        let currentNode = this.root.rootDict[treenodeKey];
+        
+        // Traverse up through parents until we reach the root
+        while (currentNode.treeNodeParent) {
+            // Color the parent node's chevron in error red
+            currentNode.treeNodeParent.chevronColor = '#e4002b';
+            
+            // Move up to the parent node
+            currentNode = currentNode.treeNodeParent;
+        }    
+    }
+  }
 }
