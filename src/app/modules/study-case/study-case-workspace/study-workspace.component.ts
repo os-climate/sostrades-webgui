@@ -136,15 +136,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
                   if (isStudyLoaded) {
                     this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
                   }
-              }, 'readOnly' in params);
+              }, !('edition' in params));
             }
           }
         }
       });
     }
-    if (this.studyCaseDataService.loadedStudy) {
-        this.hasAccessToStudy = false;
-    } 
     this.selectedUserlevel = this.userLevelList[this.filterService.filters.userLevel - 1];
 
     this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(() => {
