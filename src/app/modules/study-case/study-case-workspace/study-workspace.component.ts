@@ -142,9 +142,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         }
       });
     }
-    if (this.studyCaseDataService.loadedStudy) {
-        this.hasAccessToStudy = false;
-    } 
     this.selectedUserlevel = this.userLevelList[this.filterService.filters.userLevel - 1];
 
     this.onSearchChangeSubscription = this.studyCaseDataService.onSearchVariableChange.subscribe(() => {
