@@ -205,9 +205,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         if ('studyId' in params && 'mode' in params) {
           if (params.studyId !== null && params.studyId !== undefined) {
             this.studyCaseDataService.getStudy(params.studyId).subscribe(study => {
-              if(params.mode && params.mode == "readOnly") {
+              if(params.mode && params.mode == "edition") {
                 // Load study in read only
-                this.loadStudyInReadOnlyMode(study)
+                this.loadStudyInEditionMode(study)
               } else {
                 this.loadStudyUsingReadOnlyByDefault(study);
               }

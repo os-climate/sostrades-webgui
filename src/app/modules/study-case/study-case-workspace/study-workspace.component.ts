@@ -136,7 +136,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
                   if (isStudyLoaded) {
                     this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
                   }
-              }, 'readOnly' in params);
+              }, !('edition' in params));
             }
           }
         }

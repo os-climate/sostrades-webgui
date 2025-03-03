@@ -94,8 +94,8 @@ export class SidenavComponent implements OnInit, OnDestroy {
 
   onClickTreeview(loadedStudy: LoadedStudy) {
     
-    if (loadedStudy.loadStatus == LoadStatus.READ_ONLY_MODE) {
-      this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`, readOnly: 'true'}});
+    if (loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE) {
+      this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`, edition: 'true'}});
     } else {
       this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`}});
     } 
