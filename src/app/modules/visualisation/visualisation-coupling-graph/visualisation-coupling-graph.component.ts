@@ -67,196 +67,206 @@ export class CouplingGraphComponent implements OnInit {
     const loadedStudy = this.studyCaseDataService.loadedStudy;
 
     if (loadedStudy !== null && loadedStudy !== undefined) {
-      if (loadedStudy.loadStatus == LoadStatus.READ_ONLY_MODE) {
-          if (Object.keys(loadedStudy.n2Diagram).length === 0 || !Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.N2DIAGRAM)) {
-            if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
-              this.visualisationService.getDiagramN2Data(loadedStudy.studyCase.id).subscribe({
-                next: (res: any) => {
-                  if (Object.keys(res).length > 0) {
-                    loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM] = res;
-                    this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
-                    this.initGraph();
-                  }
-                  
-                  this.isLoading = false;
-                },
-                error: (err) => {
-                  this.isLoading = false;
-                  this.snackbarService.showError(err.description);
-                }
-              });
-            } else {
-              this.snackbarService.showError(`This coupling graph is not available for this study. To show it, please switch to edition mode`);
-              this.isLoading = false;
-            } 
-          } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.N2DIAGRAM)){
-            this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
-            this.initGraph();
-            this.isLoading = false;
-          }
-          
+      //if there is a n2_diagram already in loaded study -> show it
+      if (Object.keys(loadedStudy.n2Diagram).length !== 0 && Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.N2DIAGRAM)) {
+        this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
+        this.initGraph();
+        this.isLoading = false;
       }
-      
-    }
+      //if the study pod is running, get it from the pod
+      else if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
+          
+        this.visualisationService.getDiagramN2Data(loadedStudy.studyCase.id).subscribe({
+          next: (res: any) => {
+            if (Object.keys(res).length > 0) {
+              loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM] = res;
+              this.data = loadedStudy.n2Diagram[VisualizationDiagrams.N2DIAGRAM];
+              this.initGraph();
+            }
+            
+            this.isLoading = false;
+          },
+          error: (err) => {
+            this.isLoading = false;
+            this.snackbarService.showError(err.description);
+          }
+        });
+      // if no pod is running -> show error
+      } else {
+        this.snackbarService.showError(`This coupling graph is not available for this study. To show it, please switch to edition mode`);
+        this.isLoading = false;
+      } 
+    }   
+     
   }
 
   initGraph(): void {
-    this.modelTypes.setValue(this.typeList);
+    try{
+      this.modelTypes.setValue(this.typeList);
 
-    if ((this.data !== null) &&
-        (this.data !== undefined)) {
+      if ((this.data !== null) &&
+          (this.data !== undefined)) {
 
-      // initialize node and links visibility
-      this.nodes = this.data.treeNodes.map((node: any) => {
-        node['active'] = 1;
-        node['Type'] === 'DisciplineNode' ? node['expand'] = 1 : null;
-        return node;
-      });
-      this.links = this.data.groupedLinks.map((link: any) => {
-        link['active'] = 1;
-        return link;
-      });
+        // initialize node and links visibility
+        this.nodes = this.data.treeNodes.map((node: any) => {
+          node['active'] = 1;
+          node['Type'] === 'DisciplineNode' ? node['expand'] = 1 : null;
+          return node;
+        });
+        this.links = this.data.groupedLinks.map((link: any) => {
+          link['active'] = 1;
+          return link;
+        });
 
-      this.maxLevel = Math.max(...this.nodes.map(node => {
-        if (node['Type'] === 'DisciplineNode') {
-          return node['Level'];
-        }
-      }));
-      this.minLevel = Math.min(...this.nodes.map(node => {
-        if (node['Type'] === 'DisciplineNode') {
-          return node['Level'];
-        }
-      }));
-
-      const width = 1000;
-      const height = 1000;
-
-      d3.select(this.el.nativeElement).selectAll('svg').remove();
-
-      // Define the div for the tooltip
-      this.tooltipDiv = d3.select(this.el.nativeElement).append('div')
-        .attr('class', 'tooltip')
-        .style('position', 'fixed')
-        .style('display', 'none')
-        .style('justify-content', 'space-between')
-        .style('flex-wrap', 'wrap');
-
-      this.svg = d3.select(this.el.nativeElement).append('svg')
-        .attr('class', 'd3-graph')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .style('overflow', 'visible');
-
-      this.radiusScale = d3.scaleLinear()
-        .domain([0, 200])
-        .range([5, 50])
-        .clamp(true);
-
-      this.linkWidthScale = d3.scaleLinear()
-        .domain([0, 200])
-        .range([2, 50])
-        .clamp(true);
-
-      this.colorScale = d3.scaleOrdinal(d3.schemeSet2);
-      this.colorScaleLevel = d3.scaleSequential(d3.interpolateBlues)
-        .domain([0, 6]);
-      // this.colorScaleLevel =d3.scaleOrdinal(d3.schemeBlues);
-      this.types = Array.from(new Set(this.nodes.map((d: any) => d['Type']))).concat(Array.from(new Set(this.links.map((d: any) => d['Type']))));
-      this.container = this.svg.append('svg:g').attr('class', 'everything');
-      this.svg.append('svg:defs').attr('class', 'arrows-marker');
-
-      // Per-type markers, as they don't inherit styles.
-      this.svg.select('.arrows-marker').selectAll('.marker_end')
-        .data(this.types)
-        .enter()
-        .append('svg:marker')
-        .attr('class', 'marker_end')
-        .attr('id', d => `end-arrow-${d}`)
-        .attr('viewBox', '0 -5 10 10')
-        // .attr("refX", 10)
-        .attr('refX', 8)
-        .attr('refY', 0)
-        .attr('markerWidth', 5)
-        .attr('markerHeight', 5)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('fill', (d: any) => this.colorScale(d))
-        .attr('d', 'M0,-5L10,0L0,5');
-
-      this.svg.select('.arrows-marker').selectAll('.marker_end_hover')
-        .data(this.types)
-        .enter()
-        .append('svg:marker')
-        .attr('class', 'marker_end_hover')
-        .attr('id', d => `end-arrow-hover-${d}`)
-        .attr('viewBox', '0 -5 10 10')
-        // .attr("refX", 10)
-        .attr('refX', 7)
-        .attr('refY', 0)
-        .attr('markerWidth', 5)
-        .attr('markerHeight', 5)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('fill', (d: any) => d3.rgb(this.colorScale(d)).darker().toString())
-        .attr('d', 'M0,-5L10,0L0,5');
-
-
-      this.svg.call(
-        d3.zoom()
-          .scaleExtent([.1, 4])
-          .on('zoom', (event: any) => { this.container.attr('transform', event.transform); })
-      );
-
-      this.simulation = d3.forceSimulation()
-        // .force('link', d3.forceLink().id((d: any) => d['id']).distance(100).strength(d => 1 / d['metadata']['size']))
-        .force('link', d3.forceLink().id((d: any) => d['id']).distance((d: any) => this.linkDistance(d)))
-        .force('charge', d3.forceManyBody().strength(-2000))
-        .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('x', d3.forceX(width / 2).strength(0.3))
-        .force('y', d3.forceY(height / 2).strength(0.3))
-        .on('tick', () => this.tick());
-
-      // handles to link and node element groups
-      this.container.append('svg:g').attr('fill', 'none').attr('class', 'links');
-      this.container.append('svg:g').attr('class', 'nodes');
-
-
-      // init D3 drag support
-      this.drag = d3.drag()
-      .on('start', (event: any, d: any) => this.draggedStart(event, d))
-      .on('drag', (event: any, d: any) => this.dragged(event, d))
-      .on('end', (event: any, d: any) => this.draggedEnd(event, d));
-
-      // Add Legend
-      this.svg.append('g').attr('class', 'legend');
-      const legend = this.svg.select('.legend');
-      legend.attr(
-        'transform',
-        `translate(${5},${5 + 5 * this.types.length})`
-      );
-
-      legend
-        .selectAll('g')
-        .data(this.types)
-        .join('g')
-        .attr('transform', (d, i) => `translate(5,${15 * i})`)
-        .style('cursor', 'pointer')
-        .html(
-          d => {
-            let label = d;
-            if (d in this.typeLabels) {
-              label = this.typeLabels[d]['label'];
-            }
-
-            return `<circle r="5" stroke="black" stroke-width="1px" fill="${this.color({ 'Type': d, 'Level': 10 })}"></circle>` +
-              `<text transform="translate(8,2.5)">${label}</text>`;
+        this.maxLevel = Math.max(...this.nodes.map(node => {
+          if (node['Type'] === 'DisciplineNode') {
+            return node['Level'];
           }
-        )
-        .on('click', (event: any, d: any) => this.toggleTypeShowHide(event, d));
+        }));
+        this.minLevel = Math.min(...this.nodes.map(node => {
+          if (node['Type'] === 'DisciplineNode') {
+            return node['Level'];
+          }
+        }));
 
-      this.restart();
-      this.levelsToShow = 2;
-      this.showOnlyLevels(this.levelsToShow, this.maxLevel);
+        const width = 1000;
+        const height = 1000;
+
+        d3.select(this.el.nativeElement).selectAll('svg').remove();
+
+        // Define the div for the tooltip
+        this.tooltipDiv = d3.select(this.el.nativeElement).append('div')
+          .attr('class', 'tooltip')
+          .style('position', 'fixed')
+          .style('display', 'none')
+          .style('justify-content', 'space-between')
+          .style('flex-wrap', 'wrap');
+
+        this.svg = d3.select(this.el.nativeElement).append('svg')
+          .attr('class', 'd3-graph')
+          .attr('width', '100%')
+          .attr('height', '100%')
+          .style('overflow', 'visible');
+
+        this.radiusScale = d3.scaleLinear()
+          .domain([0, 200])
+          .range([5, 50])
+          .clamp(true);
+
+        this.linkWidthScale = d3.scaleLinear()
+          .domain([0, 200])
+          .range([2, 50])
+          .clamp(true);
+
+        this.colorScale = d3.scaleOrdinal(d3.schemeSet2);
+        this.colorScaleLevel = d3.scaleSequential(d3.interpolateBlues)
+          .domain([0, 6]);
+        // this.colorScaleLevel =d3.scaleOrdinal(d3.schemeBlues);
+        this.types = Array.from(new Set(this.nodes.map((d: any) => d['Type']))).concat(Array.from(new Set(this.links.map((d: any) => d['Type']))));
+        this.container = this.svg.append('svg:g').attr('class', 'everything');
+        this.svg.append('svg:defs').attr('class', 'arrows-marker');
+
+        // Per-type markers, as they don't inherit styles.
+        this.svg.select('.arrows-marker').selectAll('.marker_end')
+          .data(this.types)
+          .enter()
+          .append('svg:marker')
+          .attr('class', 'marker_end')
+          .attr('id', d => `end-arrow-${d}`)
+          .attr('viewBox', '0 -5 10 10')
+          // .attr("refX", 10)
+          .attr('refX', 8)
+          .attr('refY', 0)
+          .attr('markerWidth', 5)
+          .attr('markerHeight', 5)
+          .attr('orient', 'auto')
+          .append('path')
+          .attr('fill', (d: any) => this.colorScale(d))
+          .attr('d', 'M0,-5L10,0L0,5');
+
+        this.svg.select('.arrows-marker').selectAll('.marker_end_hover')
+          .data(this.types)
+          .enter()
+          .append('svg:marker')
+          .attr('class', 'marker_end_hover')
+          .attr('id', d => `end-arrow-hover-${d}`)
+          .attr('viewBox', '0 -5 10 10')
+          // .attr("refX", 10)
+          .attr('refX', 7)
+          .attr('refY', 0)
+          .attr('markerWidth', 5)
+          .attr('markerHeight', 5)
+          .attr('orient', 'auto')
+          .append('path')
+          .attr('fill', (d: any) => d3.rgb(this.colorScale(d)).darker().toString())
+          .attr('d', 'M0,-5L10,0L0,5');
+
+
+        this.svg.call(
+          d3.zoom()
+            .scaleExtent([.1, 4])
+            .on('zoom', (event: any) => { this.container.attr('transform', event.transform); })
+        );
+
+        this.simulation = d3.forceSimulation()
+          // .force('link', d3.forceLink().id((d: any) => d['id']).distance(100).strength(d => 1 / d['metadata']['size']))
+          .force('link', d3.forceLink().id((d: any) => d['id']).distance((d: any) => this.linkDistance(d)))
+          .force('charge', d3.forceManyBody().strength(-2000))
+          .force('center', d3.forceCenter(width / 2, height / 2))
+          .force('x', d3.forceX(width / 2).strength(0.3))
+          .force('y', d3.forceY(height / 2).strength(0.3))
+          .on('tick', () => this.tick());
+
+        // handles to link and node element groups
+        this.container.append('svg:g').attr('fill', 'none').attr('class', 'links');
+        this.container.append('svg:g').attr('class', 'nodes');
+
+
+        // init D3 drag support
+        this.drag = d3.drag()
+        .on('start', (event: any, d: any) => this.draggedStart(event, d))
+        .on('drag', (event: any, d: any) => this.dragged(event, d))
+        .on('end', (event: any, d: any) => this.draggedEnd(event, d));
+
+        // Add Legend
+        this.svg.append('g').attr('class', 'legend');
+        const legend = this.svg.select('.legend');
+        legend.attr(
+          'transform',
+          `translate(${5},${5 + 5 * this.types.length})`
+        );
+
+        legend
+          .selectAll('g')
+          .data(this.types)
+          .join('g')
+          .attr('transform', (d, i) => `translate(5,${15 * i})`)
+          .style('cursor', 'pointer')
+          .html(
+            d => {
+              let label = d;
+              if (d in this.typeLabels) {
+                label = this.typeLabels[d]['label'];
+              }
+
+              return `<circle r="5" stroke="black" stroke-width="1px" fill="${this.color({ 'Type': d, 'Level': 10 })}"></circle>` +
+                `<text transform="translate(8,2.5)">${label}</text>`;
+            }
+          )
+          .on('click', (event: any, d: any) => this.toggleTypeShowHide(event, d));
+
+        this.restart();
+        this.levelsToShow = 2;
+        this.showOnlyLevels(this.levelsToShow, this.maxLevel);
+        }
+    } catch(error){
+      if (this.data.length === 0){
+        this.snackbarService.showError(`The Coupling Graph is not available`);
+      }
+      else{
+        this.snackbarService.showError(error);
+      }
+      this.isLoading = false;
     }
 
   }
