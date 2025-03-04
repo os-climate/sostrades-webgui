@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { Subscription } from 'rxjs';
 import { LoadedStudy, LoadStatus} from 'src/app/models/study.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
@@ -39,6 +39,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     private headerService: HeaderService,
     private socketService: SocketService,
     private snackbarService: SnackbarService,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     public studyCaseLocalStorageService: StudyCaseLocalStorageService,
     private router: Router) {
@@ -92,9 +93,23 @@ export class SidenavComponent implements OnInit, OnDestroy {
   }
 
   onClickTreeview(loadedStudy: LoadedStudy) {
-    this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`}});
+    
+    if (loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE) {
+      this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`, edition: 'true'}});
+    } else {
+      this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`}});
+    } 
     this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
-    this.studyCaseMainService.setStudyIsActive();
+    if (this.studyCaseDataService.loadedStudy.loadStatus == LoadStatus.READ_ONLY_MODE) {
+      if (this.studyCaseDataService.preRequisiteReadOnlyDict) {
+        if(this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
+          this.studyCaseMainService.setStudyIsActive();
+        }
+      }
+    }
+    else {
+          this.studyCaseMainService.setStudyIsActive();
+    }
   }
 
   onClickSwitchEditStudy(event: any)

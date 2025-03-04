@@ -215,7 +215,7 @@ export class EditionFormDialogComponent implements OnInit {
         case DialogEditionName.EDITION_STUDY:
           if(this.data.groupId != this.editForm.value.groupId) {
             const validationDialogData = new ValidationDialogData();
-            validationDialogData.message = `You will change the group of the study "${this.editForm.value.name}", users will no more be able to access this study because they may not have access to the new group.`;
+            validationDialogData.message = `You will change the group of the study "${this.editForm.value.name}", users will no more be able to access this study. They may not have access at this group.`;
             validationDialogData.title = " Warning"
             validationDialogData.buttonOkText = 'Ok';
             validationDialogData.secondaryActionConfirmationNeeded = false;

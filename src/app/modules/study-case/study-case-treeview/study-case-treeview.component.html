@@ -130,6 +130,7 @@
     >
     <button
     mat-button
+    *ngIf="!isStudyReadOnly" 
     [matTooltip]="'Download study data into csv'"
     (click)="downloadStudy($event)"
     >

@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LoadingStudyDialogData } from 'src/app/models/dialog-data.model';
-import { LoadingDialogStep } from 'src/app/models/loading-study-dialog.model';
+import { DEFAULT_DIALOG_STEPS, LoadingDialogStep, READONLY_DIALOG_STEPS } from 'src/app/models/loading-study-dialog.model';
 
 @Component({
   selector: 'app-loading-study-dialog',
@@ -17,33 +17,20 @@ export class LoadingStudyDialogComponent implements OnInit {
   public tootipTitle: string;
   public tooltipErrorMessage: string;
 
-  public steps = [
-    { 
-      step: LoadingDialogStep.ACCESSING_STUDY_SERVER, 
-      labelBefore: 'Accessing Study server', labelAfter:'Study Server Running'
-    },
-    { 
-      step: LoadingDialogStep.LOADING_STUDY, 
-      labelBefore: 'Loading Study', labelAfter:'Study loaded'
-    },
-    { 
-      step: LoadingDialogStep.LOADING_ONTOLOGY,
-      labelBefore: 'Loading ontology', labelAfter:'Study Ready' 
-    }
-  ];
+  public steps: any;  
 
   constructor(
     public dialogRef: MatDialogRef<LoadingStudyDialogData>,
     @Inject(MAT_DIALOG_DATA) public data: LoadingStudyDialogData,
   ) {
-    this.tootipTitle = ""
-    this.tooltipErrorMessage = ""
+    this.tootipTitle = "";
+    this.tooltipErrorMessage = "";
+    this.steps = DEFAULT_DIALOG_STEPS;
   }
 
   ngOnInit(): void {
     this.currentStep = this.data.step;
     this.title = this.data.title;
-
     // Transform title and add tooltip on title if lenght > 20
     const prefixCreation = 'Create study case '
     if (this.data.title.toLocaleLowerCase().startsWith(prefixCreation.toLocaleLowerCase())) {
@@ -66,6 +53,14 @@ export class LoadingStudyDialogComponent implements OnInit {
 
   }
 
+  setReadOnlySteps(read_only_step: boolean) {
+    if (read_only_step) {
+      this.steps = READONLY_DIALOG_STEPS
+    } else {
+      this.steps = DEFAULT_DIALOG_STEPS
+    }     
+  }
+
   setError(error:string){
     this.errorMessage = error;
     if(this.errorMessage.length > 200) {
@@ -80,6 +75,7 @@ export class LoadingStudyDialogComponent implements OnInit {
   onCancelClick() {
     this.data.cancel = true;
     this.dialogRef.close(this.data);
+    this.dialogRef = null;
   }
 }
 

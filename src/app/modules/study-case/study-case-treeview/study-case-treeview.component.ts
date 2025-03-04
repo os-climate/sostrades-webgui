@@ -897,7 +897,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           this.snackbarService.showError(studyCaseStatusList.studyCalculationErrorMessage);
         }
         // Reload the study in order to get all post postprocessing data
-        const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true).subscribe({
+        const studySubscription = this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, true, false).subscribe({
           next: (resultLoadedStudy) => {
             const loadedstudyCase = resultLoadedStudy as LoadedStudy;
             this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedstudyCase, ()=>{
@@ -1323,7 +1323,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.showStudyRefreshing = true;
     const oldCurrentSelectedNode = this.currentSelectedNode;
 
-    this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false).subscribe(loadedStudy => {
+    this.studyCaseMainService.loadStudy(this.studyCaseDataService.loadedStudy.studyCase.id, false, false).subscribe(loadedStudy => {
       this.root = (loadedStudy as LoadedStudy).treeview;
 
       // Check if current selected node still exist

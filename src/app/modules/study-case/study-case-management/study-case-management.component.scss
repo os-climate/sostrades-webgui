@@ -156,23 +156,18 @@ tr:hover .actions-hover-row {
 
 .favoriteOnStudyManagementPage {
   cursor: pointer;
-  margin-top: 5px;
-  margin-left: 10px;
+
   font-size: 15px;
   color: gold;
 }
 
 .notFavoriteOnStudyManagementPage {
   cursor: pointer;
-  margin-top: 5px;
-  margin-left: 10px;
   font-size: 15px;
 }
 
 .favoriteOnWelcomePage {
   cursor: default;
-  margin-top: 5px;
-  margin-left: 10px;
   font-size: 15px;
   color: gold;
 }
@@ -190,8 +185,15 @@ tr:hover .actions-hover-row {
   font-size: 19px;
 }
 
-.link-study-title:hover {
-  text-decoration: underline;
+.link-study-title {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
 }
 
 .mat-column-process .cell-content,
@@ -202,7 +204,7 @@ tr:hover .actions-hover-row {
 
 .mat-column-process,
 .mat-column-repository{
-  width: 20% !important;
+  width: 15% !important;
 }
 .mat-column-name{
   width: 10% !important;

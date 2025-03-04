@@ -50,6 +50,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
   private onShowDataManagementSubscription: Subscription;
+
   public modelsFullPathList: string[];
   public hasAccessToStudy: boolean;
   private userLevel: UserLevel;
@@ -126,22 +127,20 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
     if (this.userService.hasAccessToStudy()) {
       this.hasAccessToStudy = true;
-      if (this.studyCaseDataService.loadedStudy === null) {
-        this.routerSubscription = this.route.queryParams.subscribe(params => {
-          // If study is defined has query parameter then we reload the study
+      this.routerSubscription = this.route.queryParams.subscribe(params => {
+        // If study is defined has query parameter then we reload the study
+        if (this.studyCaseDataService.loadedStudy === null || this.studyCaseDataService.loadedStudy === undefined) {
           if ('studyId' in params) {
             if (params.studyId !== null && params.studyId !== undefined) {
                 this.appDataService.loadCompleteStudy(params.studyId, '', isStudyLoaded => {
                   if (isStudyLoaded) {
                     this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
                   }
-                });
+              }, !('edition' in params));
             }
           }
-        });
-      }
-    } else {
-      this.hasAccessToStudy = false;
+        }
+      });
     }
     this.selectedUserlevel = this.userLevelList[this.filterService.filters.userLevel - 1];
 
@@ -153,7 +152,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       //show the data management tab
       this.showSearch = false;
       this.selectedTabIndex = 0;
-    }})
+    }});
   }
 
   setDiplayableItems() {
@@ -287,10 +286,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       }
       this.applyStyleToDocumentationTab();
     }
-  }
-
-  onClickStudyWorkspace(){
-    this.studyCaseMainService.setStudyIsActive();
   }
 
   goToProcessDocumentation(processIdentifier: string) {

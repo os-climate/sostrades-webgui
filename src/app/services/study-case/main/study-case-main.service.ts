@@ -40,27 +40,27 @@ export class StudyCaseMainService extends MainHttpService {
   /// -----------------------------------------------------------------------------------------------------------------------------
 
   //#region Load study
-  loadStudy(studyId: number, withEmit: boolean, withTimeout = true): Observable<LoadedStudy> {
+  loadStudy(studyId: number, withEmit: boolean, readOnly: boolean, withTimeout = true): Observable<LoadedStudy> {
     if (withTimeout) {
       const loaderObservable = new Observable<LoadedStudy>((observer) => {
         // Start study case loading to other services
-        this.loadStudyTimeout(studyId, withEmit, observer, false);
+        this.loadStudyTimeout(studyId, withEmit, observer, false, readOnly);
       });
       return loaderObservable;
 
     }
     else {
-      return this.internalLoadStudy(studyId);
+      return this.internalLoadStudy(studyId, readOnly);
     }
 
   }
 
-  private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean) {
-    this.internalLoadStudy(studyId).subscribe(
+  private loadStudyTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, addToStudyManagement: boolean, readOnly: boolean) {
+    this.internalLoadStudy(studyId, readOnly).subscribe(
       {next:(loadedStudy) => {
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
-            this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+            this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement, readOnly);
           }, 2000);
         } else {
           if(withEmit){
@@ -74,9 +74,9 @@ export class StudyCaseMainService extends MainHttpService {
       error:() => {
         //just try another time to be sure server is not available
         setTimeout(() => {
-          this.internalLoadStudy(studyId).subscribe(
+          this.internalLoadStudy(studyId, readOnly).subscribe(
             {next: () => {
-              this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement);
+              this.loadStudyTimeout(studyId, withEmit, loaderObservable, addToStudyManagement, readOnly);
             },
             error:(error) => {
               loaderObservable.error(error);
@@ -88,63 +88,16 @@ export class StudyCaseMainService extends MainHttpService {
         
   }
 
-  private internalLoadStudy(studyId: number): Observable<LoadedStudy> {
-    return this.http.get(`${this.apiRoute}/${studyId}`).pipe(map(
+  private internalLoadStudy(studyId: number, readOnly: boolean): Observable<LoadedStudy> {
+    const params = new HttpParams().set('verify_read_only_capability', readOnly);
+    return this.http.get(`${this.apiRoute}/${studyId}`, { params: params }).pipe(map(
       response => {
         return LoadedStudy.Create(response);
       }));
   }
 
-  loadStudyInReadOnlyModeIfNeeded(studyId: number, withEmit: boolean, withTimeout = true): Observable<LoadedStudy> {
-    if (withTimeout) {
-      const loaderObservable = new Observable<LoadedStudy>((observer) => {
-        // Start study case loading to other services
-        this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, observer);
-      });
-      return loaderObservable;
 
-    }
-    else {
-      return this.internalloadStudyInReadOnlyModeIfNeeded(studyId);
-    }
-
-  }
-
-  private loadStudyInReadOnlyModeIfNeededTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>) {
-    this.internalloadStudyInReadOnlyModeIfNeeded(studyId).subscribe(
-      {next: (loadedStudy) => {
-        if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
-          setTimeout(() => {
-            this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable);
-          }, 2000);
-        } else {
-          if(withEmit){
-            this.updateStudyCaseDataService(loadedStudy);
-            this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-          }
-
-          loaderObservable.next(loadedStudy);
-        }
-      },
-        error:() => {
-          //just try another time to be sure server is not available
-          setTimeout(() => {
-            console.log("Try to load study in read only mode after first failure")
-            this.internalloadStudyInReadOnlyModeIfNeeded(studyId).subscribe(
-              {next: () => {
-                this.loadStudyInReadOnlyModeIfNeededTimeout(studyId, withEmit, loaderObservable);
-              },
-              error:(error) => {
-                loaderObservable.error(error);
-              }
-            });
-          },2000);
-      }
-    });
-        
-  }
-
-  private internalloadStudyInReadOnlyModeIfNeeded(studyId: number): Observable<LoadedStudy> {
+  public getStudyInReadOnlyModeUsingMainServer(studyId: number): Observable<LoadedStudy> {
     return this.http.get(`${this.apiRoute}/${studyId}/read-only-mode`).pipe(map(
       response => {
         if (response !== null && response !== undefined) {
@@ -169,7 +122,7 @@ export class StudyCaseMainService extends MainHttpService {
     return this.http.get(`${this.apiRoute}/${studyid}/reload`, this.options).subscribe(
         { next: () => {
           setTimeout(() => {
-            this.loadStudyTimeout(studyid, true, loaderObservable, true);
+            this.loadStudyTimeout(studyid, true, loaderObservable, true, false);
           }, 2000);
         
       },
@@ -314,7 +267,7 @@ export class StudyCaseMainService extends MainHttpService {
       next:(loadedStudy) => {
       if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
         setTimeout(() => {
-          this.loadStudyTimeout(studyId, false, loaderObservable, false);
+          this.loadStudyTimeout(studyId, false, loaderObservable, false, false);
         }, 2000);
       } else {
         this.updateStudyCaseDataService(null);
@@ -400,12 +353,12 @@ export class StudyCaseMainService extends MainHttpService {
 
   setStudyIsActive(){
     // save the date of the last user activity on the study
-    const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-active`;
-    return this.http.post(url,{}).subscribe({
-       error: (error) => {
-        console.log(error);
-      }
-    });
+      const url = `${this.apiRoute}/${this.studyCaseDataService.loadedStudy.studyCase.id}/is-active`;
+      return this.http.post(url,{}).subscribe({
+        error: (error) => {
+          console.log(error);
+        }
+      });    
   }
 
   checkStudyIsUpAndLoaded(){
