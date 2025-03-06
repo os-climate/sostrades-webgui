@@ -7,7 +7,7 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { LoadStatus, VisualizationDiagrams } from 'src/app/models/study.model';
+import { VisualizationDiagrams } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-visualisation-coupling-graph',
