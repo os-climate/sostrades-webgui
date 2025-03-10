@@ -24,7 +24,7 @@ export class AuthenticationErrorComponent {
     this.platform = '';
     this.keycloakAvailable = false;
     }
-  ngOnInit(): void {
+  OnInit(): void {
     this.keycloakOauthService.getKeycloakOAuthAvailable().subscribe(
       response => {
         this.keycloakAvailable = response;

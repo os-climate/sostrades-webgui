@@ -25,11 +25,11 @@ export class SnackbarService {
   }
 
   showInformation(message: string) {
-    this.openSnackBar(SnackBarTypes.INFORMATIONN, message, '', 3000);
+    this.openSnackBar(SnackBarTypes.INFORMATIONN, message, '', 5000);
   }
 
   showWarning(message: string) {
-    this.openSnackBar(SnackBarTypes.WARNING, message, '', 5000);
+    this.openSnackBar(SnackBarTypes.WARNING, message, '', 7000);
   }
 
   closeSnackbarIfOpened() {

@@ -19,6 +19,7 @@ import { SpreadsheetComponent } from '../../spreadsheet/spreadsheet.component';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { ConnectorDataComponent } from '../../connector-data/connector-data.component';
 import { OntologyParameterUsage } from 'src/app/models/ontology-parameter-usage.model';
+import { LoadStatus } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-ontology-informations',
@@ -369,7 +370,8 @@ export class OntologyInformationsComponent implements OnInit {
         });
         this.loadingDialogService.closeLoading();
       } else { // File in distant server
-        this.studyCaseMainService.getFile(this.data.nodeData.identifier).subscribe({
+        const service = this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE && this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running ? this.studyCaseMainService : this.studyCaseDataService;         
+        service.getFile(this.data.nodeData.identifier).subscribe({
           next: (file) => {
             if (file.byteLength/1024/1024 > 2){
               //the file length is upper than 2Mo, it cannot be displayed

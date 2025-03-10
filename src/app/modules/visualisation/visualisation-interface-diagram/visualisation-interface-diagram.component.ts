@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { VisualizationDiagrams } from 'src/app/models/study.model';
 
 
 
@@ -30,16 +31,30 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
   ) { this.isLoading = true; }
 
   ngOnInit(): void {
-    this.visualisationService.getInterfaceDiagramData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-      next: (res: any) => {
-        this.dotString = res['dotString'];
+    const loadedStudy = this.studyCaseDataService.loadedStudy;
+
+    if (loadedStudy !== null && loadedStudy !== undefined) {
+      if (Object.keys(loadedStudy.n2Diagram).length === 0 ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.INTERFACE)) {
+        if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
+          this.visualisationService.getInterfaceDiagramData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
+            next: (res: any) => {
+              this.dotString = res['dotString'];
+              this.initGraph();
+            },
+            error: (err) => {
+              this.isLoading = false;
+              this.snackbarService.showError(err.description);
+            }
+          }); 
+        } else {
+          this.snackbarService.showError(`This interface diagramme is not available for this study. To show it, please switch to edition mode`);
+          this.isLoading = false;
+        }
+      } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.INTERFACE)){
+        this.dotString = loadedStudy.n2Diagram[VisualizationDiagrams.INTERFACE]['dotString'];
         this.initGraph();
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this.snackbarService.showError(err.description);
       }
-    });
+    }
   }
 
   initGraph(): void {
