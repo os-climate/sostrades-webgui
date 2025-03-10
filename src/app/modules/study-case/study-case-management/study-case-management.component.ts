@@ -339,19 +339,17 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
    * @param loadDirectInReadOnly Flag for direct read-only loading
    * @param loadDirectInEdition Flag for direct edition loading
    */
-  loadStudy(event: MouseEvent, study: Study, loadDirectInReadOnly: boolean, loadDirectInEdition: boolean): void {
+  loadStudy(event: MouseEvent, study: Study, loadDirectInReadOnly: boolean): void {
     if (event.ctrlKey && event.altKey) {
       this.fileUpload.nativeElement.click();
     } 
     else if (loadDirectInReadOnly) {
       this.loadStudyInReadOnlyMode(study);
 
-    } else if (loadDirectInEdition) {
+    } else {
       this.loadStudyInEditionMode(study);
 
-    } else {
-      this.loadStudyUsingReadOnlyByDefault(study);
-    }
+    } 
   }
 
   /**
@@ -375,43 +373,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     this.loadStudyWithCallback(study, false);
   }
 
-  /**
-   * Display dialog before launch the loading study in edition mode (if study has no read only mode)
-   * @param study Study to load
-
-   */
-  private displayValidationDialog(study: Study){
-    const validationDialogData = new ValidationDialogData();
-    validationDialogData.message = `The read only is not available for this study. Do you want to load "${study.name}" in edition mode ?`;
-    validationDialogData.title = ' ';
-    validationDialogData.buttonOkText = 'Ok';
-    validationDialogData.showCancelButton = true;
-    validationDialogData.secondaryActionConfirmationNeeded = false;
-
-    const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
-      disableClose: true,
-      width: '400px',
-      height: '200px',
-      data: validationDialogData,
-    });
-    dialogRefValidate.afterClosed().subscribe(result => {
-      const validationData: ValidationDialogData = result as ValidationDialogData;
-      if (validationData !== null && validationData !== undefined && !validationData.cancel) {
-        this.loadStudyWithCallback(study, false);
-        }
-      });
-  }
+  
 
   /**
    * Loads study in normal mode
    */
   private loadStudyUsingReadOnlyByDefault(study: Study): void {
-    // Display read only mode
-    if (!study.hasReadOnlyFile) {
-      this.displayValidationDialog(study);
-    } else {
-      this.loadStudyWithCallback(study, study.hasReadOnlyFile);
-    }
+    
+    this.loadStudyWithCallback(study, true);
+    
   }
 
   /**
