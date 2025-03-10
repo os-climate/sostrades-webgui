@@ -100,7 +100,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
       this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`}});
     } 
     this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
-    if (this.studyCaseDataService.loadedStudy.loadStatus == LoadStatus.READ_ONLY_MODE) {
+    if (this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
       if (this.studyCaseDataService.preRequisiteReadOnlyDict) {
         if(this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
           this.studyCaseMainService.setStudyIsActive();

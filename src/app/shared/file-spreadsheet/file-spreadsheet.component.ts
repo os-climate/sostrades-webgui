@@ -337,7 +337,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
           });
           this.loadingDialogService.closeLoading();
         } else { // File in distant server
-          const service = this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE && this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running ? this.studyCaseMainService : this.studyCaseDataService;
+          const service = this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE || this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running ? this.studyCaseMainService : this.studyCaseDataService;
           service.getFile(this.nodeData.identifier).subscribe({
             next: (file) => {
               if (file.byteLength/1024/1024 > 2){
