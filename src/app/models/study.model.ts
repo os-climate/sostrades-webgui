@@ -36,6 +36,7 @@ export class Study {
     public generationPodFlavor:string,
     public last_cpu_usage:string,
     public last_memory_usage:string,
+    public hasReadOnlyFile: boolean
 
   ) {
   }
@@ -73,12 +74,13 @@ export class Study {
       jsonData[StudyAttributes.GENERATION_POD_FLAVOR],
       jsonData[StudyAttributes.LAST_CPU_USAGE],
       jsonData[StudyAttributes.LAST_MEMORY_USAGE],
+      jsonData[StudyAttributes.HAS_READ_ONLY_File]
       );
     return result;
   }
 
   get executionStatusLabel():string {
-    return 'EXECUTION ' + this.executionStatus;
+    return this.executionStatus;
   }
 }
 
@@ -184,6 +186,7 @@ export enum StudyAttributes {
   GENERATION_POD_FLAVOR = 'generation_pod_flavor',
   LAST_CPU_USAGE = 'last_cpu_usage',
   LAST_MEMORY_USAGE = 'last_memory_usage',
+  HAS_READ_ONLY_File = 'has_read_only_file'
 }
 
 export enum LoadedStudyAttributes {
@@ -199,6 +202,12 @@ export enum LoadedStudyAttributes {
   CAN_RELOAD = 'can_reload',
   LOAD_STATUS = 'load_status',
   DASHBOARD = 'dashboard'
+}
+
+export enum VisualizationDiagrams {
+  N2DIAGRAM = 'n2_diagram',
+  EXECUTION_SEQUENCE = 'execution_sequence',
+  INTERFACE = 'interface_diagram'
 }
 
 export enum LoadStatus {

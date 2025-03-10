@@ -50,8 +50,11 @@ export class LoadingStudyDialogService {
     });
   }
 
-  isLoadingOpen() {
-    return this.dialogRef !== null;
+  isLoadingOpen(): boolean {
+    if (!this.dialogRef) {
+      return true;
+    }
+    return this.dialogRef.componentInstance !== null;
   }
 
   updateStep(step: LoadingDialogStep) {
@@ -62,6 +65,17 @@ export class LoadingStudyDialogService {
       this.dialogRef.componentInstance !== undefined
     ) {
       this.dialogRef.componentInstance.updateCurrentStep(step);
+    }
+  }
+
+  setReadOnlySteps(read_only_step: boolean) {
+    if (
+      this.dialogRef !== null &&
+      this.dialogRef !== undefined &&
+      this.dialogRef.componentInstance !== null &&
+      this.dialogRef.componentInstance !== undefined
+    ) {
+      this.dialogRef.componentInstance.setReadOnlySteps(read_only_step);
     }
   }
 
