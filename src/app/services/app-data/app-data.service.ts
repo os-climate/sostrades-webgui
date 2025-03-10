@@ -28,6 +28,9 @@ import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
 import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
 import { SocketService } from "../socket/socket.service";
 import { StudyCaseExecutionObserverService } from "../study-case-execution-observer/study-case-execution-observer.service";
+import { ValidationDialogData } from "src/app/models/dialog-data.model";
+import { MatDialog } from "@angular/material/dialog";
+import { ValidationDialogComponent } from "src/app/shared/validation-dialog/validation-dialog.component";
 
 @Injectable({
   providedIn: "root",
@@ -42,6 +45,7 @@ export class AppDataService extends DataHttpService {
   public support : any;
 
   constructor(
+    private dialog: MatDialog,
     private http: HttpClient,
     private studyCaseLoadingService: StudyCaseLoadingService,
     private studyCaseDataService: StudyCaseDataService,
@@ -206,8 +210,9 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
               response.allocation_is_running
           );
         } else {
+            
             // Handle case where read-only is not available
-            this.handleEditionModeAccess(studyId, isStudyLoaded, false);
+            this.displayValidationDialog(studyId, isStudyLoaded);
         }
       }
     },
@@ -215,6 +220,38 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
   });
 }
 
+/**
+   * Display dialog before launch the loading study in edition mode (if study has no read only mode)
+   * @param studyId id of the Study to load
+
+   */
+  private displayValidationDialog(studyId: number, isStudyLoaded: (loaded:boolean) => void){
+    const validationDialogData = new ValidationDialogData();
+    validationDialogData.message = `The read only is not available for this study. Do you want to load this study in edition mode ?`;
+    validationDialogData.title = ' ';
+    validationDialogData.buttonOkText = 'Ok';
+    validationDialogData.showCancelButton = true;
+    validationDialogData.secondaryActionConfirmationNeeded = false;
+
+    const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+      disableClose: true,
+      width: '400px',
+      height: '200px',
+      data: validationDialogData,
+    });
+    dialogRefValidate.afterClosed().subscribe(result => {
+      const validationData: ValidationDialogData = result as ValidationDialogData;
+      if (validationData !== null && validationData !== undefined && !validationData.cancel) {
+        this.handleEditionModeAccess(studyId, isStudyLoaded, false);
+        }
+        else{
+          //cancel loading
+          this.loadingStudyDialogService.closeLoading();
+          this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+        }
+      });
+  }
+  
 /**
 * Handles regular access to study
 * @param studyId ID of the study

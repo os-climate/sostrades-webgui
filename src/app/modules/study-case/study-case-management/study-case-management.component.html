@@ -147,7 +147,7 @@
                 mat-icon-button
                 color="primary"
                 [matTooltip]="'Load ' + element.name + ' in edition mode'" 
-                (click)="loadStudy($event, element, false, true)"
+                (click)="loadStudy($event, element, false)"
               >
                 <i class="fa-solid fa-file-pen"></i>
               </button>
@@ -157,7 +157,7 @@
                 color="primary"
                 [disabled]="!element.hasReadOnlyFile"
                 [matTooltip]="'Load ' + element.name + ' in read only mode'" 
-                (click)="loadStudy($event, element, true, false)"
+                (click)="loadStudy($event, element, true)"
               >
               <i class="fa-solid fa-eye"></i>
               </button>
