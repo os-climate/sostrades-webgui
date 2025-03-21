@@ -26,6 +26,9 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./study-case-treeview-light.component.scss']
 })
 
+/**
+ * This composant is the light treeview for the fullscreen mode
+ */
 export class StudyCaseTreeviewLightComponent implements OnInit, OnDestroy {
 
   private root: TreeView;
@@ -81,12 +84,18 @@ export class StudyCaseTreeviewLightComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // load the treeview
     if (this.studyCaseDataService.loadedStudy !== undefined && this.studyCaseDataService.loadedStudy !== null){
       this.showStudy(this.studyCaseDataService.loadedStudy);
     }
+
+    //refresh the treeview if study has changed
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
       this.showStudy(loadedStudy);    
     });
+
+    //update the selected treenode from the real treeview node change 
+    // (to load the light treeview at the same node of the real treeview)
     this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treeNode =>{
       if (treeNode !== null){
         this.currentSelectedNodeKey = treeNode.fullNamespace;
@@ -110,8 +119,12 @@ export class StudyCaseTreeviewLightComponent implements OnInit, OnDestroy {
       this.studyIsLoaded = true;
       this.studyIsDoneId = currentLoadedStudy.studyCase.id;
 
+      //retreive the treeview built by the real treeview composant
       this.treeControl = this.treeNodeDataService.treeControl;
+
+      //select the current node
       this.nodeClick(this.currentSelectedNode);
+
     } else {
       this.dataSource = new MatTreeNestedDataSource();
       this.originTreeNode = null;
@@ -154,6 +167,7 @@ export class StudyCaseTreeviewLightComponent implements OnInit, OnDestroy {
 
   get currentSelectedNode(): TreeNode {
     if (this.currentSelectedNodeKey === '') {
+      //if there is already a selected node, select this treenode
       if (this.treeNodeDataService.currentTreeNode !== null){
         this.currentSelectedNodeKey = this.treeNodeDataService.currentTreeNode.fullNamespace;
         return this.treeNodeDataService.currentTreeNode;
@@ -205,6 +219,7 @@ export class StudyCaseTreeviewLightComponent implements OnInit, OnDestroy {
   }
 
   saveTreeViewPreferences(node: TreeNode) {
+    //save the opened treenode parent or not
     const isExpanded = this.treeControl.isExpanded(node);
     const panelId = `${node.fullNamespace}.${PanelSection.TREEVIEW_SECTION}`
     this.studyCaseDataService.setUserStudyPreference(panelId, isExpanded).subscribe({
