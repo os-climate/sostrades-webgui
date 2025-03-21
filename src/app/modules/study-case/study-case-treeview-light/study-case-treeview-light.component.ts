@@ -110,14 +110,7 @@ export class StudyCaseTreeviewLightComponent implements OnInit, OnDestroy {
       this.studyIsLoaded = true;
       this.studyIsDoneId = currentLoadedStudy.studyCase.id;
 
-      this.treeControl.expand(this.originTreeNode);
-
-      Object.keys(this.root.rootDict).forEach(treenodeKey => {
-        const panel_id = `${this.root.rootDict[treenodeKey].fullNamespace}.${PanelSection.TREEVIEW_SECTION}`
-        if (this.studyCaseDataService.getUserStudyPreference(panel_id, false)) {
-          this.treeControl.expand(this.root.rootDict[treenodeKey]);
-        }
-      });
+      this.treeControl = this.treeNodeDataService.treeControl;
       this.nodeClick(this.currentSelectedNode);
     } else {
       this.dataSource = new MatTreeNestedDataSource();
