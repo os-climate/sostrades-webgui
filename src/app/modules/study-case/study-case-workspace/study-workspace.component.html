@@ -62,20 +62,7 @@
     Fullscreen
     <mat-icon>fullscreen</mat-icon>
     </button>
-    <button
-      mat-raised-button
-      color="primary"
-      *ngIf="showView && isFullScreenOn"
-      aria-label="Exit"
-      class="fullscreen-button button"
-      (click)="exitFullScreen()"
-    >
-      Exit
-      <mat-icon
-        style="float: right; font-size: 16px; height: 26px; line-height: unset"
-        >fullscreen_exit</mat-icon
-      >
-    </button>
+    
   </div>
 </div>
 <div style="height: 100%; width: 100%;  background-color: white" *ngIf="showSearch">
@@ -91,8 +78,58 @@
   </div>
   <app-search-panel></app-search-panel>
 </div>
-<div #tabGroup style="height: 100%; width: 100%; padding-bottom: 28px; background-color: white"
-*ngIf="!showSearch">
+<div #tabGroup style="height: 100%; width: 100%; background-color: white"
+*ngIf="!showSearch && showView">
+    <as-split [useTransition]="true" unit="pixel" [gutterSize]="10">
+      <as-split-area 
+        [(size)]="treeviewSize" 
+        [order]="1" 
+        [style.display]="isTreeviewVisible ? 'block' : 'none'"
+        *ngIf="isFullScreenOn">
+      <div class="treeview-container">
+        <div class="header-treeview"> 
+            <mat-icon
+              id='close' 
+              matTooltip="Hide treeview" 
+              class="hide-treeview-button cursor-pointer"   
+              (click)="toggleTreeview()"
+              *ngIf="isTreeviewVisible">
+                keyboard_arrow_left
+            </mat-icon> 
+          <div style="margin-left: 5px;">
+            <span>Current study</span>
+            <span id="text-sidenav-study-loaded-name"
+              *ngIf="studyName !== ''"
+              [ngClass]="{'long-title': studyName.length > 13, 'text-wrap': true}"> : {{ studyName }}</span> 
+          </div>
+          
+          
+        </div>
+        <div style="overflow: auto; height: calc(100% - 25px); width: inherit;" >
+          <app-study-case-treeview-light ></app-study-case-treeview-light>
+        </div>
+        
+      </div>
+      
+    </as-split-area>
+    <as-split-area [size]="'*'" [order]="2" [visible]="true">
+      <div style="overflow: hidden;width: 100%;height: 100%;">
+      <div class="fullscreen-container" *ngIf="showView && isFullScreenOn">
+          <mat-icon
+            id='open' 
+            matTooltip="Show treeview" 
+            class="show-treeview-button cursor-pointer"   
+            (click)="toggleTreeview()"
+            *ngIf="!isTreeviewVisible">
+              keyboard_arrow_right
+          </mat-icon> 
+        <button mat-raised-button color="primary"
+          aria-label="Exit" class="exit-fullscreen-button button"
+          matTooltip="Exit fullscreen" 
+          (click)="exitFullScreen()"> Exit
+          <mat-icon style="float: right; font-size: 16px; height: 100%; line-height: unset">fullscreen_exit</mat-icon>
+        </button>
+      </div>
   <mat-tab-group
     class="container-workspace"
     *ngIf="showView"
@@ -141,6 +178,9 @@
     >
       <app-dashboard></app-dashboard>
     </mat-tab> -->
-
+    
   </mat-tab-group>
+</div>
+</as-split-area>
+</as-split>
 </div>
