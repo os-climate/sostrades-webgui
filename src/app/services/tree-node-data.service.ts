@@ -8,8 +8,10 @@ export class TreeNodeDataService {
 
   private treeNodeDataSource: BehaviorSubject<TreeNode> = new BehaviorSubject(null);
   currentTreeNodeData = this.treeNodeDataSource.asObservable();
+  public currentTreeNode :TreeNode = null;
 
   send_tree_node(data: TreeNode) {
     this.treeNodeDataSource.next(data);
+    this.currentTreeNode = data;
   }
 }
