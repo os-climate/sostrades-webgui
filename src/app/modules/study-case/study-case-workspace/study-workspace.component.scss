@@ -1,7 +1,8 @@
 .container-workspace {
   height: calc(100% - 28px);
   width: 100%;
-
+  position: relative;
+  z-index: 0;
   padding: 5px;
 }
 
@@ -49,14 +50,21 @@
   width: 100%;
 }
 
-.fullscreen-container{
-  margin-top: 5px;
-  height: 28px;
-  width: 100%;
+
+
+.float-right-button{
+  float: right;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
 }
 
-.exit-fullscreen-button{
+.float-left-button{
   float: right;
+  position: absolute;
+  top: 5px;
+  z-index: 1;
 }
 
 .hide-treeview-button{
@@ -68,8 +76,8 @@
   height: 24px;
 }
 
-.show-treeview-button{
-  color: var(--sostrades-app-primary);
+.transparent-button{
+  color: silver;
   background: transparent;
   border-color: transparent;
   width: 24px;
