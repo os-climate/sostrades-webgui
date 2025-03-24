@@ -245,6 +245,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           }
         });
         this.nodeClick(this.currentSelectedNode);
+        this.treeNodeDataService.treeControl = this.treeControl;
         this.showChangesButtons = this.studyCaseLocalStorageService.studyHaveUnsavedChanges(currentLoadedStudy.studyCase.id.toString());
 
         // Set new subscription to calculation if needed, and cleaning old one's
