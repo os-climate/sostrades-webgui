@@ -31,6 +31,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public showView: boolean;
   public showSearch: boolean;
   public isFullScreenOn: boolean;
+  public isTreeviewVisible: boolean;
+  public treeviewSize:number;
   public tabNameSelected: string;
   public studyIsLoaded: boolean;
   public showPostProcessing: boolean;
@@ -60,6 +62,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public processIdentifier : string;
   public newUserLevelValue: number;
   public selectedTabIndex: number;
+  public studyName: string;
 
 
 
@@ -99,6 +102,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.onShowDataManagementSubscription = null;
     this.tabNameSelected = '';
     this.isFullScreenOn = false;
+    this.isTreeviewVisible = true;
     this.showDocumentation = false;
     this.hasDocumentation = false;
     this.modelsFullPathList = [];
@@ -113,6 +117,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.processIdentifier = '';
     this.newUserLevelValue = 0;
     this.selectedTabIndex = 0;
+    this.treeviewSize = 300;
+    this.studyName = "";
   }
 
   ngOnInit() {
@@ -157,6 +163,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   setDiplayableItems() {
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      this.studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
       this.showView = true;
       this.showSearch = false;
       // Check  study status to display or not charts
@@ -322,6 +329,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.tabGroup.nativeElement.msRequestFullscreen();
     }
   }
+
+  toggleTreeview() {
+    this.isTreeviewVisible = !this.isTreeviewVisible;
+  }
+  
 
   private applyStyleToDocumentationTab() {
    /* In order to remove the double scrool bar in documentation tab without changes any other tabs*/

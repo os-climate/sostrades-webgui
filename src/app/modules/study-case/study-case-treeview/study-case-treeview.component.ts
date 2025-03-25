@@ -69,6 +69,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   private onStudySubmissionEndSubscription: Subscription;
   private onRoomUserUpdateSubscription: Subscription;
   private onNewNotificationSubscription: Subscription;
+  private onTreeNodeChangeSubscription: Subscription;
 
   public recursive = false; // If true Treeview fully expand all child node
   public levels = new Map<TreeNode, number>();
@@ -183,6 +184,11 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngOnInit() {
+    this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treeNode =>{
+      if (treeNode !== null){
+        this.currentSelectedNodeKey = treeNode.fullNamespace;
+      }
+    })
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(loadedStudy => {
       if (loadedStudy !== null) {
 
@@ -239,6 +245,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
           }
         });
         this.nodeClick(this.currentSelectedNode);
+        this.treeNodeDataService.treeControl = this.treeControl;
         this.showChangesButtons = this.studyCaseLocalStorageService.studyHaveUnsavedChanges(currentLoadedStudy.studyCase.id.toString());
 
         // Set new subscription to calculation if needed, and cleaning old one's
@@ -392,6 +399,11 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     if (this.dialogRefModification !== null && this.dialogRefModification !== undefined) {
       this.dialogRefModification.close();
       this.dialogRefModification = null;
+    }
+
+    if (this.onTreeNodeChangeSubscription !== null && this.onTreeNodeChangeSubscription !== undefined) {
+      this.onTreeNodeChangeSubscription.unsubscribe();
+      this.onTreeNodeChangeSubscription = null;
     }
 
     this.studyDialogService.closeAccessLink();

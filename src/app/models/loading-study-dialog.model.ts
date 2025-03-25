@@ -34,7 +34,7 @@ export const READONLY_DIALOG_STEPS: DialogStep[] = [
   {
     step: LoadingDialogStep.ACCESSING_STUDY_SERVER,
     labelBefore: 'Accessing read-only',
-    labelAfter: 'Read only mode recieved'
+    labelAfter: 'Read only mode received'
   },
   {
     step: LoadingDialogStep.LOADING_STUDY,
