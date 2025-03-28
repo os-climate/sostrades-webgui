@@ -106,24 +106,23 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.treeviewSize = 300;
     this.studyName = "";
     this.tabs = [
-      { label: 'Documentation', component: DocumentationComponent },
       { label: 'Data', component: DataManagementContainerComponent },
       { label: 'Charts', component: PostProcessingComponent },
       { label: 'Dashboard', component: DashboardComponent },
       { label: 'Visualisation', component: VisualisationContainerComponent },
+      { label: 'Documentation', component: DocumentationComponent },
     ];
     this.available_tabs = [
-      { label: 'Documentation', component: DocumentationComponent },
       { label: 'Data', component: DataManagementContainerComponent },
       { label: 'Charts', component: PostProcessingComponent },
       { label: 'Dashboard', component: DashboardComponent },
       { label: 'Visualisation', component: VisualisationContainerComponent },
+      { label: 'Documentation', component: DocumentationComponent },
     ];
   }
 
   ngOnInit() {
-    this.setSelectedTabByLabel('Documentation')
-    this.setSelectedTabByLabel('Documentation')
+    this.setSelectedTabByLabel('Documentation');
     this.showSearch = false;
     this.setDiplayableItems();
 
@@ -173,9 +172,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   toggleTabVisibility(label: string, isVisible: boolean) {
     const tabIndex = this.tabs.findIndex(t => t.label === label);
     const tab = this.available_tabs.find(t => t.label === label);
-    if (isVisible && tab && tabIndex === -1)
-      this.tabs.push(tab)
-    else if (!isVisible && tabIndex !== -1)
+    if (isVisible && tab && tabIndex === -1) {
+      const correctIndex = this.available_tabs.findIndex(t => t.label === label);
+      this.tabs.splice(correctIndex, 0, tab)
+      console.log(this.tabs)
+    } else if (!isVisible && tabIndex !== -1)
       this.tabs.splice(tabIndex, 1)
   }
 
@@ -206,8 +207,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.toggleTabVisibility('Dashboard', false);
       } else {
         this.toggleTabVisibility('Data', true);
-        this.toggleTabVisibility('Visualisation', true);
         this.toggleTabVisibility('Dashboard', true);
+        this.toggleTabVisibility('Visualisation', true);
       }
 
       // Activate show not editable variable if study is read only
@@ -229,11 +230,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
       if (treenode !== null && treenode !== undefined) {
         if (this.studyCaseDataService.loadedStudy.noData) {
-          this.toggleTabVisibility('Visualisation', false)
           this.toggleTabVisibility('Dashboard', false)
+          this.toggleTabVisibility('Visualisation', false)
         } else {
-          this.toggleTabVisibility('Visualisation', treenode.isRoot)
           this.toggleTabVisibility('Dashboard', treenode.isRoot)
+          this.toggleTabVisibility('Visualisation', treenode.isRoot)
         }
         this.toggleTabVisibility('Documentation', !(treenode.nodeType === 'data'))
         // Remove duplicate modelsFullPath
@@ -345,9 +346,5 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   closeSearchPanel() {
     this.showSearch = false;
-  }
-
-  exitFullScreen() {
-    document.exitFullscreen();
   }
 }

@@ -121,14 +121,14 @@
     <as-split-area [size]="'*'" [order]="2" [visible]="true">
       <div style="overflow: hidden;width: 100%;height: 100%;">
       <!--button that show the treeview, only visible if the treeview is hidden in fullscreen mode-->
-      <mat-icon
-        id='open'
-        matTooltip="Show treeview"
-        class="transparent-button float-left-button cursor-pointer"
-        (click)="toggleTreeview()"
-        *ngIf="showView && isFullScreenOn && !isTreeviewVisible">
-          keyboard_arrow_right
-      </mat-icon>
+        <mat-icon
+          id='open'
+          matTooltip="Show treeview"
+          class="transparent-button float-left-button cursor-pointer"
+          (click)="toggleTreeview()"
+          *ngIf="showView && isFullScreenOn && !isTreeviewVisible">
+            keyboard_arrow_right
+        </mat-icon>
         <div #tabGroup style="height: 100%; width: 100%; padding-bottom: 28px; background-color: white"
         *ngIf="!showSearch">
           <mat-tab-group
