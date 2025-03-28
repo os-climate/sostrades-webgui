@@ -17,7 +17,11 @@ import { ProcessService } from 'src/app/services/process/process.service';
 import { Routing } from 'src/app/models/enumeration.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
-
+import { DataManagementContainerComponent } from 'src/app/modules/data-management/data-management-container/data-management-container.component';
+import { PostProcessingComponent } from 'src/app/modules/post-processings/post-processing/post-processing.component';
+import { VisualisationContainerComponent } from 'src/app/modules/visualisation/visualisation-container/visualisation-container.component';
+import { DocumentationComponent } from 'src/app/modules/study-case/study-case-documentation/study-case-documentation.component';
+import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-study-workspace',
@@ -35,17 +39,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public treeviewSize:number;
   public tabNameSelected: string;
   public studyIsLoaded: boolean;
-  public showPostProcessing: boolean;
-  public showVisualisation: boolean;
-  public showPostProcessingContent: boolean;
-  public showVisualisationContent: boolean;
-  public showDocumentationContent: boolean;
-
-  public showDataManagement: boolean;
-  public showDocumentation: boolean;
-  public showDataValidation: boolean;
-  // Hide the dashboad page
-  // public showDashboard: boolean;
   public hasDocumentation: boolean;
   public hasDashboard: boolean;
   private onStudyCaseChangeSubscription: Subscription;
@@ -63,6 +56,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public newUserLevelValue: number;
   public selectedTabIndex: number;
   public studyName: string;
+  public tabs: {label: string, component?: any}[];
+  public available_tabs: {label: string, component: any}[]
 
 
 
@@ -91,11 +86,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     private treeNodeDataService: TreeNodeDataService) {
     this.showView = false;
     this.showSearch = false;
-    this.showPostProcessing = false;
-    this.showVisualisation = false;
-    this.showPostProcessingContent = false;
-    this.showVisualisationContent = false;
-    this.showDocumentationContent = false;
     this.onStudyCaseChangeSubscription = null;
     this.studyIsLoaded = false;
     this.onTreeNodeChangeSubscription = null;
@@ -103,13 +93,9 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.tabNameSelected = '';
     this.isFullScreenOn = false;
     this.isTreeviewVisible = true;
-    this.showDocumentation = false;
     this.hasDocumentation = false;
     this.modelsFullPathList = [];
-    // this.showDashboard = false;
     this.hasDashboard = false;
-    this.showDataManagement = true;
-    this.showDataValidation = false;
     this.hasAccessToStudy = false;
     this.userLevel = new UserLevel();
     this.userLevelList = this.userLevel.userLevelList;
@@ -119,14 +105,28 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.selectedTabIndex = 0;
     this.treeviewSize = 300;
     this.studyName = "";
+    this.tabs = [
+      { label: 'Documentation', component: DocumentationComponent },
+      { label: 'Data', component: DataManagementContainerComponent },
+      { label: 'Charts', component: PostProcessingComponent },
+      { label: 'Dashboard', component: DashboardComponent },
+      { label: 'Visualisation', component: VisualisationContainerComponent },
+    ];
+    this.available_tabs = [
+      { label: 'Documentation', component: DocumentationComponent },
+      { label: 'Data', component: DataManagementContainerComponent },
+      { label: 'Charts', component: PostProcessingComponent },
+      { label: 'Dashboard', component: DashboardComponent },
+      { label: 'Visualisation', component: VisualisationContainerComponent },
+    ];
   }
 
   ngOnInit() {
-    this.tabNameSelected = 'Documentation';
-    this.showDocumentationContent=true
+    this.setSelectedTabByLabel('Documentation')
+    this.setSelectedTabByLabel('Documentation')
     this.showSearch = false;
     this.setDiplayableItems();
-    
+
     this.onStudyCaseChangeSubscription = this.studyCaseDataService.onStudyCaseChange.subscribe(() => {
       this.setDiplayableItems();
     });
@@ -161,18 +161,36 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     }});
   }
 
-  setDiplayableItems() {
+  setSelectedTabByLabel(label: string) {
+    setTimeout(() => {
+      const index = this.tabs.findIndex(tab => tab.label === label);
+      if (index !== -1) {
+        this.selectedTabIndex = index
+      }
+    })
+  }
+
+  toggleTabVisibility(label: string, isVisible: boolean) {
+    const tabIndex = this.tabs.findIndex(t => t.label === label);
+    const tab = this.available_tabs.find(t => t.label === label);
+    if (isVisible && tab && tabIndex === -1)
+      this.tabs.push(tab)
+    else if (!isVisible && tabIndex !== -1)
+      this.tabs.splice(tabIndex, 1)
+  }
+
+    setDiplayableItems() {
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
       this.showView = true;
       this.showSearch = false;
       // Check  study status to display or not charts
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
-        this.showPostProcessing = true;
-        // this.showDashboard = true;
+        this.toggleTabVisibility('Charts', true);
+        this.toggleTabVisibility('Dashboard', true);
       } else {
-        this.showPostProcessing = false;
-        // this.showDashboard = false;
+        this.toggleTabVisibility('Charts', false);
+        this.toggleTabVisibility('Dashboard', false);
       }
 
       // Set process
@@ -180,18 +198,16 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
       // Check if study is loaded without data
       if (this.studyCaseDataService.loadedStudy.noData) {
-        this.showDataManagement = false;
-        this.showVisualisation = false;
-        this.showDataValidation = false;
-        // this.showDashboard = false;
+        this.toggleTabVisibility('Data', false);
+        this.toggleTabVisibility('Visualisation', false);
 
         // Study is loaded without data management, triggering charts display
-        this.showPostProcessingContent = true;
+        this.toggleTabVisibility('Charts', true);
+        this.toggleTabVisibility('Dashboard', false);
       } else {
-        this.showDataManagement = true;
-        this.showVisualisation = true;
-        this.showDataValidation = true;
-        // this.showDashboard = true;
+        this.toggleTabVisibility('Data', true);
+        this.toggleTabVisibility('Visualisation', true);
+        this.toggleTabVisibility('Dashboard', true);
       }
 
       // Activate show not editable variable if study is read only
@@ -199,28 +215,27 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
         this.filterService.filters.showReadOnly = true;
       }
 
-      
+
     } else {
       this.showView = false;
     }
-    this.displayDocumentationTab();
+    this.setSelectedTabByLabel('Documentation')
     this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treenode => {
-      this.showVisualisation = false;
       this.showSearch = false;
-      this.showDataValidation = false;
-      this.showDocumentation = false;
       this.hasDocumentation = false;
+      this.toggleTabVisibility('Visualisation', false)
+      this.toggleTabVisibility('Documentation', false)
+
 
       if (treenode !== null && treenode !== undefined) {
         if (this.studyCaseDataService.loadedStudy.noData) {
-          this.showVisualisation = false;
-          this.showDataValidation = false;
+          this.toggleTabVisibility('Visualisation', false)
+          this.toggleTabVisibility('Dashboard', false)
         } else {
-          this.showVisualisation = treenode.isRoot;
-          this.showDataValidation = treenode.isRoot;
+          this.toggleTabVisibility('Visualisation', treenode.isRoot)
+          this.toggleTabVisibility('Dashboard', treenode.isRoot)
         }
-
-        this.showDocumentation = !(treenode.nodeType === 'data');
+        this.toggleTabVisibility('Documentation', !(treenode.nodeType === 'data'))
         // Remove duplicate modelsFullPath
         const modelsFullPathListWithoutDuplicate: string[] = [];
         treenode.modelsFullPathList.forEach((element, index) => {
@@ -237,25 +252,9 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
           const process = this.studyCaseDataService.loadedStudy.studyCase.process
           this.modelsFullPathList.push(repo.concat('.',process ))
         }
-        
+
       }
     });
-  }
-
-  displayDocumentationTab()
-  {
-    let selectedTabIndex = 1;
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      if (this.showDataManagement && this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData){
-        selectedTabIndex = 3;
-      }
-      else if ((!this.showDataManagement && this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData) ||
-      (this.showDataManagement && !this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData) ||
-      (this.showDataManagement && this.showPostProcessing && this.studyCaseDataService.loadedStudy.noData)){
-        selectedTabIndex = 2;
-      }
-      this.selectedTabIndex = selectedTabIndex;
-    } 
   }
 
   ngOnDestroy() {
@@ -276,21 +275,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   onSelectedTabChange(event: MatTabChangeEvent) {
     if (event.tab !== null && event.tab !== undefined) {
-      this.tabNameSelected = event.tab.textLabel;
-
-      this.showPostProcessingContent = false;
-      this.showVisualisationContent = false;
-      this.showDocumentationContent = false;
-
-
-      if (event.tab.textLabel === 'Charts') {
-        this.showPostProcessingContent = true;
-      } else if (event.tab.textLabel === 'Visualisation') {
-        this.showVisualisationContent = true;
-      } else if (event.tab.textLabel === 'Documentation') {
-        // this is needed so that when we are not on the tab, the request to get the documentation is not sent
-        this.showDocumentationContent = true;
-      }
+      this.setSelectedTabByLabel(event.tab.textLabel)
       this.applyStyleToDocumentationTab();
     }
   }
@@ -333,7 +318,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   toggleTreeview() {
     this.isTreeviewVisible = !this.isTreeviewVisible;
   }
-  
+
 
   private applyStyleToDocumentationTab() {
    /* In order to remove the double scrool bar in documentation tab without changes any other tabs*/

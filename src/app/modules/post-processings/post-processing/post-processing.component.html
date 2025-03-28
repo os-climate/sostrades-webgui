@@ -61,6 +61,7 @@
   </div>
 
   <div #PlotsContainer class="plot-body" (scroll)="scrollPlots()">
+<!--    mettre un bouton ici ?  -->
     <div class="plot-resize-zone" #Plots (resized)="onResizePlotZone()">
       <app-post-processing-bundle
         [postProcessingBundle]="bundle"
