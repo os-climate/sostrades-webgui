@@ -43,6 +43,21 @@ export class LoadingDialogData extends AbstractDialogData {
   }
 }
 
+export class LoadingProgressDialogData extends AbstractDialogData {
+  progress:number;
+  nextProgress:number;
+  title:string;
+  progressText:string;
+
+  public constructor() {
+    super();
+    this.progress = 0;
+    this.nextProgress = 0;
+    this.title = ""
+    this.progressText = "";
+  }
+}
+
 export class AddOrganizationDialogData extends AbstractDialogData {
   organizationName: string;
 

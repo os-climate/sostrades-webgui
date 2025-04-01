@@ -333,17 +333,16 @@
             >
             <i class="fa-solid fa-copy"></i>
             </button>
-
             <button
-              [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"
+              [id]="'btn-study-management-download-' + element.groupName +'-' + element.name"
               style="margin-right: 5px"
               mat-icon-button
               color="primary"
-              *ngIf="element.isManager"
-              [matTooltip]="'Delete ' + element.name"
-              (click)="deleteStudiesValidation([element])"
+              *ngIf="element.hasReadOnlyFile"
+              [matTooltip]="'Download ' + element.name + ' study'"
+              (click)="downloadStudy(element)"
             >
-              <i class="fa-regular fa-trash-can fa-fw"> </i>
+              <i class="fa-solid fa-download"> </i>
             </button>
             <button
               style="margin-right: 5px"
@@ -364,6 +363,17 @@
               (click)="studyAccess(element)"
             >
               <i class="fa-solid fa-user-plus fa-fw"> </i>
+            </button>
+            <button
+              [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"
+              style="margin-right: 5px"
+              mat-icon-button
+              color="primary"
+              *ngIf="element.isManager"
+              [matTooltip]="'Delete ' + element.name"
+              (click)="deleteStudiesValidation([element])"
+            >
+              <i class="fa-regular fa-trash-can fa-fw"> </i>
             </button>
           </td>
         </ng-container>

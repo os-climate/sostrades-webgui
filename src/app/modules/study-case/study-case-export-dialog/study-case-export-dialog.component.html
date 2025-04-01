@@ -1,0 +1,35 @@
+<div class="flex-container">
+  <h1 mat-dialog-title>Study case export</h1>
+
+  <div class="error-message" *ngIf="isInError">
+    <mat-icon class="icon-error-message">error</mat-icon>
+    <span *ngIf="errorMessage.length < 200">{{errorMessage}}</span>
+    <textarea matInput *ngIf="errorMessage.length > 200" readonly>
+      {{errorMessage}}
+    </textarea>
+  </div>
+  <div mat-dialog-actions class="container-action" >
+    <button
+      id="download"
+      mat-raised-button
+      color="primary" 
+      (click)="onDownloadClick()" 
+      *ngIf="isFinished">
+      Download
+    </button>
+    <button
+      id="reload"
+      mat-raised-button
+      color="primary" 
+      (click)="onReloadClick()" >
+      Reload
+    </button>
+    <button
+      id="close"
+      mat-raised-button
+      color="primary" 
+      (click)="onCloseClick()" >
+      Close
+    </button>
+  </div>
+</div>

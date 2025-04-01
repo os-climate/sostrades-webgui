@@ -521,6 +521,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
     // Start timeout to load study in Read only
     getStudyInReadOnlyMode.subscribe({ 
       next: (loadedStudy) => {
+        if(loadedStudy !== undefined){
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyInReadOnlyModeTimeout(studyId, withEmit, loaderObservable, useDataServer);
@@ -536,6 +537,11 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
           }
           loaderObservable.next(loadedStudy);
         }
+      }
+      else{
+        console.log("Error while getting read only mode, no study received");
+        loaderObservable.error("Error while getting read only mode, no study received");
+      }
       },
         error:() => {
           //just try another time to be sure server is not available

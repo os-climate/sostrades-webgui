@@ -1,0 +1,20 @@
+<div class="flex-container">
+  <h1 mat-dialog-title>{{title}}</h1>
+  <app-progress-bar
+    class="container-dialog"
+    progressMode="buffer"
+    [progressText]="progressText"
+    [value]="progress"
+    [bufferValue]="buffer"
+  ></app-progress-bar>
+  <div mat-dialog-actions >
+    <button 
+      id="loading-close-button"
+      mat-button
+      (click)="onCloseClick()" 
+      style="margin-right: 5px" 
+      color="warn">
+      Close
+    </button>
+  </div>
+</div>

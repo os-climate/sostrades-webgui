@@ -1,0 +1,17 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.container-dialog {
+  height: 100%;
+  width: 100%;
+}
+
+.mat-mdc-dialog-title {
+  margin-bottom: 30px;
+}

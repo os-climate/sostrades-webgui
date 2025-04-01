@@ -1,0 +1,121 @@
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+.progress-bar-size{
+  width: 100px;
+}
+
+.progress-container {
+    display: flex;
+
+  
+  }
+
+
+.bullet-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
+
+.mat-icon{
+  overflow: visible;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.step-descrition{
+  position: absolute;
+  top: 110px;
+  font-size: smaller;
+}
+
+
+  .inline-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+  }
+  
+  .container-dialog {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .mat-mdc-dialog-title {
+    margin-bottom: 30px;
+  }
+
+  .button-end{
+    margin-top: 50px;
+  }
+  
+  .disable-cancel-button-message {
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .button-error{
+    margin-top: 30px;
+    justify-content: center;
+    font-size: small;
+  }
+
+  .icon-error-message{
+    font-size: medium;
+    color:#E4002B;
+    margin:0px;
+    vertical-align: sub;
+  }
+
+  .error-message{
+    display: flex;
+  }
+
+  
+.line-succeed{
+  width: 100%;
+  height: 4px;
+  background-color: green; 
+  
+
+}
+
+.line-zero{
+  width: 100%;
+  height: 4px;
+  background-color: #ccc; 
+  
+}
+
+.line-error{
+  width: 100%;
+  height: 4px;
+  background-color: #E4002B; 
+  
+}
+
+  
+
+.color-before{
+  color: darkgrey;
+}
+
+.color-error{
+  color: #E4002B;
+}
+
+textarea {
+  width: 500px;
+  min-height: 100px;
+  max-height: 230px;
+  word-break: break-all;
+  text-align: justify;
+}
+ 

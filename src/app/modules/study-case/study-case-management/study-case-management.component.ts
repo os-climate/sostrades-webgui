@@ -36,6 +36,8 @@ import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/e
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { StandAloneStudyService } from 'src/app/services/stand-alone-study/stand-alone-study.service';
+import { ProgressStatus } from 'src/app/models/progress-status.model';
 
 
 @Component({
@@ -125,7 +127,8 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     private processService: ProcessService,
     private userService: UserService,
     private studyCreationService: StudyCaseCreationService,
-    private flavorService: FlavorsService
+    private flavorService: FlavorsService,
+    private standAloneStudyService: StandAloneStudyService
   ) {
     this.isFavorite = true;
     this.isLoading = true;
@@ -1081,4 +1084,45 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  downloadStudy(study){
+    // check download status
+    const studyId = study.study.id;
+    this.standAloneStudyService.getExportProgressStatus(studyId).subscribe({
+      next:(status)=>{
+        if (status === undefined || status === null){
+          //start the export
+          this.standAloneStudyService.export(studyId).subscribe({
+            next:(status)=>{
+                this._startCheckProgressForExport(studyId, status);
+              },
+            error:(error)=>{
+              const errorDescription = error?.description || 'An error occurred while exporting the study.';
+              this.snackbarService.showError(errorDescription);
+            }
+          });
+        }
+        else{
+          this._startCheckProgressForExport(studyId, status);
+        }
+      },
+      error:(error)=>{
+        const errorDescription = error?.description || 'An error occurred while exporting the study.';
+        this.snackbarService.showError(errorDescription);
+      }
+    });
+  }
+
+  _startCheckProgressForExport(studyId: number, status:ProgressStatus){
+    if (status === undefined || status === null){
+      status = new ProgressStatus(0,"",0,0,true,"Error while starting to export",false);
+    }
+    if (!status.isFinished && !status.isInError){
+      // start checking status + open progress
+    }
+    else{
+      //open popup download with error or download file
+    }
+  }
+
 }
