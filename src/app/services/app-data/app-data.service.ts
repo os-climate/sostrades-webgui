@@ -3,7 +3,7 @@ import {
   LoadedStudy,
   LoadStatus,
   StudyCasePayload,
-  StudyCaseInitialSetupPayload,
+  StudyCaseInitialSetupPayload
 } from "src/app/models/study.model";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
@@ -476,9 +476,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
               this.studyCaseDataService.loadedStudy !== null &&
               this.studyCaseDataService.loadedStudy !== undefined
             ) {
-              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE || 
-                (this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE && 
-                 this.studyCaseDataService.preRequisiteReadOnlyDict?.allocation_is_running)) {
+              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE) {
                 this.studyCaseMainService.checkStudyIsUpAndLoaded();
               }
             }
