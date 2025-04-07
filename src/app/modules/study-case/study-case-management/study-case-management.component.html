@@ -8,14 +8,14 @@
       [disabled]="isLoading"
       (click)="loadStudyManagementData()"
     >
-    <mat-icon 
+    <mat-icon
     class="refresh-icon"
     >
       refresh
     </mat-icon>
       Refresh list
-    </button>   
-    <h2 *ngIf="getTitle" id="favorite-studies-title">Last opened and favorite studies 
+    </button>
+    <h2 *ngIf="getTitle" id="favorite-studies-title">Last opened and favorite studies
         <button
           id="button-info"
           mat-button
@@ -25,9 +25,9 @@
         >
           <i class="fa-solid fa-circle-info"></i>
         </button>
-        
+
     </h2>
-      
+
     <mat-label *ngIf="getFilter" class="number-studies">
       Number of Studies <b>{{ studyCount }}</b>
     </mat-label>
@@ -135,18 +135,18 @@
                 *ngIf="!getOnlyFavoriteStudy || (getOnlyFavoriteStudy && element.isFavorite)"
                 (click)="!getOnlyFavoriteStudy && addOrRemoveFavoriteStudy(element)"
                 [matTooltip]="element.isFavorite ? 'Favorite' : 'Not favorite'">
-                <i  
-                  [class]="'fa-star ' + (getOnlyFavoriteStudy ? 'fa-solid favoriteOnWelcomePage' : 
-                  (element.isFavorite ? 'fa-solid favoriteOnStudyManagementPage' : 'fa-regular notFavoriteOnStudyManagementPage'))" 
+                <i
+                  [class]="'fa-star ' + (getOnlyFavoriteStudy ? 'fa-solid favoriteOnWelcomePage' :
+                  (element.isFavorite ? 'fa-solid favoriteOnStudyManagementPage' : 'fa-regular notFavoriteOnStudyManagementPage'))"
                   style="border: none; background-color: transparent">
                 </i>
               </button>
-             
+
               <button
                 [id]="'btn-study-management-edition-' + element.groupName + '-' + element.name"
                 mat-icon-button
                 color="primary"
-                [matTooltip]="'Load ' + element.name + ' in edition mode'" 
+                [matTooltip]="'Load ' + element.name + ' in edition mode'"
                 (click)="loadStudy($event, element, false)"
               >
                 <i class="fa-solid fa-file-pen"></i>
@@ -156,7 +156,7 @@
                 mat-icon-button
                 color="primary"
                 [disabled]="!element.hasReadOnlyFile"
-                [matTooltip]="'Load ' + element.name + ' in read only mode'" 
+                [matTooltip]="'Load ' + element.name + ' in read only mode'"
                 (click)="loadStudy($event, element, true)"
               >
               <i class="fa-solid fa-eye"></i>
@@ -170,11 +170,11 @@
         <!-- Name Column -->
         <ng-container [matColumnDef]="columnName.NAME">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Study name
-            <i *ngIf="getFilter" id="filter-name" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
+            <i *ngIf="getFilter" id="filter-name" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'"
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element">
-              <a 
+              <a
                 routerLink="/study/{{element.id}}"
                 class="link-study-title"
                 [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
@@ -189,14 +189,14 @@
         <!-- Group Column -->
         <ng-container [matColumnDef]="columnName.GROUP">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Group
-            <i *ngIf="getFilter" id="filter-group" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.GROUP)? 'icon-filter-values':'icon-filter-any-values'" 
+            <i *ngIf="getFilter" id="filter-group" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.GROUP)? 'icon-filter-values':'icon-filter-any-values'"
             (click)="displayFilterDialog(columnName.GROUP, $event)" ></i>
           </th>
           <td
             mat-cell
             *matCellDef="let element"
           >
-              <span 
+              <span
               [matTooltip]="element.groupId"
               >{{ element.groupName }}</span>
           </td>
@@ -205,7 +205,7 @@
         <!-- Repository Column -->
         <ng-container [matColumnDef]="columnName.REPOSITORY">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Repository
-            <i *ngIf="getFilter" id="filter-repository" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'" 
+            <i *ngIf="getFilter" id="filter-repository" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'"
             (click)="displayFilterDialog(columnName.REPOSITORY, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element">
@@ -220,12 +220,12 @@
         <!-- Process Column -->
         <ng-container [matColumnDef]="columnName.PROCESS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Process
-            <i *ngIf="getFilter" id="filter-process" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'" 
+            <i *ngIf="getFilter" id="filter-process" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.PROCESS)? 'icon-filter-values':'icon-filter-any-values'"
             (click)="displayFilterDialog(columnName.PROCESS, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element" >
             <div class="cell-content">
-            <span 
+            <span
               [matTooltip]="element.process"
               matTooltipPosition="right"
               >
@@ -237,7 +237,7 @@
         <!-- Calculation Status Column -->
         <ng-container [matColumnDef]="columnName.STATUS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Execution Status
-            <i *ngIf="getFilter" id="filter-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS) ? 'icon-filter-values':'icon-filter-any-values'" 
+            <i *ngIf="getFilter" id="filter-status" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.STATUS) ? 'icon-filter-values':'icon-filter-any-values'"
             (click)="displayFilterDialog(columnName.STATUS, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element">
@@ -251,7 +251,7 @@
         <!-- Flavor Column -->
         <ng-container [matColumnDef]="columnName.FLAVOR" *ngIf="showFlavors">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Pod size
-            <i *ngIf="getFilter" id="filter-flavor" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.FLAVOR) ? 'icon-filter-values':'icon-filter-any-values'" 
+            <i *ngIf="getFilter" id="filter-flavor" class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.FLAVOR) ? 'icon-filter-values':'icon-filter-any-values'"
             (click)="displayFilterDialog(columnName.FLAVOR, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element">
@@ -280,13 +280,13 @@
         </ng-container>
 
 
-        
+
 
         <!-- Action Column -->
         <ng-container [matColumnDef]="columnName.ACTION">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
-            
+
             <input
                 type="file"
                 #fileUpload

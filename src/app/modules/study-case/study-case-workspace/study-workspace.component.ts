@@ -156,17 +156,16 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       next:()=>{
       //show the data management tab
       this.showSearch = false;
-      this.selectedTabIndex = 0;
+      // this.selectedTabIndex = 0;
+      this.setSelectedTabByLabel('Data')
     }});
   }
 
   setSelectedTabByLabel(label: string) {
-    setTimeout(() => {
-      const index = this.tabs.findIndex(tab => tab.label === label);
-      if (index !== -1) {
-        this.selectedTabIndex = index
-      }
-    })
+    const index = this.tabs.findIndex(tab => tab.label === label);
+    if (index !== -1 && this.selectedTabIndex !== index) {
+      this.selectedTabIndex = index
+    }
   }
 
   toggleTabVisibility(label: string, isVisible: boolean) {
@@ -175,12 +174,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     if (isVisible && tab && tabIndex === -1) {
       const correctIndex = this.available_tabs.findIndex(t => t.label === label);
       this.tabs.splice(correctIndex, 0, tab)
-      console.log(this.tabs)
     } else if (!isVisible && tabIndex !== -1)
       this.tabs.splice(tabIndex, 1)
   }
 
-    setDiplayableItems() {
+  setDiplayableItems() {
     if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
       this.studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
       this.showView = true;
@@ -274,11 +272,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelectedTabChange(event: MatTabChangeEvent) {
-    if (event.tab !== null && event.tab !== undefined) {
-      this.setSelectedTabByLabel(event.tab.textLabel)
+  onSelectedTabChange() {
       this.applyStyleToDocumentationTab();
-    }
   }
 
   goToProcessDocumentation(processIdentifier: string) {

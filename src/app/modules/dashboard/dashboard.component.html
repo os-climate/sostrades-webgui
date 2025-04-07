@@ -40,6 +40,9 @@
                   "
                   [plotData]="plot"
                   [fullNamespace]=""
+                  [plotIndex]="0"
+                  [disciplineName]=""
+                  [name]=""
                 >
                 </app-post-processing-plotly>
 
@@ -54,12 +57,22 @@
 </div>
 
 <ng-template #missingDashboardMessage>
-  <div style="padding: 5px">
-    <div class="missing-dashboard">
-      <div style="font-size: 12px; line-height: unset">
-        This study case has no dashboard provided yet
-      </div>
-    </div>
+  <div
+    *ngIf="favorites.length > 0"
+    class="plot-resize-zone"
+  >
+    <app-post-processing-plotly
+      *ngFor="let plot of favorites"
+      [class]="
+        plot['data'] && plot['data'][0] && plot['data'][0]['type'] === 'table'
+          ? 'table'
+          : 'plot'
+      "
+      [fullNamespace]=""
+      [plotData]="plot.plotData"
+      [disciplineName]="plot.disciplineName"
+      [name]="plot.name"
+      [plotIndex]="plot.plotIndex">
+    </app-post-processing-plotly>
   </div>
 </ng-template>
-
