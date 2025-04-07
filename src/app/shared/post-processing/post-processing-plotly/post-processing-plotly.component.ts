@@ -86,7 +86,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
   saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
     const plot = new PostProcessingPlotly(plotId.disciplineName, plotId.name, plotId.id, plotData);
     isFavorite ? this.dashboardService.selectPlot(plot) : this.dashboardService.removePlot(plot);
-    console.log(`plot ${isFavorite ? 'saved': 'removed'}: ` + plotId + '\n' + JSON.stringify(plotData));
+    console.log(`plot ${isFavorite ? 'saved': 'removed'}: ` + plot.identifier + '\n' + JSON.stringify(plotData));
   }
 
   loadFavorites() {

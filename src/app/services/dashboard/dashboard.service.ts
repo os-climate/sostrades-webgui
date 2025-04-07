@@ -25,6 +25,6 @@ export class DashboardService {
   }
 
   isSelected(plotId: string) {
-    return Object.keys(this.favoritePlots).indexOf(plotId) > 0
+    return plotId in this.favoritePlots;
   }
 }

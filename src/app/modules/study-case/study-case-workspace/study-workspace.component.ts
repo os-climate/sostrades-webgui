@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
@@ -56,10 +55,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public newUserLevelValue: number;
   public selectedTabIndex: number;
   public studyName: string;
-  public tabs: {label: string, component?: any}[];
-  public available_tabs: {label: string, component: any}[]
-
-
+  public tabs: {label: TabIds, component?: any}[];
+  public available_tabs: {label: TabIds, component: any}[]
 
   @HostListener('document:fullscreenchange', ['$event'])
   @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -106,18 +103,18 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.treeviewSize = 300;
     this.studyName = "";
     this.tabs = [
-      { label: 'Data', component: DataManagementContainerComponent },
-      { label: 'Charts', component: PostProcessingComponent },
-      { label: 'Dashboard', component: DashboardComponent },
-      { label: 'Visualisation', component: VisualisationContainerComponent },
-      { label: 'Documentation', component: DocumentationComponent },
+      { label: TabIds.DATA, component: DataManagementContainerComponent },
+      { label: TabIds.CHARTS, component: PostProcessingComponent },
+      { label: TabIds.DASHBOARD, component: DashboardComponent },
+      { label: TabIds.VISUALISATION, component: VisualisationContainerComponent },
+      { label: TabIds.DOCUMENTATION, component: DocumentationComponent },
     ];
     this.available_tabs = [
-      { label: 'Data', component: DataManagementContainerComponent },
-      { label: 'Charts', component: PostProcessingComponent },
-      { label: 'Dashboard', component: DashboardComponent },
-      { label: 'Visualisation', component: VisualisationContainerComponent },
-      { label: 'Documentation', component: DocumentationComponent },
+      { label: TabIds.DATA, component: DataManagementContainerComponent },
+      { label: TabIds.CHARTS, component: PostProcessingComponent },
+      { label: TabIds.DASHBOARD, component: DashboardComponent },
+      { label: TabIds.VISUALISATION, component: VisualisationContainerComponent },
+      { label: TabIds.DOCUMENTATION, component: DocumentationComponent },
     ];
   }
 
@@ -342,4 +339,12 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   closeSearchPanel() {
     this.showSearch = false;
   }
+}
+
+export enum TabIds {
+  DATA = 'Data',
+  CHARTS = 'Charts',
+  DASHBOARD = 'Dashboard',
+  VISUALISATION = 'Visualisation',
+  DOCUMENTATION = 'Documentation'
 }
