@@ -12,18 +12,18 @@
         id="text-sidenav-study-loaded-name"
         *ngIf="studyName !== ''"
         [ngClass]="{'long-title': studyName.length > 13}"
-        > : {{ studyName }}</span> 
-        <p *ngIf="isReadOnlyMode" > 
-          <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;margin-right:3px"></i> 
-          <span 
-          style="font-weight: bold;" 
+        > : {{ studyName }}</span>
+        <p *ngIf="isReadOnlyMode; else isEditionMode"  >
+          <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;margin-right:3px"></i>
+          <span
+          style="font-weight: bold;"
           matTooltip="Your study is in read only mode, it cannot be updated or computed unless you click on the 'Switch to edition mode' button"
           matTooltipPosition="left"
-          >Read Only Mode </span> 
-          <button 
+          >Read Only Mode </span>
+          <button
             mat-button
-            class="edit-button cursor-pointer" 
-            id="study-switch-to-edition-button" 
+            class="edit-button cursor-pointer"
+            id="study-switch-to-edition-button"
             *ngIf="isReadOnlyMode"
             matTooltip="Leave the read only mode."
             color="primary"
@@ -32,17 +32,37 @@
             Switch to edition mode
           </button>
         </p>
-        
+        <ng-template #isEditionMode>
+          <p>
+            <i class="fa-solid fa-triangle-exclamation" style="color: white;margin-right:3px"></i>
+            <span
+              style="font-weight: bold;"
+              matTooltip="Your study is in edition mode, it can be updated or computed unless you click on the 'Switch to read only mode' button"
+              matTooltipPosition="left"
+            >Edition Mode </span>
+            <button
+              mat-button
+              class="edit-button cursor-pointer"
+              id="study-switch-to-read-only-button"
+              matTooltip="Leave the edition mode."
+              color="primary"
+              (click)="onClickSwitchReadOnlyStudy($event)">
+              <i class="fa-solid fa-repeat"></i>
+              Switch to read only mode
+            </button>
+          </p>
+        </ng-template>
+
       </div>
 
-      <div > 
+      <div >
         <mat-icon
-        id='close'  
-        class="close-button cursor-pointer"   
+        id='close'
+        class="close-button cursor-pointer"
         (click)="closeStudy($event)"
-        >close</mat-icon> 
+        >close</mat-icon>
       </div>
-  </div> 
+  </div>
     <div>
       <app-study-case-treeview></app-study-case-treeview>
     </div>
