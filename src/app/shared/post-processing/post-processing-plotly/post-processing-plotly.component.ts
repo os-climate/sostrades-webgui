@@ -2,6 +2,8 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import * as Plotly from 'plotly.js-dist-min';
+import { DashboardService } from "../../../services/dashboard/dashboard.service";
+import { PostProcessingPlotly } from "../../../models/post-processing.model";
 
 @Component({
   selector: 'app-post-processing-plotly',
@@ -11,10 +13,14 @@ import * as Plotly from 'plotly.js-dist-min';
 export class PostProcessingPlotlyComponent implements OnInit {
   @Input() plotData: any;
   @Input() fullNamespace: string;
-  @ViewChild('PlotlyPlaceHolder', { static: true }) private PlotlyPlaceHolder: ElementRef;
+  @Input() disciplineName: string;
+  @Input() name: string;
+  @Input() plotIndex: number;
 
+  @ViewChild('PlotlyPlaceHolder', { static: true }) private PlotlyPlaceHolder: ElementRef;
   public isPlotLoading: boolean;
   public studyCaseValidation: StudyCaseValidation;
+  public isFavorite: boolean;
 
   private readonly downloadIcon = {
     width: 24,
@@ -42,7 +48,9 @@ export class PostProcessingPlotlyComponent implements OnInit {
     scale: 8
   };
 
-  constructor(private studyCaseValidationService: StudyCaseValidationService) {
+  constructor(
+    private studyCaseValidationService: StudyCaseValidationService,
+    public dashboardService: DashboardService) {
     this.isPlotLoading = true;
     this.studyCaseValidation = null;
   }
@@ -52,7 +60,38 @@ export class PostProcessingPlotlyComponent implements OnInit {
       this.setupValidation();
       this.setupLayout();
       this.initializePlot();
+      this.loadFavorites();
     }
+  }
+
+  OnFavoriteClick() {
+    const plotId =  {
+      disciplineName: this.disciplineName,
+      name: this.name,
+      id: this.plotIndex,
+    }
+    this.isFavorite = !this.isFavorite;
+    if (this.isFavorite)
+      this.saveFavorites(plotId, this.plotData, true)
+    else
+      this.saveFavorites(plotId, null, false)
+  }
+
+  /**
+   * @param plotId object containing information to create the identifier
+   * @param plotData content of the plot
+   * @param isFavorite add if true and remove if false
+   * @description Add or remove the plot in the dashboard
+   * */
+  saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
+    const plot = new PostProcessingPlotly(plotId.disciplineName, plotId.name, plotId.id, plotData);
+    isFavorite ? this.dashboardService.selectPlot(plot) : this.dashboardService.removePlot(plot);
+    console.log(`plot ${isFavorite ? 'saved': 'removed'}: ` + plot.identifier + '\n' + JSON.stringify(plotData));
+  }
+
+  loadFavorites() {
+    const plot = new PostProcessingPlotly(this.disciplineName, this.name, this.plotIndex, this.plotData);
+    this.isFavorite = this.dashboardService.isSelected(plot.identifier)
   }
 
   private setupValidation() {
@@ -193,7 +232,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
       ...gd._context,
       responsive: true,
       modeBarButtons: [[
-        ...(this.plotData.csv_data?.length > 0 
+        ...(this.plotData.csv_data?.length > 0
           ? [{
               name: 'Download data as csv file',
               icon: this.downloadIcon,
@@ -203,8 +242,8 @@ export class PostProcessingPlotlyComponent implements OnInit {
             }]
           : []),
         ...this.createCommonModeBarButtons(currentLayout.showlegend)
-        .filter(button => 
-          typeof button === 'string' || 
+        .filter(button =>
+          typeof button === 'string' ||
           (typeof button === 'object' && button.name !== 'Enlarge plot')
         )
       ]],
@@ -256,7 +295,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
 
   private initializePlot() {
     const modeBarButtons = [[
-      ...(this.plotData.csv_data?.length > 0 
+      ...(this.plotData.csv_data?.length > 0
         ? [{
             name: 'Download data as csv file',
             icon: this.downloadIcon,
@@ -280,7 +319,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
         this.plotData
       );
 
-      this.PlotlyPlaceHolder.nativeElement.on('plotly_afterplot', () => {
+        this.PlotlyPlaceHolder.nativeElement.on('plotly_afterplot', () => {
         this.isPlotLoading = false;
       });
     }, 0);
@@ -293,9 +332,11 @@ export class PostProcessingPlotlyComponent implements OnInit {
 
     const cleanTitle = filename.replace('<b>', '').replace('</b>', '').split(' ').join('_');
     downloadLink.setAttribute('download', `${cleanTitle}.csv`);
-    
+
     document.body.appendChild(downloadLink);
     downloadLink.click();
     downloadLink.parentNode.removeChild(downloadLink);
   }
+  //
+  // protected readonly PostProcessingPlotly = PostProcessingPlotly;
 }
