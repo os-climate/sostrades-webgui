@@ -37,10 +37,13 @@
             <i class="fa-solid fa-triangle-exclamation" style="color: white;margin-right:3px"></i>
             <span
               style="font-weight: bold;"
-              matTooltip="Your study is in edition mode, it can be updated or computed unless you click on the 'Switch to read only mode' button"
               matTooltipPosition="left"
+              [matTooltip]="loadedStudy.studyCase.hasReadOnlyFile ?
+                'Your study is in edition mode, it can be updated or computed unless you click on the \'Switch to read only mode\' button'
+                : 'Your study is in edition mode, there is no read-only mode available currently'"
             >Edition Mode </span>
             <button
+              *ngIf="loadedStudy.studyCase.hasReadOnlyFile"
               mat-button
               class="edit-button cursor-pointer"
               id="study-switch-to-read-only-button"
