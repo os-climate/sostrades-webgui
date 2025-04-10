@@ -93,12 +93,12 @@ export class SidenavComponent implements OnInit, OnDestroy {
   }
 
   onClickTreeview(loadedStudy: LoadedStudy) {
-    
+
     if (loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE) {
       this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`, edition: 'true'}});
     } else {
       this.router.navigate([Routing.STUDY_WORKSPACE], {queryParams: {studyId: `${loadedStudy.studyCase.id}`}});
-    } 
+    }
     this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
     if (this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
       if (this.studyCaseDataService.preRequisiteReadOnlyDict) {
@@ -117,6 +117,12 @@ export class SidenavComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     event.preventDefault();
     this.appDataService.loadStudyInEditionMode();
+  }
+
+  onClickSwitchReadOnlyStudy(event: any) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.appDataService.loadStudyInReadOnlyMode(this.studyCaseDataService.loadedStudy.studyCase.id, this.studyCaseDataService.loadedStudy.studyCase.name);
   }
 
   closeStudy(event: any) {
