@@ -522,32 +522,41 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyInReadOnlyModeTimeout(studyId, withEmit, loaderObservable, useDataServer);
-          }, 2000);
+          }, 3000);
         } else {
           //get current study user info
+          if (loadedStudy !== null && loadedStudy !== undefined && loadedStudy.studyCase !== null && loadedStudy.studyCase !== undefined){
           this.studyCaseDataService.getStudy(loadedStudy.studyCase.id, false).subscribe({next:(study)=>{
-            loadedStudy.studyCase = study;
+            if (study !== null && study !== undefined){
+              loadedStudy.studyCase = study;
+            }
             if(withEmit){
                 const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
                 if ((currentLoadedStudy !== null) && (currentLoadedStudy !== undefined)) {
                   this.studyCaseExecutionObserverService.removeStudyCaseObserver(currentLoadedStudy.studyCase.id);
                 }
-               
+              
                 this.studyCaseDataService.setCurrentStudy(loadedStudy);
                 this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
             }
-         
+        
             loaderObservable.next(loadedStudy);
+            
           },
           error:(error) => {
             loaderObservable.error(error);
           }});
+          }
+          else{
+            loaderObservable.error("Error while retreiving loaded study");
+          }
         }
         },
           error:(error) => {
             loaderObservable.error(error);
         }
     });
+  
   }
 
   /// -----------------------------------------------------------------------------------------------------------------------------
