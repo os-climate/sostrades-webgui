@@ -123,11 +123,13 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  getStudy(studyId: number): Observable<Study> {
+  getStudy(studyId: number, addToStudyManagement:boolean=true): Observable<Study> {
     return this.http.get<Study>(`${this.apiRoute}/${studyId}`).pipe(map(
       response => {
-        const study = Study.Create(response)
-        this.studyManagementData.splice(0,0, study)
+        const study = Study.Create(response);
+        if (addToStudyManagement){
+          this.studyManagementData.splice(0,0, study);
+        }
         return study;
       }));
   }
