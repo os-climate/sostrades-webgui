@@ -537,19 +537,8 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
           loaderObservable.next(loadedStudy);
         }
       },
-        error:() => {
-          //just try another time to be sure server is not available
-          setTimeout(() => {
-            console.log("Try to load study in read only mode after first failure")
-            getStudyInReadOnlyMode.subscribe(
-              {next: () => {
-                this.loadStudyInReadOnlyModeTimeout(studyId, withEmit, loaderObservable, useDataServer);
-              },
-              error:(error) => {
-                loaderObservable.error(error);
-              }
-            });
-          },2000);
+        error:(error) => {
+          loaderObservable.error(error);
       }
     });
   }
