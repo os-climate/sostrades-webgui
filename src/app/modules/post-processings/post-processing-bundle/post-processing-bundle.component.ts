@@ -141,6 +141,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
 
   private addSectionInPostProcessing(postProcessing: any, needToUpdate:boolean ) {
     
+    this.postProcessingWithoutSection = [];
     const postProcessingWithoutSectionWithFilter: PostProcessingBundle[] = [];
     const postProcessingKeyCharts: PostProcessingBundle[] = [];
     // Create a dictionnary to section the post_processing by a name
