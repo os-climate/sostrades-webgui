@@ -411,7 +411,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
           const loadedStudyCase = resultLoadedStudy as LoadedStudy;
 
           // in case of read only mode, set post processings of the loaded study case
-          const isReadOnlyMode = loadedStudyCase.loadStatus == LoadStatus.READ_ONLY_MODE
+          const isReadOnlyMode = loadedStudyCase.loadStatus === LoadStatus.READ_ONLY_MODE
           if (isReadOnlyMode){
 
             // Set post processing dictionnary from the loaded study
