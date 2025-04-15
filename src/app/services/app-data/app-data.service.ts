@@ -390,19 +390,13 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
  
     let loadedStudy$ = new Observable<LoadedStudy>((observer) => observer.next(null));
     if(readOnlyMode) {
-        if (hasReadOnly) {
-          // Use data server to load study in read only mode
-          this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY)
-          loadedStudy$ = this.getStudyInReadOnlyMode(studyId,withEmit, !serverIsRunningForReadOnly);
-        }
-        else {
-          // Use the study server that is opening to load the study in read only mode
-          loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit, readOnlyMode);
-        }
+        // Use data server to load study in read only mode
+        this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY)
+        loadedStudy$ = this.getStudyInReadOnlyMode(studyId,withEmit, !serverIsRunningForReadOnly);
     }
     else {
       // Load study in edition mode
-      loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit, readOnlyMode);
+      loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit);
     }
     
     loadedStudy$.subscribe({
