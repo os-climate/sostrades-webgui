@@ -1,0 +1,263 @@
+.configure-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border-radius: 0 0 5px 5px;
+}
+
+
+
+.header-treeview {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 25px;
+  border-radius: 5px 5px 0 0;
+  background-color: var(--sostrades-app-primary);
+  color: #ffffff;
+}
+
+.flex-container {
+  width: 100%;
+  height: 100%;
+  padding-top: 12px;
+  border-radius: 0 0 5px 5px;
+  
+}
+
+.filter-zone {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  margin: 4px;
+  background-color: white;
+  border: solid;
+  border-width: 1px;
+  border-radius: 7px;
+  border-color: lightgrey;
+  border-radius: 0 0 5px 5px;
+
+}
+
+.filter-input {
+  padding: 2px;
+  flex: 1;
+}
+
+.filter-icon {
+  margin: 2px;
+}
+
+.radio-label {
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.no-data-to-display {
+  color: grey;
+  height: 100%;
+  width: 100%;
+  padding-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  background-color: #f9f9f9;
+  border-radius: 0 0 5px 5px;
+}
+
+.active {
+  background: lightgrey;
+}
+
+
+
+mat-tree {
+  margin-left: 10px;
+}
+
+.mat-tree-node {
+  padding: 0;
+  min-height: 24px;
+  background-color: white;
+  z-index: 1 !important;
+}
+
+li.mat-tree-node,
+li div {
+  margin: 0;
+  position: relative;
+  top: 12px;
+}
+
+li.tree-container {
+  border-bottom: 0;
+}
+
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  padding-left: 10px;
+  border: 1px dotted grey;
+  border-width: 0 0 1px 1px;
+  position: relative;
+  top: -12px;
+}
+
+li ul {
+  border-top: 1px dotted grey;
+  margin-left: -11px;
+  padding-left: 19px;
+}
+
+.last-child-left-border {
+  border-left: 1px solid white;
+  margin-left: -11px !important; // necessary to overload 'li ul' margin-left
+  padding-left: 18px !important;
+}
+
+.fa-fw {
+  width: auto;
+}
+
+
+.mat-mdc-button {
+  line-height: unset;
+  height: 24px;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.VIRTUAL {
+  background: radial-gradient(circle at 6px 6px, purple, #000);
+}
+
+.PENDING {
+  background: radial-gradient(circle at 6px 6px, blue, #000);
+}
+
+.DONE {
+  background: radial-gradient(circle at 6px 6px, lightgreen, #000);
+  content: "D";
+}
+
+.RUNNING {
+  background: radial-gradient(circle at 6px 6px, orange, #000);
+}
+
+.FAILED {
+  background: radial-gradient(circle at 6px 6px, red, #000);
+}
+
+.CONFIGURE {
+  background: radial-gradient(circle at 6px 6px, brown, #000);
+}
+
+.INPUT_DATA {
+  background: radial-gradient(circle at 6px 6px, rgb(99, 194, 238), #000);
+}
+
+.execution-bullet {
+  line-height: 19px;
+  top: 0 !important;
+  font-weight: 500;
+  color: white;
+  height: 18px;
+  min-width: 18px;
+  font-size: 12px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.execution {
+  color: green;
+}
+
+.stop {
+  color: red;
+}
+
+.status-off {
+  color: black;
+}
+
+.status-off-grey {
+  color: grey;
+}
+
+.status-on {
+  color: black;
+}
+
+.toolbar-icon {
+  height: 13px;
+}
+
+.toolbar-icon-font-aw {
+  font-size: 18px;
+  height: 26px;
+  width: 24px;
+}
+
+.toolbar {
+  height: 35px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#study-access-link {
+  font-size: 13px;
+}
+
+
+.waiting-refresh {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  padding: 5px;
+  border-radius: 7px;
+  border: solid;
+  border-width: 1px;
+  border-color: lightgray;
+  background-color: #f9f9f9f9;
+  z-index: 12000;
+}
+
+.text-loading {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.mat-mdc-progress-spinner,
+.mat-mdc-progress-spinner {
+  stroke: #3fb53f !important;
+}
+
+.iconValid {
+  margin-left: 5px;
+  cursor: default;
+  font-size: 22px;
+  height: 23px;
+  min-width: 20px;
+}
+
+.node-fullnamespace {
+  margin-left: 5px !important;
+  font-size: 13px;
+  display: block;
+}
+::ng-deep .mat-mdc-button-touch-target {
+  height: 0px !important;
+}

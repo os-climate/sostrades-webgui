@@ -1,6 +1,8 @@
 .container-workspace {
-  height: 100%;
-  overflow-y: auto;
+  height: calc(100% - 28px);
+  width: 100%;
+  position: relative;
+  z-index: 0;
   padding: 5px;
 }
 
@@ -8,6 +10,90 @@
   display: flex;
   justify-content: space-between;
   margin: 3px;
+}
+
+.treeview-container {
+  height: calc(100% - 25px);
+  width: calc(100% - 5px);
+  min-width: 24px;
+  margin:5px 0px 0px 5px;
+  flex-grow: 1;
+  background-color: white;
+  border-radius: 7px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 7px 7px 7px 7px;
+  border-color: var(--sostrades-app-primary);
+  overflow: hidden;
+}
+
+
+.header-treeview {
+  display: block;
+  justify-content: space-between;
+  text-align: left;
+  max-height: 25px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 25px;
+  border-radius: 5px 5px 0 0;
+  background-color: var(--sostrades-app-primary);
+  color: #ffffff;
+}
+
+.text-wrap{
+  word-wrap: normal;
+}
+
+.long-title {
+  height: calc(100% - 60px);
+  width: 100%;
+}
+
+
+
+.float-right-button{
+  float: right;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
+}
+
+.float-left-button{
+  float: right;
+  position: absolute;
+  top: 5px;
+  z-index: 1;
+}
+
+.hide-treeview-button{
+  float: right;
+  color: silver;
+  background: transparent;
+  border-color: transparent;
+  width: 24px;
+  height: 24px;
+}
+
+.transparent-button{
+  color: silver;
+  background: transparent;
+  border-color: transparent;
+  width: 24px;
+  height: 24px;
+}
+
+.show-treeview-button{
+  width: 24px;
+  height: 100%;
+}
+
+.treeview-left{
+  float: right;
+}
+.treeview-right{
+  margin-left:0px;
 }
 
 #process {
@@ -61,6 +147,8 @@
 .filter-level-fullscreen {
   margin-right: 5px;
 }
+
+
 
 .user-level-item {
   font-size: 13px;

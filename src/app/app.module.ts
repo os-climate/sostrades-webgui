@@ -37,6 +37,7 @@ import { StudyCaseExecutionLoggingComponent } from './modules/study-case/study-c
 import { FileSpreadsheetComponent } from './shared/file-spreadsheet/file-spreadsheet.component';
 import { ValidationDialogComponent } from './shared/validation-dialog/validation-dialog.component';
 import { StudyCaseTreeviewComponent } from './modules/study-case/study-case-treeview/study-case-treeview.component';
+import { StudyCaseTreeviewLightComponent } from './modules/study-case/study-case-treeview-light/study-case-treeview-light.component';
 import { CustomTooltipComponent } from './shared/custom-tooltip/custom-tooltip.component';
 import { StudyWorkspaceComponent } from './modules/study-case/study-case-workspace/study-workspace.component';
 import { StudyCaseManagementComponent } from './modules/study-case/study-case-management/study-case-management.component';
@@ -147,6 +148,7 @@ registerLocaleData(fr);
         FileSpreadsheetComponent,
         ValidationDialogComponent,
         StudyCaseTreeviewComponent,
+        StudyCaseTreeviewLightComponent,
         CustomTooltipComponent,
         StudyWorkspaceComponent,
         StudyCaseManagementComponent,
