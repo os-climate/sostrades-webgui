@@ -208,20 +208,9 @@ export class StudyCaseLocalStorageService {
     
         if (withReloading) {
           this.loadingDialogService.updateMessage(`Loading ontology`);
-          // Prepare Ontology request inputs
-          const ontologyRequest: PostOntology = {
-            ontology_request: {
-              disciplines: [],
-              parameter_usages: []
-            }
-          };
-    
-          // Extract ontology input data from study
-          const root = (loadedStudy as LoadedStudy).treeview.rootNode;
-          TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
-    
+
           // Call ontology service
-          this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe({
+          this.ontologyService.loadOntology( (loadedStudy as LoadedStudy)).subscribe({
             next: () => {
               // Update ontology parameters in study
               this.studyCaseDataService.updateParameterOntology(loadedStudy);
@@ -257,20 +246,10 @@ export class StudyCaseLocalStorageService {
   
   finalizeUpdateParameterFromDataset(loadedStudy: LoadedStudy) {
     this.loadingDialogService.updateMessage(`Loading ontology`);
-    // Prepare Ontology request inputs
-    const ontologyRequest: PostOntology = {
-      ontology_request: {
-        disciplines: [],
-        parameter_usages: []
-      }
-    };
-
-    // Extract ontology input data from study
-    TreenodeTools.recursiveTreenodeExtract(loadedStudy.treeview.rootNode, ontologyRequest);
-
+    
     // Call ontology service
-    this.ontologyService.loadOntologyStudy(ontologyRequest).subscribe({
-      next: () => {
+    this.ontologyService.loadOntology(loadedStudy).subscribe({
+      next: (updated) => {
         // Update ontology parameters in study
         this.studyCaseDataService.updateParameterOntology(loadedStudy);
         // Notify components observing study case status
