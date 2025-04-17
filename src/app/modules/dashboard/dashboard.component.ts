@@ -4,8 +4,8 @@ import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadedStudy } from 'src/app/models/study.model';
-import {PostProcessingPlotly} from "../../models/post-processing.model";
 import {DashboardService} from "../../services/dashboard/dashboard.service";
+import { Dashboard, DashboardGraph, DisplayableItem } from "../../models/dashboard.model";
 
 @Component({
   selector: 'app-dashboard',
@@ -15,9 +15,12 @@ import {DashboardService} from "../../services/dashboard/dashboard.service";
 export class DashboardComponent implements OnInit, OnDestroy {
 
   private treeNodeDataSubscription: Subscription;
+  private dashboardAddItemSubscription: Subscription;
+  private dashboardRemoveItemSubscription: Subscription;
   public hasDashboard: boolean;
   public loadedStudy: LoadedStudy;
-  public favorites: PostProcessingPlotly[]
+  public dashboardFavorites: DisplayableItem[];
+  public isDashboardUpdated: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -25,6 +28,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public studyCaseDataService: StudyCaseDataService,
     private dashboardService: DashboardService) {
     this.loadedStudy = null;
+    this.dashboardFavorites = [];
+    this.isDashboardUpdated = this.dashboardService.isDashboardChanged;
   }
 
   ngOnInit() {
@@ -39,19 +44,50 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.hasDashboard = false;
       }
     });
-    this.dashboardService.onDashboardAdded.subscribe((plot: PostProcessingPlotly) => {
-      this.favorites.push(plot)
-    })
-    this.dashboardService.onDashboardRemoved.subscribe((plot: PostProcessingPlotly) => {
-      this.favorites.splice(this.favorites.findIndex(plotly => plotly.identifier === plot.identifier), 1)
-    })
-    this.favorites = Object.values(this.dashboardService.favoritePlots)
+    this.dashboardAddItemSubscription = this.dashboardService.onDashboardItemsAdded.subscribe((item: DisplayableItem) => {
+      this.dashboardFavorites.push(item);
+      this.isDashboardUpdated = true;
+    });
+    this.dashboardRemoveItemSubscription = this.dashboardService.onDashboardItemsRemoved.subscribe((item: DisplayableItem) => {
+      this.dashboardFavorites = this.dashboardFavorites.filter(existing => existing.id !== item.id);
+      this.isDashboardUpdated = true;
+    });
+    this.dashboardFavorites = this.dashboardService.getItems();
   }
 
   ngOnDestroy() {
     if ((this.treeNodeDataSubscription !== null) && (this.treeNodeDataSubscription !== undefined)) {
       this.treeNodeDataSubscription.unsubscribe();
     }
+    if ((this.dashboardAddItemSubscription !== null) && (this.dashboardAddItemSubscription !== undefined)) {
+      this.dashboardAddItemSubscription.unsubscribe();
+    }
+    if ((this.dashboardRemoveItemSubscription !== null) && (this.dashboardRemoveItemSubscription !== undefined)) {
+      this.dashboardRemoveItemSubscription.unsubscribe();
+    }
   }
 
+  OnSaveDashboard() {
+    const dashboard: Dashboard = {
+      'studyCaseId': this.loadedStudy.studyCase.id,
+      'items': this.dashboardFavorites,
+    }
+    this.dashboardService.updateDashboard(dashboard).subscribe({
+      next: () => {
+        console.log('Dashboard saved !');
+        this.isDashboardUpdated = false;
+      },
+      error: (err) => {
+        console.error('Error saving dashboard', err);
+      }
+    });
+  }
+
+  isGraph(item: DisplayableItem): item is DashboardGraph {
+    return item.type === 'graph'
+  }
+
+  get graphItems(): DashboardGraph[] {
+    return this.dashboardFavorites.filter(item => this.isGraph(item)) as DashboardGraph[];
+  }
 }

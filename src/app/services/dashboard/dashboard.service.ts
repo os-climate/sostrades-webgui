@@ -1,30 +1,75 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {PostProcessingPlotly} from "../../models/post-processing.model";
+import { DataHttpService } from "../http/data-http/data-http.service";
+import { HttpClient } from "@angular/common/http";
+import { Location } from "@angular/common";
+import { Dashboard, DashboardGraph, DisplayableItem } from "../../models/dashboard.model";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
-export class DashboardService {
+export class DashboardService extends DataHttpService {
+  public onDashboardItemsAdded: EventEmitter<DisplayableItem> = new EventEmitter();
+  public onDashboardItemsRemoved: EventEmitter<DisplayableItem> = new EventEmitter();
+  public dashboardItems: { [id: string]: DisplayableItem };
+  public isDashboardUpdated: boolean
 
-  public onDashboardAdded: EventEmitter<PostProcessingPlotly> = new EventEmitter();
-  public onDashboardRemoved: EventEmitter<PostProcessingPlotly> = new EventEmitter();
-  public favoritePlots: { [id: string]: PostProcessingPlotly };
-
-  constructor() {
-    this.favoritePlots = {};
+  constructor(
+    private http: HttpClient,
+    private location: Location) {
+    super(location, 'dashboard');
+    this.dashboardItems = {};
+    this.isDashboardUpdated = false;
   }
 
-  selectPlot(plot: PostProcessingPlotly) {
-    this.onDashboardAdded.emit(plot);
-    this.favoritePlots[plot.identifier] = plot;
+  get isDashboardChanged() {
+    return this.isDashboardUpdated;
   }
 
-  removePlot(plot: PostProcessingPlotly) {
-    this.onDashboardRemoved.emit(plot)
-    delete this.favoritePlots[plot.identifier]
+  addGraphItem(graph: DashboardGraph) {
+    this.dashboardItems[graph.identifier] = graph;
+    this.onDashboardItemsAdded.emit(graph);
+    this.isDashboardUpdated = true;
   }
 
-  isSelected(plotId: string) {
-    return plotId in this.favoritePlots;
+  removeGraphItem(graph: DashboardGraph) {
+    delete this.dashboardItems[graph.identifier];
+    this.onDashboardItemsRemoved.emit(graph);
+    this.isDashboardUpdated = true;
+  }
+
+  isSelected(itemId: string) {
+    return itemId in this.dashboardItems;
+  }
+
+  getItems(): DisplayableItem[] {
+    return Object.values(this.dashboardItems);
+  }
+
+  /// -----------------------------------------------------------------------------------------------------------------------------
+  /// --------------------------------------           API DATA          ----------------------------------------------------------
+  /// -----------------------------------------------------------------------------------------------------------------------------
+
+  getDashboard(studyId: number): Observable<Dashboard> {
+    return this.http.get<Dashboard>(`${this.apiRoute}/${studyId}`).pipe(map(
+      response => {
+        const dashboard: Dashboard = Dashboard.Create(response);
+        this.dashboardItems = {};
+        for (const item of dashboard.items) {
+          this.dashboardItems[item.id] = item
+        }
+        return dashboard;
+      }
+    ))
+  }
+
+  updateDashboard(dashboard: Dashboard): Observable<void> {
+    const payload = {
+      study_case_id: dashboard.studyCaseId,
+      items: dashboard.items
+    }
+    this.isDashboardUpdated = false;
+    return this.http.post<void>(`${this.apiRoute}/${dashboard.studyCaseId}`, payload);
   }
 }

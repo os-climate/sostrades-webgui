@@ -3,7 +3,7 @@ import { StudyCaseValidation } from 'src/app/models/study-case-validation.model'
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import * as Plotly from 'plotly.js-dist-min';
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
-import { PostProcessingPlotly } from "../../../models/post-processing.model";
+import { DashboardGraph } from "../../../models/dashboard.model";
 
 @Component({
   selector: 'app-post-processing-plotly',
@@ -65,7 +65,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
   }
 
   OnFavoriteClick() {
-    const plotId =  {
+    const plotId = {
       disciplineName: this.disciplineName,
       name: this.name,
       id: this.plotIndex,
@@ -84,14 +84,13 @@ export class PostProcessingPlotlyComponent implements OnInit {
    * @description Add or remove the plot in the dashboard
    * */
   saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
-    const plot = new PostProcessingPlotly(plotId.disciplineName, plotId.name, plotId.id, plotData);
-    isFavorite ? this.dashboardService.selectPlot(plot) : this.dashboardService.removePlot(plot);
-    console.log(`plot ${isFavorite ? 'saved': 'removed'}: ` + plot.identifier + '\n' + JSON.stringify(plotData));
+    const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, { x: 1, y: 1 }, { cols: 1, rows: 1 }, plotData)
+    isFavorite ? this.dashboardService.addGraphItem(graph) : this.dashboardService.removeGraphItem(graph);
   }
 
   loadFavorites() {
-    const plot = new PostProcessingPlotly(this.disciplineName, this.name, this.plotIndex, this.plotData);
-    this.isFavorite = this.dashboardService.isSelected(plot.identifier)
+    const graph = new DashboardGraph(this.disciplineName, this.name, this.plotIndex,  { x: 1, y: 1 }, { cols: 1, rows: 1 }, this.plotData);
+    this.isFavorite = this.dashboardService.isSelected(graph.identifier);
   }
 
   private setupValidation() {
@@ -234,18 +233,18 @@ export class PostProcessingPlotlyComponent implements OnInit {
       modeBarButtons: [[
         ...(this.plotData.csv_data?.length > 0
           ? [{
-              name: 'Download data as csv file',
-              icon: this.downloadIcon,
-              click: () => {
-                this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
-              }
-            }]
+            name: 'Download data as csv file',
+            icon: this.downloadIcon,
+            click: () => {
+              this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
+            }
+          }]
           : []),
         ...this.createCommonModeBarButtons(currentLayout.showlegend)
-        .filter(button =>
-          typeof button === 'string' ||
-          (typeof button === 'object' && button.name !== 'Enlarge plot')
-        )
+          .filter(button =>
+            typeof button === 'string' ||
+            (typeof button === 'object' && button.name !== 'Enlarge plot')
+          )
       ]],
       displaylogo: false,
       toImageButtonOptions: this.downloadConfig
@@ -297,12 +296,12 @@ export class PostProcessingPlotlyComponent implements OnInit {
     const modeBarButtons = [[
       ...(this.plotData.csv_data?.length > 0
         ? [{
-            name: 'Download data as csv file',
-            icon: this.downloadIcon,
-            click: () => {
-              this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
-            }
-          }]
+          name: 'Download data as csv file',
+          icon: this.downloadIcon,
+          click: () => {
+            this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
+          }
+        }]
         : []),
       ...this.createCommonModeBarButtons(true)
     ]];
@@ -337,6 +336,7 @@ export class PostProcessingPlotlyComponent implements OnInit {
     downloadLink.click();
     downloadLink.parentNode.removeChild(downloadLink);
   }
+
   //
   // protected readonly PostProcessingPlotly = PostProcessingPlotly;
 }

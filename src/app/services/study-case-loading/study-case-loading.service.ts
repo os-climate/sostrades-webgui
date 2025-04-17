@@ -12,6 +12,7 @@ import { TreenodeTools } from "src/app/tools/treenode.tool";
 import { CoeditionNotification } from "src/app/models/coedition-notification.model";
 import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
 import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
+import { DashboardService } from "src/app/services/dashboard/dashboard.service";
 
 @Injectable({
   providedIn: "root",
@@ -24,6 +25,7 @@ export class StudyCaseLoadingService {
   constructor(
     private studyCaseValidationService: StudyCaseValidationService,
     private studyCaseDataService: StudyCaseDataService,
+    private dashboardService: DashboardService,
     private ontologyService: OntologyService,
     private snackbarService: SnackbarService,
     private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
@@ -103,8 +105,18 @@ export class StudyCaseLoadingService {
           }
         });
       } else {
-        // Load logs
 
+        // Load dashboard from api file
+        this.dashboardService.getDashboard(loadedStudy.studyCase.id).subscribe({
+          next: (dashboard) => {
+            //already saving the dashboardItems in the dashboard service
+            console.log('Dashboard loaded correctly', dashboard);
+          },
+          error: (err) => {
+            console.error('Failed to load dashboard', err);
+          }
+        });
+        // Load logs
         this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
         this.studyCaseDataService.tradeScenarioList = [];
 
@@ -113,13 +125,13 @@ export class StudyCaseLoadingService {
 
         combineLatest([loadedOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
           next: ([,preferences, resultnotifications]) => {
-            
+
             loadedStudy.userStudyPreferences = preferences;
             this.studyCaseDataService.updateParameterOntology(loadedStudy);
             this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
-            
+
             this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
-        
+
             // End loading
             this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
             this.onDisplayLogsNotifications.emit(true);
@@ -129,7 +141,7 @@ export class StudyCaseLoadingService {
             this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
             this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
           }
-        });      
+        });
       }
       // Add new study loaded in the studymanagement page without refreshing list
       if(this.studyCaseDataService.studyManagementData.length > 0) {

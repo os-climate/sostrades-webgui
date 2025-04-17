@@ -57,19 +57,26 @@
 </div>
 
 <ng-template #missingDashboardMessage>
+  <button
+    id="save-dashboard"
+    *ngIf="isDashboardUpdated"
+    matTooltip="Update saved dashboard"
+    mat-raised-button
+    color="primary"
+    class="save-dashboard-btn"
+    (click)="OnSaveDashboard()"
+  >
+    💾 save dashboard
+  </button>
   <div
-    *ngIf="favorites.length > 0"
+    *ngIf="dashboardFavorites.length > 0"
     class="plot-resize-zone"
   >
     <app-post-processing-plotly
-      *ngFor="let plot of favorites"
-      [class]="
-        plot['data'] && plot['data'][0] && plot['data'][0]['type'] === 'table'
-          ? 'table'
-          : 'plot'
-      "
+      *ngFor="let plot of graphItems"
+      [class]="plot.data && plot.data.graphData && plot.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
       [fullNamespace]=""
-      [plotData]="plot.plotData"
+      [plotData]="plot.data.graphData"
       [disciplineName]="plot.disciplineName"
       [name]="plot.name"
       [plotIndex]="plot.plotIndex">

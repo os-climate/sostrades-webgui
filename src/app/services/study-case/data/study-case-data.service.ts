@@ -9,7 +9,6 @@ import { CoeditionNotification } from 'src/app/models/coedition-notification.mod
 import { Scenario } from 'src/app/models/scenario.model';
 import { DataHttpService } from '../../http/data-http/data-http.service';
 import { OntologyService } from '../../ontology/ontology.service';
-import { StudyFavorite } from 'src/app/models/study-case-favorite';
 import { OntologyParameter } from 'src/app/models/ontology-parameter.model';
 import { StudyCaseLogging } from 'src/app/models/study-case-logging.model';
 import { StudyCaseAllocation, StudyCaseAllocationStatus } from 'src/app/models/study-case-allocation.model';
@@ -138,7 +137,7 @@ export class StudyCaseDataService extends DataHttpService {
         this.preRequisiteReadOnlyDict = response
         return this.preRequisiteReadOnlyDict;
       }
-    )); 
+    ));
   }
 
   check_study_already_exist(studyName: string, groupId: number) {
@@ -152,17 +151,12 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-
-
-  addFavoriteStudy(studyId: number, userId: number): Observable<StudyFavorite> {
+  addFavoriteStudy(studyId: number, userId: number): Observable<void> {
     const payload = {
       study_id: studyId,
       user_id: userId,
     };
-    return this.http.post<StudyFavorite>(`${this.apiRoute}/favorite`, payload, this.options).pipe(map(
-      response => {
-        return StudyFavorite.Create(response);
-      }));
+    return this.http.post<void>(`${this.apiRoute}/favorite`, payload, this.options);
   }
 
   removeFavoriteStudy(studyId: number) {
@@ -230,7 +224,7 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  
+
 
   getStudyNotifications(studyId: number): Observable<CoeditionNotification[]> {
     const url = `${this.apiRoute}/${studyId}/notifications`;
@@ -260,14 +254,14 @@ export class StudyCaseDataService extends DataHttpService {
           //show pod oomkilled message
           if (allocation.status === StudyCaseAllocationStatus.OOMKILLED){
             errorMessage = errorMessage + "\n" + StudyCaseAllocation.OOMKILLEDLABEL;
-            
+
           }
           else if (allocation.status === StudyCaseAllocationStatus.ERROR &&  allocation.message){
             errorMessage = errorMessage+ " due to pod error: " + allocation.message;
           }
           else if (errorReceived !== undefined){
             errorMessage = errorMessage +"\n" + "Study server is not responding, it may be due to a network issue or a too small pod size.";
-              
+
             }
             this.loadingStudyDialogService.setError(errorMessage);
 
@@ -275,7 +269,7 @@ export class StudyCaseDataService extends DataHttpService {
             if (afterShowError !== undefined){
               afterShowError();
             }
-            
+
         },
         error:(error)=> {
           this.loadingStudyDialogService.setError(errorMessage+"\n" + error.description);
@@ -286,7 +280,7 @@ export class StudyCaseDataService extends DataHttpService {
         }
         }
       );
-      
+
     }
     else {
       if (errorReceived !== undefined){
@@ -295,10 +289,10 @@ export class StudyCaseDataService extends DataHttpService {
       else{
         this.loadingStudyDialogService.closeLoading();
       }
-      
+
     }
-    
-    
+
+
   }
 
   addNewStudyNotificationForDatasetImport(studyId: number): Observable<number> {
@@ -335,11 +329,11 @@ export class StudyCaseDataService extends DataHttpService {
             response.forEach(parameter => {
           parametersChanges.push(StudyUpdateParameter.Create(parameter));
           });
-        } 
+        }
         return parametersChanges;
       }));
   }
-  
+
   getAuthorizedStudiesForProcess(process, repository): Observable<Study[]> {
     const url = `${this.apiRoute}/process`;
 
@@ -510,7 +504,7 @@ export class StudyCaseDataService extends DataHttpService {
       });
     });
   }
-  
+
   public getStudyInReadOnlyModeUsingDataServer(studyId: number): Observable<LoadedStudy> {
     return this.http.get(`${this.apiRoute}/${studyId}/read-only-mode`).pipe(map(
       response => {
@@ -705,7 +699,7 @@ export class StudyCaseDataService extends DataHttpService {
     query.pipe(map(
       response => {
         return StudyCaseAllocation.Create(response);
-      })).subscribe({ 
+      })).subscribe({
         next: allocation => {
           if (allocation.status !== StudyCaseAllocationStatus.DONE){
             const startWaitingDate = Date.now()
@@ -735,7 +729,7 @@ export class StudyCaseDataService extends DataHttpService {
           //   else{
           //     this.loadingDialogService.updateMessage("Study pod is still loading after a long time...\n \
           //     you can wait a little longer or maybe try again later")
-             
+
           //   }
           }
           if (allocation.status === StudyCaseAllocationStatus.ERROR || allocation.status === StudyCaseAllocationStatus.OOMKILLED){
@@ -746,7 +740,7 @@ export class StudyCaseDataService extends DataHttpService {
               this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
             }, 2000);
           }
-          
+
         } else {
           allocationObservable.next(allocation);
         }
