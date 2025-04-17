@@ -63,10 +63,11 @@
     matTooltip="Update saved dashboard"
     mat-raised-button
     color="primary"
-    class="save-dashboard-btn"
+    class="float-right-button"
     (click)="OnSaveDashboard()"
   >
-    💾 save dashboard
+    <i class="fa-solid fa-floppy-disk"></i>
+    save dashboard
   </button>
   <div
     *ngIf="dashboardFavorites.length > 0"
