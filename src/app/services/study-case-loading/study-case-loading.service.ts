@@ -7,8 +7,6 @@ import { StudyCaseValidation} from "src/app/models/study-case-validation.model";
 import { StudyCaseExecutionObserverService } from "src/app/services/study-case-execution-observer/study-case-execution-observer.service";
 import { OntologyService } from "../ontology/ontology.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
-import { PostOntology } from "src/app/models/ontology.model";
-import { TreenodeTools } from "src/app/tools/treenode.tool";
 import { CoeditionNotification } from "src/app/models/coedition-notification.model";
 import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
 import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";

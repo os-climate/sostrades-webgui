@@ -5,10 +5,8 @@ import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
 import { SnackbarService } from '../snackbar/snackbar.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingDialogService } from '../loading-dialog/loading-dialog.service';
-import { PostOntology } from 'src/app/models/ontology.model';
 import { LoadedStudy } from 'src/app/models/study.model';
 import { OntologyService } from '../ontology/ontology.service';
-import { TreenodeTools } from 'src/app/tools/treenode.tool';
 import { SocketService } from '../socket/socket.service';
 import { DataStorage } from 'src/app/models/data-storage.model';
 import { StudyCaseMainService } from '../study-case/main/study-case-main.service';
@@ -249,7 +247,7 @@ export class StudyCaseLocalStorageService {
     
     // Call ontology service
     this.ontologyService.loadOntology(loadedStudy).subscribe({
-      next: (updated) => {
+      next: () => {
         // Update ontology parameters in study
         this.studyCaseDataService.updateParameterOntology(loadedStudy);
         // Notify components observing study case status
