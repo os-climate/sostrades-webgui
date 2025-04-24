@@ -199,7 +199,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
         // Study is loaded without data management, triggering charts display
         this.toggleTabVisibility('Charts', true);
-        this.toggleTabVisibility('Dashboard', false);
+        this.toggleTabVisibility('Dashboard', true);
       } else {
         this.toggleTabVisibility('Data', true);
         this.toggleTabVisibility('Dashboard', true);
@@ -225,10 +225,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
       if (treenode !== null && treenode !== undefined) {
         if (this.studyCaseDataService.loadedStudy.noData) {
-          this.toggleTabVisibility('Dashboard', false)
+          // this.toggleTabVisibility('Dashboard', false)
           this.toggleTabVisibility('Visualisation', false)
         } else {
-          this.toggleTabVisibility('Dashboard', treenode.isRoot)
+          // this.toggleTabVisibility('Dashboard', treenode.isRoot)
           this.toggleTabVisibility('Visualisation', treenode.isRoot)
         }
         this.toggleTabVisibility('Documentation', !(treenode.nodeType === 'data'))
