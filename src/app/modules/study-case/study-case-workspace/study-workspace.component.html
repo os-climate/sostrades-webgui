@@ -132,9 +132,10 @@
         <div #tabGroup style="height: 100%; width: 100%; background-color: white"
         *ngIf="!showSearch">
           <mat-tab-group
+            #MatTabGroup
             class="container-workspace"
             *ngIf="showView"
-            (selectedTabChange)="onSelectedTabChange()"
+            (selectedTabChange)="onSelectedTabChange($event)"
             [selectedIndex] = selectedTabIndex
           >
             <mat-tab
@@ -142,7 +143,7 @@
               [label]="tab.label"
               [aria-label]="'tab-study-workspace-' + tab.label.toLowerCase()"
             >
-              <ng-container *ngIf="tab.component">
+              <ng-container *ngIf="tab.component && getTabIndex(tab.label) === selectedTabIndex">
                 <ng-container *ngComponentOutlet="tab.component"></ng-container>
               </ng-container>
             </mat-tab>

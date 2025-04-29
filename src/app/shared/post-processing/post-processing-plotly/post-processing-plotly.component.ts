@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, SimpleChanges, OnChanges } from '@angular/core';
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import * as Plotly from 'plotly.js-dist-min';
@@ -10,12 +10,14 @@ import { DashboardGraph } from "../../../models/dashboard.model";
   templateUrl: './post-processing-plotly.component.html',
   styleUrls: ['./post-processing-plotly.component.scss']
 })
-export class PostProcessingPlotlyComponent implements OnInit {
+export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   @Input() plotData: any;
   @Input() fullNamespace: string;
   @Input() disciplineName: string;
   @Input() name: string;
   @Input() plotIndex: number;
+  @Input() height?: number;
+  @Input() width?: number;
 
   @ViewChild('PlotlyPlaceHolder', { static: true }) private PlotlyPlaceHolder: ElementRef;
   public isPlotLoading: boolean;
@@ -64,6 +66,13 @@ export class PostProcessingPlotlyComponent implements OnInit {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.height || changes.width) {
+      this.setupLayout();
+      this.initializePlot();
+    }
+  }
+
   OnFavoriteClick() {
     const plotId = {
       disciplineName: this.disciplineName,
@@ -84,12 +93,12 @@ export class PostProcessingPlotlyComponent implements OnInit {
    * @description Add or remove the plot in the dashboard
    * */
   saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
-    const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, { x: 1, y: 1 }, { cols: 1, rows: 1 }, plotData)
+    const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData)
     isFavorite ? this.dashboardService.addGraphItem(graph) : this.dashboardService.removeGraphItem(graph);
   }
 
   loadFavorites() {
-    const graph = new DashboardGraph(this.disciplineName, this.name, this.plotIndex,  { x: 1, y: 1 }, { cols: 1, rows: 1 }, this.plotData);
+    const graph = new DashboardGraph(this.disciplineName, this.name, this.plotIndex, this.plotData);
     this.isFavorite = this.dashboardService.isSelected(graph.identifier);
   }
 
@@ -158,6 +167,8 @@ export class PostProcessingPlotlyComponent implements OnInit {
         opacity: 0.2
       });
     }
+    this.plotData.layout.height = this.height || 450;
+    this.plotData.layout.width = this.width || 600;
   }
 
   private createCommonModeBarButtons(showLegend: boolean) {

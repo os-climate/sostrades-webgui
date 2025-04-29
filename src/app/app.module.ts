@@ -122,6 +122,7 @@ import { LoadingStudyDialogComponent } from './modules/loading-study-dialog/load
 import { FilterBarComponent } from './shared/filter-bar/filter-bar.component';
 import { TruncatePipe } from './pipes/truncate/truncate.pipe';
 import { AuthenticationErrorComponent } from './modules/authentication-error/authentication-error.component';
+import { GridsterModule } from "angular-gridster2";
 
 registerLocaleData(fr);
 
@@ -237,6 +238,7 @@ registerLocaleData(fr);
         TableVirtualScrollModule,
         ClipboardModule,
         AngularSplitModule,
+        GridsterModule,
         MarkdownModule.forRoot({
             markedOptions: {
               provide: MarkedOptions,

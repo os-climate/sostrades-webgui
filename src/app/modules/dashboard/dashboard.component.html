@@ -57,30 +57,73 @@
 </div>
 
 <ng-template #missingDashboardMessage>
-  <button
-    id="save-dashboard"
-    *ngIf="isDashboardUpdated"
-    matTooltip="Update saved dashboard"
-    mat-raised-button
-    color="primary"
-    class="float-right-button"
-    (click)="OnSaveDashboard()"
-  >
-    <i class="fa-solid fa-floppy-disk"></i>
-    save dashboard
-  </button>
+  <div class="edit-save-button">
+    <button
+      id="edit-dashboard"
+      matTooltip="Edit dashboard"
+      mat-raised-button
+      color="primary"
+      class="float-right-button"
+      (click)="handleEditButtonClick(slideToggle)"
+    >
+      <mat-slide-toggle #slideToggle [checked]="options.draggable.enabled" (change)="onSlideToggleChange($event)">
+      </mat-slide-toggle>
+      Edit
+    </button>
+    <button
+      id="reorder-dashboard"
+      matTooltip="Reorder dashboard"
+      mat-raised-button
+      color="primary"
+      class="float-right-button"
+      (click)="onReorder()"
+    >
+     <i class="fa-solid fa-rotate-right"></i>
+      Reorder
+    </button>
+    <button
+      id="save-dashboard"
+      *ngIf="isDashboardUpdated"
+      matTooltip="Update saved dashboard"
+      mat-raised-button
+      color="primary"
+      class="float-right-button"
+      (click)="OnSaveDashboard()"
+    >
+      <i class="fa-solid fa-floppy-disk"></i>
+      Save
+    </button>
+  </div>
   <div
     *ngIf="dashboardFavorites.length > 0"
     class="plot-resize-zone"
   >
-    <app-post-processing-plotly
-      *ngFor="let plot of graphItems"
-      [class]="plot.data && plot.data.graphData && plot.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
-      [fullNamespace]=""
-      [plotData]="plot.data.graphData"
-      [disciplineName]="plot.disciplineName"
-      [name]="plot.name"
-      [plotIndex]="plot.plotIndex">
-    </app-post-processing-plotly>
+    <div class="gridster-container">
+      <gridster [options]="options">
+        <gridster-item *ngFor="let item of graphItems" [item]="item">
+          <div class="graph-card">
+            <app-post-processing-plotly
+              [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+              [fullNamespace]=""
+              [plotData]="item.data.graphData"
+              [disciplineName]="item.disciplineName"
+              [name]="item.name"
+              [plotIndex]="item.plotIndex"
+              [height]="getGraphHeight(item)"
+              [width]="getGraphWidth(item)">
+            </app-post-processing-plotly>
+          </div>
+        </gridster-item>
+      </gridster>
+    </div>
+<!--    <app-post-processing-plotly-->
+<!--      *ngFor="let plot of graphItems"-->
+<!--      [class]="plot.data && plot.data.graphData && plot.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"-->
+<!--      [fullNamespace]=""-->
+<!--      [plotData]="plot.data.graphData"-->
+<!--      [disciplineName]="plot.disciplineName"-->
+<!--      [name]="plot.name"-->
+<!--      [plotIndex]="plot.plotIndex">-->
+<!--    </app-post-processing-plotly>-->
   </div>
 </ng-template>

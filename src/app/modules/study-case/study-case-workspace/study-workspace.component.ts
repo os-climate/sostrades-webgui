@@ -21,6 +21,7 @@ import { PostProcessingComponent } from 'src/app/modules/post-processings/post-p
 import { VisualisationContainerComponent } from 'src/app/modules/visualisation/visualisation-container/visualisation-container.component';
 import { DocumentationComponent } from 'src/app/modules/study-case/study-case-documentation/study-case-documentation.component';
 import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.component';
+import { MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
 
 @Component({
   selector: 'app-study-workspace',
@@ -30,6 +31,7 @@ import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.componen
 export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
+  @ViewChild('MatTabGroup') tabGroupMat: MatTabGroup;
 
   public showView: boolean;
   public showSearch: boolean;
@@ -119,7 +121,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.setSelectedTabByLabel('Documentation');
+    this.setSelectedTabByLabel(TabIds.DOCUMENTATION);
     this.showSearch = false;
     this.setDiplayableItems();
 
@@ -153,8 +155,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       next:()=>{
       //show the data management tab
       this.showSearch = false;
-      // this.selectedTabIndex = 0;
-      this.setSelectedTabByLabel('Data')
+      this.setSelectedTabByLabel(TabIds.DATA)
     }});
   }
 
@@ -163,6 +164,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     if (index !== -1 && this.selectedTabIndex !== index) {
       this.selectedTabIndex = index
     }
+  }
+
+  getTabIndex(labelName: string) {
+    return this.tabs.findIndex(tab => tab.label === labelName);
   }
 
   toggleTabVisibility(label: string, isVisible: boolean) {
@@ -182,11 +187,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.showSearch = false;
       // Check  study status to display or not charts
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
-        this.toggleTabVisibility('Charts', true);
-        this.toggleTabVisibility('Dashboard', true);
+        this.toggleTabVisibility(TabIds.CHARTS, true);
+        this.toggleTabVisibility(TabIds.DASHBOARD, true);
       } else {
-        this.toggleTabVisibility('Charts', false);
-        this.toggleTabVisibility('Dashboard', false);
+        this.toggleTabVisibility(TabIds.CHARTS, false);
+        this.toggleTabVisibility(TabIds.DASHBOARD, false);
       }
 
       // Set process
@@ -194,16 +199,16 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
       // Check if study is loaded without data
       if (this.studyCaseDataService.loadedStudy.noData) {
-        this.toggleTabVisibility('Data', false);
-        this.toggleTabVisibility('Visualisation', false);
+        this.toggleTabVisibility(TabIds.DATA, false);
+        this.toggleTabVisibility(TabIds.VISUALISATION, false);
 
         // Study is loaded without data management, triggering charts display
-        this.toggleTabVisibility('Charts', true);
-        this.toggleTabVisibility('Dashboard', true);
+        this.toggleTabVisibility(TabIds.CHARTS, true);
+        this.toggleTabVisibility(TabIds.DASHBOARD, true);
       } else {
-        this.toggleTabVisibility('Data', true);
-        this.toggleTabVisibility('Dashboard', true);
-        this.toggleTabVisibility('Visualisation', true);
+        this.toggleTabVisibility(TabIds.DATA, true);
+        this.toggleTabVisibility(TabIds.DASHBOARD, true);
+        this.toggleTabVisibility(TabIds.VISUALISATION, true);
       }
 
       // Activate show not editable variable if study is read only
@@ -215,23 +220,23 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     } else {
       this.showView = false;
     }
-    this.setSelectedTabByLabel('Documentation')
+    this.setSelectedTabByLabel(TabIds.DOCUMENTATION)
     this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treenode => {
       this.showSearch = false;
       this.hasDocumentation = false;
-      this.toggleTabVisibility('Visualisation', false)
-      this.toggleTabVisibility('Documentation', false)
+      this.toggleTabVisibility(TabIds.VISUALISATION, false)
+      this.toggleTabVisibility(TabIds.DOCUMENTATION, false)
 
 
       if (treenode !== null && treenode !== undefined) {
         if (this.studyCaseDataService.loadedStudy.noData) {
           // this.toggleTabVisibility('Dashboard', false)
-          this.toggleTabVisibility('Visualisation', false)
+          this.toggleTabVisibility(TabIds.VISUALISATION, false)
         } else {
           // this.toggleTabVisibility('Dashboard', treenode.isRoot)
-          this.toggleTabVisibility('Visualisation', treenode.isRoot)
+          this.toggleTabVisibility(TabIds.VISUALISATION, treenode.isRoot)
         }
-        this.toggleTabVisibility('Documentation', !(treenode.nodeType === 'data'))
+        this.toggleTabVisibility(TabIds.DOCUMENTATION, !(treenode.nodeType === 'data'))
         // Remove duplicate modelsFullPath
         const modelsFullPathListWithoutDuplicate: string[] = [];
         treenode.modelsFullPathList.forEach((element, index) => {
@@ -269,8 +274,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelectedTabChange() {
-      this.applyStyleToDocumentationTab();
+  onSelectedTabChange(event: MatTabChangeEvent) {
+    this.renderViewOnCurrentTab();
+    this.setSelectedTabByLabel(event.tab.textLabel)
+    console.log('Selected tab: ', event.tab.textLabel);
   }
 
   goToProcessDocumentation(processIdentifier: string) {
@@ -312,8 +319,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.isTreeviewVisible = !this.isTreeviewVisible;
   }
 
-
-  private applyStyleToDocumentationTab() {
+  private renderViewOnCurrentTab() {
    /* In order to remove the double scrool bar in documentation tab without changes any other tabs*/
     const allTabGroups = document.querySelectorAll('mat-tab-body');
     if (allTabGroups.length > 0) {
