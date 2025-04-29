@@ -1,15 +1,14 @@
-import { AfterViewInit, Component, ElementRef, OnChanges, Renderer2, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, Renderer2} from '@angular/core';
 import { KatexOptions } from 'ngx-markdown';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { SoSTradesError } from 'src/app/models/sos-trades-error.model';
-import {MardownDocumentation, TreeNode} from 'src/app/models/tree-node.model';
+import { MardownDocumentation } from 'src/app/models/tree-node.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
-import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import * as html2pdf from 'html2pdf.js';
 
 
@@ -18,7 +17,10 @@ import * as html2pdf from 'html2pdf.js';
   templateUrl: './study-case-documentation.component.html',
   styleUrls: ['./study-case-documentation.component.scss']
 })
-export class DocumentationComponent implements OnInit, OnChanges, AfterViewInit  {
+export class DocumentationComponent implements OnChanges, AfterViewInit  {
+
+  @Input() identifiers: string[];
+
   public documentation: MardownDocumentation[];
   public loading: boolean;
   public hasDocumentation: boolean;
@@ -28,8 +30,7 @@ export class DocumentationComponent implements OnInit, OnChanges, AfterViewInit 
   public updateMarkdown: boolean;
   public canUpdate: boolean;
   private identifier: string;
-  public onTreeNodeChangeSubscription: Subscription;
-  public modelsFullPathList: string[];
+  private managedDocumentations:number;
 
   public options: KatexOptions = {
     delimiters: [
@@ -49,10 +50,8 @@ export class DocumentationComponent implements OnInit, OnChanges, AfterViewInit 
     public studyCaseDataService:StudyCaseDataService,
     private el: ElementRef,
     private renderer: Renderer2,
-    private loadingDialogService: LoadingDialogService,
-    private treeNodeDataService: TreeNodeDataService
+    private loadingDialogService: LoadingDialogService
     ) {
-    this.modelsFullPathList= []
     this.hasDocumentation = false;
     this.showBookmarks = false;
     this.documentation = [];
@@ -60,17 +59,12 @@ export class DocumentationComponent implements OnInit, OnChanges, AfterViewInit 
     this.updateMarkdown = true;
     this.identifier = "";
     this.canUpdate = false;
-    this.onTreeNodeChangeSubscription = null;
-  }
-
-  ngOnInit() {
-    this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treenode => {
-      this.updateDocumentation(treenode);
-    })
+    this.managedDocumentations = 0;
   }
 
   ngOnChanges (): void {
-    this.updateDocumentation(this.treeNodeDataService.currentTreeNode);
+
+    this.updateDocumentation();
     setTimeout(() => {
       this.hasDocumentationSubject.next(true);  // Emit the value true to indicate that the documentation is ready
     }, 1000);
@@ -80,68 +74,48 @@ export class DocumentationComponent implements OnInit, OnChanges, AfterViewInit 
     this.insertAttributeOnMarkdown();
   }
 
-  private updateDocumentation(treenode: TreeNode) {
+  private updateDocumentation() {
     this.documentation = [];
     this.loading = true;
-    let documentationRetrieved = 0;
+    this.managedDocumentations = 0;
     // If study is in readonly mode, the documentation cannot be updated
     this.canUpdate = !this.studyCaseDataService.loadedStudy.readOnly;
-    this.setModelFullPathList(treenode);
-    this.modelsFullPathList.forEach(identifier => {
+    this.identifiers.forEach(identifier => {
       const markdown = this.ontologyService.markdownDocumentations[identifier];
       this.identifier = identifier
       if (markdown && markdown.documentation) {
         this.updateMarkdown = false;
       }
-      this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe({
-        next: (response) => {
-          if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
-            response.name = identifier;
 
-            // Transform markdown only if this documentation has not been already transformed
-            if(this.updateMarkdown) {
-              response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+      //if we are in read only, the documentation is loaded from saved documentation
+      if (this.studyCaseDataService.loadedStudy.readOnly){
+        this.studyCaseDataService.loadSavedDocumentation(this.studyCaseDataService.loadedStudy.studyCase.id, identifier).subscribe({
+          next:(response)=>{
+            //if there is no saved ontology, get the documentation as in edition mode from ontology server
+            if (response === null || response === undefined){
+              this.loadDocumentationFromOntologyService(identifier);
             }
-
-            this.documentation.push(response);
-            this.hasDocumentation = true;
-          } else if (this.documentation.length == 0) {
-            this.hasDocumentation = false;
-          }
-          documentationRetrieved = documentationRetrieved + 1;
-          if (documentationRetrieved === this.modelsFullPathList.length) {
-            this.loading = false;
-            this.showBookmarks = this.documentation.length > 1;
-          }
-        },
-        error: (errorReceived) => {
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.loading = false;
-            this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
-          }
-        }
-      });
-    });
-  }
-  setModelFullPathList(treenode) {
-    const modelsFullPathListWithoutDuplicate: string[] = [];
-    treenode.modelsFullPathList.forEach((element, index) => {
-      if (treenode.modelsFullPathList.indexOf(element) === index) {
-        modelsFullPathListWithoutDuplicate.push(element);
+            else{
+              //post proc on the documentation after retrieving
+              this.loadMarkdownFromResponse(response, identifier);
+            }
+          },error: (errorReceived) => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              this.loading = false;
+              this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
+            }
+          }});
       }
-    });
-    this.modelsFullPathList = modelsFullPathListWithoutDuplicate;
+      else{
+        //if we are in edition mode, get the documentation from the ontology server
+        this.loadDocumentationFromOntologyService(identifier);
+      }
 
-    // if node is root node, add process documentation
-    if (treenode === this.studyCaseDataService.loadedStudy.treeview.rootNode){
-      //build process path with repo.process
-      const repo = this.studyCaseDataService.loadedStudy.studyCase.repository
-      const process = this.studyCaseDataService.loadedStudy.studyCase.process
-      this.modelsFullPathList.push(repo.concat('.',process ))
-    }
+
+    });
   }
 
   refresh() {
@@ -170,7 +144,7 @@ export class DocumentationComponent implements OnInit, OnChanges, AfterViewInit 
 
           // Set flag to indicate that documentation is available
           this.hasDocumentation = true;
-        } else if (this.documentation.length == 0) {
+        } else if (this.documentation.length === 0) {
           // If documentation is empty, set flag to indicate no documentation
           this.hasDocumentation = false;
         }
@@ -277,6 +251,48 @@ export class DocumentationComponent implements OnInit, OnChanges, AfterViewInit 
     event.preventDefault();
     const element = document.getElementById(identifier);
     element.scrollIntoView();
+  }
+
+  private loadDocumentationFromOntologyService(identifier){
+    this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe({
+      next: (response) => {
+        this.loadMarkdownFromResponse(response, identifier);
+
+
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.loading = false;
+          this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
+        }
+      }
+    });
+  }
+
+  private loadMarkdownFromResponse(response:any, identifier){
+    if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
+      response.name = identifier;
+
+      // Transform markdown only if this documentation has not been already transformed
+      if(this.updateMarkdown) {
+        response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+      }
+
+      this.documentation.push(response);
+      this.hasDocumentation = true;
+    } else if (this.documentation.length === 0) {
+      this.hasDocumentation = false;
+    }
+    //check the end of loading of documentation
+    this.managedDocumentations += 1;
+    if (this.managedDocumentations === this.identifiers.length) {
+      this.loading = false;
+      this.showBookmarks = this.documentation.length > 1;
+    }
+
   }
 
   /**

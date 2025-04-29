@@ -7,8 +7,6 @@ import { StudyCaseValidation} from "src/app/models/study-case-validation.model";
 import { StudyCaseExecutionObserverService } from "src/app/services/study-case-execution-observer/study-case-execution-observer.service";
 import { OntologyService } from "../ontology/ontology.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
-import { PostOntology } from "src/app/models/ontology.model";
-import { TreenodeTools } from "src/app/tools/treenode.tool";
 import { CoeditionNotification } from "src/app/models/coedition-notification.model";
 import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
 import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
@@ -89,14 +87,16 @@ export class StudyCaseLoadingService {
       }
 
       const updateUserPreferences$ = this.studyCaseDataService.loadUserStudyPreferences(loadedStudy.studyCase.id);
-      const loadedOntology$ = this.loadOntology(loadedStudy);
+      const loadedOntology$ = loadedStudy.readOnly ? this.studyCaseDataService.loadSavedOntology(loadedStudy) : this.ontologyService.loadOntology(loadedStudy);
 
       if (loadOnlyOntology) {
         combineLatest([loadedOntology$, updateUserPreferences$]).subscribe({
-          next:([, preferences]) => {
+          next:([ontologyUpdated, preferences]) => {
 
             loadedStudy.userStudyPreferences = preferences;
-            this.studyCaseDataService.updateParameterOntology(loadedStudy);
+            if(ontologyUpdated){
+              this.studyCaseDataService.updateParameterOntology(loadedStudy);
+            }
             //end loading
             this.terminateStudyCaseLoading(
               loadedStudy,
@@ -124,10 +124,12 @@ export class StudyCaseLoadingService {
         const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
 
         combineLatest([loadedOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
-          next: ([,preferences, resultnotifications]) => {
+          next: ([ontologyUpdated, preferences, resultnotifications]) => {
 
             loadedStudy.userStudyPreferences = preferences;
-            this.studyCaseDataService.updateParameterOntology(loadedStudy);
+            if(ontologyUpdated){
+              this.studyCaseDataService.updateParameterOntology(loadedStudy);
+            }
             this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
 
             this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
@@ -150,22 +152,7 @@ export class StudyCaseLoadingService {
     }
   }
 
-  private loadOntology(loadedStudy: LoadedStudy): Observable<void> {
-    // Prepare Ontology request inputs
-    const ontologyRequest: PostOntology = {
-      ontology_request: {
-        disciplines: [],
-        parameter_usages: [],
-      },
-    };
 
-    // Extract ontology input data from study
-    const root = loadedStudy.treeview.rootNode;
-    TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
-
-    // Call ontology service
-    return this.ontologyService.loadOntologyStudy(ontologyRequest);
-  }
 
   public loadValidations(studyId: number): Observable<StudyCaseValidation[]> {
     return this.studyCaseValidationService.loadStudyValidationData(studyId);

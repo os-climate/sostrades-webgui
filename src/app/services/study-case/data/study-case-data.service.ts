@@ -3,7 +3,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NodeData, IoType } from 'src/app/models/node-data.model';
-import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subscriber } from 'rxjs';
 import { Location } from '@angular/common';
 import { CoeditionNotification } from 'src/app/models/coedition-notification.model';
 import { Scenario } from 'src/app/models/scenario.model';
@@ -20,6 +20,9 @@ import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-
 import { LoadingStudyDialogService } from '../../loading-study-dialog/loading-study-dialog.service';
 import { UserStudyPreferences } from 'src/app/models/user-study-preferences.model';
 import { StudyCaseExecutionObserverService } from '../../study-case-execution-observer/study-case-execution-observer.service';
+import { PostOntology } from 'src/app/models/ontology.model';
+import { TreenodeTools } from 'src/app/tools/treenode.tool';
+import { MardownDocumentation } from 'src/app/models/tree-node.model';
 
 @Injectable({
   providedIn: 'root'
@@ -122,11 +125,13 @@ export class StudyCaseDataService extends DataHttpService {
       }));
   }
 
-  getStudy(studyId: number): Observable<Study> {
+  getStudy(studyId: number, addToStudyManagement=true): Observable<Study> {
     return this.http.get<Study>(`${this.apiRoute}/${studyId}`).pipe(map(
       response => {
-        const study = Study.Create(response)
-        this.studyManagementData.splice(0,0, study)
+        const study = Study.Create(response);
+        if (addToStudyManagement){
+          this.studyManagementData.splice(0,0, study);
+        }
         return study;
       }));
   }
@@ -705,7 +710,7 @@ export class StudyCaseDataService extends DataHttpService {
             const startWaitingDate = Date.now()
             setTimeout(() => {
               this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, observer, startWaitingDate);
-            }, 2000);
+            }, 3000);
           }
           else{
             observer.next(allocation);
@@ -738,7 +743,7 @@ export class StudyCaseDataService extends DataHttpService {
           else{
             setTimeout(() => {
               this.getStudyCaseAllocationStatusTimeout(allocation.studyCaseId, allocationObservable, startWaitingDate);
-            }, 2000);
+            }, 3000);
           }
 
         } else {
@@ -781,4 +786,55 @@ export class StudyCaseDataService extends DataHttpService {
       this.studyManagementData[index] = loadedStudy.studyCase;
     }
   }
+
+  public saveOntology(loadedStudy: LoadedStudy){
+    const ontologyRequest: PostOntology = {
+        ontology_request: {
+          disciplines: [],
+          parameter_usages: [],
+        },
+      };
+  
+      // Extract ontology input data from study
+      const root = loadedStudy.treeview.rootNode;
+      TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
+    
+      return this.http.post<void>(`${this.apiRoute}/${loadedStudy.studyCase.id}/save-ontology`, ontologyRequest, this.options);
+      
+  }
+
+  public loadSavedOntology(loadedStudy: LoadedStudy):Observable<boolean>{
+  
+      return this.http.get<any>(`${this.apiRoute}/${loadedStudy.studyCase.id}/saved-ontology-usages`, this.options).pipe(map(
+            response => {
+              if (response !== null && response !== undefined){
+                  this.ontologyService.buildOntologyFromJsonResponse(response);
+                  return true;
+              }
+              else{
+                this.ontologyService.loadOntology(loadedStudy).subscribe({next:()=>{
+                  this.updateParameterOntology(loadedStudy);
+                }});
+                return false;
+              }
+
+          }));
+            
+      
+  }
+
+  public loadSavedDocumentation(study_id, documentation_identifier): Observable<MardownDocumentation>{
+    if (documentation_identifier in this.ontologyService.markdownDocumentations){
+      return of(this.ontologyService.markdownDocumentations[documentation_identifier]);
+    }
+    else{
+      return this.http.get<any>(`${this.apiRoute}/${study_id}/saved-documentation/${documentation_identifier}`, this.options).pipe(map(
+        response => {
+          const documentation = new MardownDocumentation('', response);
+          this.ontologyService.markdownDocumentations[documentation_identifier] = documentation;
+          return documentation;
+        }));
+      } 
+}
+
 }

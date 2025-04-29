@@ -87,7 +87,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     });
 
     // show the discipline label if there are 2 or more discipline with the same model at the same node
-    if(this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== ''
+    if (this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== ''
     && this.postProcessingBundle.showDisciplineName) {
       this.additionalDisciplineName = ` : ${this.postProcessingBundle.disciplineName}`
     }
@@ -144,7 +144,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   }
 
   private addSectionInPostProcessing(postProcessing: any, needToUpdate:boolean ) {
-
+this.postProcessingWithoutSection = [];
     const postProcessingWithoutSectionWithFilter: PostProcessingBundle[] = [];
     const postProcessingKeyCharts: PostProcessingBundle[] = [];
     // Create a dictionnary to section the post_processing by a name
