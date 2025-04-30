@@ -4,6 +4,7 @@ import { StudyCaseValidationService } from 'src/app/services/study-case-validati
 import * as Plotly from 'plotly.js-dist-min';
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { DashboardGraph } from "../../../models/dashboard.model";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-post-processing-plotly',
@@ -51,6 +52,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   };
 
   constructor(
+    private snackBar: MatSnackBar,
     private studyCaseValidationService: StudyCaseValidationService,
     public dashboardService: DashboardService) {
     this.isPlotLoading = true;
@@ -95,6 +97,13 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
     const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData)
     isFavorite ? this.dashboardService.addGraphItem(graph) : this.dashboardService.removeGraphItem(graph);
+    const message = isFavorite ? 'Graph added to favorites!' : 'Graph removed from favorites!';
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success'],
+    });
   }
 
   loadFavorites() {

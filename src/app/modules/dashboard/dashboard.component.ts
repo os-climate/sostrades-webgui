@@ -8,6 +8,7 @@ import {DashboardService} from "../../services/dashboard/dashboard.service";
 import { Dashboard, DashboardGraph, DisplayableItem } from "../../models/dashboard.model";
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-dashboard',
@@ -27,6 +28,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private previousPositions: string;
 
   constructor(
+    private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private treeNodeDataService: TreeNodeDataService,
     public studyCaseDataService: StudyCaseDataService,
@@ -134,6 +136,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.resizable.enabled = false;
     this.options.displayGrid = 'none';
     this.options.api.optionsChanged();
+    this.snackBar.open('Dashboard saved', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success']
+    });
   }
 
   isGraph(item: DisplayableItem): item is DashboardGraph {
