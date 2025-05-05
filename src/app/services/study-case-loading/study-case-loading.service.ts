@@ -1,14 +1,12 @@
 import { LoadedStudy } from "src/app/models/study.model";
 import { Injectable, EventEmitter } from "@angular/core";
-import { combineLatest, Observable} from "rxjs";
+import { combineLatest, Observable, of} from "rxjs";
 import { StudyCaseValidationService } from "../study-case-validation/study-case-validation.service";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
 import { StudyCaseValidation} from "src/app/models/study-case-validation.model";
 import { StudyCaseExecutionObserverService } from "src/app/services/study-case-execution-observer/study-case-execution-observer.service";
 import { OntologyService } from "../ontology/ontology.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
-import { PostOntology } from "src/app/models/ontology.model";
-import { TreenodeTools } from "src/app/tools/treenode.tool";
 import { CoeditionNotification } from "src/app/models/coedition-notification.model";
 import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
 import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
@@ -87,73 +85,68 @@ export class StudyCaseLoadingService {
       }
 
       const updateUserPreferences$ = this.studyCaseDataService.loadUserStudyPreferences(loadedStudy.studyCase.id);
-      const loadedOntology$ = this.loadOntology(loadedStudy);
-
-      if (loadOnlyOntology) {
-        combineLatest([loadedOntology$, updateUserPreferences$]).subscribe({
-          next:([, preferences]) => {
-
-            loadedStudy.userStudyPreferences = preferences;
+      const loadReadOnlyOntology$ = loadedStudy.readOnly ? this.studyCaseDataService.loadSavedOntology(loadedStudy) : of(false);
+      loadReadOnlyOntology$.subscribe({
+        next:(ontologyUpdated)=>{
+          
+          if(ontologyUpdated){
             this.studyCaseDataService.updateParameterOntology(loadedStudy);
-            //end loading
-            this.terminateStudyCaseLoading(
-              loadedStudy,
-              isStudyCreated
-            );
           }
-        });
-      } else {
-        // Load logs
-
-        this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
-        this.studyCaseDataService.tradeScenarioList = [];
-
-        const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
-        const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
-
-        combineLatest([loadedOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
-          next: ([,preferences, resultnotifications]) => {
-            
-            loadedStudy.userStudyPreferences = preferences;
-            this.studyCaseDataService.updateParameterOntology(loadedStudy);
-            this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
-            
-            this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
+          const loadOntology$ = ontologyUpdated ? of(null) : this.ontologyService.loadOntology(loadedStudy);
         
-            // End loading
-            this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
-            this.onDisplayLogsNotifications.emit(true);
-          },
-          error: (errorReceived) => {
-            // Notify user
-            this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
-            this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
+          if (loadOnlyOntology) {
+            combineLatest([loadOntology$, updateUserPreferences$]).subscribe({
+              next:([,preferences]) => {
+
+                loadedStudy.userStudyPreferences = preferences;
+                //end loading
+                this.terminateStudyCaseLoading(
+                  loadedStudy,
+                  isStudyCreated
+                );
+              }
+            });
+          } else {
+            // Load logs
+
+            this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
+            this.studyCaseDataService.tradeScenarioList = [];
+
+            const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
+            const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
+
+            combineLatest([loadOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
+              next: ([ontologyUpdated, preferences, resultnotifications]) => {
+                
+                loadedStudy.userStudyPreferences = preferences;
+                if(ontologyUpdated){
+                  this.studyCaseDataService.updateParameterOntology(loadedStudy);
+                }
+                this.studyCaseDataService.studyCoeditionNotifications = resultnotifications as CoeditionNotification[];
+                
+                this.studyCaseValidationService.setValidationOnNode(this.studyCaseDataService.loadedStudy.treeview);
+            
+                // End loading
+                this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
+                this.onDisplayLogsNotifications.emit(true);
+              },
+              error: (errorReceived) => {
+                // Notify user
+                this.snackbarService.showError(`Error while loading, the following error occurs: ${errorReceived.description}`);
+                this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
+              }
+            });      
           }
-        });      
-      }
-      // Add new study loaded in the studymanagement page without refreshing list
-      if(this.studyCaseDataService.studyManagementData.length > 0) {
-       this.studyCaseDataService.updateStudyInList(loadedStudy);
-      }
+          // Add new study loaded in the studymanagement page without refreshing list
+          if(this.studyCaseDataService.studyManagementData.length > 0) {
+          this.studyCaseDataService.updateStudyInList(loadedStudy);
+          }
+        }
+      });
     }
   }
 
-  private loadOntology(loadedStudy: LoadedStudy): Observable<void> {
-    // Prepare Ontology request inputs
-    const ontologyRequest: PostOntology = {
-      ontology_request: {
-        disciplines: [],
-        parameter_usages: [],
-      },
-    };
-
-    // Extract ontology input data from study
-    const root = loadedStudy.treeview.rootNode;
-    TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
-
-    // Call ontology service
-    return this.ontologyService.loadOntologyStudy(ontologyRequest);
-  }
+  
 
   public loadValidations(studyId: number): Observable<StudyCaseValidation[]> {
     return this.studyCaseValidationService.loadStudyValidationData(studyId);

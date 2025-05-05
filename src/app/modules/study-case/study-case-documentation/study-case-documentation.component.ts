@@ -30,6 +30,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   public updateMarkdown: boolean;
   public canUpdate: boolean;
   private identifier: string;
+  private managedDocumentations:number;
 
   public options: KatexOptions = {
     delimiters: [
@@ -58,6 +59,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     this.updateMarkdown = true;
     this.identifier = "";
     this.canUpdate = false;
+    this.managedDocumentations = 0;
   }
 
   ngOnChanges (): void {
@@ -75,47 +77,44 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   private updateDocumentation() {
     this.documentation = [];
     this.loading = true;
-    let documentationRetrieved = 0;
+    this.managedDocumentations = 0;
     // If study is in readonly mode, the documentation cannot be updated
     this.canUpdate = !this.studyCaseDataService.loadedStudy.readOnly;
-
     this.identifiers.forEach(identifier => {
       const markdown = this.ontologyService.markdownDocumentations[identifier];
       this.identifier = identifier
       if (markdown && markdown.documentation) {
         this.updateMarkdown = false;
       }
-      this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe({
-        next: (response) => {
-          if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
-            response.name = identifier;
 
-            // Transform markdown only if this documentation has not been already transformed
-            if(this.updateMarkdown) {
-              response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+      //if we are in read only, the documentation is loaded from saved documentation
+      if (this.studyCaseDataService.loadedStudy.readOnly){
+        this.studyCaseDataService.loadSavedDocumentation(this.studyCaseDataService.loadedStudy.studyCase.id, identifier).subscribe({
+          next:(response)=>{
+            //if there is no saved ontology, get the documentation as in edition mode from ontology server
+            if (response === null || response === undefined){
+              this.loadDocumentationFromOntologyService(identifier);
             }
-
-            this.documentation.push(response);
-            this.hasDocumentation = true;
-          } else if (this.documentation.length == 0) {
-            this.hasDocumentation = false;
-          }
-          documentationRetrieved = documentationRetrieved + 1;
-          if (documentationRetrieved === this.identifiers.length) {
-            this.loading = false;
-            this.showBookmarks = this.documentation.length > 1;
-          }
-        },
-        error: (errorReceived) => {
-          const error = errorReceived as SoSTradesError;
-          if (error.redirect) {
-            this.snackbarService.showError(error.description);
-          } else {
-            this.loading = false;
-            this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
-          }
-        }
-      });
+            else{
+              //post proc on the documentation after retrieving
+              this.loadMarkdownFromResponse(response, identifier);
+            }
+          },error: (errorReceived) => {
+            const error = errorReceived as SoSTradesError;
+            if (error.redirect) {
+              this.snackbarService.showError(error.description);
+            } else {
+              this.loading = false;
+              this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
+            }
+          }});
+      }
+      else{
+        //if we are in edition mode, get the documentation from the ontology server
+        this.loadDocumentationFromOntologyService(identifier);
+      }
+      
+      
     });
   }
 
@@ -145,7 +144,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     
           // Set flag to indicate that documentation is available
           this.hasDocumentation = true;
-        } else if (this.documentation.length == 0) {
+        } else if (this.documentation.length === 0) {
           // If documentation is empty, set flag to indicate no documentation
           this.hasDocumentation = false;
         }
@@ -252,6 +251,48 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     event.preventDefault();
     const element = document.getElementById(identifier);
     element.scrollIntoView();
+  }
+
+  private loadDocumentationFromOntologyService(identifier){
+    this.ontologyService.getOntologyMarkdowndocumentation(identifier).subscribe({
+      next: (response) => {
+        this.loadMarkdownFromResponse(response, identifier);
+
+        
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.loading = false;
+          this.snackbarService.showError('Error loading markdown documentation : ' + error.description);
+        }
+      }
+    });
+  }
+
+  private loadMarkdownFromResponse(response:any, identifier){
+    if ((response.documentation !== null) && (response.documentation !== undefined) && (response.documentation.length > 0)) {
+      response.name = identifier;
+
+      // Transform markdown only if this documentation has not been already transformed
+      if(this.updateMarkdown) {
+        response.documentation = this.transformFootnotesAndEquationKatexAndImages(response.documentation);
+      }
+
+      this.documentation.push(response);
+      this.hasDocumentation = true;
+    } else if (this.documentation.length === 0) {
+      this.hasDocumentation = false;
+    }
+    //check the end of loading of documentation
+    this.managedDocumentations += 1;
+    if (this.managedDocumentations === this.identifiers.length) {
+      this.loading = false;
+      this.showBookmarks = this.documentation.length > 1;
+    }
+    
   }
 
   /**

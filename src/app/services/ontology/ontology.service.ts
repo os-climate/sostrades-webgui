@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 import { HeaderService } from '../hearder/header.service';
 import { DataHttpService } from '../http/data-http/data-http.service';
 import { ColumnName } from 'src/app/models/enumeration.model';
+import { LoadedStudy } from 'src/app/models/study.model';
+import { TreenodeTools } from 'src/app/tools/treenode.tool';
 
 
 @Injectable({
@@ -77,27 +79,45 @@ export class OntologyService extends DataHttpService {
     this.markdownDocumentations = {};
   }
 
-  loadOntologyStudy(ontologyRequest: PostOntology): Observable<void> {
-    return this.http.post<any>(`${this.apiRoute}/ontology-usages`, ontologyRequest).pipe(map(
-      response => {
-        this.ontology.studyCase.parameters = {};
+  public loadOntology(loadedStudy: LoadedStudy): Observable<boolean> {
+      // Prepare Ontology request inputs
+      const ontologyRequest: PostOntology = {
+        ontology_request: {
+          disciplines: [],
+          parameter_usages: [],
+        },
+      };
+  
+      // Extract ontology input data from study
+      const root = loadedStudy.treeview.rootNode;
+      TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
+  
+      // Call ontology service
+      return this.http.post<any>(`${this.apiRoute}/ontology-usages`, ontologyRequest).pipe(map(
+        response => {
+          this.buildOntologyFromJsonResponse(response);
+          return true;
+        }
+      ));
+    }
+
+  buildOntologyFromJsonResponse(jsonResponse){
+    this.ontology.studyCase.parameters = {};
         this.ontology.studyCase.disciplines = {};
 
-        Object.keys(response).forEach(ontologyType => {
+        Object.keys(jsonResponse).forEach(ontologyType => {
           if (ontologyType === OntologyType.PARAMETERS) {
-            Object.keys(response[ontologyType]).forEach(variable => {
-              const parameter = OntologyParameter.Create(response[ontologyType][variable]);
-              parameter.addParameterUsage(response[ontologyType][variable]);
+            Object.keys(jsonResponse[ontologyType]).forEach(variable => {
+              const parameter = OntologyParameter.Create(jsonResponse[ontologyType][variable]);
+              parameter.addParameterUsage(jsonResponse[ontologyType][variable]);
               this.ontology.studyCase.parameters[variable] = parameter;
             });
           } else if (ontologyType === OntologyType.DISCIPLINES) {
-            Object.keys(response[ontologyType]).forEach(variable => {
-              this.ontology.studyCase.disciplines[variable] = OntologyDiscipline.Create(response[ontologyType][variable]);
+            Object.keys(jsonResponse[ontologyType]).forEach(variable => {
+              this.ontology.studyCase.disciplines[variable] = OntologyDiscipline.Create(jsonResponse[ontologyType][variable]);
             });
           }
         });
-      }
-    ));
   }
 
   getOntologyModelsStatus(): Observable<OntologyModelStatus[]> {

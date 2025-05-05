@@ -3,7 +3,7 @@ import {
   LoadedStudy,
   LoadStatus,
   StudyCasePayload,
-  StudyCaseInitialSetupPayload,
+  StudyCaseInitialSetupPayload
 } from "src/app/models/study.model";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
@@ -94,7 +94,7 @@ export class AppDataService extends DataHttpService {
           if (!loadingCanceled){
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
             new StudyCaseInitialSetupPayload(allocation.studyCaseId, study.reference, study.type);
-              this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true); 
+              this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true, null, true); 
           }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ",()=> {
@@ -135,7 +135,7 @@ export class AppDataService extends DataHttpService {
       next: (allocation) => {
         if(!loadingCanceled) {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {
-            this.launchLoadStudy(allocation.studyCaseId, false,  true, isStudyCreated, true);
+            this.launchLoadStudy(allocation.studyCaseId, false,  true, isStudyCreated, true, null, true);
           } else {
             this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case: " ,()=> isStudyCreated(false));
           }
@@ -390,19 +390,13 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
  
     let loadedStudy$ = new Observable<LoadedStudy>((observer) => observer.next(null));
     if(readOnlyMode) {
-        if (hasReadOnly) {
-          // Use data server to load study in read only mode
-          this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY)
-          loadedStudy$ = this.getStudyInReadOnlyMode(studyId,withEmit, !serverIsRunningForReadOnly);
-        }
-        else {
-          // Use the study server that is opening to load the study in read only mode
-          loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit, readOnlyMode);
-        }
+        // Use data server to load study in read only mode
+        this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY)
+        loadedStudy$ = this.getStudyInReadOnlyMode(studyId,withEmit, !serverIsRunningForReadOnly);
     }
     else {
       // Load study in edition mode
-      loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit, readOnlyMode);
+      loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit);
     }
     
     loadedStudy$.subscribe({
@@ -411,7 +405,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
           const loadedStudyCase = resultLoadedStudy as LoadedStudy;
 
           // in case of read only mode, set post processings of the loaded study case
-          const isReadOnlyMode = loadedStudyCase.loadStatus == LoadStatus.READ_ONLY_MODE
+          const isReadOnlyMode = loadedStudyCase.loadStatus === LoadStatus.READ_ONLY_MODE
           if (isReadOnlyMode){
 
             // Set post processing dictionnary from the loaded study
@@ -476,9 +470,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
               this.studyCaseDataService.loadedStudy !== null &&
               this.studyCaseDataService.loadedStudy !== undefined
             ) {
-              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE || 
-                (this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE && 
-                 this.studyCaseDataService.preRequisiteReadOnlyDict?.allocation_is_running)) {
+              if (this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE) {
                 this.studyCaseMainService.checkStudyIsUpAndLoaded();
               }
             }
@@ -524,23 +516,41 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyInReadOnlyModeTimeout(studyId, withEmit, loaderObservable, useDataServer);
-          }, 2000);
+          }, 3000);
         } else {
-          if(withEmit){
-              const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
-              if ((currentLoadedStudy !== null) && (currentLoadedStudy !== undefined)) {
-                this.studyCaseExecutionObserverService.removeStudyCaseObserver(currentLoadedStudy.studyCase.id);
-              }
-              this.studyCaseDataService.setCurrentStudy(loadedStudy);
-              this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+          //get current study user info
+          if (loadedStudy !== null && loadedStudy !== undefined && loadedStudy.studyCase !== null && loadedStudy.studyCase !== undefined){
+          this.studyCaseDataService.getStudy(loadedStudy.studyCase.id, false).subscribe({next:(study)=>{
+            if (study !== null && study !== undefined){
+              loadedStudy.studyCase = study;
+            }
+            if(withEmit){
+                const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
+                if ((currentLoadedStudy !== null) && (currentLoadedStudy !== undefined)) {
+                  this.studyCaseExecutionObserverService.removeStudyCaseObserver(currentLoadedStudy.studyCase.id);
+                }
+              
+                this.studyCaseDataService.setCurrentStudy(loadedStudy);
+                this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+            }
+        
+            loaderObservable.next(loadedStudy);
+            
+          },
+          error:(error) => {
+            loaderObservable.error(error);
+          }});
           }
-          loaderObservable.next(loadedStudy);
+          else{
+            loaderObservable.error("Error while retreiving loaded study");
+          }
         }
-      },
-        error:(error) => {
-          loaderObservable.error(error);
-      }
+        },
+          error:(error) => {
+            loaderObservable.error(error);
+        }
     });
+  
   }
 
   /// -----------------------------------------------------------------------------------------------------------------------------
