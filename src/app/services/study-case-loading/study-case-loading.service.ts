@@ -92,11 +92,11 @@ export class StudyCaseLoadingService {
           if(ontologyUpdated){
             this.studyCaseDataService.updateParameterOntology(loadedStudy);
           }
-          const loadOntology$ = ontologyUpdated ? of(true) : this.ontologyService.loadOntology(loadedStudy);
+          const loadOntology$ = ontologyUpdated ? of(null) : this.ontologyService.loadOntology(loadedStudy);
         
           if (loadOnlyOntology) {
             combineLatest([loadOntology$, updateUserPreferences$]).subscribe({
-              next:([ontologyUpdated, preferences]) => {
+              next:([,preferences]) => {
 
                 loadedStudy.userStudyPreferences = preferences;
                 //end loading
