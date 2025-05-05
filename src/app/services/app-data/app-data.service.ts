@@ -94,7 +94,7 @@ export class AppDataService extends DataHttpService {
           if (!loadingCanceled){
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
             new StudyCaseInitialSetupPayload(allocation.studyCaseId, study.reference, study.type);
-              this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true); 
+              this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true, null, true); 
           }
         } else {
           this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ",()=> {
@@ -135,7 +135,7 @@ export class AppDataService extends DataHttpService {
       next: (allocation) => {
         if(!loadingCanceled) {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {
-            this.launchLoadStudy(allocation.studyCaseId, false,  true, isStudyCreated, true);
+            this.launchLoadStudy(allocation.studyCaseId, false,  true, isStudyCreated, true, null, true);
           } else {
             this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case: " ,()=> isStudyCreated(false));
           }
