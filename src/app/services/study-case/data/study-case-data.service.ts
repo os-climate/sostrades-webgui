@@ -818,9 +818,6 @@ export class StudyCaseDataService extends DataHttpService {
                   return true;
               }
               else{
-                this.ontologyService.loadOntology(loadedStudy).subscribe({next:()=>{
-                  this.updateParameterOntology(loadedStudy);
-                }});
                 return false;
               }
 
@@ -836,10 +833,13 @@ export class StudyCaseDataService extends DataHttpService {
     else{
       return this.http.get<any>(`${this.apiRoute}/${study_id}/saved-documentation/${documentation_identifier}`, this.options).pipe(map(
         response => {
-          const documentation = new MardownDocumentation('', response);
-          this.ontologyService.markdownDocumentations[documentation_identifier] = documentation;
-          return documentation;
-        }));
+          if (response !== null && response !== undefined){
+            const documentation = new MardownDocumentation('', response);
+            this.ontologyService.markdownDocumentations[documentation_identifier] = documentation;
+            return documentation;
+          }
+          return null;
+      }));
       } 
 }
 
