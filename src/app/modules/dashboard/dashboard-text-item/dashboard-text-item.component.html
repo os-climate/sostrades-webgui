@@ -1,0 +1,38 @@
+<mat-card class="text-item-card">
+  <mat-card-content class="text-item-content">
+    <!-- Display mode -->
+    <div *ngIf="!isEditing" class="text-content">
+      <div class="content-wrapper" (click)="startEditing()">
+        <div [innerHTML]="textItem.data.content | safeHtml"></div>
+      </div>
+      <div class="edit-actions">
+        <button mat-button color="warn" (click)="deleteTextItem(textItem)">
+          <i class="fa-solid fa-trash"></i>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Edit mode -->
+    <div *ngIf="isEditing" class="edit-content">
+      <mat-form-field appearance="fill" class="full-width">
+        <textarea
+          matInput
+          [(ngModel)]="editableContent"
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="10"
+        ></textarea>
+      </mat-form-field>
+
+      <div class="edit-actions">
+        <button mat-button color="primary" (click)="saveChanges()">Save</button>
+        <button mat-button (click)="cancelEditing()">Cancel</button>
+        <button mat-button color="warn" (click)="deleteTextItem(textItem)">
+          <i class="fa-solid fa-trash"></i>
+          Delete
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

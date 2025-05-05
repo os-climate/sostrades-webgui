@@ -62,17 +62,33 @@
   margin-right: 5px;
 }
 
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.dashboard-toolbar {
+  flex: 0 0 auto;
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+  z-index: 10;
+}
+
 .edit-save-button {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
 }
 
 .gridster-container {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  position: relative;
+  flex: 1;
 }
 
 gridster {
@@ -85,6 +101,25 @@ gridster {
   box-sizing: border-box;
 }
 
+.text-card {
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+
+
 .label {
   margin-bottom: auto !important;
 }
+
+// impots sur 39k -> 4865,48
+// impots sur 24k -> 1375,33
+// total des deux 6240,81
+
+// impots sur 63k -> 2615,48 * 2 -> 5230,96
+// evolutions:
+// 2615,48 - 4865,48 = -2250
+// 2615,48 - 1375,33 = +1240,15
+// 1240,15 - 2250 = -1009,85

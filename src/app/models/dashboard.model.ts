@@ -43,19 +43,13 @@ export class DashboardText implements DisplayableItem {
   constructor(
     id: string,
     content: string,
-    position: {
-      x: number,
-      y: number,
-      cols: number,
-      rows: number
-    }
   ) {
     this.id = id;
     this.data = { content };
-    this.x = position.x;
-    this.y = position.y;
-    this.cols = position.cols;
-    this.rows = position.rows;
+    this.x = 0;
+    this.y = 0;
+    this.cols = 2;
+    this.rows = 1;
   }
 }
 

@@ -2,7 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import { DataHttpService } from "../http/data-http/data-http.service";
 import { HttpClient } from "@angular/common/http";
 import { Location } from "@angular/common";
-import { Dashboard, DashboardGraph, DisplayableItem } from "../../models/dashboard.model";
+import { Dashboard, DashboardGraph, DashboardText, DisplayableItem } from "../../models/dashboard.model";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -12,6 +12,7 @@ import { map } from "rxjs/operators";
 export class DashboardService extends DataHttpService {
   public onDashboardItemsAdded: EventEmitter<DisplayableItem> = new EventEmitter();
   public onDashboardItemsRemoved: EventEmitter<DisplayableItem> = new EventEmitter();
+  public onDashboardItemsUpdated: EventEmitter<DisplayableItem> = new EventEmitter();
   public dashboardItems: { [id: string]: DisplayableItem };
   public isDashboardUpdated: boolean
 
@@ -36,6 +37,18 @@ export class DashboardService extends DataHttpService {
   removeGraphItem(graph: DashboardGraph) {
     delete this.dashboardItems[graph.identifier];
     this.onDashboardItemsRemoved.emit(graph);
+      this.isDashboardUpdated = true;
+  }
+
+  addTextItem(text: DashboardText) {
+    this.dashboardItems[text.id] = text;
+    this.onDashboardItemsAdded.emit(text);
+    this.isDashboardUpdated = true;
+  }
+
+  removeTextItem(text: DashboardText) {
+    delete this.dashboardItems[text.id];
+    this.onDashboardItemsRemoved.emit(text);
     this.isDashboardUpdated = true;
   }
 

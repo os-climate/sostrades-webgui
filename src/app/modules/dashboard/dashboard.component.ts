@@ -5,10 +5,11 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { MatDialog } from '@angular/material/dialog';
 import { LoadedStudy } from 'src/app/models/study.model';
 import {DashboardService} from "../../services/dashboard/dashboard.service";
-import { Dashboard, DashboardGraph, DisplayableItem } from "../../models/dashboard.model";
+import { Dashboard, DashboardGraph, DashboardText, DisplayableItem } from "../../models/dashboard.model";
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { SnackbarService } from "../../services/snackbar/snackbar.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -20,6 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private treeNodeDataSubscription: Subscription;
   private dashboardAddItemSubscription: Subscription;
   private dashboardRemoveItemSubscription: Subscription;
+  private dashboardUpdateItemSubscription: Subscription;
   public hasDashboard: boolean;
   public loadedStudy: LoadedStudy;
   public dashboardFavorites: DisplayableItem[];
@@ -32,6 +34,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialog: MatDialog,
     private treeNodeDataService: TreeNodeDataService,
     public studyCaseDataService: StudyCaseDataService,
+    private snackbarService: SnackbarService,
     private dashboardService: DashboardService,
     private cdr: ChangeDetectorRef) {
     this.loadedStudy = null;
@@ -46,6 +49,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       resizable: {
         enabled: false,
+        stop: this.onResizeStop.bind(this),
       },
       gridType: 'scrollVertical',
       displayGrid: 'none',
@@ -62,6 +66,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.treeNodeDataSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(() => {
       this.loadedStudy = this.studyCaseDataService.loadedStudy;
+      // to remove
       this.hasDashboard = this.loadedStudy.dashboard !== null &&
         this.loadedStudy.dashboard !== undefined &&
         ('rows' in this.loadedStudy.dashboard || 'title' in this.loadedStudy.dashboard);
@@ -74,10 +79,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       this.dashboardFavorites = this.dashboardFavorites.filter(existing => existing.id !== item.id);
       this.isDashboardUpdated = true;
     });
+    this.dashboardUpdateItemSubscription = this.dashboardService.onDashboardItemsUpdated.subscribe((item: DisplayableItem) => {
+      console.log(item.data)
+      this.isDashboardUpdated = true;
+    })
     this.dashboardFavorites = this.dashboardService.getItems();
     if (this.options.api)
       this.options.api.optionsChanged();
-    this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y })));
+    this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y, cols: item.cols, rows: item.rows })));
   }
 
   ngAfterViewInit() {
@@ -98,11 +107,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     if ((this.dashboardRemoveItemSubscription !== null) && (this.dashboardRemoveItemSubscription !== undefined)) {
       this.dashboardRemoveItemSubscription.unsubscribe();
     }
+    if ((this.dashboardUpdateItemSubscription !== null) && (this.dashboardUpdateItemSubscription !== undefined)) {
+      this.dashboardUpdateItemSubscription.unsubscribe();
+    }
   }
 
   toggleEdit() {
     this.options.draggable.enabled = !this.options.draggable.enabled;
-    this.options.resizable.enabled = this.options.draggable.enabled;
+    this.options.resizable.enabled = !this.options.resizable.enabled;
     this.options.displayGrid = this.options.draggable.enabled ? 'always' : 'none';
     this.options.api.optionsChanged();
   }
@@ -125,23 +137,17 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.dashboardService.updateDashboard(dashboard).subscribe({
       next: () => {
-        console.log('Dashboard saved !');
+        this.snackbarService.showInformation('Dashboard saved');
         this.isDashboardUpdated = false;
       },
       error: (err) => {
-        console.error('Error saving dashboard', err);
+        this.snackbarService.showError(`Error saving dashboard: ${err}`);
       }
     });
     this.options.draggable.enabled = false;
     this.options.resizable.enabled = false;
     this.options.displayGrid = 'none';
     this.options.api.optionsChanged();
-    this.snackBar.open('Dashboard saved', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'bottom',
-      panelClass: ['snackbar-success']
-    });
   }
 
   isGraph(item: DisplayableItem): item is DashboardGraph {
@@ -152,7 +158,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.dashboardFavorites.filter(item => this.isGraph(item)) as DashboardGraph[];
   }
 
-  reorderItems(items: DisplayableItem[]) {
+  isText(item: DisplayableItem): item is DashboardText {
+    return item.type === 'text'
+  }
+
+  get textItems(): DashboardText[] {
+    return this.dashboardFavorites.filter(item => this.isText(item)) as DashboardText[];
+  }
+
+  autoFitItems(items: DisplayableItem[]) {
     this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
       console.log(`Item ${index}: ${item.id}, x: ${item.x}, y: ${item.y}, cols: ${item.cols}, rows: ${item.rows}`);
     })
@@ -178,8 +192,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     return itemReOrdered;
   }
 
-  onReorder() {
-    this.dashboardFavorites = this.reorderItems(this.dashboardFavorites);
+  onAutoFit() {
+    this.dashboardFavorites = this.autoFitItems(this.dashboardFavorites);
+    this.options.compactType = 'none'
     this.options.api.optionsChanged();
   }
 
@@ -224,15 +239,21 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
    }, 0);
   }
 
+  onResizeStop() {
+    setTimeout(() => {
+      this.checkForPositionChanges();
+    }, 0);
+  }
+
   checkForPositionChanges() {
-    const currentPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y })));
+    const currentPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y, cols: item.cols, rows: item.rows })));
     if (currentPositions !== this.previousPositions) {
       console.log('Positions changed');
       this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
         console.log(`Item ${index}: ${item.id}, x: ${item.x}, y: ${item.y}, cols: ${item.cols}, rows: ${item.rows}`);
       })
       this.orderItemsByPosition();
-      this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y })));
+      this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y, cols: item.cols, rows: item.rows })));
       this.isDashboardUpdated = true;
     } else {
       console.log('Positions not changed');
@@ -250,5 +271,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         return a.y - b.y;
       }
     });
+  }
+
+  onAddText() {
+    // problem might occur when deleting the first one in a list of 2 texts and then re adding a new one it will be created with the same id as the remaining one text-1
+    // fix should be incrementing the id of the new text by 1
+    const textItemLen: number = this.textItems.length;
+    const id = `text-${textItemLen}`;
+    const text = new DashboardText(id, 'Click to edit this text');
+    this.dashboardService.addTextItem(text);
   }
 }

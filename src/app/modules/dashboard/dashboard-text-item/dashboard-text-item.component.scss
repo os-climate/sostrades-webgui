@@ -1,0 +1,45 @@
+.text-item-card {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-item-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-content {
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.edit-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+.content-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 10px;
+}
