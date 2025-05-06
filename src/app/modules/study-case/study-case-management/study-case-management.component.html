@@ -335,6 +335,18 @@
             </button>
 
             <button
+            [id]="'btn-study-management-export-ro-' + element.groupName + '-' + element.name"
+            *ngIf="element.hasReadOnlyFile"
+            style="margin-right: 5px"
+            mat-icon-button
+            color="primary"
+            (click)="exportStudy(element)"
+            matTooltip="Export study read only"
+            >
+            <i class="fa-solid fa-file-zipper"></i>
+            </button>
+
+            <button
               [id]="'btn-study-management-delete-' + element.groupName +'-' + element.name"
               style="margin-right: 5px"
               mat-icon-button

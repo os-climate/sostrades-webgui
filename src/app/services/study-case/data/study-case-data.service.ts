@@ -843,4 +843,19 @@ export class StudyCaseDataService extends DataHttpService {
       } 
 }
 
+getStudyReadOnlyZip(studyId: number): Observable<Blob> {
+  const options: {
+    headers?: HttpHeaders;
+    observe?: 'body';
+    params?: HttpParams;
+    reportProgress?: boolean;
+    responseType: 'blob';
+  } = {
+    responseType: 'blob'
+  };
+  const url = `${this.apiRoute}/${studyId}/read-only-mode/export`;
+
+  return this.http.get(url, options);
+}
+
 }

@@ -601,6 +601,30 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
+  exportStudy(study: Study){
+    this.loadingDialogService.showLoading(`Retrieving study case "${study.name}" read only files...`);
+
+    this.studyCaseDataService.getStudyReadOnlyZip(study.id).subscribe({
+      next: (result) => {
+        this.loadingDialogService.closeLoading();
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(result);
+        downloadLink.setAttribute('download', `zip_study_${study.id}.zip`);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.loadingDialogService.closeLoading();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError(`Error downloading study case "${study.name}" : ${error.description}`);
+        }
+      }
+    });
+  
+  }
 
   deleteStudiesValidation(studies: Study[]) {
     // Warn user is trying to delete current loaded study
