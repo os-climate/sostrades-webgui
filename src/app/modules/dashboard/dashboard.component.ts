@@ -4,7 +4,13 @@ import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { LoadedStudy } from 'src/app/models/study.model';
 import { DashboardService } from "../../services/dashboard/dashboard.service";
-import { Dashboard, DashboardGraph, DashboardText, DisplayableItem } from "../../models/dashboard.model";
+import {
+  Dashboard,
+  DashboardGraph,
+  DashboardSection,
+  DashboardText,
+  DisplayableItem
+} from "../../models/dashboard.model";
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { SnackbarService } from "../../services/snackbar/snackbar.service";
@@ -47,6 +53,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         enabled: false,
         stop: this.onResizeStop.bind(this),
       },
+      itemResizeCallback: this.onItemResize.bind(this),
+      enableEmptyCellDrop: true,
       gridType: 'scrollVertical',
       displayGrid: 'none',
       minCols: 10,
@@ -165,6 +173,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.dashboardFavorites.filter(item => item.type === 'text') as DashboardText[];
   }
 
+  // Getter that returns the section items of the dashboard
+  get sectionItems(): DashboardSection[] {
+    return this.dashboardFavorites.filter(item => item.type === 'section') as DashboardSection[];
+  }
+
   // Custom compact function to fil the empty spaces in the dashboard
   autoFitItems(items: DisplayableItem[]) {
     // this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
@@ -254,6 +267,27 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 0);
   }
 
+  onItemResize(item: DisplayableItem) {
+    setTimeout(() => {
+      this.itemResize(item);
+    }, 0)
+  }
+
+  // Handle the item resize event
+  itemResize(item: DisplayableItem) {
+    if (item.minCols && item.minRows) {
+      if (item.cols < item.minCols) {
+        this.snackbarService.showError(`${item.type} item must have at least ${item.minCols} columns`);
+        item.cols = item.minCols;
+      }
+      if (item.rows < item.minRows) {
+        this.snackbarService.showError(`${item.type} item must have at least ${item.minRows} rows`);
+        item.rows = item.minRows;
+      }
+    }
+    this.options.api.optionsChanged();
+  }
+
   // check if the position of the items has changed
   checkForPositionChanges() {
     const currentPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
@@ -289,8 +323,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Add a new text item to the dashboard
   onAddText() {
-    const id = `text-${Date.now()}`;
-    const text = new DashboardText(id, 'Click to edit this text');
+    const text = new DashboardText('Click to edit this text');
     this.dashboardService.addItem(text);
   }
+
+  // Add a new section item to the dashboard
+  onAddSection() {
+    const section = new DashboardSection('<p>Section title</p>');
+    this.dashboardService.addItem(section);
+  }
 }
+
+

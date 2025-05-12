@@ -22,10 +22,16 @@ export enum DashboardAttributes {
 export class DisplayableItem implements GridsterItem {
   id: string;
   type: 'text' | 'graph' | 'section';
+  // position on the grid
   x: number;
   y: number;
+  // size of the grid item
   cols: number;
   rows: number;
+  // min and max size of the grid item
+  minCols: number;
+  minRows: number;
+  // data to be displayed
   data: any;
 }
 
@@ -36,20 +42,21 @@ export class DashboardText implements DisplayableItem {
   y: number;
   cols: number;
   rows: number;
+  minCols: number;
+  minRows: number;
   data: {
     content: string;
   }
 
-  constructor(
-    id: string,
-    content: string,
-  ) {
-    this.id = id;
+  constructor(content: string) {
+    this.id = `text-${Date.now()}`;
     this.data = { content };
     this.x = 0;
     this.y = 0;
     this.cols = 3;
     this.rows = 2;
+    this.minCols = 2;
+    this.minRows = 2;
   }
 }
 
@@ -63,6 +70,8 @@ export class DashboardGraph implements DisplayableItem {
   y: number;
   cols: number;
   rows: number;
+  minCols: number;
+  minRows: number;
   data: {
     graphData: any;
   }
@@ -80,6 +89,8 @@ export class DashboardGraph implements DisplayableItem {
     this.y = 0;
     this.cols = 4;
     this.rows = 3;
+    this.minCols = 3;
+    this.minRows = 2;
     this.data = { graphData };
     this.id = this.identifier;
   }
@@ -96,27 +107,21 @@ export class DashboardSection implements DisplayableItem {
   y: number;
   cols: number;
   rows: number;
+  minCols: number;
+  minRows: number;
   data: {
     title: string;
-    children: DisplayableItem[];
+    children: DashboardGraph[];
   };
 
-  constructor(
-    id: string,
-    title: string,
-    position: {
-      x: number,
-      y: number,
-      cols: number,
-      rows: number,
-    },
-    children: DisplayableItem[]
-  ) {
-    this.id = id;
-    this.x = position.x;
-    this.y = position.y;
-    this.cols = position.cols;
-    this.rows = position.rows;
-    this.data = { title, children };
+  constructor(title: string) {
+    this.id = `section-${Date.now()}`;
+    this.x = 0;
+    this.y = 0;
+    this.cols = 10;
+    this.rows = 5;
+    this.minCols = 10;
+    this.minRows = 4;
+    this.data = { title, children: [] };
   }
 }

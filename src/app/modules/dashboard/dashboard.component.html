@@ -11,7 +11,19 @@
         *ngIf="this.options.draggable.enabled"
       >
         <mat-icon>text_fields</mat-icon>
-        Add text
+        Add Text
+      </button>
+      <button
+        id="add-section"
+        matTooltip="Add section"
+        mat-raised-button
+        color="primary"
+        class="float-right-button"
+        (click)="onAddSection()"
+        *ngIf="this.options.draggable.enabled"
+      >
+        <i class="fa-solid fa-folder-open"></i>
+        Add Section
       </button>
       <button
         id="reorder-dashboard"
@@ -73,10 +85,14 @@
         </gridster-item>
         <gridster-item *ngFor="let text of textItems" [item]="text">
           <div class="text-card">
-            <app-dashboard-text-item
-              [textItem]="text"
-            >
+            <app-dashboard-text-item [textItem]="text">
             </app-dashboard-text-item>
+          </div>
+        </gridster-item>
+        <gridster-item *ngFor="let section of sectionItems" [item]="section">
+          <div class="section-card">
+            <app-dashboard-section-item [sectionItem]="section">
+            </app-dashboard-section-item>
           </div>
         </gridster-item>
       </gridster>

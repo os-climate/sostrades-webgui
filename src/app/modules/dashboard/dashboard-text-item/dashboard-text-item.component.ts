@@ -13,7 +13,6 @@ export class DashboardTextItemComponent implements OnInit {
   public isEditing: boolean;
   public editableContent: string;
   public editModules: any;
-  public viewModules: any;
 
   constructor(private dashboardService: DashboardService) {
     this.isEditing = false;
@@ -32,30 +31,22 @@ export class DashboardTextItemComponent implements OnInit {
       ],
         placeholder: '',
     };
-    this.viewModules = {
-      toolbar: false
-    }
   }
 
   ngOnInit() {
-    console.log('textItem: ', this.textItem);
     if (!this.textItem.data.content)
       this.textItem.data.content = '';
     this.editableContent = this.textItem.data.content;
-    console.log('initial content: ', this.textItem.data.content);
-    console.log('initial editableContent: ', this.editableContent);
   }
 
   // When entering edit mode
   startEditing() {
     this.isEditing = true;
     this.editableContent = this.textItem.data.content;
-    console.log('startEditing: ', this.editableContent);
   }
 
   // When leaving edit mode by saving
   saveChanges() {
-    console.log('saveChanges: ', this.editableContent);
     this.textItem.data.content = this.editableContent;
     this.dashboardService.updateItem(this.textItem);
     this.isEditing = false;

@@ -77,6 +77,7 @@ import { DataManagementDisciplineComponent } from './modules/data-management/dat
 import { DocumentationComponent } from './modules/study-case/study-case-documentation/study-case-documentation.component';
 import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { DashboardTextItemComponent} from "./modules/dashboard/dashboard-text-item/dashboard-text-item.component";
+import { DashboardSectionItemComponent } from "./modules/dashboard/dashboard-section-item/dashboard-section-item.component";
 import { SafeHtmlPipe } from "./modules/dashboard/safe-html.pipe";
 import { OntologyParameterConverterPipe } from './pipes/ontology-parameter-converter/ontology-parameter-converter.pipe';
 import { OntologyDisciplineConverterPipe } from './pipes/ontology-discipline-converter/ontology-discipline-converter.pipe';
@@ -187,6 +188,7 @@ registerLocaleData(fr);
         DocumentationComponent,
         DashboardComponent,
         DashboardTextItemComponent,
+        DashboardSectionItemComponent,
         SafeHtmlPipe,
         OntologyParameterConverterPipe,
         OntologyDisciplineConverterPipe,
