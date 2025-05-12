@@ -48,8 +48,8 @@ export class DashboardText implements DisplayableItem {
     this.data = { content };
     this.x = 0;
     this.y = 0;
-    this.cols = 2;
-    this.rows = 1;
+    this.cols = 3;
+    this.rows = 2;
   }
 }
 

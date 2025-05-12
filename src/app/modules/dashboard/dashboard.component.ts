@@ -2,13 +2,11 @@ import { Component, OnInit, OnDestroy, AfterViewInit, HostListener, ChangeDetect
 import { Subscription } from 'rxjs';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import { MatDialog } from '@angular/material/dialog';
 import { LoadedStudy } from 'src/app/models/study.model';
-import {DashboardService} from "../../services/dashboard/dashboard.service";
+import { DashboardService } from "../../services/dashboard/dashboard.service";
 import { Dashboard, DashboardGraph, DashboardText, DisplayableItem } from "../../models/dashboard.model";
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { SnackbarService } from "../../services/snackbar/snackbar.service";
 
 @Component({
@@ -30,8 +28,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private previousPositions: string;
 
   constructor(
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog,
     private treeNodeDataService: TreeNodeDataService,
     public studyCaseDataService: StudyCaseDataService,
     private snackbarService: SnackbarService,
@@ -66,10 +62,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.treeNodeDataSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(() => {
       this.loadedStudy = this.studyCaseDataService.loadedStudy;
-      // to remove
-      this.hasDashboard = this.loadedStudy.dashboard !== null &&
-        this.loadedStudy.dashboard !== undefined &&
-        ('rows' in this.loadedStudy.dashboard || 'title' in this.loadedStudy.dashboard);
     });
     this.dashboardAddItemSubscription = this.dashboardService.onDashboardItemsAdded.subscribe((item: DisplayableItem) => {
       this.dashboardFavorites.push(item);
@@ -80,13 +72,22 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isDashboardUpdated = true;
     });
     this.dashboardUpdateItemSubscription = this.dashboardService.onDashboardItemsUpdated.subscribe((item: DisplayableItem) => {
-      console.log(item.data)
-      this.isDashboardUpdated = true;
-    })
+      const index = this.dashboardFavorites.findIndex(existing => existing.id === item.id);
+      if (index !== -1) {
+        this.dashboardFavorites[index] = item;
+        this.isDashboardUpdated = true;
+      }
+    });
     this.dashboardFavorites = this.dashboardService.getItems();
     if (this.options.api)
       this.options.api.optionsChanged();
-    this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y, cols: item.cols, rows: item.rows })));
+    this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
+      id: item.id,
+      x: item.x,
+      y: item.y,
+      cols: item.cols,
+      rows: item.rows
+    })));
   }
 
   ngAfterViewInit() {
@@ -112,6 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  // Handle the edition mode switch (draggable, resizable and display grid)
   toggleEdit() {
     this.options.draggable.enabled = !this.options.draggable.enabled;
     this.options.resizable.enabled = !this.options.resizable.enabled;
@@ -119,17 +121,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.api.optionsChanged();
   }
 
+  // Handle the mat-slide-toggle inside the button when the user clicks the button
   handleEditButtonClick(toggle: MatSlideToggle) {
     toggle.toggle();
     this.toggleEdit();
   }
 
+  // Handle the mat-slide-toggle change event
   onSlideToggleChange(event: MatSlideToggleChange) {
     this.options.resizable.enabled = event.checked;
     this.options.draggable.enabled = event.checked;
     this.toggleEdit();
   }
 
+  // Save the current dashboard in a backend file
   OnSaveDashboard() {
     const dashboard: Dashboard = {
       'studyCaseId': this.loadedStudy.studyCase.id,
@@ -150,26 +155,21 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.api.optionsChanged();
   }
 
-  isGraph(item: DisplayableItem): item is DashboardGraph {
-    return item.type === 'graph'
-  }
-
+  // Getter that returns the graph items of the dashboard
   get graphItems(): DashboardGraph[] {
-    return this.dashboardFavorites.filter(item => this.isGraph(item)) as DashboardGraph[];
+    return this.dashboardFavorites.filter(item => item.type === 'graph') as DashboardGraph[];
   }
 
-  isText(item: DisplayableItem): item is DashboardText {
-    return item.type === 'text'
-  }
-
+  // Getter that returns the text items of the dashboard
   get textItems(): DashboardText[] {
-    return this.dashboardFavorites.filter(item => this.isText(item)) as DashboardText[];
+    return this.dashboardFavorites.filter(item => item.type === 'text') as DashboardText[];
   }
 
+  // Custom compact function to fil the empty spaces in the dashboard
   autoFitItems(items: DisplayableItem[]) {
-    this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
-      console.log(`Item ${index}: ${item.id}, x: ${item.x}, y: ${item.y}, cols: ${item.cols}, rows: ${item.rows}`);
-    })
+    // this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
+    //   console.log(`Item ${index}: ${item.id}, x: ${item.x}, y: ${item.y}, cols: ${item.cols}, rows: ${item.rows}`);
+    // })
     const ColsWidth = 10;
     let rowHeight = 3;
     let currentX = 0;
@@ -192,77 +192,91 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     return itemReOrdered;
   }
 
+  // Handle the auto-fit button click and change the compact type to none
   onAutoFit() {
     this.dashboardFavorites = this.autoFitItems(this.dashboardFavorites);
     this.options.compactType = 'none'
     this.options.api.optionsChanged();
   }
 
-  getGraphWidth(item: DashboardGraph): number {
-    const colWidth = this.calculateColWidth();
+  // Calculate the width of the graph item for resizing
+  CalculateGraphWidth(item: DashboardGraph): number {
+    const colWidth = this.getColWidth();
     if (!colWidth) return null;
     return (item.cols * colWidth) + ((item.cols - 1) * this.options.margin);
   }
 
-  getGraphHeight(item: DashboardGraph): number {
-    const rowHeight = this.calculateRowHeight();
+  // Calculate the height of the graph item for resizing
+  CalculateGraphHeight(item: DashboardGraph): number {
+    const rowHeight = this.getRowHeight();
     if (!rowHeight) return null;
     return (item.rows * rowHeight) + ((item.rows - 1) * this.options.margin);
   }
 
-  calculateColWidth(): number {
+  // get the width of the column
+  getColWidth(): number {
     const columnElement = document.querySelector('.gridster-column');
     if (columnElement) {
       return parseFloat(getComputedStyle(columnElement).width);
     }
   }
 
-  calculateRowHeight(): number {
+  // get the height of the row
+  getRowHeight(): number {
     const rowElement = document.querySelector('.gridster-row');
     if (rowElement) {
       return parseFloat(getComputedStyle(rowElement).height);
     }
   }
 
+  // Listen for window resize event
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.updateGraphSizes();
   }
 
+  // Used to trigger Angular's change detection
   updateGraphSizes() {
     this.dashboardFavorites = [...this.dashboardFavorites];
   }
 
+  // Handle the drag stop event
   onDragStop() {
-   setTimeout(() => {
-    this.checkForPositionChanges();
-   }, 0);
+    setTimeout(() => {
+      this.checkForPositionChanges();
+    }, 0);
   }
 
+  // Handle the resize stop event
   onResizeStop() {
     setTimeout(() => {
       this.checkForPositionChanges();
     }, 0);
   }
 
+  // check if the position of the items has changed
   checkForPositionChanges() {
-    const currentPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y, cols: item.cols, rows: item.rows })));
+    const currentPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
+      id: item.id,
+      x: item.x,
+      y: item.y,
+      cols: item.cols,
+      rows: item.rows
+    })));
     if (currentPositions !== this.previousPositions) {
-      console.log('Positions changed');
-      this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
-        console.log(`Item ${index}: ${item.id}, x: ${item.x}, y: ${item.y}, cols: ${item.cols}, rows: ${item.rows}`);
-      })
       this.orderItemsByPosition();
-      this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({ id: item.id, x: item.x, y: item.y, cols: item.cols, rows: item.rows })));
+      this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
+        id: item.id,
+        x: item.x,
+        y: item.y,
+        cols: item.cols,
+        rows: item.rows
+      })));
       this.isDashboardUpdated = true;
-    } else {
-      console.log('Positions not changed');
-      this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
-        console.log(`Item ${index}: ${item.id}, x: ${item.x}, y: ${item.y}, cols: ${item.cols}, rows: ${item.rows}`);
-      })
     }
   }
 
+  // Change the dashboard list of the component to match the new order of the items in the grid
   orderItemsByPosition() {
     this.dashboardFavorites.sort((a, b) => {
       if (a.y === b.y) {
@@ -273,12 +287,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  // Add a new text item to the dashboard
   onAddText() {
-    // problem might occur when deleting the first one in a list of 2 texts and then re adding a new one it will be created with the same id as the remaining one text-1
-    // fix should be incrementing the id of the new text by 1
-    const textItemLen: number = this.textItems.length;
-    const id = `text-${textItemLen}`;
+    const id = `text-${Date.now()}`;
     const text = new DashboardText(id, 'Click to edit this text');
-    this.dashboardService.addTextItem(text);
+    this.dashboardService.addItem(text);
   }
 }

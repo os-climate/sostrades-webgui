@@ -1,156 +1,85 @@
-<!--to remove-->
-<div *ngIf="hasDashboard; else missingDashboardMessage" style="height: 100%;">
-  <div class="flex-container">
-    <div
-      *ngIf="loadedStudy.dashboard['title']"
-      style="width : 100%"
-    >
-      <div class="widget-container">
-        <div class="widget-cell">
-          <div class="h2" style="font-weight: bold; text-align: center;">
-            {{loadedStudy.dashboard['title']}}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="loadedStudy.dashboard['rows']">
-      <div
-
-        *ngFor="let row of loadedStudy.dashboard['rows']"
+<div class="dashboard-container">
+  <div class="dashboard-toolbar">
+    <div class="edit-save-button">
+      <button
+        id="add-text"
+        matTooltip="Add text"
+        mat-raised-button
+        color="primary"
+        class="float-right-button"
+        (click)="onAddText()"
+        *ngIf="this.options.draggable.enabled"
       >
-        <div class="widget-container">
-          <div
-            *ngFor="let block of row"
-          >
-            <div class="widget-cell">
-              <div *ngIf="block['content_type'] === 'TEXT'" [className]="block['style'] ? block['style'] : ''">
-                {{block['content']}}
-              </div>
-              <div *ngIf="block['content_type'] === 'SCALAR'">
-                <strong>{{block['content']['var_name']}} :</strong>
-                {{block['content']['value']}}
-              </div>
-              <div *ngIf="block['content_type'] === 'POST_PROCESSING'" class="plot-resize-zone">
-                <app-post-processing-plotly
-                  *ngFor="let plot of [block['content']]"
-                  [class]="
-                    plot['data'] && plot['data'][0] && plot['data'][0]['type'] === 'table'
-                      ? 'table'
-                      : 'plot'
-                  "
-                  [plotData]="plot"
-                  [fullNamespace]=""
-                  [plotIndex]="0"
-                  [disciplineName]=""
-                  [name]=""
-                >
-                </app-post-processing-plotly>
-
-              </div>
-            </div>
-
+        <mat-icon>text_fields</mat-icon>
+        Add text
+      </button>
+      <button
+        id="reorder-dashboard"
+        matTooltip="Reorder dashboard"
+        mat-raised-button
+        color="primary"
+        class="float-right-button"
+        *ngIf="this.options.draggable.enabled"
+        (click)="onAutoFit()"
+      >
+        <i class="fa-solid fa-rotate-right"></i>
+        Auto-fit
+      </button>
+      <button
+        id="save-dashboard"
+        *ngIf="isDashboardUpdated"
+        matTooltip="Update saved dashboard"
+        mat-raised-button
+        color="primary"
+        class="float-right-button"
+        (click)="OnSaveDashboard()"
+      >
+        <i class="fa-solid fa-floppy-disk"></i>
+        Save
+      </button>
+      <button
+        id="edit-dashboard"
+        matTooltip="Edit dashboard"
+        mat-raised-button
+        color="primary"
+        class="float-right-button"
+        (click)="handleEditButtonClick(slideToggle)"
+      >
+        <mat-slide-toggle #slideToggle [checked]="options.draggable.enabled" (change)="onSlideToggleChange($event)">
+        </mat-slide-toggle>
+        Edit
+      </button>
+    </div>
+  </div>
+  <div
+    *ngIf="dashboardFavorites.length > 0"
+    class="plot-resize-zone"
+  >
+    <div class="gridster-container">
+      <gridster [options]="options">
+        <gridster-item *ngFor="let graph of graphItems" [item]="graph">
+          <div class="graph-card">
+            <app-post-processing-plotly
+              [class]="graph.data && graph.data.graphData && graph.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+              [fullNamespace]=""
+              [plotData]="graph.data.graphData"
+              [disciplineName]="graph.disciplineName"
+              [name]="graph.name"
+              [plotIndex]="graph.plotIndex"
+              [height]="CalculateGraphHeight(graph)"
+              [width]="CalculateGraphWidth(graph)">
+            </app-post-processing-plotly>
           </div>
-        </div>
-      </div>
+        </gridster-item>
+        <gridster-item *ngFor="let text of textItems" [item]="text">
+          <div class="text-card">
+            <app-dashboard-text-item
+              [textItem]="text"
+            >
+            </app-dashboard-text-item>
+          </div>
+        </gridster-item>
+      </gridster>
     </div>
   </div>
 </div>
-
-<ng-template #missingDashboardMessage>
-  <div class="dashboard-container">
-    <div class="dashboard-toolbar">
-      <div class="edit-save-button">
-        <button
-          id="add-text"
-          matTooltip="Add text"
-          mat-raised-button
-          color="primary"
-          class="float-right-button"
-          (click)="onAddText()"
-          *ngIf="this.options.draggable.enabled"
-        >
-          <mat-icon>text_fields</mat-icon>
-          Add text
-        </button>
-        <button
-          id="reorder-dashboard"
-          matTooltip="Reorder dashboard"
-          mat-raised-button
-          color="primary"
-          class="float-right-button"
-          *ngIf="this.options.draggable.enabled"
-          (click)="onAutoFit()"
-        >
-          <i class="fa-solid fa-rotate-right"></i>
-          Auto-fit
-        </button>
-        <button
-          id="save-dashboard"
-          *ngIf="isDashboardUpdated"
-          matTooltip="Update saved dashboard"
-          mat-raised-button
-          color="primary"
-          class="float-right-button"
-          (click)="OnSaveDashboard()"
-        >
-          <i class="fa-solid fa-floppy-disk"></i>
-          Save
-        </button>
-        <button
-          id="edit-dashboard"
-          matTooltip="Edit dashboard"
-          mat-raised-button
-          color="primary"
-          class="float-right-button"
-          (click)="handleEditButtonClick(slideToggle)"
-        >
-          <mat-slide-toggle #slideToggle [checked]="options.draggable.enabled" (change)="onSlideToggleChange($event)">
-          </mat-slide-toggle>
-          Edit
-        </button>
-      </div>
-    </div>
-    <div
-      *ngIf="dashboardFavorites.length > 0"
-      class="plot-resize-zone"
-    >
-      <div class="gridster-container">
-        <gridster [options]="options">
-          <gridster-item *ngFor="let graph of graphItems" [item]="graph">
-            <div class="graph-card">
-              <app-post-processing-plotly
-                [class]="graph.data && graph.data.graphData && graph.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
-                [fullNamespace]=""
-                [plotData]="graph.data.graphData"
-                [disciplineName]="graph.disciplineName"
-                [name]="graph.name"
-                [plotIndex]="graph.plotIndex"
-                [height]="getGraphHeight(graph)"
-                [width]="getGraphWidth(graph)">
-              </app-post-processing-plotly>
-            </div>
-          </gridster-item>
-          <gridster-item *ngFor="let text of textItems" [item]="text">
-            <div class="text-card">
-              <app-dashboard-text-item
-                [textItem]="text"
-                [isDraggable]="this.options.draggable.enabled"
-              >
-              </app-dashboard-text-item>
-            </div>
-          </gridster-item>
-        </gridster>
-      </div>
-      <!--    <app-post-processing-plotly-->
-      <!--      *ngFor="let plot of graphItems"-->
-      <!--      [class]="plot.data && plot.data.graphData && plot.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"-->
-      <!--      [fullNamespace]=""-->
-      <!--      [plotData]="plot.data.graphData"-->
-      <!--      [disciplineName]="plot.disciplineName"-->
-      <!--      [name]="plot.name"-->
-      <!--      [plotIndex]="plot.plotIndex">-->
-      <!--    </app-post-processing-plotly>-->
-    </div>
-  </div>
-</ng-template>

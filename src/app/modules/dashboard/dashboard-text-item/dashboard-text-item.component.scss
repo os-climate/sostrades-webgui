@@ -3,6 +3,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 .text-item-content {
@@ -16,30 +18,71 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .edit-content {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  overflow: hidden;
 }
 
-.full-width {
-  width: 100%;
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .edit-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: auto;
-  margin-bottom: 5px;
-  margin-right: 5px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .content-wrapper {
   flex-grow: 1;
   overflow-y: auto;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  height: calc(100% - 5px);
+}
+
+.empty-content {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  margin: 10px;
+}
+
+.quill-content {
+  min-height: 50px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+quill-editor {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 40px);
+  overflow: hidden;
+}
+
+.ql-container {
+  height: 100% !important;
+  flex: auto;
+  max-height: calc(100% - 50px);
+  overflow-y: auto;
+}
+
+quill-view-html {
+  display: block;
+  height: 100%;
+}
+
+.ql-editor {
+  min-height: 100px;
+  max-height: none;
 }

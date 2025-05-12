@@ -1,4 +1,4 @@
-import { Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DashboardText } from "../../../models/dashboard.model";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 
@@ -9,39 +9,66 @@ import { DashboardService } from "../../../services/dashboard/dashboard.service"
 })
 export class DashboardTextItemComponent implements OnInit {
   @Input() textItem: DashboardText;
-  @Input() isDraggable: boolean;
 
-  isEditing: boolean;
-  editableContent: string;
+  public isEditing: boolean;
+  public editableContent: string;
+  public editModules: any;
+  public viewModules: any;
 
   constructor(private dashboardService: DashboardService) {
     this.isEditing = false;
-    this.editableContent = '';
-  }
-
-  ngOnInit() {
-    this.editableContent = this.textItem.data.content;
-  }
-
-  startEditing() {
-    if (!this.isDraggable) {
-      this.isEditing = true;
-      this.editableContent = this.textItem.data.content;
+      this.editableContent = '';
+    this.editModules = {
+      toolbar: [
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        [{ size: ['small', false, 'large', 'huge'] }],
+        [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+        [{ indent: '-1' }, { indent: '+1' }],
+        [{ font: [] }],
+        [{ color: [] }, { background: [] }],
+        [{ align: [] }],
+        ['clean'],
+      ],
+        placeholder: '',
+    };
+    this.viewModules = {
+      toolbar: false
     }
   }
 
-  saveChanges() {
-    this.textItem.data.content = this.editableContent;
-    this.isEditing = false;
-    this.dashboardService.onDashboardItemsUpdated.emit(this.textItem);
-  }
-
-  cancelEditing() {
-    this.isEditing = false;
+  ngOnInit() {
+    console.log('textItem: ', this.textItem);
+    if (!this.textItem.data.content)
+      this.textItem.data.content = '';
     this.editableContent = this.textItem.data.content;
+    console.log('initial content: ', this.textItem.data.content);
+    console.log('initial editableContent: ', this.editableContent);
   }
 
+  // When entering edit mode
+  startEditing() {
+    this.isEditing = true;
+    this.editableContent = this.textItem.data.content;
+    console.log('startEditing: ', this.editableContent);
+  }
+
+  // When leaving edit mode by saving
+  saveChanges() {
+    console.log('saveChanges: ', this.editableContent);
+    this.textItem.data.content = this.editableContent;
+    this.dashboardService.updateItem(this.textItem);
+    this.isEditing = false;
+  }
+
+  // When leaving edit mode by canceling
+  cancelEditing() {
+    this.editableContent = this.textItem.data.content;
+    this.isEditing = false;
+  }
+
+  // delete the text item of the dashboard and emit an event
   deleteTextItem(text: DashboardText) {
-    this.dashboardService.removeTextItem(text);
+    this.dashboardService.removeItem(text);
   }
 }

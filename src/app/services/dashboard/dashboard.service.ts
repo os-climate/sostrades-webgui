@@ -2,7 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import { DataHttpService } from "../http/data-http/data-http.service";
 import { HttpClient } from "@angular/common/http";
 import { Location } from "@angular/common";
-import { Dashboard, DashboardGraph, DashboardText, DisplayableItem } from "../../models/dashboard.model";
+import { Dashboard, DisplayableItem } from "../../models/dashboard.model";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -24,38 +24,38 @@ export class DashboardService extends DataHttpService {
     this.isDashboardUpdated = false;
   }
 
+  // Getter to check if the dashboard has changed
   get isDashboardChanged() {
     return this.isDashboardUpdated;
   }
 
-  addGraphItem(graph: DashboardGraph) {
-    this.dashboardItems[graph.identifier] = graph;
-    this.onDashboardItemsAdded.emit(graph);
+  // adds an item to the dashboard and emits an event
+  addItem(item: DisplayableItem) {
+    this.dashboardItems[item.id] = item;
+    this.onDashboardItemsAdded.emit(item);
     this.isDashboardUpdated = true;
   }
 
-  removeGraphItem(graph: DashboardGraph) {
-    delete this.dashboardItems[graph.identifier];
-    this.onDashboardItemsRemoved.emit(graph);
-      this.isDashboardUpdated = true;
-  }
-
-  addTextItem(text: DashboardText) {
-    this.dashboardItems[text.id] = text;
-    this.onDashboardItemsAdded.emit(text);
+  // removes an item from the dashboard and emits an event
+  removeItem(item: DisplayableItem) {
+    delete this.dashboardItems[item.id];
+    this.onDashboardItemsRemoved.emit(item);
     this.isDashboardUpdated = true;
   }
 
-  removeTextItem(text: DashboardText) {
-    delete this.dashboardItems[text.id];
-    this.onDashboardItemsRemoved.emit(text);
+  // updates an item in the dashboard and emits an event
+  updateItem(item: DisplayableItem) {
+    this.dashboardItems[item.id] = item;
+    this.onDashboardItemsUpdated.emit(item);
     this.isDashboardUpdated = true;
   }
 
+  // checks if an item is selected
   isSelected(itemId: string) {
     return itemId in this.dashboardItems;
   }
 
+  // get the whole dashboard loaded in the service
   getItems(): DisplayableItem[] {
     return Object.values(this.dashboardItems);
   }
@@ -64,6 +64,7 @@ export class DashboardService extends DataHttpService {
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
 
+  // get the dashboard from the API
   getDashboard(studyId: number): Observable<Dashboard> {
     return this.http.get<Dashboard>(`${this.apiRoute}/${studyId}`).pipe(map(
       response => {
@@ -77,6 +78,7 @@ export class DashboardService extends DataHttpService {
     ))
   }
 
+  // Save the dashboard to the API
   updateDashboard(dashboard: Dashboard): Observable<void> {
     const payload = {
       study_case_id: dashboard.studyCaseId,

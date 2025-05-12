@@ -77,6 +77,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     }
   }
 
+  // Add or remove the plot in the dashboard
   OnFavoriteClick() {
     const plotId = {
       disciplineName: this.disciplineName,
@@ -98,10 +99,11 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
    * */
   saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
     const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData)
-    isFavorite ? this.dashboardService.addGraphItem(graph) : this.dashboardService.removeGraphItem(graph);
+    isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph);
     this.snackbarService.showInformation(isFavorite ? 'Graph added to dashboard!' : 'Graph removed from dashboard!');
   }
 
+  // Check if the plot is in the dashboard
   loadFavorites() {
     const graph = new DashboardGraph(this.disciplineName, this.name, this.plotIndex, this.plotData);
     this.isFavorite = this.dashboardService.isSelected(graph.identifier);
@@ -172,6 +174,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
         opacity: 0.2
       });
     }
+    // Set the layout size if the plot is being resized in the dashboard
     this.plotData.layout.height = this.height || 450;
     this.plotData.layout.width = this.width || 600;
   }
