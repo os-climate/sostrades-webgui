@@ -602,24 +602,52 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   exportStudy(study: Study){
-    this.loadingDialogService.showLoading(`Retrieving study case "${study.name}" read only files...`);
+    let loadingCanceled= false;
+    this.loadingDialogService.showLoadingWithCancelobserver(`Compressing study case "${study.name}"...`).subscribe({
+      next:()=>{
+        // Ask the user if he wants the download in background
+        const validationDialogData = new ValidationDialogData();
+        validationDialogData.message = `Are you sure you want to cancel or do you still want to download the zip file in background when it is ready ?`;
+
+        const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+          disableClose: true,
+          data: validationDialogData,
+        });
+
+        dialogRefValidate.afterClosed().subscribe((result) => {
+          const validationData: ValidationDialogData = result as ValidationDialogData;
+
+          if (validationData !== null && validationData !== undefined) {
+            if (validationData.cancel) {
+              loadingCanceled = true;
+            }
+          }
+        });
+      
+      }
+    });
 
     this.studyCaseDataService.getStudyReadOnlyZip(study.id).subscribe({
       next: (result) => {
-        this.loadingDialogService.closeLoading();
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(result);
-        downloadLink.setAttribute('download', `zip_study_${study.id}.zip`);
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
+          if (!loadingCanceled){
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', `zip_study_${study.id}.zip`);
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          this.snackbarService.showInformation("The study as been successfully exported.")
+        }
       },
       error: (errorReceived) => {
+        if (!loadingCanceled){
         const error = errorReceived as SoSTradesError;
         this.loadingDialogService.closeLoading();
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
           this.snackbarService.showError(`Error downloading study case "${study.name}" : ${error.description}`);
+        }
         }
       }
     });

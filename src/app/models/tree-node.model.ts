@@ -90,6 +90,8 @@ export class TreeNode {
 
   constructor(
     public name: string,
+    jsonData: any,
+    jsonDiscData: any,
     public nodeType: string,
     public modelNameFullPath: string,
     public modelsFullPathList: string[],
@@ -154,6 +156,8 @@ export class TreeNode {
 
     const result: TreeNode = new TreeNode(
       jsonData[TreeNodeAttributes.NAME],
+      jsonData[TreeNodeAttributes.DATA],
+      jsonData[TreeNodeAttributes.DISC_DATA],
       jsonData[TreeNodeAttributes.NODE_TYPE],
       jsonData[TreeNodeAttributes.MODEL_NAME_FULL_PATH],
       jsonData[TreeNodeAttributes.MODELS_NAME_FULL_PATH_LIST],
