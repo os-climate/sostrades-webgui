@@ -15,6 +15,7 @@ export class DashboardService extends DataHttpService {
   public onDashboardItemsUpdated: EventEmitter<DisplayableItem> = new EventEmitter();
   public dashboardItems: { [id: string]: DisplayableItem };
   public isDashboardUpdated: boolean
+  public isDashboardInEdition: boolean;
 
   constructor(
     private http: HttpClient,
@@ -22,11 +23,16 @@ export class DashboardService extends DataHttpService {
     super(location, 'dashboard');
     this.dashboardItems = {};
     this.isDashboardUpdated = false;
+    this.isDashboardInEdition = false;
   }
 
   // Getter to check if the dashboard has changed
   get isDashboardChanged() {
     return this.isDashboardUpdated;
+  }
+
+  get isDashboardInEditionMode() {
+    return this.isDashboardInEdition;
   }
 
   // adds an item to the dashboard and emits an event

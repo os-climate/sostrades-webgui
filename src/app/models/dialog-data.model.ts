@@ -459,4 +459,15 @@ export class TreeNodeDialogData extends AbstractDialogData {
     super();
     this.node = null;
   }
-} 
+}
+
+export class DashboardTextDialogData extends AbstractDialogData {
+  public text: string;
+  public id: string;
+
+  public constructor() {
+    super();
+    this.text = '';
+    this.id = null;
+  }
+}

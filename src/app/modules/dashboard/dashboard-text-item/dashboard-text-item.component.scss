@@ -29,14 +29,12 @@
 
 .card-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  justify-content: flex-start;
 }
 
 .edit-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  justify-content: flex-start;
   margin-bottom: 8px;
 }
 
@@ -57,32 +55,16 @@
   margin: 10px;
 }
 
-.quill-content {
-  min-height: 50px;
-  height: 100%;
-  overflow-y: auto;
-}
 
-quill-editor {
+.drag-handle {
+  cursor: move;
   display: flex;
-  flex-direction: column;
-  height: calc(100% - 40px);
-  overflow: hidden;
-}
+  align-items: center;
+  justify-content: center;
 
-.ql-container {
-  height: 100% !important;
-  flex: auto;
-  max-height: calc(100% - 50px);
-  overflow-y: auto;
-}
-
-quill-view-html {
-  display: block;
-  height: 100%;
-}
-
-.ql-editor {
-  min-height: 100px;
-  max-height: none;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
 }

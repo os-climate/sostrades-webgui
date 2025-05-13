@@ -121,12 +121,22 @@ gridster {
   margin-bottom: auto !important;
 }
 
-// impots sur 39k -> 4865,48
-// impots sur 24k -> 1375,33
-// total des deux 6240,81
+.drag-handle {
+  position: absolute;
+  top: 8px;
+  left: 39px;
+  z-index: 10;
+  cursor: move;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(1.2);
 
-// impots sur 63k -> 2615,48 * 2 -> 5230,96
-// evolutions:
-// 2615,48 - 4865,48 = -2250
-// 2615,48 - 1375,33 = +1240,15
-// 1240,15 - 2250 = -1009,85
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+}

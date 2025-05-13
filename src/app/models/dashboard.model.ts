@@ -55,8 +55,8 @@ export class DashboardText implements DisplayableItem {
     this.y = 0;
     this.cols = 3;
     this.rows = 2;
-    this.minCols = 2;
-    this.minRows = 2;
+    this.minCols = 1;
+    this.minRows = 1;
   }
 }
 

@@ -20,6 +20,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   @Input() plotIndex: number;
   @Input() height?: number;
   @Input() width?: number;
+  @Input() isEditing?: boolean;
 
   @ViewChild('PlotlyPlaceHolder', { static: true }) private PlotlyPlaceHolder: ElementRef;
   public isPlotLoading: boolean;
@@ -74,6 +75,9 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     if (changes.height || changes.width) {
       this.setupLayout();
       this.initializePlot();
+    }
+    if (this.isEditing === undefined) {
+      this.isEditing = this.dashboardService.isDashboardInEdition
     }
   }
 

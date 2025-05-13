@@ -1,4 +1,5 @@
 <mat-icon
+  [hidden]="!isEditing"
   id="favorite-post-processing-plot"
   [matTooltip]="isFavorite ? 'Remove from dashboard' : 'Add into dashboard'"
   class="favorite-button-container float-left-button cursor-pointer"

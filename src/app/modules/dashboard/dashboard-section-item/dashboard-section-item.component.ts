@@ -2,6 +2,8 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { DashboardSection } from "../../../models/dashboard.model";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { QuillEditorComponent } from "ngx-quill";
+import { MatDialog } from "@angular/material/dialog";
+import { DashboardTextDialogComponent } from "../dashboard-text-dialog/dashboard-text-dialog.component";
 
 @Component({
   selector: 'app-dashboard-section-item',
@@ -10,75 +12,43 @@ import { QuillEditorComponent } from "ngx-quill";
 })
 export class DashboardSectionItemComponent implements OnInit {
   @Input() sectionItem: DashboardSection;
+  @Input() inEditionMode: boolean;
   @ViewChild(QuillEditorComponent, { static: false }) quillEditor: QuillEditorComponent;
 
-  public isEditing: boolean;
-  public editableContent: string;
-  public editModules: any;
-
-  constructor(private dashboardService: DashboardService) {
-    this.isEditing = false;
-      this.editableContent = '';
-    this.editModules = {
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        [{ size: ['small', false, 'large', 'huge'] }],
-        [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-        [{ indent: '-1' }, { indent: '+1' }],
-        [{ font: [] }],
-        [{ color: [] }, { background: [] }],
-        [{ align: ['center'] }],
-        ['clean'],
-      ]
-    };
+  constructor(
+    private dashboardService: DashboardService,
+    private dialog: MatDialog
+  ) {
   }
 
   ngOnInit() {
     if (!this.sectionItem.data.title)
       this.sectionItem.data.title = '';
-    this.editableContent = this.sectionItem.data.title;
+  }
+
+  startEditingTitle() {
+    if (this.inEditionMode) {
+      const dialogRef = this.dialog.open(DashboardTextDialogComponent, {
+        width: '600px',
+        height: '400px',
+        data: { content: this.sectionItem.data.title }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result !== null) {
+          this.sectionItem.data.title = result;
+          this.dashboardService.updateItem(this.sectionItem);
+        }
+      })
+    }
   }
 
   // When entering edit mode
-  startEditing() {
-    this.editableContent = this.sectionItem.data.title;
-    console.log('startEditing: ', this.editableContent);
-    this.isEditing = true;
-    setTimeout(() => {
-      if (this.quillEditor && this.quillEditor.quillEditor) {
-        console.log('setting quill content directly: ', this.editableContent);
-        this.quillEditor.quillEditor.setText('');
-        if (this.editableContent && this.editableContent.trim() !== '') {
-          this.quillEditor.quillEditor.clipboard.dangerouslyPasteHTML(this.editableContent);
-        }
-      }
-    }, 0);
-  }
-
-  // When leaving edit mode by saving
-  saveChanges() {
-    this.sectionItem.data.title = this.editableContent;
-    this.dashboardService.updateItem(this.sectionItem);
-    this.isEditing = false;
-  }
-
-  // When leaving edit mode by canceling
-  cancelEditing() {
-    this.editableContent = this.sectionItem.data.title;
-    this.isEditing = false;
+  startEditingSection() {
+    // popup to add graphs inside the section
   }
 
   // delete the text item of the dashboard and emit an event
   deleteTextItem(text: DashboardSection) {
     this.dashboardService.removeItem(text);
-  }
-
-  onEditorCreated(quill: any) {
-    console.log('Editor created: ', quill);
-    if (this.editableContent && this.editableContent.trim() !== '') {
-      console.log('setting content on editor creation: ', this.editableContent);
-      quill.clipboard.dangerouslyPasteHTML(this.editableContent);
-    }
   }
 }

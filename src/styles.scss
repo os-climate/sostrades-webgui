@@ -608,3 +608,11 @@ gridster .gridster-row,
 gridster .gridster-column {
   border-color: black !important;
 }
+
+.ql-container {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  border: none;
+  height: 75% !important;
+  min-height: 0;
+}

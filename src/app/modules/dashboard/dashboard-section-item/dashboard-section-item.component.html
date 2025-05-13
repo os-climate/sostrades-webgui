@@ -2,35 +2,27 @@
   <mat-card-content class="section-item-content">
     <!--    Title Area  -->
     <div class="section-header">
-      <!-- Display mode -->
-      <div [hidden]="isEditing" class="section-content">
-        <div class="card-actions">
-          <button mat-button color="warn" (click)="deleteTextItem(sectionItem)" matTooltip="Delete section">
-            <i class="fa-solid fa-trash"></i>
-            Delete
-          </button>
-        </div>
-        <div class="content-wrapper" (click)="startEditing()">
-          <div *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''" class="quill-content">
-            <quill-view-html [content]="sectionItem.data.title" theme="snow"></quill-view-html>
-          </div>
-        </div>
+      <div class="card-actions" [hidden]="!inEditionMode">
+        <button mat-button color="warn" (click)="deleteTextItem(sectionItem)" matTooltip="Delete section">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+        <button mat-button color="primary" class="drag-handle" matTooltip="Move section">
+          <i class="fa-solid fa-arrows-up-down-left-right"></i>
+        </button>
+        <button mat-button color="primary" (click)="startEditingSection()" matTooltip="Edit section">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </button>
       </div>
-
-      <!-- Edit mode -->
-      <div [hidden]="!isEditing" class="edit-content">
-        <div class="edit-actions">
-          <button mat-button color="primary" (click)="saveChanges()">Save</button>
-          <button mat-button color="primary" (click)="cancelEditing()">Cancel</button>
-          <button mat-button color="warn" (click)="deleteTextItem(sectionItem)" matTooltip="Delete section">
-            <i class="fa-solid fa-trash"></i>
-            Delete
-          </button>
+      <div class="content-wrapper" (click)="startEditingTitle()">
+        <div *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''" class="quill-content">
+          <quill-view-html [content]="sectionItem.data.title" theme="snow"></quill-view-html>
         </div>
-        <quill-editor [(ngModel)]="editableContent" [modules]="editModules" (onEditorCreated)="onEditorCreated($event)">
-        </quill-editor>
+        <div *ngIf="!sectionItem.data.title || sectionItem.data.title.trim() === ''" class="empty-content">
+          Click to edit
+        </div>
       </div>
     </div>
+
     <!--    Separator Line  -->
     <div class="section-separator"></div>
 

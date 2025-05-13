@@ -38,6 +38,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   postProcessingWithoutSection: any[] = [];
   postProcessingWithSection: any[] = [];
   postProcessingKeyCharts: any[] = [];
+  public isDashboardInEditionMode: boolean;
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
