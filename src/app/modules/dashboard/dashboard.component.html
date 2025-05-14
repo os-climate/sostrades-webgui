@@ -71,7 +71,7 @@
       <gridster [options]="options">
         <gridster-item *ngFor="let graph of graphItems" [item]="graph">
           <div class="graph-card">
-            <button mat-icon-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
+            <button mat-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
               <i class="fa-solid fa-arrows-up-down-left-right"></i>
             </button>
             <app-post-processing-plotly

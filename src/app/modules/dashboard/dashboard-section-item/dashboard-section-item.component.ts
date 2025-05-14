@@ -34,7 +34,7 @@ export class DashboardSectionItemComponent implements OnInit {
         data: { content: this.sectionItem.data.title }
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (result !== null) {
+        if (result !== undefined) {
           this.sectionItem.data.title = result;
           this.dashboardService.updateItem(this.sectionItem);
         }
@@ -45,6 +45,16 @@ export class DashboardSectionItemComponent implements OnInit {
   // When entering edit mode
   startEditingSection() {
     // popup to add graphs inside the section
+  }
+
+  toggleExpandSection() {
+    this.sectionItem.data.shown = !this.sectionItem.data.shown;
+    if (this.sectionItem.data.shown) {
+      this.sectionItem.rows = 5;
+    } else {
+      this.sectionItem.rows = 1;
+    }
+    this.dashboardService.updateItem(this.sectionItem)
   }
 
   // delete the text item of the dashboard and emit an event

@@ -1,7 +1,7 @@
 <mat-card class="section-item-card">
   <mat-card-content class="section-item-content">
     <!--    Title Area  -->
-    <div class="section-header">
+    <div [ngClass]="this.sectionItem.data.shown ? 'show-section-header' : 'hidden-section-header'">
       <div class="card-actions" [hidden]="!inEditionMode">
         <button mat-button color="warn" (click)="deleteTextItem(sectionItem)" matTooltip="Delete section">
           <i class="fa-solid fa-trash"></i>
@@ -13,7 +13,12 @@
           <i class="fa-solid fa-pen-to-square"></i>
         </button>
       </div>
-      <div class="content-wrapper" (click)="startEditingTitle()">
+      <div class="expansion-button">
+        <button mat-button color="primary" [matTooltip]="this.sectionItem.data.shown ? 'Hide graphs' : 'Show graphs'" (click)="toggleExpandSection()">
+          <i [ngClass]="this.sectionItem.data.shown ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up'"></i>
+        </button>
+      </div>
+      <div [ngClass]="inEditionMode ? 'edit-content-wrapper' : 'content-wrapper'" (click)="startEditingTitle()">
         <div *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''" class="quill-content">
           <quill-view-html [content]="sectionItem.data.title" theme="snow"></quill-view-html>
         </div>
@@ -24,10 +29,10 @@
     </div>
 
     <!--    Separator Line  -->
-    <div class="section-separator"></div>
+    <div class="section-separator" [hidden]="!this.sectionItem.data.shown"></div>
 
     <!--    Graphs Area  -->
-    <div class="section-graph">
+    <div class="section-graph" [hidden]="!this.sectionItem.data.shown">
       <div *ngIf="sectionItem.data.children && sectionItem.data.children.length > 0" class="graph-container">
         <div *ngFor="let child of sectionItem.data.children" class="graph-item">
           <app-post-processing-plotly

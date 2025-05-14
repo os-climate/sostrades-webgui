@@ -32,7 +32,7 @@ export class DashboardTextItemComponent implements OnInit {
         data: { content: this.textItem.data.content }
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (result !== null) {
+        if (result !== undefined) {
           this.textItem.data.content = result;
           this.dashboardService.updateItem(this.textItem);
         }

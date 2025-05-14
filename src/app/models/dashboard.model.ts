@@ -48,9 +48,9 @@ export class DashboardText implements DisplayableItem {
     content: string;
   }
 
-  constructor(content: string) {
+  constructor() {
     this.id = `text-${Date.now()}`;
-    this.data = { content };
+    this.data = { content: '' };
     this.x = 0;
     this.y = 0;
     this.cols = 3;
@@ -112,16 +112,17 @@ export class DashboardSection implements DisplayableItem {
   data: {
     title: string;
     children: DashboardGraph[];
+    shown: boolean;
   };
 
-  constructor(title: string) {
+  constructor() {
     this.id = `section-${Date.now()}`;
     this.x = 0;
     this.y = 0;
     this.cols = 10;
     this.rows = 5;
     this.minCols = 10;
-    this.minRows = 4;
-    this.data = { title, children: [] };
+    this.minRows = 1;
+    this.data = { title: '', children: [], shown: true };
   }
 }

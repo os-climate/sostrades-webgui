@@ -42,6 +42,6 @@ export class DashboardTextDialogComponent {
   }
 
   cancelEditing() {
-    this.dialogRef.close(null);
+    this.dialogRef.close(undefined);
   }
 }

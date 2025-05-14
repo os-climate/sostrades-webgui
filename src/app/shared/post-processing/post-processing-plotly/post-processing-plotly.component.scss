@@ -12,21 +12,17 @@
 }
 
 .favorite-button-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 24px;
-  padding-top: 10px;
-  padding-left: 10px;
-}
-
-mat-icon {
-  width: auto !important;
-  height: auto !important;
+  margin-top: 10px;
+  margin-left: 10px;
 }
 
 .float-left-button {
   position: absolute;
   z-index: 1;
-}
 
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+}

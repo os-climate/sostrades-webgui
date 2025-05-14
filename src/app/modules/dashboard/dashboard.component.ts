@@ -97,6 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dashboardFavorites[index] = item;
         this.isDashboardUpdated = true;
       }
+      this.options.api.optionsChanged();
     });
     this.dashboardFavorites = this.dashboardService.getItems();
     this.isDashboardInEditionMode = this.dashboardService.isDashboardInEditionMode;
@@ -360,13 +361,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Add a new text item to the dashboard
   onAddText() {
-    const text = new DashboardText('Click to edit this text');
+    const text = new DashboardText();
     this.dashboardService.addItem(text);
   }
 
   // Add a new section item to the dashboard
   onAddSection() {
-    const section = new DashboardSection('<p>Section title</p>');
+    const section = new DashboardSection();
     this.dashboardService.addItem(section);
   }
 }
