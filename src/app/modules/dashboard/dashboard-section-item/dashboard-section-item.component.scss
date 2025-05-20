@@ -80,10 +80,13 @@ mat-card-content:first-child {
   border-radius: 4px;
   margin: 10px;
 }
+:root {
+  --section-header-height: 20%;
+}
 
 .show-section-header {
   flex: 0 0 auto;
-  height: 20%;
+  height: var(--section_header_height);
   position: relative;
   padding: 16px;
 }
@@ -114,7 +117,7 @@ mat-card-content:first-child {
   gap: 16px;
 }
 
-.graph-item {
+.item {
   overflow: hidden;
   position: relative;
 }
@@ -133,12 +136,6 @@ mat-card-content:first-child {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.95);
-    color: #333;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
 }
 
 .expansion-button {

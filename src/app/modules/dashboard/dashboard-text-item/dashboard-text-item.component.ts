@@ -40,6 +40,11 @@ export class DashboardTextItemComponent implements OnInit {
     }
   }
 
+  // Check if the text is in the dashboard
+  isTextInDashboard(text: DashboardText): boolean {
+    return this.dashboardService.getItems().some(item => item.id === text.id);
+  }
+
   // delete the text item of the dashboard and emit an event
   deleteTextItem(text: DashboardText) {
     this.dashboardService.removeItem(text);

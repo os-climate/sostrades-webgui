@@ -4,7 +4,7 @@
       <button mat-button color="warn" (click)="deleteTextItem(textItem)" matTooltip="Delete text">
         <i class="fa-solid fa-trash"></i>
       </button>
-      <button mat-button color="primary" class="drag-handle" matTooltip="Move text">
+      <button *ngIf="isTextInDashboard(textItem)" mat-button color="primary" class="drag-handle" matTooltip="Move text">
         <i class="fa-solid fa-arrows-up-down-left-right"></i>
       </button>
     </div>

@@ -36,12 +36,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private dashboardAddItemSubscription: Subscription;
   private dashboardRemoveItemSubscription: Subscription;
   private dashboardUpdateItemSubscription: Subscription;
+  private sectionExpansionSubscription: Subscription;
   public loadedStudy: LoadedStudy;
   public dashboardFavorites: DisplayableItem[];
   public isDashboardUpdated: boolean;
   public options: GridsterConfig;
   private previousPositions: string;
   public isDashboardInEditionMode: boolean;
+
+  // Getter that returns the graph items of the dashboard
+  itemType: { [K in DisplayableItem['type']]: K } = {
+    graph: 'graph',
+    section: 'section',
+    text: 'text'
+  }
 
   constructor(
     private treeNodeDataService: TreeNodeDataService,
@@ -99,6 +107,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.options.api.optionsChanged();
     });
+    this.sectionExpansionSubscription = this.dashboardService.onSectionExpansion.subscribe(() => {
+      this.onAutoFit();
+    })
     this.dashboardFavorites = this.dashboardService.getItems();
     this.isDashboardInEditionMode = this.dashboardService.isDashboardInEditionMode;
     this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
@@ -201,7 +212,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.api.optionsChanged();
   }
 
-  // Getter that returns the graph items of the dashboard
   get graphItems(): DashboardGraph[] {
     return this.dashboardFavorites.filter(item => item.type === 'graph') as DashboardGraph[];
   }
@@ -323,6 +333,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         item.rows = item.minRows;
       }
     }
+    if (item.type === 'section') {
+      if ((<DashboardSection>item).maxRows) {
+        if (item.rows > (<DashboardSection>item).maxRows) {
+          this.snackbarService.showError(`${item.type} item must have at most ${(<DashboardSection>item).maxRows} rows`);
+          item.rows = (<DashboardSection>item).maxRows;
+        }
+      }
+    }
+
     this.options.api.optionsChanged();
   }
 
@@ -364,7 +383,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     const text = new DashboardText();
     this.dashboardService.addItem(text);
   }
-
   // Add a new section item to the dashboard
   onAddSection() {
     const section = new DashboardSection();

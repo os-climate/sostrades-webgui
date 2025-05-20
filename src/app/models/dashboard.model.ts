@@ -19,7 +19,9 @@ export enum DashboardAttributes {
   ITEMS = 'items',
 }
 
-export class DisplayableItem implements GridsterItem {
+export type DisplayableItem = DashboardText | DashboardGraph | DashboardSection;
+
+interface BaseItem extends GridsterItem {
   id: string;
   type: 'text' | 'graph' | 'section';
   // position on the grid
@@ -35,7 +37,7 @@ export class DisplayableItem implements GridsterItem {
   data: any;
 }
 
-export class DashboardText implements DisplayableItem {
+export class DashboardText implements BaseItem {
   id: string;
   type: 'text' = 'text' as const;
   x: number;
@@ -60,7 +62,7 @@ export class DashboardText implements DisplayableItem {
   }
 }
 
-export class DashboardGraph implements DisplayableItem {
+export class DashboardGraph implements BaseItem {
   disciplineName: string;
   name: string;
   plotIndex: number;
@@ -73,6 +75,7 @@ export class DashboardGraph implements DisplayableItem {
   minCols: number;
   minRows: number;
   data: {
+    title?: string;
     graphData: any;
   }
 
@@ -98,9 +101,12 @@ export class DashboardGraph implements DisplayableItem {
   get identifier(): string {
     return `${this.disciplineName}-${this.name}-${this.plotIndex.toString()}`;
   }
+  get getTitle(): string {
+    return this.data.graphData.layout.title.text.replace(/<[^>]*>/g, '');
+  }
 }
 
-export class DashboardSection implements DisplayableItem {
+export class DashboardSection implements BaseItem {
   id: string;
   type: 'section' = 'section' as const;
   x: number;
@@ -109,10 +115,12 @@ export class DashboardSection implements DisplayableItem {
   rows: number;
   minCols: number;
   minRows: number;
+  maxRows?: number;
   data: {
     title: string;
-    children: DashboardGraph[];
+    items: DisplayableItem[];
     shown: boolean;
+    expandedSize?: number;
   };
 
   constructor() {
@@ -122,7 +130,7 @@ export class DashboardSection implements DisplayableItem {
     this.cols = 10;
     this.rows = 5;
     this.minCols = 10;
-    this.minRows = 1;
-    this.data = { title: '', children: [], shown: true };
+    this.minRows = 4;
+    this.data = { title: '', items: [], shown: true };
   }
 }

@@ -1,7 +1,8 @@
 <mat-card class="section-item-card">
   <mat-card-content class="section-item-content">
     <!--    Title Area  -->
-    <div [ngClass]="this.sectionItem.data.shown ? 'show-section-header' : 'hidden-section-header'">
+    <div [ngClass]="this.sectionItem.data.shown ? 'show-section-header' : 'hidden-section-header'"
+         [style.height.%]="getHeaderHeight()">
       <div class="card-actions" [hidden]="!inEditionMode">
         <button mat-button color="warn" (click)="deleteTextItem(sectionItem)" matTooltip="Delete section">
           <i class="fa-solid fa-trash"></i>
@@ -14,7 +15,8 @@
         </button>
       </div>
       <div class="expansion-button">
-        <button mat-button color="primary" [matTooltip]="this.sectionItem.data.shown ? 'Hide graphs' : 'Show graphs'" (click)="toggleExpandSection()">
+        <button mat-button color="primary" [matTooltip]="this.sectionItem.data.shown ? 'Hide graphs' : 'Show graphs'"
+                (click)="toggleExpandSection()">
           <i [ngClass]="this.sectionItem.data.shown ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up'"></i>
         </button>
       </div>
@@ -33,19 +35,26 @@
 
     <!--    Graphs Area  -->
     <div class="section-graph" [hidden]="!this.sectionItem.data.shown">
-      <div *ngIf="sectionItem.data.children && sectionItem.data.children.length > 0" class="graph-container">
-        <div *ngFor="let child of sectionItem.data.children" class="graph-item">
+      <div *ngIf="sectionItem.data.items && sectionItem.data.items.length > 0" class="graph-container">
+        <ng-container *ngFor="let item of sectionItem.data.items" [ngSwitch]="item.type" class="item">
           <app-post-processing-plotly
-            [class]="child.data && child.data.graphData && child.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+            *ngSwitchCase="itemType.graph"
+            [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
             [fullNamespace]=""
-            [plotData]="child.data.graphData"
-            [disciplineName]="child.disciplineName"
-            [name]="child.name"
-            [plotIndex]="child.plotIndex">
+            [plotData]="item.data.graphData"
+            [disciplineName]="item.disciplineName"
+            [name]="item.name"
+            [plotIndex]="item.plotIndex"
+            [isEditing]="inEditionMode">
           </app-post-processing-plotly>
-        </div>
+          <app-dashboard-text-item
+            *ngSwitchCase="itemType.text"
+            [textItem]="item"
+            [inEditionMode]="inEditionMode">
+          </app-dashboard-text-item>
+        </ng-container>
       </div>
-      <div *ngIf="!sectionItem.data.children || sectionItem.data.children.length === 0" class="no-graphs">
+      <div *ngIf="!sectionItem.data.items || sectionItem.data.items.length === 0" class="no-graphs">
         No graphs available in this section
       </div>
     </div>

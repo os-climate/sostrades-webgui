@@ -13,6 +13,7 @@ export class DashboardService extends DataHttpService {
   public onDashboardItemsAdded: EventEmitter<DisplayableItem> = new EventEmitter();
   public onDashboardItemsRemoved: EventEmitter<DisplayableItem> = new EventEmitter();
   public onDashboardItemsUpdated: EventEmitter<DisplayableItem> = new EventEmitter();
+  public onSectionExpansion: EventEmitter<void> = new EventEmitter();
   public dashboardItems: { [id: string]: DisplayableItem };
   public isDashboardUpdated: boolean
   public isDashboardInEdition: boolean;
@@ -43,10 +44,23 @@ export class DashboardService extends DataHttpService {
   }
 
   // removes an item from the dashboard and emits an event
-  removeItem(item: DisplayableItem) {
-    delete this.dashboardItems[item.id];
+  removeItem(item: DisplayableItem): void | string {
+    let text: string = null;
+    if (item.id in this.dashboardItems) delete this.dashboardItems[item.id];
+    else {
+      for (const dashboardItem of Object.values(this.dashboardItems)) {
+        if (dashboardItem.type === 'section') {
+          const index = dashboardItem.data.items.findIndex((child: DisplayableItem) => child.id === item.id);
+          if (index !== -1) {
+            dashboardItem.data.items.splice(index, 1);
+            text = 'Graph removed from section !';
+          }
+        }
+      }
+    }
     this.onDashboardItemsRemoved.emit(item);
     this.isDashboardUpdated = true;
+    if (text) return text;
   }
 
   // updates an item in the dashboard and emits an event
@@ -56,9 +70,26 @@ export class DashboardService extends DataHttpService {
     this.isDashboardUpdated = true;
   }
 
+  onSectionExpansionEvent() {
+  this.onSectionExpansion.emit();
+  }
+
   // checks if an item is selected
   isSelected(itemId: string) {
-    return itemId in this.dashboardItems;
+    if (itemId in this.dashboardItems)
+      return true;
+    else {
+      for (const item of Object.values(this.dashboardItems)) {
+        if (item.type === 'section') {
+          for (const child of item.data.items) {
+            if (child.id === itemId) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
   }
 
   // get the whole dashboard loaded in the service

@@ -37,6 +37,18 @@ quill-editor {
   border-top: none;
   border-left: none;
   border-right: none;
+
+  button:focus {
+    outline: none;
+  }
+
+  button {
+    pointer-events: auto;
+  }
+}
+
+.ql-container {
+  z-index: 1;
 }
 
 mat-dialog-actions {

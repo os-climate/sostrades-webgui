@@ -69,40 +69,42 @@
   >
     <div class="gridster-container">
       <gridster [options]="options">
-        <gridster-item *ngFor="let graph of graphItems" [item]="graph">
-          <div class="graph-card">
-            <button mat-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
-              <i class="fa-solid fa-arrows-up-down-left-right"></i>
-            </button>
-            <app-post-processing-plotly
-              [class]="graph.data && graph.data.graphData && graph.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
-              [fullNamespace]=""
-              [plotData]="graph.data.graphData"
-              [disciplineName]="graph.disciplineName"
-              [name]="graph.name"
-              [plotIndex]="graph.plotIndex"
-              [height]="CalculateGraphHeight(graph)"
-              [width]="CalculateGraphWidth(graph)"
-              [isEditing]="options.draggable.enabled">
-            </app-post-processing-plotly>
-          </div>
-        </gridster-item>
-        <gridster-item *ngFor="let text of textItems" [item]="text">
-          <div class="text-card">
-            <app-dashboard-text-item
-              [textItem]="text"
-              [inEditionMode]="options.draggable.enabled">
-            </app-dashboard-text-item>
-          </div>
-        </gridster-item>
-        <gridster-item *ngFor="let section of sectionItems" [item]="section">
-          <div class="section-card">
-            <app-dashboard-section-item
-              [sectionItem]="section"
-              [inEditionMode]="options.draggable.enabled">
-            </app-dashboard-section-item>
-          </div>
-        </gridster-item>
+        <ng-container *ngFor="let item of dashboardFavorites" [ngSwitch]="item.type">
+          <gridster-item *ngSwitchCase="itemType.graph" [item]="item">
+            <div class="graph-card">
+              <button mat-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
+                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+              </button>
+              <app-post-processing-plotly
+                [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+                [fullNamespace]=""
+                [plotData]="item.data.graphData"
+                [disciplineName]="item.disciplineName"
+                [name]="item.name"
+                [plotIndex]="item.plotIndex"
+                [height]="CalculateGraphHeight(item)"
+                [width]="CalculateGraphWidth(item)"
+                [isEditing]="options.draggable.enabled">
+              </app-post-processing-plotly>
+            </div>
+          </gridster-item>
+          <gridster-item *ngSwitchCase="itemType.text" [item]="item">
+            <div class="text-card">
+              <app-dashboard-text-item
+                [textItem]="item"
+                [inEditionMode]="options.draggable.enabled">
+              </app-dashboard-text-item>
+            </div>
+          </gridster-item>
+          <gridster-item *ngSwitchCase="itemType.section" [item]="item">
+            <div class="section-card">
+              <app-dashboard-section-item
+                [sectionItem]="item"
+                [inEditionMode]="options.draggable.enabled">
+              </app-dashboard-section-item>
+            </div>
+          </gridster-item>
+        </ng-container>
       </gridster>
     </div>
   </div>
