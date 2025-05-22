@@ -41,15 +41,18 @@
 .content-wrapper {
   flex-grow: 1;
   overflow-y: auto;
-  padding-top: 5px;
-  height: calc(100% - 5px);
+  height: 100%;
 }
 
 .empty-content {
-  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 20px);
   text-align: center;
   color: #999;
   font-style: italic;
+  font-size: 14px;
   border: 1px dashed #ccc;
   border-radius: 4px;
   margin: 10px;

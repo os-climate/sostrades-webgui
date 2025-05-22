@@ -36,22 +36,24 @@
     <!--    Graphs Area  -->
     <div class="section-graph" [hidden]="!this.sectionItem.data.shown">
       <div *ngIf="sectionItem.data.items && sectionItem.data.items.length > 0" class="graph-container">
-        <ng-container *ngFor="let item of sectionItem.data.items" [ngSwitch]="item.type" class="item">
-          <app-post-processing-plotly
-            *ngSwitchCase="itemType.graph"
-            [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
-            [fullNamespace]=""
-            [plotData]="item.data.graphData"
-            [disciplineName]="item.disciplineName"
-            [name]="item.name"
-            [plotIndex]="item.plotIndex"
-            [isEditing]="inEditionMode">
-          </app-post-processing-plotly>
-          <app-dashboard-text-item
-            *ngSwitchCase="itemType.text"
-            [textItem]="item"
-            [inEditionMode]="inEditionMode">
-          </app-dashboard-text-item>
+        <ng-container *ngFor="let item of sectionItem.data.items" [ngSwitch]="item.type">
+          <div class="item">
+            <app-post-processing-plotly
+              *ngSwitchCase="itemType.graph"
+              [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+              [fullNamespace]=""
+              [plotData]="item.data.graphData"
+              [disciplineName]="item.disciplineName"
+              [name]="item.name"
+              [plotIndex]="item.plotIndex"
+              [isEditing]="inEditionMode">
+            </app-post-processing-plotly>
+            <app-dashboard-text-item
+              *ngSwitchCase="itemType.text"
+              [textItem]="item"
+              [inEditionMode]="inEditionMode">
+            </app-dashboard-text-item>
+          </div>
         </ng-container>
       </div>
       <div *ngIf="!sectionItem.data.items || sectionItem.data.items.length === 0" class="no-graphs">
