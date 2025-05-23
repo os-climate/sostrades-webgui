@@ -53,20 +53,17 @@ export class LoadingStudyDialogComponent implements OnInit {
 
   }
 
-  setReadOnlySteps(read_only_step: boolean) {
-    if (read_only_step) {
-      this.steps = READONLY_DIALOG_STEPS
-    } else {
-      this.steps = DEFAULT_DIALOG_STEPS
-    }     
+  setSteps(steps) {
+      this.steps = steps;
+         
   }
 
   setError(error:string){
     this.errorMessage = error;
     if(this.errorMessage.length > 200) {
-      this.dialogRef.updateSize('600px','450px')
+      this.dialogRef.updateSize('500px','350px')
     } else {
-      this.dialogRef.updateSize('260');
+      this.dialogRef.updateSize('500px','260px');
     }
     
     this.isInError = true;

@@ -64,12 +64,12 @@
     color="primary"
     aria-label="Create study cases"
     id="create-study"
-    style="margin-left: 10px;"
     (click)="createStudy()"
   >
   <mat-icon style="margin-left: -10px;">add</mat-icon>
    Create study
   </button>
+
   </div>
 
   <div class="action-button-bar" *ngIf="selection.hasValue()">
@@ -147,6 +147,7 @@
                 mat-icon-button
                 color="primary"
                 [matTooltip]="'Load ' + element.name + ' in edition mode'" 
+                *ngIf="!element.isStandAlone"
                 (click)="loadStudy($event, element, false)"
               >
                 <i class="fa-solid fa-file-pen"></i>
@@ -279,31 +280,16 @@
           </td>
         </ng-container>
 
-
-        
-
         <!-- Action Column -->
         <ng-container [matColumnDef]="columnName.ACTION">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" class="actions-hover-row">
-            
-            <input
-                type="file"
-                #fileUpload
-                id="fileUpload"
-                name="fileUpload"
-                accept=".pkl"
-                style="display: none"
-                multiple
-                (change)="onSelection($event, element)"
-              />
-
             <button
             [id]="'btn-study-management-edit-' + element.groupName + '-' + element.name"
             style="margin-right: 5px"
             mat-icon-button
             color="primary"
-            *ngIf="element.isManager"
+            *ngIf="element.isManager && !element.isStandAlone"
             (click)="updateStudy(element)"
             [matTooltip]="'Edit ' + element.name"
             >
@@ -315,7 +301,7 @@
             style="margin-right: 5px"
             mat-icon-button
             color="primary"
-            *ngIf="element.isManager && showFlavors"
+            *ngIf="element.isManager && showFlavors && !element.isStandAlone"
             (click)="updateFlavor(element)"
             [matTooltip]="'Change pod size of ' + element.name"
             >
@@ -324,11 +310,11 @@
 
             <button
             [id]="'btn-study-management-copy-' + element.groupName + '-' + element.name"
-            *ngIf="getCreateStudy"
+            *ngIf="getCreateStudy && !element.isStandAlone"
             style="margin-right: 5px"
             mat-icon-button
             color="primary"
-            (click)="copyStudy(element)"
+            (click)="copyStudy(element) "
             [matTooltip]="'Copy ' + element.name"
             >
             <i class="fa-solid fa-copy"></i>

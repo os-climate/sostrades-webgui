@@ -428,6 +428,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
+
   copyStudy(study: Study) {
     this.handleUnsavedChanges(changeHandled => {
       if (changeHandled) {
@@ -608,10 +609,11 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         // Ask the user if he wants the download in background
         const validationDialogData = new ValidationDialogData();
         validationDialogData.message = `Are you sure you want to cancel or do you still want to download the zip file in background when it is ready ?`;
+        
 
         const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
-          data: validationDialogData,
+          data: validationDialogData
         });
 
         dialogRefValidate.afterClosed().subscribe((result) => {
@@ -627,7 +629,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.studyCaseDataService.getStudyReadOnlyZip(study.id).subscribe({
+    this.studyCaseDataService.getStudyStandAloneZip(study.id).subscribe({
       next: (result) => {
           if (!loadingCanceled){
           this.loadingDialogService.closeLoading();
@@ -1108,29 +1110,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  onSelection(event: any, study: Study) {
-
-    if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
-      this.loadingDialogService.showLoading(`Upload study case data "${study.name}"`);
-
-      this.studyCaseMainService.uploadStudyRaw(study.id.toString(), event.target.files).subscribe({
-        next: () => {
-          this.loadingDialogService.closeLoading();
-          this.snackbarService.showInformation('Upload successful');
-          if (event.target.files) {
-            event.target.value = '';
-          }
-        },
-        error: (error) => {
-          this.loadingDialogService.closeLoading();
-          const errorDescription = error?.description || 'An error occurred while uploading the study.';
-          this.snackbarService.showError(errorDescription);
-          if (event.target.files) {
-            event.target.value = '';
-          }
-        }
-      });
-    }
-  }
+  
+  
 }

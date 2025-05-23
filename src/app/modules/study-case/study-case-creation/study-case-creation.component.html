@@ -6,16 +6,26 @@
     progressText="Loading form information"
   ></app-progress-bar>
 </div>
-<div class="flex-container" [formGroup]="createStudyForm" *ngIf="!isLoading">
+<div class="flex-container" *ngIf="!isLoading" [formGroup]="createStudyForm">
   <div mat-dialog-title>
     <h1 style="margin-bottom: 10px !important; text-align: center">
       {{title}}
     </h1>
   </div>
-
-  <div mat-dialog-content
-  [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
-    <mat-form-field  *ngIf="!data.selectProcessOnly">
+    <!-- Create study form-->
+  <div mat-dialog-content 
+    [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
+    <div style="display: flex;margin-bottom: 10px;" *ngIf="!data.selectProcessOnly">
+     <mat-slide-toggle
+      id="slide-toggle-stand-alone"
+      class="text-zone"
+      [checked]="isStandAlone"
+      (change)="onSelectStandAlone($event.checked)"
+      >
+    </mat-slide-toggle>
+    <mat-label >Import Study Stand Alone</mat-label>
+  </div>  
+    <mat-form-field  *ngIf="!data.selectProcessOnly && !isStandAlone">
         <mat-label>Study name</mat-label>
         <input
           matInput
@@ -34,7 +44,7 @@
         >
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field *ngIf="!isStandAlone">
       <mat-select
       id='process'
       formControlName="processId"
@@ -59,7 +69,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field *ngIf="!isStandAlone">
       <mat-select
         id="reference"
         placeholder="Study"
@@ -108,8 +118,42 @@
       </mat-select>
       <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;" *ngIf="disabledReference && !disabledReferenceList">Loading reference</mat-hint>
     </mat-form-field>
+    <div style="display: flex; align-items: center;" *ngIf="!data.selectProcessOnly && isStandAlone">
+        <button
+          class="button-select-file"
+          mat-raised-button
+          color="primary"
+          aria-label="Import zip file"
+          id="import-study"
+          (click)="importStudyStandAlone()"
+        >
+          Select zip file
+        </button>
+        <input
+          type="file"
+          #fileUpload
+          id="fileUpload"
+          name="fileUpload"
+          accept=".zip"
+          style="display: none"
+          (change)="onSelectStudyFileZip($event)"
+        />
+      <mat-form-field style="margin: 10px;">
+          <input
+          matInput
+          id='studyFileName'
+          formControlName="fileUpload"
+          placeholder="selected file name"
+          [disabled]="true"
+          [value]="createStudyForm.get('fileUpload').value"
+          />
+        <mat-error *ngIf="hasError('fileUpload', 'required')"
+          >A study zip file <strong>required</strong></mat-error
+        >
+      </mat-form-field> 
+    </div>
     <mat-form-field *ngIf="!data.selectProcessOnly">
-      <mat-select id="group" placeholder="Group name" formControlName="groupId">
+      <mat-select id="group" placeholder="Group name" formControlName="groupId" (selectionChange)="onGroupChanged()">
         <mat-option
           *ngFor="let group of groupList"
           [value]="group.group.id"
@@ -122,7 +166,7 @@
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field *ngIf="hasFlavors">
+    <mat-form-field *ngIf="hasFlavors && !isStandAlone">
       <mat-select id="flavor" placeholder="study pod size" formControlName="flavor">
         <mat-option
           *ngFor="let flavor of flavorsList"
@@ -138,7 +182,7 @@
     </mat-form-field>
   </div>
 
-  <div mat-dialog-actions>
+  <div mat-dialog-actions class="center-elements">
     <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>
     <button
       id='submit'
