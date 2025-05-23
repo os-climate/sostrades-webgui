@@ -455,7 +455,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         
               const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
                 disableClose: true,
-                data: dialogData
+                data: dialogData,
+                width: '600px',
+                height: '550px'
               });
               dialogRef.afterClosed().subscribe(result => {
                 const studyCaseData = result as StudyCaseCreateDialogData;

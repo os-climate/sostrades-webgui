@@ -40,7 +40,9 @@ export class StudyCaseCreationService {
 
     this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
       disableClose: true,
-      data: dialogData
+      data: dialogData,
+      width: '600px',
+      height: '550px'
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
@@ -143,7 +145,9 @@ export class StudyCaseCreationService {
       
           this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
             disableClose: true,
-            data: dialogData
+            data: dialogData,
+            width: '600px',
+            height: '550px'
           });
       
           this.dialogRef.afterClosed().subscribe(result => {
