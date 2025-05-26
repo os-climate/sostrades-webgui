@@ -874,7 +874,7 @@ waitStudyCreationEnding(studyId:number, creationObservable:Subscriber<Study>){
   this.getStudy(studyId).subscribe(
   {
       next: (study) => {
-        if (study.creationStatus === CreationStatus.CREATION_IN_PROGRESS) {
+        if (study.creationStatus === CreationStatus.CREATION_IN_PROGRESS || study.creationStatus === CreationStatus.CREATION_PENDING) {
           setTimeout(() => {
               this.waitStudyCreationEnding(studyId, creationObservable);
             }, 3000);

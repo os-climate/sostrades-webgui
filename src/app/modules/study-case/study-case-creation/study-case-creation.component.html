@@ -15,7 +15,7 @@
     <!-- Create study form-->
   <div mat-dialog-content 
     [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
-    <div style="display: flex;margin-bottom: 10px;" *ngIf="!data.selectProcessOnly">
+    <div style="display: flex;" *ngIf="!data.selectProcessOnly">
      <mat-slide-toggle
       id="slide-toggle-stand-alone"
       class="text-zone"
@@ -166,7 +166,7 @@
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field *ngIf="hasFlavors && !isStandAlone">
+    <mat-form-field *ngIf="!isStandAlone">
       <mat-select id="flavor" placeholder="study pod size" formControlName="flavor">
         <mat-option
           *ngFor="let flavor of flavorsList"

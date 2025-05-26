@@ -6,14 +6,12 @@
 }
 
 .content-for-process-builder {
-  padding-top: 15px;
-  height: 140px;
+  height: 160px;
   
 }
 
 .content-for-create-study {
   margin-top: 1px !important;
-  padding-top: 10px;
 }
 
 .hidden-element{
@@ -32,12 +30,9 @@
 
 .mat-mdc-form-field {
   width: 100%;
-  margin-bottom: 10px;
 }
 
-.mat-mdc-dialog-title {
-  margin-bottom: 10px;
-}
+
 
 .error-container {
   height: 100%;
@@ -60,7 +55,6 @@
   padding: 15px 15px 7px 15px;
   background-color: #f9f9f9;
   border-radius: 7px;
-  margin-bottom: 17px;
 }
 
 .radio-button {
@@ -76,8 +70,6 @@
 .reference-option-container {
   display: flex;
   flex-direction: column;
-  min-height: 40px;
-  padding: 5px;
 }
 
 .center-elements{
