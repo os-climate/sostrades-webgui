@@ -13,9 +13,8 @@
     </h1>
   </div>
     <!-- Create study form-->
-  <div mat-dialog-content 
-    [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
-    <div style="display: flex;" *ngIf="!data.selectProcessOnly">
+     <div mat-dialog-content >
+     <div style="display: flex;" *ngIf="!data.selectProcessOnly && data.process===null">
      <mat-slide-toggle
       id="slide-toggle-stand-alone"
       class="text-zone"
@@ -25,6 +24,9 @@
     </mat-slide-toggle>
     <mat-label >Import Study Stand Alone</mat-label>
   </div>  
+  <div 
+    [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
+    
     <mat-form-field  *ngIf="!data.selectProcessOnly && !isStandAlone">
         <mat-label>Study name</mat-label>
         <input
@@ -118,8 +120,10 @@
       </mat-select>
       <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;" *ngIf="disabledReference && !disabledReferenceList">Loading reference</mat-hint>
     </mat-form-field>
-    <div style="display: flex; align-items: center;" *ngIf="!data.selectProcessOnly && isStandAlone">
-        <button
+    <div *ngIf="!data.selectProcessOnly && isStandAlone" style="display: block;">
+    <div style="display: flex; align-items: center;" >
+        <button 
+          style="margin: 10px;"
           class="button-select-file"
           mat-raised-button
           color="primary"
@@ -138,19 +142,22 @@
           style="display: none"
           (change)="onSelectStudyFileZip($event)"
         />
-      <mat-form-field style="margin: 10px;">
           <input
           matInput
           id='studyFileName'
-          formControlName="fileUpload"
           placeholder="selected file name"
-          [disabled]="true"
           [value]="createStudyForm.get('fileUpload').value"
+          disabled="true"
+          style="margin-left: 10px; width:100%"
+          *ngIf="!hasError('fileUpload', 'fileSize')"
           />
-        <mat-error *ngIf="hasError('fileUpload', 'required')"
-          >A study zip file <strong>required</strong></mat-error
-        >
-      </mat-form-field> 
+        <mat-error *ngIf="hasError('fileUpload', 'fileSize')"
+        style="margin-left: 10px; width:100%">
+          {{createStudyForm.get('fileUpload').getError('fileSize')}}
+        </mat-error>
+      </div>
+     
+      
     </div>
     <mat-form-field *ngIf="!data.selectProcessOnly">
       <mat-select id="group" placeholder="Group name" formControlName="groupId" (selectionChange)="onGroupChanged()">
@@ -181,7 +188,7 @@
       </mat-error>
     </mat-form-field>
   </div>
-
+  </div>
   <div mat-dialog-actions class="center-elements">
     <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>
     <button
