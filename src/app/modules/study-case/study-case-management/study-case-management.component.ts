@@ -637,7 +637,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
           this.loadingDialogService.closeLoading();
           const downloadLink = document.createElement('a');
           downloadLink.href = window.URL.createObjectURL(result);
-          downloadLink.setAttribute('download', `zip_study_${study.id}.zip`);
+          downloadLink.setAttribute('download', `zip_study_${study.id}_${study.name}.zip`);
           document.body.appendChild(downloadLink);
           downloadLink.click();
           this.snackbarService.showInformation("The study as been successfully exported.")
