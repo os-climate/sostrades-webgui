@@ -871,7 +871,7 @@ importStudyStandAloneZip(groupId:number, file:File): Observable<Study> {
 
 
 waitStudyCreationEnding(studyId:number, creationObservable:Subscriber<Study>){
-  this.getStudy(studyId).subscribe(
+  this.getStudy(studyId, false).subscribe(
   {
       next: (study) => {
         if (study.creationStatus === CreationStatus.CREATION_IN_PROGRESS || study.creationStatus === CreationStatus.CREATION_PENDING) {

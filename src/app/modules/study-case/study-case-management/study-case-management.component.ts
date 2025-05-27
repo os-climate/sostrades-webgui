@@ -204,7 +204,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       // If study is defined has query parameter then we reload the study
         if ('studyId' in params && 'mode' in params) {
           if (params.studyId !== null && params.studyId !== undefined) {
-            this.studyCaseDataService.getStudy(params.studyId).subscribe(study => {
+            this.studyCaseDataService.getStudy(params.studyId, false).subscribe(study => {
               if(params.mode && params.mode == "edition") {
                 // Load study in read only
                 this.loadStudyInEditionMode(study)
