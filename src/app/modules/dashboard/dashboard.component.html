@@ -39,7 +39,8 @@
       </button>
       <button
         id="save-dashboard"
-        *ngIf="isDashboardUpdated"
+        *ngIf="this.options.draggable.enabled"
+        [disabled]="!isDashboardUpdated"
         matTooltip="Update saved dashboard"
         mat-raised-button
         color="primary"

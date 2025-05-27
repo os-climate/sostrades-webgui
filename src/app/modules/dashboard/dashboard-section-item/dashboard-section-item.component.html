@@ -34,8 +34,8 @@
     <div class="section-separator" [hidden]="!this.sectionItem.data.shown"></div>
 
     <!--    Graphs Area  -->
-    <div class="section-graph" [hidden]="!this.sectionItem.data.shown">
-      <div *ngIf="sectionItem.data.items && sectionItem.data.items.length > 0" class="graph-container">
+    <div class="section-items" [hidden]="!this.sectionItem.data.shown">
+      <div *ngIf="sectionItem.data.items && sectionItem.data.items.length > 0" class="container-items">
         <ng-container *ngFor="let item of sectionItem.data.items" [ngSwitch]="item.type">
           <div class="item">
             <app-post-processing-plotly

@@ -1,20 +1,20 @@
 <div *ngIf="showView && !showSearch" id="process-buttons" style="height:28px;">
   <div id="process"
-    (click)="goToProcessDocumentation(processIdentifier)"
-    [matTooltip]="'Go to the process '+ processIdentifier+ ' documentation'"
-    >
+       (click)="goToProcessDocumentation(processIdentifier)"
+       [matTooltip]="'Go to the process '+ processIdentifier+ ' documentation'"
+  >
     <span>Study based on process: </span>
-    <span id="process-identifier">  {{processIdentifier}} </span>
+    <span id="process-identifier">  {{ processIdentifier }} </span>
   </div>
   <div class="filter-level-fullscreen">
     <button
-    class="button"
-    mat-flat-button
-    color="primary"
-    [matMenuTriggerFor]="menuFilters"
-    aria-label="filters menu"
-    *ngIf="hasAccessToStudy">
-    Filters
+      class="button"
+      mat-flat-button
+      color="primary"
+      [matMenuTriggerFor]="menuFilters"
+      aria-label="filters menu"
+      *ngIf="hasAccessToStudy">
+      Filters
     </button>
     <mat-menu #menuFilters="matMenu">
       <div mat-menu-item>
@@ -29,24 +29,24 @@
       </div>
     </mat-menu>
     <button
-    mat-flat-button
-    color="primary"
-    [matMenuTriggerFor]="menuUserLevel"
-    aria-label="user level menu"
-    class="button"
+      mat-flat-button
+      color="primary"
+      [matMenuTriggerFor]="menuUserLevel"
+      aria-label="user level menu"
+      class="button"
       *ngIf="hasAccessToStudy && !studyCaseDataService.loadedStudy.noData">
       <mat-icon>visibility</mat-icon>
       {{ selectedUserlevel }}
     </button>
     <mat-menu #menuUserLevel="matMenu">
       <mat-selection-list multiple="false" #userLevelSelectionList
-        (selectionChange)="changeUserLevel($event.options)">
+                          (selectionChange)="changeUserLevel($event.options)">
         <mat-list-option
           class="user-level-item"
           *ngFor="let userLevelName of userLevelList; let i = index"
           [value]="i"
           [selected]="newUserLevelValue === i"
-          >
+        >
           {{ userLevelName }}
         </mat-list-option>
       </mat-selection-list>
@@ -58,9 +58,9 @@
       aria-label="fullscreen"
       class="fullscreen-button button"
       (click)="goFullScreen()"
-      >
-    Fullscreen
-    <mat-icon>fullscreen</mat-icon>
+    >
+      Fullscreen
+      <mat-icon>fullscreen</mat-icon>
     </button>
 
   </div>
@@ -68,50 +68,50 @@
 <div style="height: 100%; width: 100%;  background-color: white" *ngIf="showSearch">
   <div style="float: right;">
     <button
-        mat-icon-button
-        color="primary"
-        matTooltip="Close search panel"
-        (click)="closeSearchPanel()"
-      >
-        <i class="far fa-window-close"> </i>
-      </button>
+      mat-icon-button
+      color="primary"
+      matTooltip="Close search panel"
+      (click)="closeSearchPanel()"
+    >
+      <i class="far fa-window-close"> </i>
+    </button>
   </div>
   <app-search-panel></app-search-panel>
 </div>
 <div style="height: 100%; width: 100%; background-color: white"
-*ngIf="!showSearch && showView">
-    <as-split [useTransition]="true" unit="pixel" [gutterSize]="10">
-      <!--split for the light treeview only visible in the fullscreen mode-->
-      <as-split-area
-        [(size)]="treeviewSize"
-        [order]="1"
-        [style.display]="isTreeviewVisible ? 'block' : 'none'"
-        *ngIf="isFullScreenOn">
+     *ngIf="!showSearch && showView">
+  <as-split [useTransition]="true" unit="pixel" [gutterSize]="10">
+    <!--split for the light treeview only visible in the fullscreen mode-->
+    <as-split-area
+      [(size)]="treeviewSize"
+      [order]="1"
+      [style.display]="isTreeviewVisible ? 'block' : 'none'"
+      *ngIf="isFullScreenOn">
       <div class="treeview-container">
         <div class="header-treeview">
-            <!--button to hide the treeview,
-            visible if the treeview is visible-->
-            <mat-icon
-              id='close'
-              matTooltip="Hide treeview"
-              class="hide-treeview-button cursor-pointer"
-              (click)="toggleTreeview()"
-              *ngIf="isTreeviewVisible">
-                keyboard_arrow_left
-            </mat-icon>
+          <!--button to hide the treeview,
+          visible if the treeview is visible-->
+          <mat-icon
+            id='close'
+            matTooltip="Hide treeview"
+            class="hide-treeview-button cursor-pointer"
+            (click)="toggleTreeview()"
+            *ngIf="isTreeviewVisible">
+            keyboard_arrow_left
+          </mat-icon>
           <!--name of the study-->
           <div style="margin-left: 5px;">
             <span>Current study</span>
             <span id="text-sidenav-study-loaded-name"
-              *ngIf="studyName !== ''"
-              [ngClass]="{'long-title': studyName.length > 13, 'text-wrap': true}"> : {{ studyName }}</span>
+                  *ngIf="studyName !== ''"
+                  [ngClass]="{'long-title': studyName.length > 13, 'text-wrap': true}"> : {{ studyName }}</span>
           </div>
 
 
         </div>
         <!--light treeview-->
-        <div style="overflow: auto; height: calc(100% - 25px); width: inherit;" >
-          <app-study-case-treeview-light ></app-study-case-treeview-light>
+        <div style="overflow: auto; height: calc(100% - 25px); width: inherit;">
+          <app-study-case-treeview-light></app-study-case-treeview-light>
         </div>
 
       </div>
@@ -120,23 +120,23 @@
     <!--split for the workspace-->
     <as-split-area [size]="'*'" [order]="2" [visible]="true">
       <div style="overflow: hidden;width: 100%;height: 100%;">
-      <!--button that show the treeview, only visible if the treeview is hidden in fullscreen mode-->
+        <!--button that show the treeview, only visible if the treeview is hidden in fullscreen mode-->
         <mat-icon
           id='open'
           matTooltip="Show treeview"
           class="transparent-button float-left-button cursor-pointer"
           (click)="toggleTreeview()"
           *ngIf="showView && isFullScreenOn && !isTreeviewVisible">
-            keyboard_arrow_right
+          keyboard_arrow_right
         </mat-icon>
         <div #tabGroup style="height: 100%; width: 100%; background-color: white"
-        *ngIf="!showSearch">
+             *ngIf="!showSearch">
           <mat-tab-group
             #MatTabGroup
             class="container-workspace"
             *ngIf="showView"
             (selectedTabChange)="onSelectedTabChange($event)"
-            [selectedIndex] = selectedTabIndex
+            [selectedIndex]=selectedTabIndex
           >
             <mat-tab
               *ngFor="let tab of tabs"
@@ -148,6 +148,58 @@
               </ng-container>
             </mat-tab>
           </mat-tab-group>
+
+<!--          <mat-tab-group-->
+<!--            class="container-workspace"-->
+<!--            *ngIf="showView"-->
+<!--            (selectedTabChange)="onSelectedTabChange($event)"-->
+<!--            [selectedIndex]=selectedTabIndex-->
+<!--          >-->
+<!--            <mat-tab-->
+<!--              label="Data"-->
+<!--              aria-label="tab-study-workspace-data-management"-->
+<!--              *ngIf="showDataManagement"-->
+<!--            >-->
+<!--              <app-data-management-container></app-data-management-container>-->
+<!--            </mat-tab>-->
+<!--            <mat-tab-->
+<!--              label="Charts"-->
+<!--              aria-label="tab-study-workspace-charts"-->
+<!--              *ngIf="showPostProcessing"-->
+<!--            >-->
+<!--              <app-post-processing-->
+<!--                *ngIf="showPostProcessingContent"-->
+<!--              ></app-post-processing>-->
+<!--            </mat-tab>-->
+<!--            <mat-tab-->
+<!--              label="Dashboard"-->
+<!--              aria-label="tab-study-workspace-dashboard"-->
+<!--              *ngIf="showDashboard"-->
+<!--            >-->
+<!--              <app-dashboard-->
+<!--              *ngIf="showDashboardContent">-->
+<!--              </app-dashboard>-->
+<!--            </mat-tab>-->
+<!--            <mat-tab-->
+<!--              label="Visualisation"-->
+<!--              aria-label="tab-study-workspace-visualisation"-->
+<!--              *ngIf="showVisualisation"-->
+<!--            >-->
+<!--              <app-visualisation-container-->
+<!--                *ngIf="showVisualisationContent">-->
+<!--              </app-visualisation-container>-->
+<!--            </mat-tab>-->
+<!--            <mat-tab-->
+<!--              label="Documentation"-->
+<!--              aria-label="tab-study-workspace-documentation"-->
+<!--              *ngIf="showDocumentation"-->
+<!--            >-->
+<!--              <app-study-case-documentation-->
+<!--                [identifiers]="modelsFullPathList"-->
+<!--                *ngIf="showDocumentationContent"-->
+<!--              ></app-study-case-documentation>-->
+<!--            </mat-tab>-->
+<!--          </mat-tab-group>-->
         </div>
       </div>
     </as-split-area>

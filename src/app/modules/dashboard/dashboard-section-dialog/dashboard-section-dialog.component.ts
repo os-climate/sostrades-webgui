@@ -50,10 +50,6 @@ export class DashboardSectionDialogComponent {
     return text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
   }
 
-  saveChanges() {
-    this.dialogRef.close(this.data.content);
-  }
-
   cancelEditing() {
     this.dialogRef.close(undefined)
   }

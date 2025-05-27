@@ -105,13 +105,13 @@ mat-card-content:first-child {
   flex: 0 0 auto;
 }
 
-.section-graph {
+.section-items {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
 }
 
-.graph-container {
+.container-items {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
@@ -124,6 +124,7 @@ mat-card-content:first-child {
     0px 1px 5px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
   min-width: 290px;
   max-width: 600px;
+  max-height: 450px;
 }
 
 .no-graphs {

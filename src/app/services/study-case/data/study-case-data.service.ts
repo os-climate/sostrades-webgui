@@ -794,17 +794,17 @@ export class StudyCaseDataService extends DataHttpService {
           parameter_usages: [],
         },
       };
-  
+
       // Extract ontology input data from study
       const root = loadedStudy.treeview.rootNode;
       TreenodeTools.recursiveTreenodeExtract(root, ontologyRequest);
-    
+
       return this.http.post<void>(`${this.apiRoute}/${loadedStudy.studyCase.id}/save-ontology`, ontologyRequest, this.options);
-      
+
   }
 
   public loadSavedOntology(loadedStudy: LoadedStudy):Observable<boolean>{
-  
+
       return this.http.get<any>(`${this.apiRoute}/${loadedStudy.studyCase.id}/saved-ontology-usages`, this.options).pipe(map(
             response => {
               if (response !== null && response !== undefined){
@@ -819,8 +819,8 @@ export class StudyCaseDataService extends DataHttpService {
               }
 
           }));
-            
-      
+
+
   }
 
   public loadSavedDocumentation(study_id, documentation_identifier): Observable<MardownDocumentation>{
@@ -834,7 +834,7 @@ export class StudyCaseDataService extends DataHttpService {
           this.ontologyService.markdownDocumentations[documentation_identifier] = documentation;
           return documentation;
         }));
-      } 
+      }
 }
 
 }

@@ -71,7 +71,7 @@ export class DashboardService extends DataHttpService {
   }
 
   onSectionExpansionEvent() {
-  this.onSectionExpansion.emit();
+    this.onSectionExpansion.emit();
   }
 
   // checks if an item is selected

@@ -212,27 +212,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.api.optionsChanged();
   }
 
-  get graphItems(): DashboardGraph[] {
-    return this.dashboardFavorites.filter(item => item.type === 'graph') as DashboardGraph[];
-  }
-
-  // Getter that returns the text items of the dashboard
-  get textItems(): DashboardText[] {
-    return this.dashboardFavorites.filter(item => item.type === 'text') as DashboardText[];
-  }
-
-  // Getter that returns the section items of the dashboard
-  get sectionItems(): DashboardSection[] {
-    return this.dashboardFavorites.filter(item => item.type === 'section') as DashboardSection[];
-  }
-
   // Custom compact function to fil the empty spaces in the dashboard
   autoFitItems(items: DisplayableItem[]) {
-    // this.dashboardFavorites.forEach((item: DisplayableItem, index) => {
-    //   console.log(`Item ${index}: ${item.id}, x: ${item.x}, y: ${item.y}, cols: ${item.cols}, rows: ${item.rows}`);
-    // })
     const ColsWidth = 10;
-    let rowHeight = 3;
+    let rowHeight = 1;
     let currentX = 0;
     let currentY = 0;
     const itemReOrdered: DisplayableItem[] = [];

@@ -38,7 +38,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   postProcessingWithoutSection: any[] = [];
   postProcessingWithSection: any[] = [];
   postProcessingKeyCharts: any[] = [];
-  public isDashboardInEditionMode: boolean;
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
@@ -145,7 +144,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
   }
 
   private addSectionInPostProcessing(postProcessing: any, needToUpdate:boolean ) {
-this.postProcessingWithoutSection = [];
+    this.postProcessingWithoutSection = [];
     const postProcessingWithoutSectionWithFilter: PostProcessingBundle[] = [];
     const postProcessingKeyCharts: PostProcessingBundle[] = [];
     // Create a dictionnary to section the post_processing by a name
@@ -227,5 +226,4 @@ this.postProcessingWithoutSection = [];
       search => search.toString().toLowerCase().indexOf(value) > -1
     )
   }
-
- }
+}

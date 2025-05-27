@@ -342,7 +342,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
         this.plotData
       );
 
-        this.PlotlyPlaceHolder.nativeElement.on('plotly_afterplot', () => {
+      this.PlotlyPlaceHolder.nativeElement.on('plotly_afterplot', () => {
         this.isPlotLoading = false;
       });
     }, 0);

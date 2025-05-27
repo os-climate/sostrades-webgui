@@ -2,7 +2,7 @@
   <h2 class="mat-dialog-title">Edit Section</h2>
   <mat-dialog-content class="listing-content">
     <div cdkDropListGroup class="cdkDropListGroup">
-      <div class="container">
+      <div class="container-list">
         <h2>Dashboard's Items</h2>
         <div
           cdkDropList
@@ -34,7 +34,7 @@
       <div class="arrow-container">
         <i class="fa-solid fa-arrow-right-arrow-left"></i>
       </div>
-      <div class="container">
+      <div class="container-list">
         <h2>Section's Items</h2>
         <div
           cdkDropList
@@ -66,13 +66,9 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="center">
-    <button mat-raised-button color="primary" (click)="saveChanges()" matTooltip="Save changes">
-      <i class="fa-solid fa-floppy-disk"></i>
-      Save
-    </button>
     <button mat-raised-button color="primary" (click)="cancelEditing()" matTooltip="Cancel changes">
-      <i class="fa-solid fa-xmark"></i>
-      Cancel
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Exit
     </button>
   </mat-dialog-actions>
 </div>

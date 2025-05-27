@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { DashboardGraph, DashboardSection, DashboardText, DisplayableItem } from "../../../models/dashboard.model";
+import { DashboardSection, DisplayableItem } from "../../../models/dashboard.model";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { QuillEditorComponent } from "ngx-quill";
 import { MatDialog } from "@angular/material/dialog";
@@ -65,8 +65,7 @@ export class DashboardSectionItemComponent implements OnInit {
   }
 
   toggleExpandSection() {
-    const wasShown = this.sectionItem.data.shown;
-    this.sectionItem.data.shown = !wasShown;
+    this.sectionItem.data.shown = !this.sectionItem.data.shown;
     if (this.sectionItem.data.shown) {
       if (this.sectionItem.data.expandedSize) {
         this.sectionItem.rows = this.sectionItem.data.expandedSize;
