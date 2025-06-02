@@ -156,7 +156,10 @@
           {{createStudyForm.get('fileUpload').getError('fileSize')}}
         </mat-error>
       </div>
-     
+     <mat-label *ngIf="hasWarnings" style="margin-left: 10px; width:100%; color: #f0ad4e;">
+      <i class="fa-solid fa-triangle-exclamation" style="margin-right:3px"></i>
+      {{warnings}}
+      </mat-label>
       
     </div>
     <mat-form-field *ngIf="!data.selectProcessOnly">
