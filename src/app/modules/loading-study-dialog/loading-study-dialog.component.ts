@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LoadingStudyDialogData } from 'src/app/models/dialog-data.model';
-import { DEFAULT_DIALOG_STEPS, LoadingDialogStep, READONLY_DIALOG_STEPS } from 'src/app/models/loading-study-dialog.model';
+import { DEFAULT_DIALOG_STEPS, LoadingDialogStep } from 'src/app/models/loading-study-dialog.model';
 
 @Component({
   selector: 'app-loading-study-dialog',
