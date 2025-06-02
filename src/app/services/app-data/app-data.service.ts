@@ -227,7 +227,8 @@ private handleStandAloneStudyAccess(studyId: number, isStudyCreated: (loaded: bo
   //first check the status of the creation before opening the study
   const studyCreatedObserver = new Observable<Study>((observer)=>{
       this.studyCaseDataService.waitStudyCreationEnding(studyId, observer)
-    }).subscribe({
+    });
+  studyCreatedObserver.subscribe({
       next: (study) => {
         if(!loadingCanceled) {
           //then open the study in read only
