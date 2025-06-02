@@ -210,7 +210,7 @@ createStudyStandAlone(groupId:number, studyZip: File, isStudyCreated: (loaded: b
     this.studyCaseDataService.importStudyStandAloneZip(groupId, studyZip).subscribe({
         next: (createdStudy) => {
           if(!loadingCanceled){
-
+            this.onStudyCreated.emit(createdStudy.id);
             //the unzip has been started by the server, we have to wait for the study to have the state "creation_done", then open the read only
             this.handleStandAloneStudyAccess(createdStudy.id, isStudyCreated, loadingCanceled);
           }
