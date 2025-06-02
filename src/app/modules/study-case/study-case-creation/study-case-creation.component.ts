@@ -462,8 +462,9 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   onSelectStudyFileZip(event: any) {
 
     if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
-      //if the file size is upper than 10Mo set control form in error
-      if (event.target.files[0].size > 10 * 1024 * 1024) {
+      //if not on local and if the file size is upper than 10Mo set control form in error
+      const host = window.location.host;
+      if (!host.includes('localhost:') && event.target.files[0].size > 10 * 1024 * 1024) {
         this.createStudyForm.get('fileUpload').setErrors({
           fileSize: 'The file size must be less than 10Mo'
         });
