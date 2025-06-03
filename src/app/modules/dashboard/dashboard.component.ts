@@ -309,10 +309,23 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     if (item.minCols && item.minRows) {
       if (item.cols < item.minCols) {
         this.snackbarService.showError(`${item.type} item must have at least ${item.minCols} columns`);
+        // check if the item after recalibration will stay on the valid grid
+        // if not, set the item's x to the maximum x position based on the options.maxCols minus item.minCols (to avoid grid to be extended)
+        if (item.x + item.minCols > this.options.maxCols) {
+          item.x = this.options.maxCols - item.minCols;
+        }
         item.cols = item.minCols;
       }
       if (item.rows < item.minRows) {
         this.snackbarService.showError(`${item.type} item must have at least ${item.minRows} rows`);
+        // check if the item after recalibration will not collide with another item
+        // if not, set the item's y to the maximum y position based on the other item colliding y and the item.minRows (to avoid items to overlap)
+        JSON.parse(this.previousPositions).forEach(i => {
+          if (item.y + item.minRows > i.y && item.y < i.y + i.rows && item.x + item.cols > i.x && item.id !== i.id) {
+            console.log('Collision detected with item', i.id);
+            item.y = i.y - item.minRows
+          }
+        })
         item.rows = item.minRows;
       }
     }

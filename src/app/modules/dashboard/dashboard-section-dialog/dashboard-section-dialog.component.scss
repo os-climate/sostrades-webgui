@@ -53,6 +53,10 @@ h2 {
 }
 
 .empty-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 48px); // container height minus title (32) + margin (16)
   border: dashed 1px #ccc;
   color: rgba(0, 0, 0, 0.87);
   text-align: center;
@@ -60,7 +64,6 @@ h2 {
   background: white;
   font-size: 14px;
   border-radius: 4px;
-  padding: 134px;
 }
 
 .box-item {

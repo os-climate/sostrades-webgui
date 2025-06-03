@@ -64,36 +64,34 @@ export class DashboardSectionItemComponent implements OnInit {
     });
   }
 
-  toggleExpandSection() {
+  expandSection() {
     this.sectionItem.data.shown = !this.sectionItem.data.shown;
-    if (this.sectionItem.data.shown) {
-      if (this.sectionItem.data.expandedSize) {
-        this.sectionItem.rows = this.sectionItem.data.expandedSize;
-      } else {
-        this.sectionItem.rows = 5;
-      }
-      this.sectionItem.minRows = 4;
-      this.sectionItem.maxRows = undefined;
-    } else {
+    if (!this.sectionItem.data.shown)
       this.sectionItem.data.expandedSize = this.sectionItem.rows;
-      this.sectionItem.rows = 1;
-      this.sectionItem.minRows = 1;
-      this.sectionItem.maxRows = 1;
-    }
+    this.sectionItem.rows = this.sectionItem.data.shown ?
+      (this.sectionItem.data.expandedSize || 5) : // use stored size or default
+      1; // Collapse size
+    this.sectionItem.minRows = this.sectionItem.data.shown ? 4 : 1; // Minimum 4 when expanded, 1 when collapsed
+    this.sectionItem.maxRows = this.sectionItem.data.shown ? undefined : 1; // No max when expanded, 1 when collapsed
     this.dashboardService.updateItem(this.sectionItem);
     this.dashboardService.onSectionExpansionEvent();
   }
 
   getHeaderHeight() {
     if (this.sectionItem.data.shown) {
-      return (1 / this.sectionItem.rows) * 100;
+      const percentPerRow: number = 1 / this.sectionItem.rows;
+      const gapAdjustment: number = (this.sectionItem.rows - 1) * 4; // 4px gap between rows
+      if (gapAdjustment > 0)
+        return `calc((100% - ${gapAdjustment}px) * ${percentPerRow})`;
+      else
+        return `${percentPerRow * 100}%`;
     } else {
-      return 100;
+      return '100%';
     }
   }
 
   // delete the text item of the dashboard and emit an event
-  deleteTextItem(text: DashboardSection) {
+  deleteSectionItem(text: DashboardSection) {
     this.dashboardService.removeItem(text);
   }
 }

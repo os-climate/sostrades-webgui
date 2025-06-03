@@ -2,9 +2,9 @@
   <mat-card-content class="section-item-content">
     <!--    Title Area  -->
     <div [ngClass]="this.sectionItem.data.shown ? 'show-section-header' : 'hidden-section-header'"
-         [style.height.%]="getHeaderHeight()">
+         [style.height]="getHeaderHeight()">
       <div class="card-actions" [hidden]="!inEditionMode">
-        <button mat-button color="warn" (click)="deleteTextItem(sectionItem)" matTooltip="Delete section">
+        <button mat-button color="warn" (click)="deleteSectionItem(sectionItem)" matTooltip="Delete section">
           <i class="fa-solid fa-trash"></i>
         </button>
         <button mat-button color="primary" class="drag-handle" matTooltip="Move section">
@@ -16,22 +16,30 @@
       </div>
       <div class="expansion-button">
         <button mat-button color="primary" [matTooltip]="this.sectionItem.data.shown ? 'Hide graphs' : 'Show graphs'"
-                (click)="toggleExpandSection()">
+                (click)="expandSection()">
           <i [ngClass]="this.sectionItem.data.shown ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up'"></i>
         </button>
       </div>
       <div [ngClass]="inEditionMode ? 'edit-content-wrapper' : 'content-wrapper'" (click)="startEditingTitle()">
-        <div *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''" class="quill-content">
+        <div class="quill-content"
+          *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''"
+          [matTooltip]="inEditionMode ? 'Click to edit title' : 'switch to edit mode to edit title'"
+          matTooltipPosition="above"
+        >
           <quill-view-html [content]="sectionItem.data.title" theme="snow"></quill-view-html>
         </div>
-        <div *ngIf="!sectionItem.data.title || sectionItem.data.title.trim() === ''" class="empty-content">
+        <div class="empty-content"
+          [matTooltip]="inEditionMode ? 'Click to edit title' : 'switch to edit mode to edit title'"
+          matTooltipPosition="above"
+          *ngIf="!sectionItem.data.title || sectionItem.data.title.trim() === ''"
+        >
           Click to edit
         </div>
       </div>
     </div>
 
     <!--    Separator Line  -->
-    <div class="section-separator" [hidden]="!this.sectionItem.data.shown"></div>
+    <div class="section-separator"  [hidden]="!this.sectionItem.data.shown"></div>
 
     <!--    Graphs Area  -->
     <div class="section-items" [hidden]="!this.sectionItem.data.shown">
@@ -62,3 +70,65 @@
     </div>
   </mat-card-content>
 </mat-card>
+
+<!--
+<mat-expansion-panel
+  [id]="sectionItem.id"
+  class="section-item-card"
+  [expanded]="sectionItem.data.shown"
+  (opened)="expandSection(true)"
+  (closed)="expandSection(false)">
+  <mat-expansion-panel-header class="section-header">
+    <mat-panel-title>
+      <div class="title-container" (click)="$event.stopPropagation()">
+        <div *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''" class="quill-content">
+          <quill-view-html [content]="sectionItem.data.title" theme="snow"></quill-view-html>
+        </div>
+        <div *ngIf="!sectionItem.data.title || sectionItem.data.title.trim() === ''" class="empty-content">
+          Click to edit
+        </div>
+      </div>
+    </mat-panel-title>
+    <div class="panel-actions" *ngIf="inEditionMode" (click)="$event.stopPropagation()">
+      <button mat-button color="warn" (click)="deleteSectionItem(sectionItem)" matTooltip="Delete section">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+      <button mat-button color="primary" class="drag-handle" matTooltip="Move section">
+        <i class="fa-solid fa-arrows-up-down-left-right"></i>
+      </button>
+      <button mat-button color="primary" (click)="startEditingSection()" matTooltip="Edit section">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </button>
+    </div>
+  </mat-expansion-panel-header>
+
+  <div class="section-content">
+    <div *ngIf="sectionItem.data.items && sectionItem.data.items.length > 0" class="items-container">
+      <ng-container *ngFor="let item of sectionItem.data.items" [ngSwitch]="item.type">
+        <div class="item">
+          <app-post-processing-plotly
+            *ngSwitchCase="itemType.graph"
+            [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+            [fullNamespace]=""
+            [plotData]="item.data.graphData"
+            [disciplineName]="item.disciplineName"
+            [name]="item.name"
+            [plotIndex]="item.plotIndex"
+            [isEditing]="inEditionMode">
+          </app-post-processing-plotly>
+
+          <app-dashboard-text-item
+            *ngSwitchCase="itemType.text"
+            [textItem]="item"
+            [inEditionMode]="inEditionMode">
+          </app-dashboard-text-item>
+        </div>
+      </ng-container>
+    </div>
+    <div *ngIf="!sectionItem.data.items || sectionItem.data.items.length === 0" class="empty-section">
+      <mat-icon>info</mat-icon>
+      <span>No items available in this section</span>
+    </div>
+  </div>
+</mat-expansion-panel>
+-->

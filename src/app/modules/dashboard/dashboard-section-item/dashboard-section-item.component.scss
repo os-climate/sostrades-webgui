@@ -1,10 +1,21 @@
 .section-item-card {
+  width: 100%;
   height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+
+  .mat-expansion-panel-body {
+    padding: 0 !important;
+  }
+  //height: 100%;
+  //box-sizing: border-box;
+  //display: flex;
+  //flex-direction: column;
+  //position: relative;
+  //overflow: hidden;
 }
 
 mat-card {
@@ -22,14 +33,63 @@ mat-card-content:last-child {
 mat-card-content:first-child {
   padding-top: 0;
 }
+//
+//.section-header {
+//  .mat-expansion-panel-header-title {
+//    flew-grow: 1;
+//  }
+//  .title-container {
+//    display: flex;
+//    align-items: center;
+//    width: 100%;
+//    .quill-content {
+//      width: 100%;
+//      .ql-editor {
+//        padding: 0;
+//      }
+//    }
+//    .empty-content {
+//      color: #999;
+//      font-style: italic;
+//    }
+//  }
+//}
+//
+//.panel-actions {
+//  display: flex;
+//  align-items: center;
+//  gap: 4px;
+//}
+//
+//.section-content {
+//  padding: 16px;
+//  .items-container {
+//    display: grid;
+//    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+//    gap: 16px;
+//    .item {
+//      width: 100%;
+//      min-height: 200px;
+//    }
+//  }
+//  .empty-section {
+//    display: flex;
+//    flex-direction: column;
+//    align-items: center;
+//    justify-content: center;
+//    padding: 32px;
+//    color: #999;
+//    mat-icon {
+//      font-size: 48px;
+//      height: 48px;
+//      width: 48px;
+//      margin-bottom: 16px;
+//    }
+//  }
+//
+//}
 
 .section-item-content {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.section-item-no-content {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -62,23 +122,28 @@ mat-card-content:first-child {
 
 .edit-content-wrapper {
   overflow-y: auto;
-  height: calc(100% - 20px);
+  height: 100%;
 }
 
 .content-wrapper {
   overflow-y: auto;
-  height: 100%;
-  padding-top: 36px;
+  height: calc(100% - 36px);
+  position: relative;
+  top: 36px;
 }
 
 .empty-content {
-  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex-grow: 1;
   text-align: center;
   color: #999;
   font-style: italic;
+  font-size: 14px;
   border: 1px dashed #ccc;
   border-radius: 4px;
-  margin: 10px;
 }
 :root {
   --section-header-height: 20%;
@@ -86,16 +151,18 @@ mat-card-content:first-child {
 
 .show-section-header {
   flex: 0 0 auto;
-  height: var(--section_header_height);
   position: relative;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .hidden-section-header {
   flex: 0 0 auto;
-  height: 100%;
   position: relative;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .section-separator {
@@ -128,8 +195,10 @@ mat-card-content:first-child {
 }
 
 .no-graphs {
-  text-align: center;
-  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   color: #999;
   font-style: italic;
   border: 1px dashed #ccc;

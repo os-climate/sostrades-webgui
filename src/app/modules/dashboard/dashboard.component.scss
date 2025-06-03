@@ -143,3 +143,18 @@ gridster {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 }
+
+.missing-dashboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 7px;
+  border-color: lightgrey;
+  background-color: #f9f9f9;
+  padding: 5px 0 5px 0;
+  font-size: 12px;
+  line-height: unset;
+}
