@@ -180,6 +180,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
   process: Process;
   selectProcessOnly: boolean;
   selectedFlavor:string;
+  zipFile: File;
 
   public constructor() {
     super();
@@ -190,6 +191,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
     this.process = null;
     this.selectProcessOnly = false;
     this.selectedFlavor = null;
+    this.zipFile = null;
   }
 }
 

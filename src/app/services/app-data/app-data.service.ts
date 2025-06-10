@@ -3,7 +3,9 @@ import {
   LoadedStudy,
   LoadStatus,
   StudyCasePayload,
-  StudyCaseInitialSetupPayload
+  StudyCaseInitialSetupPayload,
+  Study,
+  CreationStatus
 } from "src/app/models/study.model";
 import { StudyCaseDataService } from "../study-case/data/study-case-data.service";
 import { SnackbarService } from "../snackbar/snackbar.service";
@@ -24,7 +26,7 @@ import { UserService } from "../user/user.service";
 import { map } from "rxjs/operators";
 import { Routing } from "src/app/models/enumeration.model";
 import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
-import { LoadingDialogStep } from "src/app/models/loading-study-dialog.model";
+import { LoadingDialogStep, READONLY_DIALOG_STEPS, STANDALONE_CREATION_DIALOG_STEPS } from "src/app/models/loading-study-dialog.model";
 import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
 import { SocketService } from "../socket/socket.service";
 import { StudyCaseExecutionObserverService } from "../study-case-execution-observer/study-case-execution-observer.service";
@@ -187,6 +189,63 @@ export class AppDataService extends DataHttpService {
   }
 }
 
+createStudyStandAlone(groupId:number, studyZip: File, isStudyCreated: (loaded: boolean) => void) {
+    
+    let loadingCanceled = false;
+
+    // Display loading message
+    this.loadingStudyDialogService
+      .showLoadingWithCancelobserver(`Importing study stand-alone, this can take a few minutes...`)
+      .subscribe(() => {
+        this.loggerService.log(
+          `Loading has been canceled, redirecting to study management from ${this.router.url} `
+        );
+        loadingCanceled = true;
+        this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+      });
+    this.loadingStudyDialogService.setSteps(STANDALONE_CREATION_DIALOG_STEPS);
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
+
+    //start the import of the zip
+    this.studyCaseDataService.importStudyStandAloneZip(groupId, studyZip).subscribe({
+        next: (createdStudy) => {
+          if(!loadingCanceled){
+            this.onStudyCreated.emit(createdStudy.id);
+            //the unzip has been started by the server, we have to wait for the study to have the state "creation_done", then open the read only
+            this.handleStandAloneStudyAccess(createdStudy.id, isStudyCreated, loadingCanceled);
+          }
+        },
+        error: (error) => {
+         this.loadingStudyDialogService.setError("Error creating study\n" + error.description);
+        }
+      });
+    
+  }
+
+private handleStandAloneStudyAccess(studyId: number, isStudyCreated: (loaded: boolean) => void, loadingCanceled: boolean): void {
+
+  //first check the status of the creation before opening the study
+  const studyCreatedObserver = new Observable<Study>((observer)=>{
+      this.studyCaseDataService.waitStudyCreationEnding(studyId, observer)
+    });
+  studyCreatedObserver.subscribe({
+      next: (study) => {
+        if(!loadingCanceled) {
+          //then open the study in read only
+          if (study.creationStatus === CreationStatus.CREATION_DONE) {
+            this.launchLoadStudy(study.id, false,  true, isStudyCreated, false, true, false);
+          } else {
+            this.loadingStudyDialogService.setError("Error while unzipping study stand alone data: \n" + study.error);
+          }
+          
+        }
+      },
+      error: (errorReceived) => {
+        this.loadingStudyDialogService.setError("Error while unzipping study stand alone data: \n" + errorReceived);
+      }
+    });
+}
+
 /**
 * Handles read-only access to study
 * @param studyId ID of the study
@@ -198,7 +257,7 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
     next: (response) => {
       if(!loadingCanceled) {
         if (response.has_read_only) {
-          this.loadingStudyDialogService.setReadOnlySteps(true);
+          this.loadingStudyDialogService.setSteps(READONLY_DIALOG_STEPS);
           // Launch study with appropriate server running status
           this.launchLoadStudy(
               studyId, 
@@ -349,7 +408,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
       });
       if(!loadingCanceled){
         // Update loading step using read only step
-        this.loadingStudyDialogService.setReadOnlySteps(true)   
+        this.loadingStudyDialogService.setSteps(READONLY_DIALOG_STEPS)   
         // load study
         this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe({
         next: (response) => { 
@@ -520,7 +579,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
         } else {
           //get current study user info
           if (loadedStudy !== null && loadedStudy !== undefined && loadedStudy.studyCase !== null && loadedStudy.studyCase !== undefined){
-          this.studyCaseDataService.getStudy(loadedStudy.studyCase.id, false).subscribe({next:(study)=>{
+          this.studyCaseDataService.getStudy(studyId, false).subscribe({next:(study)=>{
             if (study !== null && study !== undefined){
               loadedStudy.studyCase = study;
             }

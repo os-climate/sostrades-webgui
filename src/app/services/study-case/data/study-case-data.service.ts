@@ -1,4 +1,4 @@
-import { Study, LoadedStudy, StudyCasePayload } from 'src/app/models/study.model';
+import { Study, LoadedStudy, StudyCasePayload, CreationStatus } from 'src/app/models/study.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
@@ -841,6 +841,51 @@ export class StudyCaseDataService extends DataHttpService {
           return null;
       }));
       } 
+}
+
+getStudyStandAloneZip(studyId: number): Observable<Blob> {
+  const options: {
+    headers?: HttpHeaders;
+    observe?: 'body';
+    params?: HttpParams;
+    reportProgress?: boolean;
+    responseType: 'blob';
+  } = {
+    responseType: 'blob'
+  };
+  const url = `${this.apiRoute}/${studyId}/stand-alone/export`;
+
+  return this.http.get(url, options);
+}
+
+importStudyStandAloneZip(groupId:number, file:File): Observable<Study> {
+    const formData = new FormData();
+
+    if (file !== null && file !== undefined) {
+      formData.append(file.name, file);
+      formData.append("group_id", groupId.toString());
+    }
+    const url = `${this.apiRoute}/stand-alone/import`;
+    return this.http.post<Study>(url, formData);
+  }
+
+
+waitStudyCreationEnding(studyId:number, creationObservable:Subscriber<Study>){
+  this.getStudy(studyId, false).subscribe(
+  {
+      next: (study) => {
+        if (study.creationStatus === CreationStatus.CREATION_IN_PROGRESS || study.creationStatus === CreationStatus.CREATION_PENDING) {
+          setTimeout(() => {
+              this.waitStudyCreationEnding(studyId, creationObservable);
+            }, 3000);
+        }
+        else{
+          creationObservable.next(study);
+        }
+      }, error: error => {
+        creationObservable.error(error);
+      }
+  });
 }
 
 }
