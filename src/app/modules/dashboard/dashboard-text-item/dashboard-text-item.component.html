@@ -8,7 +8,7 @@
         <i class="fa-solid fa-arrows-up-down-left-right"></i>
       </button>
     </div>
-    <div class="content-wrapper" (click)="startEditing()">
+    <div [ngClass]="inEditionMode ? 'edit-content-wrapper' : 'content-wrapper'" (click)="startEditing()">
       <div *ngIf="textItem.data.content && textItem.data.content.trim() !== ''" class="quill-content">
         <quill-view-html [content]="textItem.data.content" theme="snow"></quill-view-html>
       </div>

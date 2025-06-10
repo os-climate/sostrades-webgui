@@ -10,12 +10,12 @@
   padding: 5px 1px 1px 1px;
 }
 
-.hr-solid{
+.hr-solid {
   border-top: 3px solid #bbb;
   position: absolute;
   left: 10px;
   right: 10px;
-  width : 100%;
+  width: 100%;
 }
 
 .widget-container {
@@ -47,14 +47,14 @@
   height: 450px;
   width: 600px;
   box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 .table {
   margin: 2px;
   width: 100%;
   box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 .float-right-button {
@@ -92,6 +92,8 @@
 
 gridster-item {
   transition: height 0.3s ease, transform 0.3s ease;
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 gridster {
