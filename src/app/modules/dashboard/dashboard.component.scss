@@ -10,13 +10,12 @@
   padding: 5px 1px 1px 1px;
 }
 
-.hr-solid{
+.hr-solid {
   border-top: 3px solid #bbb;
-  left: 0px;
   position: absolute;
   left: 10px;
   right: 10px;
-  width : 100%;
+  width: 100%;
 }
 
 .widget-container {
@@ -34,21 +33,130 @@
 }
 
 .plot-resize-zone {
+  position: relative;
   flex: 1;
+  display: flex;
   flex-wrap: wrap;
   width: 100%;
-  height: 500px;
+  height: 100%;
+  background-color: #f4f4f4;
   padding: 2px;
+}
+
+.plot {
+  height: 450px;
+  width: 600px;
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.table {
+  margin: 2px;
+  width: 100%;
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.float-right-button {
+  margin-right: 5px;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.dashboard-toolbar {
+  flex: 0 0 auto;
+  padding: 5px;
+  z-index: 10;
+}
+
+.edit-save-button {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.gridster-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+  flex: 1;
+}
+
+gridster-item {
+  transition: height 0.3s ease, transform 0.3s ease;
+  box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+gridster {
+  background-color: #f4f4f4;
+}
+
+.graph-card {
+  height: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.text-card {
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+
+.section-card {
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+
+.label {
+  margin-bottom: auto !important;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 11px;
+  left: 52px;
+  z-index: 10;
+  cursor: move;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(1.2);
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .missing-dashboard {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: solid;
+  border-style: solid;
   border-width: 1px;
   border-radius: 7px;
   border-color: lightgrey;
   background-color: #f9f9f9;
   padding: 5px 0 5px 0;
+  font-size: 12px;
+  line-height: unset;
 }

@@ -138,7 +138,7 @@ export class DataManagementContainerComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     event.preventDefault();
 
-    
+
     const treeNodedialogData = new TreeNodeDialogData();
     treeNodedialogData.node = this.treeNodeData;
 

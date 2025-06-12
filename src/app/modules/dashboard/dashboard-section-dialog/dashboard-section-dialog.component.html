@@ -1,0 +1,74 @@
+<div class="listing-dialog-container">
+  <h2 class="mat-dialog-title">Edit Section</h2>
+  <mat-dialog-content class="listing-content">
+    <div cdkDropListGroup class="cdkDropListGroup">
+      <div class="container-list">
+        <h2>Dashboard's Items</h2>
+        <div
+          cdkDropList
+          id="dashboard-list"
+          [cdkDropListData]="data.dashboard"
+          class="list"
+          (cdkDropListDropped)="drop($event)"
+          *ngIf="data.dashboard && data.dashboard.length > 0">
+          <div cdkDrag *ngFor="let item of data.dashboard" [ngSwitch]="item.type" class="box-item">
+            <div *ngSwitchCase="itemType.graph">
+              {{item.data.title}}
+            </div>
+            <div *ngSwitchCase="itemType.text">
+              {{cleanText(item.data.content)}}
+            </div>
+          </div>
+        </div>
+        <div
+          cdkDropList
+          id="empty-dashboard-list"
+          class="empty-list"
+          [cdkDropListData]="data.dashboard"
+          (cdkDropListDropped)="drop($event)"
+          *ngIf="!data.dashboard || data.dashboard.length === 0">
+          Drag and drop items here
+        </div>
+      </div>
+      <!-- arrows between the two lists to indicate the direction of the drag-and-drop action.-->
+      <div class="arrow-container">
+        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+      </div>
+      <div class="container-list">
+        <h2>Section's Items</h2>
+        <div
+          cdkDropList
+          id="section-list"
+          [cdkDropListData]="data.content"
+          class="list"
+          (cdkDropListDropped)="drop($event)"
+          *ngIf="data.content && data.content.length > 0">
+          <div cdkDrag *ngFor="let item of data.content" [ngSwitch]="item.type" class="box-item">
+            <div *ngSwitchCase="itemType.graph">
+              {{item.data.title}}
+            </div>
+            <div *ngSwitchCase="itemType.text">
+              {{cleanText(item.data.content)}}
+            </div>
+          </div>
+        </div>
+        <div
+          cdkDropList
+          id="empty-section-list"
+          [cdkDropListData]="data.content"
+          class="empty-list"
+          (cdkDropListDropped)="drop($event)"
+          *ngIf="!data.content || data.content.length === 0"
+        >
+          Drag and drop items here
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+    <button mat-raised-button color="primary" (click)="cancelEditing()" matTooltip="Cancel changes">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Exit
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,158 @@
+.section-item-card {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+
+  .mat-expansion-panel-body {
+    padding: 0 !important;
+  }
+}
+
+mat-card {
+  padding: 0;
+}
+
+mat-card-content {
+  padding: 0;
+}
+
+mat-card-content:last-child {
+  padding-bottom: 0;
+}
+
+mat-card-content:first-child {
+  padding-top: 0;
+}
+
+.section-item-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-content {
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+}
+
+.edit-content-wrapper {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.content-wrapper {
+  overflow-y: auto;
+  height: calc(100% - 36px);
+  position: relative;
+  top: 36px;
+}
+
+.empty-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex-grow: 1;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  font-size: 14px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+}
+:root {
+  --section-header-height: 20%;
+}
+
+.show-section-header {
+  flex: 0 0 auto;
+  position: relative;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden-section-header {
+  flex: 0 0 auto;
+  position: relative;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-separator {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 0 16px;
+  flex: 0 0 auto;
+}
+
+.section-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.container-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.item {
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+  min-width: 290px;
+  max-width: 600px;
+  max-height: 450px;
+}
+
+.no-graphs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+  font-style: italic;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+}
+
+.drag-handle {
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expansion-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
