@@ -1,0 +1,20 @@
+<div class="editor-dialog-container">
+  <h2 class="mat-dialog-title">Edit Content</h2>
+  <mat-dialog-content class="editor-content">
+    <quill-editor
+      [(ngModel)]="editableContent"
+      [modules]="editModules"
+      (onEditorCreated)="onEditorCreated($event)">
+    </quill-editor>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+    <button mat-raised-button color="primary" (click)="saveChanges()" matTooltip="Save changes">
+      <i class="fa-solid fa-floppy-disk"></i>
+      Save
+    </button>
+    <button mat-raised-button color="primary" (click)="cancelEditing()" matTooltip="Cancel changes">
+      <i class="fa-solid fa-xmark"></i>
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</div>

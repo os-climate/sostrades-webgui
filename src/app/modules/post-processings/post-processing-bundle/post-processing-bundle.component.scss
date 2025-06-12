@@ -33,7 +33,6 @@
 .key-charts {
   border-left:solid;
   border-left-color:#0b78b8;
-  
 }
 
 
@@ -210,8 +209,8 @@
 
 /* Appliquer le défilement personnalisé à la div conteneur */
 .custom-options-container {
-  max-height: 200px; 
-  overflow: auto; 
+  max-height: 200px;
+  overflow: auto;
   display: flex;
   flex-direction: column;
 }

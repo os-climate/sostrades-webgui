@@ -1,0 +1,28 @@
+.not-favorite-post-processing {
+  cursor: pointer;
+  font-size: 20px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.favorite-post-processing {
+  cursor: pointer;
+  font-size: 20px;
+  color: gold;
+  transform: scale(1.2);
+}
+
+.favorite-button-container {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.float-left-button {
+  position: absolute;
+  z-index: 1;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+}

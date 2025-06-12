@@ -87,10 +87,14 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     });
 
     // show the discipline label if there are 2 or more discipline with the same model at the same node
-    if(this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== '' 
+    if (this.postProcessingBundle.name !== this.postProcessingBundle.disciplineName && this.postProcessingBundle.disciplineName !== ''
     && this.postProcessingBundle.showDisciplineName) {
       this.additionalDisciplineName = ` : ${this.postProcessingBundle.disciplineName}`
     }
+  }
+
+  getPlotIndex(plotData: any){
+    return this.postProcessingBundle.plotly.indexOf(plotData);
   }
 
   ngOnDestroy() {
@@ -136,20 +140,19 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
             this.snackbarService.showError('Error loading charts : ' + error.description);
           }
         }
-      });    
+      });
   }
 
   private addSectionInPostProcessing(postProcessing: any, needToUpdate:boolean ) {
-    
     this.postProcessingWithoutSection = [];
     const postProcessingWithoutSectionWithFilter: PostProcessingBundle[] = [];
     const postProcessingKeyCharts: PostProcessingBundle[] = [];
     // Create a dictionnary to section the post_processing by a name
     const postProcessingBundleSectionned = new Map<string, PostProcessingBundle[]>();
-    postProcessing.forEach(plotly => { 
+    postProcessing.forEach(plotly => {
       if (plotly.post_processing_is_key_chart){
         postProcessingKeyCharts.push(plotly);
-      } 
+      }
       if (plotly.post_processing_section_name) {
         // Check if key "post_processing_section_name" already exist
         if (!postProcessingBundleSectionned.has(plotly.post_processing_section_name)) {
@@ -158,7 +161,7 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
         // Add ploty on the section
         postProcessingBundleSectionned.get(plotly.post_processing_section_name)?.push(plotly);
       } else {
-        // Check if need to update 
+        // Check if need to update
         if (needToUpdate) {
           postProcessingWithoutSectionWithFilter.push(plotly);
         } else {
@@ -174,16 +177,16 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     // Replace the new array with filter on postProcessingWithoutSection
     if (postProcessingWithoutSectionWithFilter.length > 0) {
       this.postProcessingWithoutSection = postProcessingWithoutSectionWithFilter;
-    }  
+    }
     // Create a array with post_processing sectionned
-    this.postProcessingWithSection = Array.from(postProcessingBundleSectionned, 
-      ([post_processing_section_name, plots]) => ({ 
-        post_processing_section_name, 
+    this.postProcessingWithSection = Array.from(postProcessingBundleSectionned,
+      ([post_processing_section_name, plots]) => ({
+        post_processing_section_name,
         plots}));
     //add section is opened by checking 'post_processing_section_is_opened' of each chart of the section
     this.postProcessingWithSection.forEach(postProcBundle => {
       postProcBundle.post_processing_section_is_opened = postProcBundle.plots.some(plot => plot.post_processing_section_is_opened);
-      
+
     })
     // Listen for search field value changes
     this.chartsFiltered.valueChanges.pipe(takeUntil(this.onDestroy))
@@ -221,7 +224,6 @@ export class PostProcessingBundleComponent implements OnInit, OnDestroy {
     // filter values
     this.filter.filteredValues = this.filter.filterValues.filter(
       search => search.toString().toLowerCase().indexOf(value) > -1
-    )        
-  }     
-  
- }
+    )
+  }
+}
