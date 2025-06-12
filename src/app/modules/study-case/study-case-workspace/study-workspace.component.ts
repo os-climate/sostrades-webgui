@@ -265,9 +265,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   onSelectedTabChange(event: MatTabChangeEvent) {
-    console.log('onSelectedTabChange', event);
-    console.log('tabNameSelected', this.tabNameSelected);
-    console.log(this.showPostProcessingContent, this.showVisualisationContent, this.showDocumentationContent, this.showDashboardContent);
     if (event.tab !== null && event.tab !== undefined) {
       this.tabNameSelected = event.tab.textLabel;
       this.showPostProcessingContent = false;
