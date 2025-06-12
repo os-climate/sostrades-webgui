@@ -387,5 +387,3 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dashboardService.addItem(section);
   }
 }
-
-

@@ -10,12 +10,6 @@
   .mat-expansion-panel-body {
     padding: 0 !important;
   }
-  //height: 100%;
-  //box-sizing: border-box;
-  //display: flex;
-  //flex-direction: column;
-  //position: relative;
-  //overflow: hidden;
 }
 
 mat-card {
@@ -33,61 +27,6 @@ mat-card-content:last-child {
 mat-card-content:first-child {
   padding-top: 0;
 }
-//
-//.section-header {
-//  .mat-expansion-panel-header-title {
-//    flew-grow: 1;
-//  }
-//  .title-container {
-//    display: flex;
-//    align-items: center;
-//    width: 100%;
-//    .quill-content {
-//      width: 100%;
-//      .ql-editor {
-//        padding: 0;
-//      }
-//    }
-//    .empty-content {
-//      color: #999;
-//      font-style: italic;
-//    }
-//  }
-//}
-//
-//.panel-actions {
-//  display: flex;
-//  align-items: center;
-//  gap: 4px;
-//}
-//
-//.section-content {
-//  padding: 16px;
-//  .items-container {
-//    display: grid;
-//    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-//    gap: 16px;
-//    .item {
-//      width: 100%;
-//      min-height: 200px;
-//    }
-//  }
-//  .empty-section {
-//    display: flex;
-//    flex-direction: column;
-//    align-items: center;
-//    justify-content: center;
-//    padding: 32px;
-//    color: #999;
-//    mat-icon {
-//      font-size: 48px;
-//      height: 48px;
-//      width: 48px;
-//      margin-bottom: 16px;
-//    }
-//  }
-//
-//}
 
 .section-item-content {
   height: 100%;

@@ -24,23 +24,6 @@ export class PostProcessing {
   }
 }
 
-export class PostProcessingPlotly {
-  disciplineName: string;
-  name: string;
-  plotIndex: number;
-  plotData: any;
-
-  constructor(discipline: string, name: string, plotIndex: number, plotData: any) {
-    this.disciplineName = discipline;
-    this.name = name;
-    this.plotIndex = plotIndex;
-    this.plotData = plotData;
-  }
-
-  get identifier(): string {
-    return `${this.disciplineName}-${this.name}-${this.plotIndex.toString()}`
-  }
-}
 
 export class PendingPostProcessingRequest {
   loadedStudy: LoadedStudy;
