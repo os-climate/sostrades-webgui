@@ -111,29 +111,33 @@
   >
   <div *ngIf="postProcessingKeyCharts.length" style="width: 100%;background-color: #f4f4f4;">
     <div class="section-panel key-charts">
-      <mat-expansion-panel id="key_charts_section" style="margin-bottom: 2px;" 
+      <mat-expansion-panel id="key_charts_section" style="margin-bottom: 2px;"
       [expanded]="isExpand('key_charts', true)"
       (opened)="setIsExpand('key_charts', true)"
       (closed)="setIsExpand('key_charts', false)">
         <mat-expansion-panel-header>
-          
+
           <mat-panel-title style="color: #0b78b8;">
             <span style="width: 15px; margin-right: 5px;">
               <i class="fa-solid fa-star toolbar-icon" style="color: #0b78b8;"></i>
-            </span> 
+            </span>
             Key Charts
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <app-post-processing-plotly 
+        <app-post-processing-plotly
           [class]="
             plot.data && plot.data[0] && plot.data[0].type === 'table'
               ? 'table'
               : 'plot'
              "
-          
+
           *ngFor="let plot of postProcessingKeyCharts"
           [plotData]="plot"
+          [disciplineName]="postProcessingBundle.disciplineName"
+          [name]="postProcessingBundle.name"
+          [plotIndex]="getPlotIndex(plot)"
           [fullNamespace]="fullNamespace"
+          [isEditing]=""
         >
         </app-post-processing-plotly>
       </mat-expansion-panel>
@@ -151,15 +155,18 @@
               {{ section.post_processing_section_name }}
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <app-post-processing-plotly 
+          <app-post-processing-plotly
             [class]="
               plot.data && plot.data[0] && plot.data[0].type === 'table'
                 ? 'table'
                 : 'plot'
                "
-            
+
             *ngFor="let plot of section.plots"
             [plotData]="plot"
+            [disciplineName]="postProcessingBundle.disciplineName"
+            [name]="postProcessingBundle.name"
+            [plotIndex]="getPlotIndex(plot)"
             [fullNamespace]="fullNamespace"
           >
           </app-post-processing-plotly>
@@ -181,6 +188,9 @@
         "
         *ngFor="let plot of postProcessingWithoutSection"
         [plotData]="plot"
+        [disciplineName]="postProcessingBundle.disciplineName"
+        [name]="postProcessingBundle.name"
+        [plotIndex]="getPlotIndex(plot)"
         [fullNamespace]="fullNamespace"
       >
       </app-post-processing-plotly>

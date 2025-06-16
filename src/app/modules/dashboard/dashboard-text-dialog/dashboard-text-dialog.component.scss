@@ -1,0 +1,61 @@
+.editor-dialog-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mat-dialog-title {
+  flex: 0 0 auto;
+  padding: 16px;
+  margin: 0;
+}
+
+mat-dialog-content.editor-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+quill-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ql-toolbar {
+  flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: white;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+
+  button:focus {
+    outline: none;
+  }
+
+  button {
+    pointer-events: auto;
+  }
+}
+
+.ql-container {
+  z-index: 1;
+}
+
+mat-dialog-actions {
+  flex: 0 0 auto;
+  padding: 16px;
+  margin: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+}

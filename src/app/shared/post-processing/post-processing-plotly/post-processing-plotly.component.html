@@ -1,3 +1,12 @@
+<button
+  mat-button
+  [hidden]="!isEditing"
+  id="favorite-post-processing-plot"
+  [matTooltip]="isFavorite ? 'Remove from dashboard' : 'Add into dashboard'"
+  class="favorite-button-container float-left-button cursor-pointer"
+  (click)="OnFavoriteClick()">
+  <i [ngClass]="isFavorite ? 'fa-star fa-solid favorite-post-processing' : 'fa-star fa-regular not-favorite-post-processing'" class=""></i>
+</button>
 <div
   id="PlotlyPlaceHolder"
   #PlotlyPlaceHolder
