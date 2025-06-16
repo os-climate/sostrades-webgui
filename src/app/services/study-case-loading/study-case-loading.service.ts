@@ -137,9 +137,6 @@ export class StudyCaseLoadingService {
               this.dashboardService.getDashboard(loadedStudy.studyCase.id).subscribe({
                 next: () => {
                   this.snackbarService.showInformation('Dashboard loaded');
-                },
-                error: () => {
-                  this.snackbarService.showError('Dashboard not loaded');
                 }
               });
               // Load logs
