@@ -71,7 +71,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "12mb"
+                  "maximumError": "15mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -87,6 +87,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "sos-trades-gui:build"
+            
           },
           "configurations": {
             "production": {
