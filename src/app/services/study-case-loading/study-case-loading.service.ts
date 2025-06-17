@@ -133,20 +133,15 @@ export class StudyCaseLoadingService {
               });
             } else {
 
-              // Load dashboard from api file
-              this.dashboardService.getDashboard(loadedStudy.studyCase.id).subscribe({
-                next: () => {
-                  this.snackbarService.showInformation('Dashboard loaded');
-                }
-              });
               // Load logs
               this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
               this.studyCaseDataService.tradeScenarioList = [];
 
               const loadedNotifications$ = this.studyCaseDataService.getStudyNotifications(loadedStudy.studyCase.id);
               const loadedValidations$ = this.loadValidations(loadedStudy.studyCase.id);
+              const loadedDashboard$ = this.dashboardService.getDashboard(loadedStudy.studyCase.id)
 
-              combineLatest([loadOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$]).subscribe({
+              combineLatest([loadOntology$, updateUserPreferences$, loadedNotifications$, loadedValidations$, loadedDashboard$]).subscribe({
                 next: ([ontologyUpdated, preferences, resultnotifications]) => {
 
                   loadedStudy.userStudyPreferences = preferences;
