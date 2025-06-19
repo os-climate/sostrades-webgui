@@ -11,7 +11,7 @@
   <br>
   <div id="save-cancel" class="save-or-cancel">
     <button id="cancel" *ngIf="showCancelButton"  mat-raised-button (click)="onCancelClick()">
-      Cancel
+      {{ data.buttonCancelText }}
     </button>
     <button *ngIf="showSupButton"  mat-raised-button (click)="onSupClick()">
       {{ data.buttonSecondaryActionText }}
