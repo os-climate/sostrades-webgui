@@ -129,7 +129,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       this.options.api.optionsChanged();
     }
     this.cdr.detectChanges();
-    this.setupDragHandling();
   }
 
   ngOnDestroy() {
@@ -147,37 +146,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  setupDragHandling() {
-    setTimeout(() => {
-      if (this.dashboardFavorites.length > 0) {
-        this.gridsterItems.forEach(item => {
-          const el = item.nativeElement;
-          el.addEventListener('mousedown', (event: MouseEvent) => {
-            const clickedElement = event.target as HTMLElement;
-
-            if (this.hasNonDraggableParent(clickedElement)) {
-              event.stopPropagation();
-            }
-          }, true)
-        })
-      }
-    }, 500);
-  }
-
-  hasNonDraggableParent(element: HTMLElement): boolean {
-    if (!element) return false;
-    if (element.classList && element.classList.contains('non-draggable')) return true;
-    if (element.parentElement) return this.hasNonDraggableParent(element.parentElement);
-    return false;
-  }
-
   // Handle the edition mode switch (draggable, resizable and display grid)
   toggleEdit() {
     this.options.draggable.enabled = !this.options.draggable.enabled;
     this.options.resizable.enabled = !this.options.resizable.enabled;
     this.dashboardService.isDashboardInEdition = this.options.draggable.enabled;
     this.options.displayGrid = this.options.draggable.enabled ? 'always' : 'none';
-    if (this.dashboardFavorites.length > 0)
+    if (this.options.api)
       this.options.api.optionsChanged();
   }
 
@@ -212,7 +187,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.draggable.enabled = false;
     this.options.resizable.enabled = false;
     this.options.displayGrid = 'none';
-    this.options.api.optionsChanged();
+    if (this.dashboardFavorites.length > 0)
+      this.options.api.optionsChanged();
   }
 
   // Custom compact function to fil the empty spaces in the dashboard
