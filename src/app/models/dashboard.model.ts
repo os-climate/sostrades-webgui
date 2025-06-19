@@ -4,7 +4,7 @@ export class Dashboard {
 
   constructor(
     public studyCaseId: number,
-    public items: DisplayableItem[]) {
+    public items: DisplayableItem[] = []) {
   }
 
   public static Create(jsonData: any): Dashboard {
