@@ -610,9 +610,10 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       next:()=>{
         // Ask the user if he wants the download in background
         const validationDialogData = new ValidationDialogData();
-        validationDialogData.message = `Are you sure you want to cancel or do you still want to download the zip file in background when it is ready ?`;
+        validationDialogData.message = `You are about to cancel the download. Do you want to download the zip file in background when it is ready ?`;
+        validationDialogData.buttonOkText = 'Yes keep the download in background';
+        validationDialogData.buttonCancelText = 'No, cancel the download';
         
-
         const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
           disableClose: true,
           data: validationDialogData
@@ -627,7 +628,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
             }
           }
         });
-      
       }
     });
 

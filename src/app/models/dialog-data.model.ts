@@ -287,6 +287,7 @@ export class ValidationDialogData extends AbstractDialogData {
   message: string;
   validate: boolean;
   buttonOkText: string;
+  buttonCancelText: string;
   buttonSecondaryActionText: string;
   secondaryActionConfirmationNeeded: boolean;
   showCancelButton: boolean;
@@ -298,6 +299,7 @@ export class ValidationDialogData extends AbstractDialogData {
     this.validate = false;
     this.buttonSecondaryActionText = null;
     this.buttonOkText = 'Ok';
+    this.buttonCancelText = 'Cancel';
     this.secondaryActionConfirmationNeeded = false;
     this.title = null;
     this.showCancelButton = true;

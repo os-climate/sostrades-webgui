@@ -130,7 +130,10 @@ import { AuthenticationErrorComponent } from './modules/authentication-error/aut
 import { GridsterModule } from "angular-gridster2";
 import { QuillModule } from "ngx-quill";
 import { QuillConfigModule } from "ngx-quill/config";
+import Quill from "quill"
+import QuillPlaceholder from "quill-placeholder-module"
 
+Quill.register('modules/placeholder', QuillPlaceholder);
 registerLocaleData(fr);
 
 

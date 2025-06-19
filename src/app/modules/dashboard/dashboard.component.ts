@@ -30,7 +30,7 @@ import { SnackbarService } from "../../services/snackbar/snackbar.service";
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('gridster-item') gridsterItems: QueryList<ElementRef>;
+  @ViewChild('gridsterItem') gridsterItems: QueryList<ElementRef>;
 
   private treeNodeDataSubscription: Subscription;
   private dashboardAddItemSubscription: Subscription;
@@ -149,16 +149,18 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setupDragHandling() {
     setTimeout(() => {
-      this.gridsterItems.forEach(item => {
-        const el = item.nativeElement;
-        el.addEventListener('mousedown', (event: MouseEvent) => {
-          const clickedElement = event.target as HTMLElement;
+      if (this.dashboardFavorites.length > 0) {
+        this.gridsterItems.forEach(item => {
+          const el = item.nativeElement;
+          el.addEventListener('mousedown', (event: MouseEvent) => {
+            const clickedElement = event.target as HTMLElement;
 
-          if (this.hasNonDraggableParent(clickedElement)) {
-            event.stopPropagation();
-          }
-        }, true)
-      })
+            if (this.hasNonDraggableParent(clickedElement)) {
+              event.stopPropagation();
+            }
+          }, true)
+        })
+      }
     }, 500);
   }
 
@@ -175,7 +177,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.resizable.enabled = !this.options.resizable.enabled;
     this.dashboardService.isDashboardInEdition = this.options.draggable.enabled;
     this.options.displayGrid = this.options.draggable.enabled ? 'always' : 'none';
-    this.options.api.optionsChanged();
+    if (this.dashboardFavorites.length > 0)
+      this.options.api.optionsChanged();
   }
 
   // Handle the mat-slide-toggle inside the button when the user clicks the button

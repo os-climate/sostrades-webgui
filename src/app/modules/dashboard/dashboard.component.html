@@ -71,7 +71,7 @@
     <div class="gridster-container">
       <gridster [options]="options">
         <ng-container *ngFor="let item of dashboardFavorites" [ngSwitch]="item.type">
-          <gridster-item *ngSwitchCase="itemType.graph" [item]="item">
+          <gridster-item *ngSwitchCase="itemType.graph" [item]="item" #gridsterItem>
             <div class="graph-card">
               <button mat-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
                 <i class="fa-solid fa-arrows-up-down-left-right"></i>
