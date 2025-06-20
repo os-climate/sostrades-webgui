@@ -180,6 +180,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
   process: Process;
   selectProcessOnly: boolean;
   selectedFlavor:string;
+  zipFile: File;
 
   public constructor() {
     super();
@@ -190,6 +191,7 @@ export class StudyCaseCreateDialogData extends AbstractDialogData {
     this.process = null;
     this.selectProcessOnly = false;
     this.selectedFlavor = null;
+    this.zipFile = null;
   }
 }
 
@@ -285,6 +287,7 @@ export class ValidationDialogData extends AbstractDialogData {
   message: string;
   validate: boolean;
   buttonOkText: string;
+  buttonCancelText: string;
   buttonSecondaryActionText: string;
   secondaryActionConfirmationNeeded: boolean;
   showCancelButton: boolean;
@@ -296,6 +299,7 @@ export class ValidationDialogData extends AbstractDialogData {
     this.validate = false;
     this.buttonSecondaryActionText = null;
     this.buttonOkText = 'Ok';
+    this.buttonCancelText = 'Cancel';
     this.secondaryActionConfirmationNeeded = false;
     this.title = null;
     this.showCancelButton = true;
@@ -459,4 +463,15 @@ export class TreeNodeDialogData extends AbstractDialogData {
     super();
     this.node = null;
   }
-} 
+}
+
+export class DashboardTextDialogData extends AbstractDialogData {
+  public text: string;
+  public id: string;
+
+  public constructor() {
+    super();
+    this.text = '';
+    this.id = null;
+  }
+}

@@ -76,6 +76,10 @@ import { DataManagementContainerComponent } from './modules/data-management/data
 import { DataManagementDisciplineComponent } from './modules/data-management/data-management-discipline/data-management-discipline.component';
 import { DocumentationComponent } from './modules/study-case/study-case-documentation/study-case-documentation.component';
 import { DashboardComponent } from './modules/dashboard/dashboard.component';
+import { DashboardTextItemComponent} from "./modules/dashboard/dashboard-text-item/dashboard-text-item.component";
+import { DashboardSectionItemComponent } from "./modules/dashboard/dashboard-section-item/dashboard-section-item.component";
+import { DashboardTextDialogComponent } from "./modules/dashboard/dashboard-text-dialog/dashboard-text-dialog.component";
+import {  DashboardSectionDialogComponent } from "./modules/dashboard/dashboard-section-dialog/dashboard-section-dialog.component";
 import { OntologyParameterConverterPipe } from './pipes/ontology-parameter-converter/ontology-parameter-converter.pipe';
 import { OntologyDisciplineConverterPipe } from './pipes/ontology-discipline-converter/ontology-discipline-converter.pipe';
 import { PostProcessingBundleComponent } from './modules/post-processings/post-processing-bundle/post-processing-bundle.component';
@@ -123,6 +127,13 @@ import { FilterBarComponent } from './shared/filter-bar/filter-bar.component';
 import { TruncatePipe } from './pipes/truncate/truncate.pipe';
 import { AuthenticationErrorComponent } from './modules/authentication-error/authentication-error.component';
 
+import { GridsterModule } from "angular-gridster2";
+import { QuillModule } from "ngx-quill";
+import { QuillConfigModule } from "ngx-quill/config";
+import Quill from "quill"
+import QuillPlaceholder from "quill-placeholder-module"
+
+Quill.register('modules/placeholder', QuillPlaceholder);
 registerLocaleData(fr);
 
 
@@ -180,6 +191,10 @@ registerLocaleData(fr);
         SearchPanelComponent,
         DocumentationComponent,
         DashboardComponent,
+        DashboardTextItemComponent,
+        DashboardSectionItemComponent,
+        DashboardTextDialogComponent,
+        DashboardSectionDialogComponent,
         OntologyParameterConverterPipe,
         OntologyDisciplineConverterPipe,
         PostProcessingBundleComponent,
@@ -237,6 +252,13 @@ registerLocaleData(fr);
         TableVirtualScrollModule,
         ClipboardModule,
         AngularSplitModule,
+        GridsterModule,
+        QuillModule.forRoot(),
+        QuillConfigModule.forRoot({
+          modules: {
+            syntax: true,
+          }
+        }),
         MarkdownModule.forRoot({
             markedOptions: {
               provide: MarkedOptions,

@@ -28,7 +28,6 @@ export class PostProcessingComponent implements OnInit, OnDestroy {
   public loadedStudy: LoadedStudy;
   private dialogRefValidate: MatDialogRef<StudyCaseValidationDialogComponent>;
 
-
   constructor(
     private dialog: MatDialog,
     private treeNodeDataService: TreeNodeDataService,

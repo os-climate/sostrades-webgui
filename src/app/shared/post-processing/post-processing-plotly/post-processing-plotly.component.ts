@@ -1,20 +1,31 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, SimpleChanges, OnChanges } from '@angular/core';
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import * as Plotly from 'plotly.js-dist-min';
+import { DashboardService } from "../../../services/dashboard/dashboard.service";
+import { DashboardGraph } from "../../../models/dashboard.model";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { SnackbarService } from "../../../services/snackbar/snackbar.service";
 
 @Component({
   selector: 'app-post-processing-plotly',
   templateUrl: './post-processing-plotly.component.html',
   styleUrls: ['./post-processing-plotly.component.scss']
 })
-export class PostProcessingPlotlyComponent implements OnInit {
+export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   @Input() plotData: any;
   @Input() fullNamespace: string;
-  @ViewChild('PlotlyPlaceHolder', { static: true }) private PlotlyPlaceHolder: ElementRef;
+  @Input() disciplineName: string;
+  @Input() name: string;
+  @Input() plotIndex: number;
+  @Input() height?: number;
+  @Input() width?: number;
+  @Input() isEditing?: boolean;
 
+  @ViewChild('PlotlyPlaceHolder', { static: true }) private PlotlyPlaceHolder: ElementRef;
   public isPlotLoading: boolean;
   public studyCaseValidation: StudyCaseValidation;
+  public isFavorite: boolean;
 
   private readonly downloadIcon = {
     width: 24,
@@ -42,7 +53,11 @@ export class PostProcessingPlotlyComponent implements OnInit {
     scale: 8
   };
 
-  constructor(private studyCaseValidationService: StudyCaseValidationService) {
+  constructor(
+    private snackBar: MatSnackBar,
+    private studyCaseValidationService: StudyCaseValidationService,
+    private snackbarService: SnackbarService,
+    public dashboardService: DashboardService) {
     this.isPlotLoading = true;
     this.studyCaseValidation = null;
   }
@@ -52,7 +67,51 @@ export class PostProcessingPlotlyComponent implements OnInit {
       this.setupValidation();
       this.setupLayout();
       this.initializePlot();
+      this.loadFavorites();
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.height || changes.width) {
+      this.setupLayout();
+      this.initializePlot();
+    }
+    if (this.isEditing === undefined) {
+      this.isEditing = this.dashboardService.isDashboardInEdition
+    }
+  }
+
+  // Add or remove the plot in the dashboard
+  OnFavoriteClick() {
+    const plotId = {
+      disciplineName: this.disciplineName,
+      name: this.name,
+      id: this.plotIndex,
+    }
+    this.isFavorite = !this.isFavorite;
+    if (this.isFavorite)
+      this.saveFavorites(plotId, this.plotData, true)
+    else
+      this.saveFavorites(plotId, null, false)
+  }
+
+  /**
+   * @param plotId object containing information to create the identifier
+   * @param plotData content of the plot
+   * @param isFavorite add if true and remove if false
+   * @description Add or remove the plot in the dashboard
+   * */
+  saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
+    const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData);
+    if (isFavorite) graph.data.title = graph.getTitle;
+    const text: void | string = isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph);
+    this.snackbarService.showInformation(text ? text : isFavorite ? 'Graph added to dashboard !' : 'Graph removed from dashboard !');
+  }
+
+  // Check if the plot is in the dashboard
+  loadFavorites() {
+    const graph = new DashboardGraph(this.disciplineName, this.name, this.plotIndex, this.plotData);
+    this.isFavorite = this.dashboardService.isSelected(graph.identifier);
   }
 
   private setupValidation() {
@@ -120,6 +179,9 @@ export class PostProcessingPlotlyComponent implements OnInit {
         opacity: 0.2
       });
     }
+    // Set the layout size if the plot is being resized in the dashboard
+    this.plotData.layout.height = this.height || 450;
+    this.plotData.layout.width = this.width || 600;
   }
 
   private createCommonModeBarButtons(showLegend: boolean) {
@@ -193,20 +255,20 @@ export class PostProcessingPlotlyComponent implements OnInit {
       ...gd._context,
       responsive: true,
       modeBarButtons: [[
-        ...(this.plotData.csv_data?.length > 0 
+        ...(this.plotData.csv_data?.length > 0
           ? [{
-              name: 'Download data as csv file',
-              icon: this.downloadIcon,
-              click: () => {
-                this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
-              }
-            }]
+            name: 'Download data as csv file',
+            icon: this.downloadIcon,
+            click: () => {
+              this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
+            }
+          }]
           : []),
         ...this.createCommonModeBarButtons(currentLayout.showlegend)
-        .filter(button => 
-          typeof button === 'string' || 
-          (typeof button === 'object' && button.name !== 'Enlarge plot')
-        )
+          .filter(button =>
+            typeof button === 'string' ||
+            (typeof button === 'object' && button.name !== 'Enlarge plot')
+          )
       ]],
       displaylogo: false,
       toImageButtonOptions: this.downloadConfig
@@ -256,14 +318,14 @@ export class PostProcessingPlotlyComponent implements OnInit {
 
   private initializePlot() {
     const modeBarButtons = [[
-      ...(this.plotData.csv_data?.length > 0 
+      ...(this.plotData.csv_data?.length > 0
         ? [{
-            name: 'Download data as csv file',
-            icon: this.downloadIcon,
-            click: () => {
-              this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
-            }
-          }]
+          name: 'Download data as csv file',
+          icon: this.downloadIcon,
+          click: () => {
+            this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
+          }
+        }]
         : []),
       ...this.createCommonModeBarButtons(true)
     ]];
@@ -293,9 +355,12 @@ export class PostProcessingPlotlyComponent implements OnInit {
 
     const cleanTitle = filename.replace('<b>', '').replace('</b>', '').split(' ').join('_');
     downloadLink.setAttribute('download', `${cleanTitle}.csv`);
-    
+
     document.body.appendChild(downloadLink);
     downloadLink.click();
     downloadLink.parentNode.removeChild(downloadLink);
   }
+
+  //
+  // protected readonly PostProcessingPlotly = PostProcessingPlotly;
 }

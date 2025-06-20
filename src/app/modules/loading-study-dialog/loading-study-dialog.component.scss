@@ -12,7 +12,8 @@
 
 .progress-container {
     display: flex;
-
+  	position: absolute;
+    top: 120px;
   
   }
 
@@ -31,8 +32,9 @@
 
 .step-descrition{
   position: absolute;
-  top: 110px;
+  top: -20px;
   font-size: smaller;
+  text-wrap:nowrap;
 }
 
 
@@ -62,9 +64,12 @@
   }
 
   .button-error{
-    margin-top: 30px;
+    position: absolute;
+    bottom: 10px;
     justify-content: center;
     font-size: small;
+    display: block;
+    width: 100%;
   }
 
   .icon-error-message{
@@ -112,7 +117,7 @@
 }
 
 textarea {
-  width: 500px;
+  width: 440px;
   min-height: 100px;
   max-height: 230px;
   word-break: break-all;

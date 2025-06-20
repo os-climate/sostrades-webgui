@@ -204,7 +204,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       // If study is defined has query parameter then we reload the study
         if ('studyId' in params && 'mode' in params) {
           if (params.studyId !== null && params.studyId !== undefined) {
-            this.studyCaseDataService.getStudy(params.studyId).subscribe(study => {
+            this.studyCaseDataService.getStudy(params.studyId, false).subscribe(study => {
               if(params.mode && params.mode == "edition") {
                 // Load study in read only
                 this.loadStudyInEditionMode(study)
@@ -428,6 +428,7 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
+
   copyStudy(study: Study) {
     this.handleUnsavedChanges(changeHandled => {
       if (changeHandled) {
@@ -454,7 +455,9 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
         
               const dialogRef = this.dialog.open(StudyCaseCreationComponent, {
                 disableClose: true,
-                data: dialogData
+                data: dialogData,
+                width: '600px',
+                height: '550px'
               });
               dialogRef.afterClosed().subscribe(result => {
                 const studyCaseData = result as StudyCaseCreateDialogData;
@@ -601,6 +604,59 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     });
   }
 
+  exportStudy(study: Study){
+    let loadingCanceled= false;
+    this.loadingDialogService.showLoadingWithCancelobserver(`Compressing study case "${study.name}"...`).subscribe({
+      next:()=>{
+        // Ask the user if he wants the download in background
+        const validationDialogData = new ValidationDialogData();
+        validationDialogData.message = `You are about to cancel the download. Do you want to download the zip file in background when it is ready ?`;
+        validationDialogData.buttonOkText = 'Yes keep the download in background';
+        validationDialogData.buttonCancelText = 'No, cancel the download';
+        
+        const dialogRefValidate = this.dialog.open(ValidationDialogComponent, {
+          disableClose: true,
+          data: validationDialogData
+        });
+
+        dialogRefValidate.afterClosed().subscribe((result) => {
+          const validationData: ValidationDialogData = result as ValidationDialogData;
+
+          if (validationData !== null && validationData !== undefined) {
+            if (validationData.cancel) {
+              loadingCanceled = true;
+            }
+          }
+        });
+      }
+    });
+
+    this.studyCaseDataService.getStudyStandAloneZip(study.id).subscribe({
+      next: (result) => {
+          if (!loadingCanceled){
+          this.loadingDialogService.closeLoading();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(result);
+          downloadLink.setAttribute('download', `zip_study_${study.id}_${study.name}.zip`);
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          this.snackbarService.showInformation("The study as been successfully exported.")
+        }
+      },
+      error: (errorReceived) => {
+        if (!loadingCanceled){
+        const error = errorReceived as SoSTradesError;
+        this.loadingDialogService.closeLoading();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError(`Error downloading study case "${study.name}" : ${error.description}`);
+        }
+        }
+      }
+    });
+  
+  }
 
   deleteStudiesValidation(studies: Study[]) {
     // Warn user is trying to delete current loaded study
@@ -1056,29 +1112,6 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  onSelection(event: any, study: Study) {
-
-    if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
-      this.loadingDialogService.showLoading(`Upload study case data "${study.name}"`);
-
-      this.studyCaseMainService.uploadStudyRaw(study.id.toString(), event.target.files).subscribe({
-        next: () => {
-          this.loadingDialogService.closeLoading();
-          this.snackbarService.showInformation('Upload successful');
-          if (event.target.files) {
-            event.target.value = '';
-          }
-        },
-        error: (error) => {
-          this.loadingDialogService.closeLoading();
-          const errorDescription = error?.description || 'An error occurred while uploading the study.';
-          this.snackbarService.showError(errorDescription);
-          if (event.target.files) {
-            event.target.value = '';
-          }
-        }
-      });
-    }
-  }
+  
+  
 }

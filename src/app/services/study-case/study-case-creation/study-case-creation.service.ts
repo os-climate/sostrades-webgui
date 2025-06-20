@@ -40,7 +40,9 @@ export class StudyCaseCreationService {
 
     this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
       disableClose: true,
-      data: dialogData
+      data: dialogData,
+      width: '600px',
+      height: '550px'
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
@@ -48,7 +50,10 @@ export class StudyCaseCreationService {
 
       if ((resultCreateStudyRef !== null) && (resultCreateStudyRef !== undefined)) {
 
-        if (resultCreateStudyRef.cancel === false && resultCreateStudyRef.studyName !== '' && resultCreateStudyRef.groupId !== null) {
+        if (!resultCreateStudyRef.cancel && resultCreateStudyRef.studyType === 'stand-alone' &&  resultCreateStudyRef.zipFile !== null && resultCreateStudyRef.groupId !== null){
+          this.importStandAloneStudyCase(resultCreateStudyRef.zipFile, resultCreateStudyRef.groupId);
+        }
+        else if (resultCreateStudyRef.cancel === false && resultCreateStudyRef.studyName !== '' && resultCreateStudyRef.groupId !== null) {
           if (resultCreateStudyRef.studyType === 'Study') {
             this.createStudyCaseByCopy(
               resultCreateStudyRef.studyId,
@@ -70,6 +75,21 @@ export class StudyCaseCreationService {
               resultCreateStudyRef.selectedFlavor);
           }
         }
+      }
+    });
+  }
+
+  private importStandAloneStudyCase(file:File, group: number) {
+    
+    // Check user was in an another study before this one and leave room
+    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
+      this.socketService.leaveRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
+    }
+
+    this.appDataService.createStudyStandAlone(group, file, isStudyCreated => {
+      if (isStudyCreated) {
+        // Joining room
+        this.socketService.joinRoom(this.studyCaseDataService.loadedStudy.studyCase.id);
       }
     });
   }
@@ -125,7 +145,9 @@ export class StudyCaseCreationService {
       
           this.dialogRef = this.dialog.open(StudyCaseCreationComponent, {
             disableClose: true,
-            data: dialogData
+            data: dialogData,
+            width: '600px',
+            height: '550px'
           });
       
           this.dialogRef.afterClosed().subscribe(result => {

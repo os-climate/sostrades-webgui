@@ -47,3 +47,20 @@ export const READONLY_DIALOG_STEPS: DialogStep[] = [
     labelAfter: 'Study Ready'
   }
 ];
+export const STANDALONE_CREATION_DIALOG_STEPS: DialogStep[] = [
+  {
+    step: LoadingDialogStep.ACCESSING_STUDY_SERVER,
+    labelBefore: 'Uploading zip file',
+    labelAfter: 'Study uploaded'
+  },
+  {
+    step: LoadingDialogStep.LOADING_STUDY,
+    labelBefore: 'Unzipping files',
+    labelAfter: 'Files unzipped'
+  },
+  {
+    step: LoadingDialogStep.LOADING_ONTOLOGY,
+    labelBefore: 'Loading study',
+    labelAfter: 'Study Ready'
+  }
+];

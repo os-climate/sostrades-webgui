@@ -16,15 +16,22 @@
         <p *ngIf="isReadOnlyMode; else isEditionMode"  >
           <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;margin-right:3px"></i>
           <span
+          *ngIf="!isStandAlone"
           style="font-weight: bold;"
-          matTooltip="Your study is in read only mode, it cannot be updated or computed unless you click on the 'Switch to edition mode' button"
+          matTooltip="Your study is in read only mode, it cannot be updated nor computed unless you click on the 'Switch to edition mode' button"
           matTooltipPosition="left"
           >Read Only Mode </span>
+          <span
+          *ngIf="isStandAlone"
+          style="font-weight: bold;"
+          matTooltip="Your study is stand alone, it cannot be updated nor computed"
+          matTooltipPosition="left"
+          >Stand Alone </span>
           <button
             mat-button
             class="edit-button cursor-pointer"
             id="study-switch-to-edition-button"
-            *ngIf="isReadOnlyMode"
+            *ngIf="isReadOnlyMode && !isStandAlone"
             matTooltip="Leave the read only mode."
             color="primary"
             (click)="onClickSwitchEditStudy($event)">
@@ -38,12 +45,12 @@
             <span
               style="font-weight: bold;"
               matTooltipPosition="left"
-              [matTooltip]="loadedStudy.studyCase.hasReadOnlyFile ?
+              [matTooltip]="loadedStudy?.studyCase.hasReadOnlyFile ?
                 'Your study is in edition mode, it can be updated or computed unless you click on the \'Switch to read only mode\' button'
                 : 'Your study is in edition mode, there is no read-only mode available currently'"
             >Edition Mode </span>
             <button
-              *ngIf="loadedStudy.studyCase.hasReadOnlyFile"
+              *ngIf="loadedStudy?.studyCase.hasReadOnlyFile"
               mat-button
               class="edit-button cursor-pointer"
               id="study-switch-to-read-only-button"

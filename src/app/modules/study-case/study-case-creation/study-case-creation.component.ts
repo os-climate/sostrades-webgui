@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -43,14 +43,19 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   private studyCaseReferenceReady: boolean;
   private groupReady: boolean;
   private emptyProcessRef: Study;
+  private selectedFile: File;
   private checkIfReferenceIsAlreadySelected: boolean;
   public title: string;
   public flavorsList: string[];
   public hasFlavors: boolean;
   public loadingName: boolean;
+  public isStandAlone: boolean;
+  public hasWarnings: boolean;
+  public warnings: string;
 
 
   readonly EMPTY_STUDY_NAME = 'Empty Study';
+  @ViewChild('fileUpload', { static: false }) fileUpload: ElementRef;
 
   constructor(
     private groupDataService: GroupDataService,
@@ -79,13 +84,17 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.flavorsList = [];
     this.hasFlavors = false;
     this.loadingName = false;
+    this.isStandAlone = false;
+    this.selectedFile = null;
+    this.hasWarnings = false;
+    this.warnings = '';
 
 
     /**
      * Create a placeholder reference to allow to choose nothing to initialize the study case
      */
     this.emptyProcessRef = new Study(null, this.EMPTY_STUDY_NAME, '', '', '', null, null, '',  '',
-     '', '', 0, false, '', '', false, null, null, false, false, false, false, false, false, null, '', null, null, null, '', '', false);
+     '', '', 0, false, '', '', false, null, null, false, false, false, false, false, false, null, '', null, null, null, '', '', false, false);
 
   }
 
@@ -116,7 +125,8 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
         groupId: new FormControl('', [Validators.required]),
         processId: new FormControl('', [Validators.required]),
         selectedRef: new FormControl(this.emptyProcessRef),
-        flavor:new FormControl('')
+        flavor:new FormControl(''),
+        fileUpload: new FormControl('')
       });
     }
 
@@ -418,54 +428,118 @@ export class StudyCaseCreationComponent implements OnInit, OnDestroy {
     this.getStudyCaseReferences();
   }
 
+  public onGroupChanged(){
+    this.createStudyForm.updateValueAndValidity();
+  }
+
   public hasError = (controlName: string, errorName: string) => {
     return this.createStudyForm.controls[controlName].hasError(errorName);
+  }
+
+  onSelectStandAlone(isSelected:boolean) {
+    this.isStandAlone = isSelected;
+    if (isSelected) {
+      this.createStudyForm.controls['fileUpload'].setValidators([Validators.required]);
+      this.createStudyForm.controls['fileUpload'].updateValueAndValidity();
+      this.createStudyForm.controls['studyName'].clearValidators();
+      this.createStudyForm.controls['studyName'].updateValueAndValidity();
+      this.createStudyForm.controls['processId'].clearValidators();
+      this.createStudyForm.controls['processId'].updateValueAndValidity();
+      
+    }
+    else{
+      this.createStudyForm.controls['fileUpload'].clearValidators();
+      this.createStudyForm.controls['fileUpload'].updateValueAndValidity();
+      this.createStudyForm.controls['studyName'].setValidators([Validators.required, Validators.pattern(TypeCheckingTools.TEXT_LETTER_NUMBER_REGEX)]);
+      this.createStudyForm.controls['studyName'].updateValueAndValidity();
+      this.createStudyForm.controls['processId'].setValidators([Validators.required]);
+      this.createStudyForm.controls['processId'].updateValueAndValidity();
+    }
+    this.createStudyForm.updateValueAndValidity();
+    }
+
+  importStudyStandAlone(){
+    const fileUploadElement = this.fileUpload.nativeElement;
+    fileUploadElement.click();
+  }
+  
+  onSelectStudyFileZip(event: any) {
+    this.hasWarnings = false;
+    this.warnings = '';
+    if (event.target.files !== undefined && event.target.files !== null && event.target.files.length > 0) {
+      //if not on local and if the file size is upper than 10Mo set control form in error
+      const host = window.location.host;
+      if (event.target.files[0].size > 10 * 1024 * 1024) {
+        if(host.includes('localhost:')){
+          this.warnings = 'The file size is more than 10Mo';
+          this.hasWarnings = true;
+        }
+        else{
+          this.createStudyForm.get('fileUpload').setErrors({
+            fileSize: 'The file size must be less than 10Mo'
+          });
+          return;
+        }
+        
+      }
+      this.selectedFile = event.target.files[0];
+      this.createStudyForm.patchValue({fileUpload:this.selectedFile.name});
+      this.createStudyForm.updateValueAndValidity();
+    }
   }
 
   submitForm() {
     this.data.cancel = false;
 
-    let refName = null;
-    let selectedRef = this.createStudyForm.value.selectedRef
-
-    if (selectedRef === null || selectedRef === undefined) {
-      if(this.data.studyId) {
-        selectedRef = this.referenceList.find(dataSource => dataSource.id === this.data.studyId);
-      }
-      else {
-        selectedRef = this.referenceList.find(dataSource => dataSource.name === this.data.reference);
-      }
+    if (this.isStandAlone){
+      this.data.groupId = this.createStudyForm.value.groupId;
+      this.data.zipFile = this.selectedFile;
+      this.data.studyType = "stand-alone";
+      this.dialogRef.close(this.data);
     }
+    else{
+      let refName = null;
+      let selectedRef = this.createStudyForm.value.selectedRef
 
-    if(selectedRef.name !== this.EMPTY_STUDY_NAME) {
-      refName = selectedRef.name;
-    }
-    this.loadingName = true;
-    this.studyCaseDataService.check_study_already_exist(this.createStudyForm.value.studyName, this.createStudyForm.value.groupId).subscribe({
-      next: (isExist) => {
-        if(!isExist) {
-          this.data.studyType = selectedRef.studyType;
-          this.data.studyId = selectedRef.id;
-          this.data.studyName = this.createStudyForm.value.studyName;
-          this.data.reference = refName;
-          this.data.groupId = this.createStudyForm.value.groupId;
-          this.data.selectedFlavor = this.createStudyForm.value.flavor;
-
-          this.data.process = this.process;
-
-          this.dialogRef.close(this.data);
-        } else {
-          this.createStudyForm.get('studyName').setErrors({
-            studyExists: `The following study case name "${this.createStudyForm.value.studyName}" already exist in the database for the selected group`
-          }); 
+      if (selectedRef === null || selectedRef === undefined) {
+        if(this.data.studyId) {
+          selectedRef = this.referenceList.find(dataSource => dataSource.id === this.data.studyId);
         }
-        this.loadingName = false; 
-        },
-        error: (errorReceived) => {
-          this.snackbarService.showError("Error creating study\n" + errorReceived.description);
+        else {
+          selectedRef = this.referenceList.find(dataSource => dataSource.name === this.data.reference);
+        }
+      }
+
+      if(selectedRef.name !== this.EMPTY_STUDY_NAME) {
+        refName = selectedRef.name;
+      }
+      this.loadingName = true;
+      this.studyCaseDataService.check_study_already_exist(this.createStudyForm.value.studyName, this.createStudyForm.value.groupId).subscribe({
+        next: (isExist) => {
+          if(!isExist) {
+            this.data.studyType = selectedRef.studyType;
+            this.data.studyId = selectedRef.id;
+            this.data.studyName = this.createStudyForm.value.studyName;
+            this.data.reference = refName;
+            this.data.groupId = this.createStudyForm.value.groupId;
+            this.data.selectedFlavor = this.createStudyForm.value.flavor;
+
+            this.data.process = this.process;
+
+            this.dialogRef.close(this.data);
+          } else {
+            this.createStudyForm.get('studyName').setErrors({
+              studyExists: `The following study case name "${this.createStudyForm.value.studyName}" already exist in the database for the selected group`
+            }); 
+          }
           this.loadingName = false; 
-        }
-      });
+          },
+          error: (errorReceived) => {
+            this.snackbarService.showError("Error creating study\n" + errorReceived.description);
+            this.loadingName = false; 
+          }
+        });
+      }
   }
 
   onCancelClick() {
