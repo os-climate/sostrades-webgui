@@ -136,7 +136,7 @@
         >
           <ng-container *ngFor="let tab of tabs">
             <mat-tab
-              *ngIf="tab.component && getTabIndex(tab.label) === selectedTabIndex"
+              *ngIf="tab.component"
               [label]="tab.label"
               [aria-label]="'tab-study-workspace-' + tab.label.toLocaleLowerCase()">
                 <ng-container *ngIf="tab.showContent">
