@@ -105,7 +105,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dashboardFavorites[index] = item;
         this.isDashboardUpdated = true;
       }
-      this.options.api.optionsChanged();
+      if (this.options.api) this.options.api.optionsChanged();
     });
     this.sectionExpansionSubscription = this.dashboardService.onSectionExpansion.subscribe(() => {
       this.onAutoFit();
@@ -125,9 +125,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.updateGraphSizes();
-    if (this.options.api) {
-      this.options.api.optionsChanged();
-    }
+    if (this.options.api) this.options.api.optionsChanged();
     this.cdr.detectChanges();
   }
 
@@ -152,8 +150,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.resizable.enabled = !this.options.resizable.enabled;
     this.dashboardService.isDashboardInEdition = this.options.draggable.enabled;
     this.options.displayGrid = this.options.draggable.enabled ? 'always' : 'none';
-    if (this.options.api)
-      this.options.api.optionsChanged();
+    if (this.options.api) this.options.api.optionsChanged();
   }
 
   // Handle the mat-slide-toggle inside the button when the user clicks the button
@@ -219,7 +216,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   onAutoFit() {
     this.dashboardFavorites = this.autoFitItems(this.dashboardFavorites);
     this.options.compactType = 'none'
-    this.options.api.optionsChanged();
+    if (this.options.api) this.options.api.optionsChanged();
   }
 
   // Calculate the width of the graph item for resizing
@@ -319,7 +316,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    this.options.api.optionsChanged();
+    if (this.options.api) this.options.api.optionsChanged();
   }
 
   // check if the position of the items has changed
