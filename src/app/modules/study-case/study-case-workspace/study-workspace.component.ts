@@ -15,7 +15,12 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { ProcessService } from 'src/app/services/process/process.service';
 import { Routing } from 'src/app/models/enumeration.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
-import { MatTabChangeEvent } from "@angular/material/tabs";
+import { MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
+import { DataManagementContainerComponent } from 'src/app/modules/data-management/data-management-container/data-management-container.component';
+import { PostProcessingComponent } from 'src/app/modules/post-processings/post-processing/post-processing.component';
+import { VisualisationContainerComponent } from 'src/app/modules/visualisation/visualisation-container/visualisation-container.component';
+import { DocumentationComponent } from 'src/app/modules/study-case/study-case-documentation/study-case-documentation.component';
+import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-study-workspace',
@@ -25,6 +30,7 @@ import { MatTabChangeEvent } from "@angular/material/tabs";
 export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
   @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
+  @ViewChild('MatTabGroup', { static: false }) matTabGroup: MatTabGroup;
 
   public showView: boolean;
   public showSearch: boolean;
@@ -59,6 +65,8 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public newUserLevelValue: number;
   public selectedTabIndex: number;
   public studyName: string;
+  public tabs: {label: TabIds, component?: any, showContent: boolean}[];
+  public availableTabs: {label: TabIds, component?: any, showContent: boolean}[];
 
   @HostListener('document:fullscreenchange', ['$event'])
   @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -113,11 +121,24 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.selectedTabIndex = 0;
     this.treeviewSize = 300;
     this.studyName = "";
+    this.tabs = [
+      { label: TabIds.DATA, component: DataManagementContainerComponent, showContent: true },
+      { label: TabIds.CHARTS, component: PostProcessingComponent, showContent:  false },
+      { label: TabIds.DASHBOARD, component: DashboardComponent, showContent: false },
+      { label: TabIds.VISUALISATION, component: VisualisationContainerComponent, showContent: false },
+      { label: TabIds.DOCUMENTATION, component: DocumentationComponent, showContent: true },
+    ];
+    this.availableTabs = [
+      { label: TabIds.DATA, component: DataManagementContainerComponent, showContent: true },
+      { label: TabIds.CHARTS, component: PostProcessingComponent, showContent: false },
+      { label: TabIds.DASHBOARD, component: DashboardComponent, showContent: false },
+      { label: TabIds.VISUALISATION, component: VisualisationContainerComponent, showContent: false },
+      { label: TabIds.DOCUMENTATION, component: DocumentationComponent, showContent: false },
+    ];
   }
 
   ngOnInit() {
-    this.tabNameSelected = TabIds.DOCUMENTATION;
-    this.showDocumentationContent = true;
+    this.setSelectedTabByLabel(TabIds.DOCUMENTATION);
     this.showSearch = false;
     this.setDisplayableItems();
 
@@ -151,8 +172,30 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       next:()=>{
       //show the data management tab
       this.showSearch = false;
-      this.selectedTabIndex = 0;
+      this.setSelectedTabByLabel(TabIds.DATA);
     }});
+  }
+
+  setSelectedTabByLabel(label: string) {
+    const index = this.tabs.findIndex(tab => tab.label === label);
+    if (index !== -1 && this.selectedTabIndex !== index) {
+      this.selectedTabIndex = index
+      this.tabs[index].showContent = true;
+    }
+  }
+
+  getTabIndex(labelName: string) {
+    return this.tabs.findIndex(tab => tab.label === labelName);
+  }
+
+  toggleTabVisibility(label: string, isVisible: boolean) {
+    const tabIndex = this.tabs.findIndex(t => t.label === label);
+    const tab = this.availableTabs.find(t => t.label === label);
+    if (isVisible && tab && tabIndex === -1) {
+      const correctIndex = this.availableTabs.findIndex(t => t.label === label);
+      this.tabs.splice(correctIndex, 0, tab)
+    } else if (!isVisible && tabIndex !== -1)
+      this.tabs.splice(tabIndex, 1)
   }
 
   setDisplayableItems() {
@@ -162,11 +205,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       this.showSearch = false;
       // Check  study status to display or not charts
       if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
-        this.showPostProcessing = true;
-        this.showDashboard = true;
+        this.toggleTabVisibility(TabIds.CHARTS, true);
+        this.toggleTabVisibility(TabIds.DASHBOARD, true);
       } else {
-        this.showPostProcessing = false;
-        this.showDashboard = false;
+        this.toggleTabVisibility(TabIds.CHARTS, false);
+        this.toggleTabVisibility(TabIds.DASHBOARD, false);
       }
 
       // Set process
@@ -174,18 +217,18 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 
       // Check if study is loaded without data
       if (this.studyCaseDataService.loadedStudy.noData) {
-        this.showDataManagement = false;
-        this.showVisualisation = false;
-        this.showDashboard = false;
-        this.showDashboardContent = false;
-
+        this.toggleTabVisibility(TabIds.DATA, false);
+        this.toggleTabVisibility(TabIds.VISUALISATION, false);
+        this.toggleTabVisibility(TabIds.DASHBOARD, false);
+        this.tabs[this.getTabIndex(TabIds.DASHBOARD)].showContent = false;
         // Study is loaded without data management, triggering charts display
-        this.showPostProcessing = true;
-        this.showPostProcessingContent = true;
+        this.toggleTabVisibility(TabIds.CHARTS, true);
+        this.tabs[this.getTabIndex(TabIds.CHARTS)].showContent = true;
       } else {
-        this.showDataManagement = true;
-        this.showVisualisation = true;
-        this.showDashboard = true;
+        this.toggleTabVisibility(TabIds.DATA, true);
+        this.toggleTabVisibility(TabIds.VISUALISATION, true);
+        this.toggleTabVisibility(TabIds.DASHBOARD, true);
+        this.tabs[this.getTabIndex(TabIds.DASHBOARD)].showContent = true;
       }
 
       // Activate show not editable variable if study is read only
@@ -197,20 +240,19 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     } else {
       this.showView = false;
     }
-    this.displayDocumentationTab();
+    this.setSelectedTabByLabel(TabIds.DOCUMENTATION);
     this.onTreeNodeChangeSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(treenode => {
       this.showSearch = false;
       this.hasDocumentation = false;
-      this.showVisualisation = false;
-      this.showDocumentation = false;
-
+      this.toggleTabVisibility(TabIds.VISUALISATION, false);
+      this.toggleTabVisibility(TabIds.DOCUMENTATION, false);
       if (treenode !== null && treenode !== undefined) {
         if (this.studyCaseDataService.loadedStudy.noData) {
-          this.showVisualisation = false;
+          this.toggleTabVisibility(TabIds.VISUALISATION, false);
         } else {
-          this.showVisualisation = treenode.isRoot
+          this.toggleTabVisibility(TabIds.VISUALISATION, treenode.isRoot);
         }
-        this.showDocumentation = !(treenode.nodeType === 'data');
+        this.toggleTabVisibility(TabIds.DOCUMENTATION, !(treenode.nodeType === 'data'))
         // Remove duplicate modelsFullPath
         const modelsFullPathListWithoutDuplicate: string[] = [];
         treenode.modelsFullPathList.forEach((element, index) => {
@@ -232,22 +274,6 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     });
   }
 
-  // get the documentation tab index
-  displayDocumentationTab() {
-    let selectedTabIndex = 1;
-    if (this.studyCaseDataService.loadedStudy !== null && this.studyCaseDataService.loadedStudy !== undefined) {
-      if (this.showDataManagement && this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData){
-        selectedTabIndex = 3;
-      }
-      else if ((!this.showDataManagement && this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData) ||
-      (this.showDataManagement && !this.showPostProcessing && !this.studyCaseDataService.loadedStudy.noData) ||
-      (this.showDataManagement && this.showPostProcessing && this.studyCaseDataService.loadedStudy.noData)){
-        selectedTabIndex = 2;
-      }
-      this.selectedTabIndex = selectedTabIndex;
-    }
-  }
-
   ngOnDestroy() {
     if (this.onStudyCaseChangeSubscription !== null) {
       this.onStudyCaseChangeSubscription.unsubscribe();
@@ -267,19 +293,11 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   onSelectedTabChange(event: MatTabChangeEvent) {
     if (event.tab !== null && event.tab !== undefined) {
       this.tabNameSelected = event.tab.textLabel;
-      this.showPostProcessingContent = false;
-      this.showVisualisationContent = false;
-      this.showDocumentationContent = false;
-      this.showDashboardContent = false;
-      if (this.tabNameSelected === TabIds.CHARTS) {
-        this.showPostProcessingContent = true;
-      } else if (this.tabNameSelected === TabIds.DASHBOARD) {
-        this.showDashboardContent = true;
-      } else if (this.tabNameSelected === TabIds.VISUALISATION) {
-        this.showVisualisationContent = true;
-      } else if (this.tabNameSelected === TabIds.DOCUMENTATION) {
-        this.showDocumentationContent = true;
-      }
+      this.tabs.forEach(tab => {
+        if (tab.label !== TabIds.DATA)
+          tab.showContent = false;
+      })
+      this.tabs[this.getTabIndex(this.tabNameSelected)].showContent = true;
       this.renderViewOnCurrentTab();
     }
   }
