@@ -114,7 +114,7 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
       { label: TabIds.DATA, component: DataManagementContainerComponent, showContent: true },
       { label: TabIds.CHARTS, component: PostProcessingComponent, showContent: false },
       { label: TabIds.VISUALISATION, component: VisualisationContainerComponent, showContent: false },
-      { label: TabIds.DOCUMENTATION, component: DocumentationComponent, showContent: false },
+      { label: TabIds.DOCUMENTATION, component: DocumentationComponent, showContent: true },
       { label: TabIds.DASHBOARD, component: DashboardComponent, showContent: false },
     ];
   }
@@ -174,8 +174,15 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     const tabIndex = this.tabs.findIndex(t => t.label === label);
     const tab = this.availableTabs.find(t => t.label === label);
     if (isVisible && tab && tabIndex === -1) {
-      const correctIndex = this.availableTabs.findIndex(t => t.label === label);
-      this.tabs.splice(correctIndex, 0, tab)
+      const targetIndex = this.availableTabs.findIndex(t => t.label === label);
+      let insertionIndex = 0;
+      for (let i = 0; i < targetIndex; i++) {
+        const precedingTabIndex = this.tabs.findIndex(t => t.label === this.availableTabs[i].label);
+        if (precedingTabIndex !== -1 && precedingTabIndex >= insertionIndex) {
+          insertionIndex = precedingTabIndex + 1;
+        }
+      }
+      this.tabs.splice(insertionIndex, 0, tab);
     } else if (!isVisible && tabIndex !== -1)
       this.tabs.splice(tabIndex, 1)
   }
