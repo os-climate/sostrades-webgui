@@ -45,6 +45,15 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   private onSearchChangeSubscription: Subscription;
   private onTreeNodeChangeSubscription: Subscription;
   private onShowDataManagementSubscription: Subscription;
+  public showDataManagement: boolean;
+  public showPostProcessing: boolean;
+  public showPostProcessingContent: boolean;
+  public showDashboard: boolean;
+  public showDashboardContent: boolean;
+  public showVisualisation: boolean;
+  public showVisualisationContent: boolean;
+  public showDocumentation: boolean;
+  public showDocumentationContent: boolean;
 
   public modelsFullPathList: string[];
   public hasAccessToStudy: boolean;
@@ -82,6 +91,15 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
     private renderer: Renderer2,
     private treeNodeDataService: TreeNodeDataService) {
+    this.showPostProcessing = false;
+    this.showPostProcessingContent = false;
+    this.showDashboard = false;
+    this.showDashboardContent = false;
+    this.showVisualisation = false;
+    this.showVisualisationContent = false;
+    this.showDocumentation = false;
+    this.showDocumentationContent = false;
+    this.showDataManagement = true;
     this.showView = false;
     this.showSearch = false;
     this.onStudyCaseChangeSubscription = null;
@@ -106,16 +124,16 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
     this.tabs = [
       { label: TabIds.DATA, component: DataManagementContainerComponent, showContent: true },
       { label: TabIds.CHARTS, component: PostProcessingComponent, showContent:  false },
+      { label: TabIds.DASHBOARD, component: DashboardComponent, showContent: false },
       { label: TabIds.VISUALISATION, component: VisualisationContainerComponent, showContent: false },
       { label: TabIds.DOCUMENTATION, component: DocumentationComponent, showContent: true },
-      { label: TabIds.DASHBOARD, component: DashboardComponent, showContent: false },
     ];
     this.availableTabs = [
       { label: TabIds.DATA, component: DataManagementContainerComponent, showContent: true },
       { label: TabIds.CHARTS, component: PostProcessingComponent, showContent: false },
+      { label: TabIds.DASHBOARD, component: DashboardComponent, showContent: false },
       { label: TabIds.VISUALISATION, component: VisualisationContainerComponent, showContent: false },
       { label: TabIds.DOCUMENTATION, component: DocumentationComponent, showContent: false },
-      { label: TabIds.DASHBOARD, component: DashboardComponent, showContent: false },
     ];
   }
 
