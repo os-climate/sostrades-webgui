@@ -128,22 +128,55 @@
             keyboard_arrow_right
         </mat-icon>
         <mat-tab-group
-          #MatTabGroup
           class="container-workspace"
           *ngIf="showView"
           (selectedTabChange)="onSelectedTabChange($event)"
           [selectedIndex]=selectedTabIndex
         >
-          <ng-container *ngFor="let tab of tabs">
-            <mat-tab
-              *ngIf="tab.component && getTabIndex(tab.label) === selectedTabIndex"
-              [label]="tab.label"
-              [aria-label]="'tab-study-workspace-' + tab.label.toLocaleLowerCase()">
-                <ng-container *ngIf="tab.showContent">
-                  <ng-container *ngComponentOutlet="tab.component"></ng-container>
-                </ng-container>
-            </mat-tab>
-          </ng-container>
+          <mat-tab
+            label="Data"
+            aria-label="tab-study-workspace-data-management"
+            *ngIf="showDataManagement"
+          >
+            <app-data-management-container></app-data-management-container>
+          </mat-tab>
+          <mat-tab
+            label="Charts"
+            aria-label="tab-study-workspace-charts"
+            *ngIf="showPostProcessing"
+          >
+            <app-post-processing
+              *ngIf="showPostProcessingContent"
+            ></app-post-processing>
+          </mat-tab>
+          <mat-tab
+            label="Visualisation"
+            aria-label="tab-study-workspace-visualisation"
+            *ngIf="showVisualisation"
+          >
+            <app-visualisation-container
+              *ngIf="showVisualisationContent">
+            </app-visualisation-container>
+          </mat-tab>
+          <mat-tab
+            label="Documentation"
+            aria-label="tab-study-workspace-documentation"
+            *ngIf="showDocumentation"
+          >
+            <app-study-case-documentation
+              [identifiers]="modelsFullPathList"
+              *ngIf="showDocumentationContent"
+            ></app-study-case-documentation>
+          </mat-tab>
+          <mat-tab
+            label="Dashboard"
+            aria-label="tab-study-workspace-dashboard"
+            *ngIf="showDashboard"
+          >
+            <app-dashboard
+              *ngIf="showDashboardContent">
+            </app-dashboard>
+          </mat-tab>
         </mat-tab-group>
       </div>
     </as-split-area>
