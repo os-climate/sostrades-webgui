@@ -69,18 +69,17 @@ export class DashboardSectionItemComponent implements OnInit {
     if (!this.sectionItem.data.shown)
       this.sectionItem.data.expandedSize = this.sectionItem.rows;
     this.sectionItem.rows = this.sectionItem.data.shown ?
-      (this.sectionItem.data.expandedSize || 5) : // use stored size or default
+      (this.sectionItem.data.expandedSize || 20) : // use stored size or default
       1; // Collapse size
-    this.sectionItem.minRows = this.sectionItem.data.shown ? 4 : 1; // Minimum 4 when expanded, 1 when collapsed
-    this.sectionItem.maxRows = this.sectionItem.data.shown ? undefined : 1; // No max when expanded, 1 when collapsed
+    this.sectionItem.minRows = this.sectionItem.data.shown ? 16 : 1; // Minimum 16 when expanded, 1 when collapsed
     this.dashboardService.updateItem(this.sectionItem);
-    this.dashboardService.onSectionExpansionEvent();
+    this.dashboardService.onSectionExpansionEvent(this.sectionItem);
   }
 
   getHeaderHeight() {
     if (this.sectionItem.data.shown) {
       const percentPerRow: number = 1 / this.sectionItem.rows;
-      const gapAdjustment: number = (this.sectionItem.rows - 1) * 4; // 4px gap between rows
+      const gapAdjustment: number = (this.sectionItem.rows - 1);
       if (gapAdjustment > 0)
         return `calc((100% - ${gapAdjustment}px) * ${percentPerRow})`;
       else

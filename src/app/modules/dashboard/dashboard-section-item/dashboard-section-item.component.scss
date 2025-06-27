@@ -51,6 +51,8 @@ mat-card-content:first-child {
 .card-actions {
   display: flex;
   justify-content: flex-start;
+  position: absolute;
+  top: 9px;
 }
 
 .edit-actions {
@@ -62,13 +64,14 @@ mat-card-content:first-child {
 .edit-content-wrapper {
   overflow-y: auto;
   height: 100%;
+  width: 100%;
+  padding: 5px 40px 5px 95px;
 }
 
 .content-wrapper {
   overflow-y: auto;
-  height: calc(100% - 36px);
-  position: relative;
-  top: 36px;
+  width: 100%;
+  padding: 5px 40px 5px 5px;
 }
 
 .empty-content {
@@ -91,7 +94,7 @@ mat-card-content:first-child {
 .show-section-header {
   flex: 0 0 auto;
   position: relative;
-  padding: 16px;
+  padding: 4px;
   display: flex;
   flex-direction: column;
 }
@@ -99,9 +102,10 @@ mat-card-content:first-child {
 .hidden-section-header {
   flex: 0 0 auto;
   position: relative;
-  padding: 16px;
+  padding: 4px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 4px;
 }
 
 .section-separator {
@@ -149,10 +153,27 @@ mat-card-content:first-child {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 .expansion-button {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 2px;
+  right: 4px;
+}
+
+.correct-height {
+  height: 100%;
+}
+
+quill-view-html .ql-editor {
+  width: 100%;
+}
+
+quill-view-html .ql-editor p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: block;
 }
