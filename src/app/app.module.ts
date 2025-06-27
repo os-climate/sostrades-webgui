@@ -126,6 +126,8 @@ import { LoadingStudyDialogComponent } from './modules/loading-study-dialog/load
 import { FilterBarComponent } from './shared/filter-bar/filter-bar.component';
 import { TruncatePipe } from './pipes/truncate/truncate.pipe';
 import { AuthenticationErrorComponent } from './modules/authentication-error/authentication-error.component';
+import { ChatBotDialogComponent } from './modules/chat-bot-dialog/chat-bot-dialog.component';
+import { SafePipe } from './pipes/safe/safe.pipe';
 
 import { GridsterModule } from "angular-gridster2";
 import { QuillModule } from "ngx-quill";
@@ -237,6 +239,8 @@ registerLocaleData(fr);
         FilterBarComponent,
         TruncatePipe,
         AuthenticationErrorComponent,
+        ChatBotDialogComponent,
+        SafePipe,
     ],
     imports: [
         BrowserModule,

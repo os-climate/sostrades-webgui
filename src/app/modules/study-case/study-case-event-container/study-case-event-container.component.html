@@ -1,4 +1,17 @@
+<button
+    mat-icon-button
+    class="chat-bot-button" 
+    *ngIf="showChatBotButton"
+    id="chat-bot-button"
+    color="primary"
+    matTooltip="Chat with the AI assistant about your study"
+    (click)="openChatBot()"
+  >
+    <i class="fa-regular fa-comments"></i>  
+  </button>
 <mat-tab-group class="container">
+  
+
   <mat-tab label="Study Logs" aria-label="tab-study-case-event-container-study-logs">
     <app-study-case-logging></app-study-case-logging>
   </mat-tab>

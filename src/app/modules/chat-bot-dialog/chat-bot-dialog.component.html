@@ -1,0 +1,18 @@
+<div class="flex-container">
+  <div class="header">
+  <div
+    class="llm-title" 
+     cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle
+    >AI assistant for study {{data.studyName}}
+    </div>
+     <button 
+      id="close-button"
+      class="close-button"
+      mat-button
+      (click)="closeDialog()" 
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+</div>
+<iframe class="iframe-container" [src]="data.chatBotUrl | safe" allowfullscreen></iframe>
+</div>

@@ -1,0 +1,45 @@
+.flex-container{
+    height:100%;
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.header{
+    display: flex;
+    background-color: #424242;
+    height: 38px;
+    align-content: space-evenly;
+}
+
+.llm-title{
+    color: #f0f0f0; 
+    
+    //let the text on one line with ... if too long
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    align-content: space-evenly;
+}
+
+.close-button{
+    color: #f0f0f0; 
+}
+
+.iframe-container{
+    width:100%;
+    height: 100%;
+    border:none;
+}
+
+.action-buttons{
+    align-items: center;
+    justify-content: right;
+    
+    height: 50px;
+}
