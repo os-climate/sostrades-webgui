@@ -198,7 +198,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       let found = false;
       for (let y = 0; !found; y++) {
         for (let x = 0; x <= ColsWidth - item.cols; x++) {
-          // Vérifie s’il y a collision avec un item déjà placé
+          // Check if there is a collision with an already placed item
           const collision = placed.some(other =>
             x < other.x + other.cols &&
             x + item.cols > other.x &&
