@@ -83,7 +83,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       maxRows: 400,
       margin: 1,
       swap: true,
-      swapWhileDragging: true
     }
   }
 
