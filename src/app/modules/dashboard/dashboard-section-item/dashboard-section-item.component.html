@@ -4,13 +4,13 @@
     <div [ngClass]="this.sectionItem.data.shown ? 'show-section-header' : 'hidden-section-header'"
          [style.height]="getHeaderHeight()">
       <div class="card-actions" [hidden]="!inEditionMode">
-        <button mat-button color="warn" (click)="deleteSectionItem(sectionItem)" matTooltip="Delete section">
+        <button mat-button color="warn" (click)="deleteSectionItem(sectionItem)" matTooltip="Delete section" class="correct-height">
           <i class="fa-solid fa-trash"></i>
         </button>
         <button mat-button color="primary" class="drag-handle" matTooltip="Move section">
           <i class="fa-solid fa-arrows-up-down-left-right"></i>
         </button>
-        <button mat-button color="primary" (click)="startEditingSection()" matTooltip="Edit section">
+        <button mat-button color="primary" (click)="startEditingSection()" matTooltip="Edit section" class="correct-height">
           <i class="fa-solid fa-pen-to-square"></i>
         </button>
       </div>
@@ -24,13 +24,13 @@
         <div class="quill-content"
           *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''"
           [matTooltip]="inEditionMode ? 'Click to edit title' : 'switch to edit mode to edit title'"
-          matTooltipPosition="above"
+          matTooltipPosition="below"
         >
           <quill-view-html [content]="sectionItem.data.title" theme="snow"></quill-view-html>
         </div>
         <div class="empty-content"
           [matTooltip]="inEditionMode ? 'Click to edit title' : 'switch to edit mode to edit title'"
-          matTooltipPosition="above"
+          matTooltipPosition="below"
           *ngIf="!sectionItem.data.title || sectionItem.data.title.trim() === ''"
         >
           Click to edit

@@ -11,6 +11,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 4px !important;
+  container-type: size;
 }
 
 .text-content {
@@ -20,42 +22,38 @@
   flex-direction: column;
 }
 
-.edit-content {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 .card-actions {
   display: flex;
   justify-content: flex-start;
+  position: absolute;
+  top: 2px;
 }
 
-.edit-actions {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 8px;
+.edit-content-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  height: 100%;
+  padding: 5px 5px 5px 65px;
 }
 
 .content-wrapper {
   flex-grow: 1;
   overflow-y: auto;
   height: 100%;
+  padding: 5px;
 }
 
 .empty-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100% - 20px);
+  height: 100%;
   text-align: center;
   color: #999;
   font-style: italic;
   font-size: 14px;
   border: 1px dashed #ccc;
   border-radius: 4px;
-  margin: 10px;
 }
 
 .drag-handle {

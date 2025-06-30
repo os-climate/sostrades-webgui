@@ -77,13 +77,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       enableEmptyCellDrop: true,
       gridType: 'scrollVertical',
       displayGrid: 'none',
-      minCols: 10,
-      minRows: 4,
-      maxCols: 10,
-      maxRows: 100,
-      margin: 4,
+      minCols: 40,
+      minRows: 16,
+      maxCols: 40,
+      maxRows: 400,
+      margin: 1,
       swap: true,
-      swapWhileDragging: true
     }
   }
 
@@ -107,9 +106,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (this.options.api) this.options.api.optionsChanged();
     });
-    this.sectionExpansionSubscription = this.dashboardService.onSectionExpansion.subscribe(() => {
+    this.sectionExpansionSubscription = this.dashboardService.onSectionExpansion.subscribe((item: DisplayableItem) => {
+      this.itemResize(item);
       this.onAutoFit();
-    })
+    });
     this.dashboardFavorites = this.dashboardService.getItems();
     this.isDashboardInEditionMode = this.dashboardService.isDashboardInEditionMode;
     this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
@@ -190,26 +190,32 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Custom compact function to fil the empty spaces in the dashboard
   autoFitItems(items: DisplayableItem[]) {
-    const ColsWidth = 10;
-    let rowHeight = 1;
-    let currentX = 0;
-    let currentY = 0;
-    const itemReOrdered: DisplayableItem[] = [];
+    const ColsWidth = 40;
+    const placed: DisplayableItem[] = [];
 
     for (const item of items) {
-      if (currentX + item.cols > ColsWidth) {
-        currentX = 0;
-        currentY += rowHeight;
-        rowHeight = 0;
+      let found = false;
+      for (let y = 0; !found; y++) {
+        for (let x = 0; x <= ColsWidth - item.cols; x++) {
+          // Check if there is a collision with an already placed item
+          const collision = placed.some(other =>
+            x < other.x + other.cols &&
+            x + item.cols > other.x &&
+            y < other.y + other.rows &&
+            y + item.rows > other.y
+          );
+          if (!collision) {
+            item.x = x;
+            item.y = y;
+            placed.push(item);
+            found = true;
+            break;
+          }
+        }
       }
-      item.x = currentX;
-      item.y = currentY;
-      itemReOrdered.push(item);
-      rowHeight = Math.max(rowHeight, item.rows);
-      currentX += item.cols;
     }
     this.checkForPositionChanges();
-    return itemReOrdered;
+    return placed;
   }
 
   // Handle the auto-fit button click and change the compact type to none
@@ -305,14 +311,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
             item.y = i.y - item.minRows
         });
         item.rows = item.minRows;
-      }
-    }
-    if (item.type === 'section') {
-      if ((<DashboardSection>item).maxRows) {
-        if (item.rows > (<DashboardSection>item).maxRows) {
-          this.snackbarService.showError(`${item.type} item must have at most ${(<DashboardSection>item).maxRows} rows`);
-          item.rows = (<DashboardSection>item).maxRows;
-        }
       }
     }
 
