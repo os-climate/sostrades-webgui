@@ -55,8 +55,8 @@ export class DashboardText implements BaseItem {
     this.data = { content: '' };
     this.x = 0;
     this.y = 0;
-    this.cols = 3;
-    this.rows = 2;
+    this.cols = 12;
+    this.rows = 8;
     this.minCols = 1;
     this.minRows = 1;
   }
@@ -90,10 +90,10 @@ export class DashboardGraph implements BaseItem {
     this.plotIndex = plotIndex;
     this.x = 0;
     this.y = 0;
-    this.cols = 4;
-    this.rows = 3;
-    this.minCols = 3;
-    this.minRows = 2;
+    this.cols = 16;
+    this.rows = 12;
+    this.minCols = 12;
+    this.minRows = 8;
     this.data = { graphData };
     this.id = this.identifier;
   }
@@ -115,7 +115,6 @@ export class DashboardSection implements BaseItem {
   rows: number;
   minCols: number;
   minRows: number;
-  maxRows?: number;
   data: {
     title: string;
     items: DisplayableItem[];
@@ -127,10 +126,10 @@ export class DashboardSection implements BaseItem {
     this.id = `section-${Date.now()}`;
     this.x = 0;
     this.y = 0;
-    this.cols = 10;
-    this.rows = 5;
-    this.minCols = 10;
-    this.minRows = 4;
+    this.cols = 40;
+    this.rows = 20;
+    this.minCols = 40;
+    this.minRows = 16;
     this.data = { title: '', items: [], shown: true };
   }
 }
