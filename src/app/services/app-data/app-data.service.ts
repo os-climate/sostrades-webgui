@@ -26,10 +26,16 @@ import { UserService } from "../user/user.service";
 import { map } from "rxjs/operators";
 import { Routing } from "src/app/models/enumeration.model";
 import { LoadingStudyDialogService } from "../loading-study-dialog/loading-study-dialog.service";
-import { LoadingDialogStep, READONLY_DIALOG_STEPS, STANDALONE_CREATION_DIALOG_STEPS } from "src/app/models/loading-study-dialog.model";
+import {
+  LoadingDialogStep,
+  READONLY_DIALOG_STEPS,
+  STANDALONE_CREATION_DIALOG_STEPS
+} from "src/app/models/loading-study-dialog.model";
 import { LoadingDialogService } from "../loading-dialog/loading-dialog.service";
 import { SocketService } from "../socket/socket.service";
-import { StudyCaseExecutionObserverService } from "../study-case-execution-observer/study-case-execution-observer.service";
+import {
+  StudyCaseExecutionObserverService
+} from "../study-case-execution-observer/study-case-execution-observer.service";
 import { ValidationDialogData } from "src/app/models/dialog-data.model";
 import { MatDialog } from "@angular/material/dialog";
 import { ValidationDialogComponent } from "src/app/shared/validation-dialog/validation-dialog.component";
@@ -42,9 +48,9 @@ export class AppDataService extends DataHttpService {
   private connectionStatusTimer;
   public onStudyCreated: EventEmitter<number> = new EventEmitter();
   public onNoServerResponse: EventEmitter<boolean>;
-  public platformInfo : any;
+  public platformInfo: any;
   public hasNoServerAvailable: boolean;
-  public support : any;
+  public support: any;
 
   constructor(
     private dialog: MatDialog,
@@ -63,7 +69,6 @@ export class AppDataService extends DataHttpService {
     private loadingDialogService: LoadingDialogService,
     private socketService: SocketService,
     private studyCaseExecutionObserverService: StudyCaseExecutionObserverService,
-
     private location: Location
   ) {
     super(location, "application");
@@ -75,8 +80,8 @@ export class AppDataService extends DataHttpService {
   }
 
   createCompleteStudy(study: StudyCasePayload, isStudyCreated: any) {
-    
-    let loadingCanceled= false;
+
+    let loadingCanceled = false;
 
     // Display loading message
     this.loadingStudyDialogService
@@ -88,18 +93,18 @@ export class AppDataService extends DataHttpService {
         loadingCanceled = true;
         this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
-    
+
     this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
     this.studyCaseDataService.createAllocationForNewStudyCase(study).subscribe({
       next: (allocation) => {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
-          if (!loadingCanceled){
+          if (!loadingCanceled) {
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
             new StudyCaseInitialSetupPayload(allocation.studyCaseId, study.reference, study.type);
-              this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true, null, true); 
+            this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true, null, true);
           }
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ",()=> {
+          this.studyCaseDataService.checkPodStatusAndShowError(allocation.studyCaseId, undefined, "Error creating study: ", () => {
             isStudyCreated(false);
           });
           this.onStudyCreated.emit(allocation.studyCaseId);
@@ -110,18 +115,18 @@ export class AppDataService extends DataHttpService {
         isStudyCreated(false);
       }
     });
-  }    
+  }
 
   copyCompleteStudy(
     studyId: number,
     studyNameSource: string,
     newName: string,
     groupId: number,
-    flavor:string,
+    flavor: string,
     isStudyCreated: any
   ) {
-    
-    let loadingCanceled= false;
+
+    let loadingCanceled = false;
     // Display loading message
     this.loadingStudyDialogService
       .showLoadingWithCancelobserver(`Creating "${newName}" copy of study case "${studyNameSource}"`)
@@ -135,28 +140,28 @@ export class AppDataService extends DataHttpService {
     this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
     this.studyCaseDataService.createAllocationForCopyingStudyCase(studyId, newName, groupId, flavor).subscribe({
       next: (allocation) => {
-        if(!loadingCanceled) {
+        if (!loadingCanceled) {
           if (allocation.status === StudyCaseAllocationStatus.DONE) {
-            this.launchLoadStudy(allocation.studyCaseId, false,  true, isStudyCreated, true, null, true);
+            this.launchLoadStudy(allocation.studyCaseId, false, true, isStudyCreated, true, null, true);
           } else {
-            this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case: " ,()=> isStudyCreated(false));
+            this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error copying study case: ", () => isStudyCreated(false));
           }
           this.onStudyCreated.emit(allocation.studyCaseId);
         }
       },
       error: (errorReceived) => {
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case: ",()=> isStudyCreated(false));
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error copying study case: ", () => isStudyCreated(false));
       }
     });
   }
 
-      /**
- * Handles study loading process with different scenarios
- * @param studyId ID of the study to load
- * @param studyName Name of the study
- * @param isStudyLoaded Callback function for load completion
- * @param read_only_mode Whether to load in read-only mode when refreshing studyCase (this information is provided by the url)
- */
+  /**
+   * Handles study loading process with different scenarios
+   * @param studyId ID of the study to load
+   * @param studyName Name of the study
+   * @param isStudyLoaded Callback function for load completion
+   * @param read_only_mode Whether to load in read-only mode when refreshing studyCase (this information is provided by the url)
+   */
   loadCompleteStudy(studyId: number, studyName: string, isStudyLoaded: any, read_only_mode?: boolean) {
     let loadingCanceled = false;
 
@@ -170,27 +175,27 @@ export class AppDataService extends DataHttpService {
         loadingCanceled = true;
         this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
-  
-  if (!loadingCanceled) {
-    // Handle direct access link case
-    if (studyName === "requested") {
+
+    if (!loadingCanceled) {
+      // Handle direct access link case
+      if (studyName === "requested") {
         this.handleReadOnlyAccess(studyId, isStudyLoaded, loadingCanceled);
         return;
-    }
+      }
 
-    // Handle named study case. When you click to load study from studyManagement page
-    // or
-    // Handle refresh case. We have previously checked if in url there is the param "ReadOnly"
-    if (read_only_mode) {
+      // Handle named study case. When you click to load study from studyManagement page
+      // or
+      // Handle refresh case. We have previously checked if in url there is the param "ReadOnly"
+      if (read_only_mode) {
         this.handleReadOnlyAccess(studyId, isStudyLoaded, loadingCanceled);
-    } else {
+      } else {
         this.handleEditionModeAccess(studyId, isStudyLoaded, loadingCanceled);
+      }
     }
   }
-}
 
-createStudyStandAlone(groupId:number, studyZip: File, isStudyCreated: (loaded: boolean) => void) {
-    
+  createStudyStandAlone(groupId: number, studyZip: File, isStudyCreated: (loaded: boolean) => void) {
+
     let loadingCanceled = false;
 
     // Display loading message
@@ -208,83 +213,83 @@ createStudyStandAlone(groupId:number, studyZip: File, isStudyCreated: (loaded: b
 
     //start the import of the zip
     this.studyCaseDataService.importStudyStandAloneZip(groupId, studyZip).subscribe({
-        next: (createdStudy) => {
-          if(!loadingCanceled){
-            this.onStudyCreated.emit(createdStudy.id);
-            //the unzip has been started by the server, we have to wait for the study to have the state "creation_done", then open the read only
-            this.handleStandAloneStudyAccess(createdStudy.id, isStudyCreated, loadingCanceled);
-          }
-        },
-        error: (error) => {
-         this.loadingStudyDialogService.setError("Error creating study\n" + error.description);
+      next: (createdStudy) => {
+        if (!loadingCanceled) {
+          this.onStudyCreated.emit(createdStudy.id);
+          //the unzip has been started by the server, we have to wait for the study to have the state "creation_done", then open the read only
+          this.handleStandAloneStudyAccess(createdStudy.id, isStudyCreated, loadingCanceled);
         }
-      });
-    
+      },
+      error: (error) => {
+        this.loadingStudyDialogService.setError("Error creating study\n" + error.description);
+      }
+    });
+
   }
 
-private handleStandAloneStudyAccess(studyId: number, isStudyCreated: (loaded: boolean) => void, loadingCanceled: boolean): void {
+  private handleStandAloneStudyAccess(studyId: number, isStudyCreated: (loaded: boolean) => void, loadingCanceled: boolean): void {
 
-  //first check the status of the creation before opening the study
-  const studyCreatedObserver = new Observable<Study>((observer)=>{
+    //first check the status of the creation before opening the study
+    const studyCreatedObserver = new Observable<Study>((observer) => {
       this.studyCaseDataService.waitStudyCreationEnding(studyId, observer)
     });
-  studyCreatedObserver.subscribe({
+    studyCreatedObserver.subscribe({
       next: (study) => {
-        if(!loadingCanceled) {
+        if (!loadingCanceled) {
           //then open the study in read only
           if (study.creationStatus === CreationStatus.CREATION_DONE) {
-            this.launchLoadStudy(study.id, false,  true, isStudyCreated, false, true, false);
+            this.launchLoadStudy(study.id, false, true, isStudyCreated, false, true, false);
           } else {
             this.loadingStudyDialogService.setError("Error while unzipping study stand alone data: \n" + study.error);
           }
-          
+
         }
       },
       error: (errorReceived) => {
         this.loadingStudyDialogService.setError("Error while unzipping study stand alone data: \n" + errorReceived);
       }
     });
-}
+  }
 
-/**
-* Handles read-only access to study
-* @param studyId ID of the study
-* @param isStudyLoaded Callback function
-* @param loadingCanceled Whether loading was canceled
-*/
-private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void, loadingCanceled: boolean): void {
-  this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe({
-    next: (response) => {
-      if(!loadingCanceled) {
-        if (response.has_read_only) {
-          this.loadingStudyDialogService.setSteps(READONLY_DIALOG_STEPS);
-          // Launch study with appropriate server running status
-          this.launchLoadStudy(
-              studyId, 
-              false, 
-              true, 
-              isStudyLoaded, 
-              false, 
+  /**
+   * Handles read-only access to study
+   * @param studyId ID of the study
+   * @param isStudyLoaded Callback function
+   * @param loadingCanceled Whether loading was canceled
+   */
+  private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void, loadingCanceled: boolean): void {
+    this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe({
+      next: (response) => {
+        if (!loadingCanceled) {
+          if (response.has_read_only) {
+            this.loadingStudyDialogService.setSteps(READONLY_DIALOG_STEPS);
+            // Launch study with appropriate server running status
+            this.launchLoadStudy(
+              studyId,
+              false,
+              true,
+              isStudyLoaded,
+              false,
               response.has_read_only,
               response.allocation_is_running
-          );
-        } else {
-            
+            );
+          } else {
+
             // Handle case where read-only is not available
             this.displayValidationDialog(studyId, isStudyLoaded);
+          }
         }
-      }
-    },
-    error:  (errorReceived) => this.handleLoadingError(studyId, errorReceived, isStudyLoaded)
-  });
-}
+      },
+      error: (errorReceived) => this.handleLoadingError(studyId, errorReceived, isStudyLoaded)
+    });
+  }
 
-/**
+  /**
    * Display dialog before launch the loading study in edition mode (if study has no read only mode)
    * @param studyId id of the Study to load
 
    */
-  private displayValidationDialog(studyId: number, isStudyLoaded: (loaded:boolean) => void){
+  private displayValidationDialog(studyId: number, isStudyLoaded: (loaded: boolean) => void) {
     const validationDialogData = new ValidationDialogData();
     validationDialogData.message = `The read only is not available for this study. Do you want to load this study in edition mode ?`;
     validationDialogData.title = ' ';
@@ -302,51 +307,50 @@ private handleReadOnlyAccess(studyId: number, isStudyLoaded: (loaded: boolean) =
       const validationData: ValidationDialogData = result as ValidationDialogData;
       if (validationData !== null && validationData !== undefined && !validationData.cancel) {
         this.handleEditionModeAccess(studyId, isStudyLoaded, false);
-        }
-        else{
-          //cancel loading
-          this.loadingStudyDialogService.closeLoading();
-          this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
-        }
-      });
+      } else {
+        //cancel loading
+        this.loadingStudyDialogService.closeLoading();
+        this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
+      }
+    });
   }
-  
-/**
-* Handles regular access to study
-* @param studyId ID of the study
-* @param isStudyLoaded Callback function
-* @param loadingCanceled Whether loading was canceled
-*/
-private handleEditionModeAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void, 
-  loadingCanceled: boolean): void {
-  // Update loading dialog to show accessing server step
-  this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
-  this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
+
+  /**
+   * Handles regular access to study
+   * @param studyId ID of the study
+   * @param isStudyLoaded Callback function
+   * @param loadingCanceled Whether loading was canceled
+   */
+  private handleEditionModeAccess(studyId: number, isStudyLoaded: (loaded: boolean) => void,
+                                  loadingCanceled: boolean): void {
+    // Update loading dialog to show accessing server step
+    this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
+    this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
       next: (allocation) => {
-          if (allocation.status === StudyCaseAllocationStatus.DONE) {
-              this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
-              
-              if (!loadingCanceled) {
-                  this.launchLoadStudy(allocation.studyCaseId, false, false, isStudyLoaded, false);
-              } else {
-                  this.handleLoadingError(studyId, undefined, isStudyLoaded);
-              }
+        if (allocation.status === StudyCaseAllocationStatus.DONE) {
+          this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
+
+          if (!loadingCanceled) {
+            this.launchLoadStudy(allocation.studyCaseId, false, false, isStudyLoaded, false);
+          } else {
+            this.handleLoadingError(studyId, undefined, isStudyLoaded);
           }
+        }
       },
       error: (errorReceived) => this.handleLoadingError(studyId, errorReceived, isStudyLoaded)
-  });
-}
+    });
+  }
 
-/**
-* Handles errors during study loading
-* @param studyId ID of the study
-* @param error Error received, if any
-* @param isStudyLoaded Callback function
-*/
-private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: boolean) => void): void {
-  isStudyLoaded(false);
-  this.studyCaseDataService.checkPodStatusAndShowError(studyId, error, "Error loading study: ");
-}
+  /**
+   * Handles errors during study loading
+   * @param studyId ID of the study
+   * @param error Error received, if any
+   * @param isStudyLoaded Callback function
+   */
+  private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: boolean) => void): void {
+    isStudyLoaded(false);
+    this.studyCaseDataService.checkPodStatusAndShowError(studyId, error, "Error loading study: ");
+  }
 
   /**
    * Load the current study without read only mode (open in normal mode)
@@ -372,18 +376,18 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
     this.studyCaseDataService.createAllocationForExistingStudyCase(studyId).subscribe({
       next: (allocation) => {
         if (allocation.status === StudyCaseAllocationStatus.DONE) {
-          if(!loadingCanceled){ 
+          if (!loadingCanceled) {
             this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY);
             this.postProcessingService.addPostProcessingAfterSwitchEditionMode(this.studyCaseDataService.loadedStudy);
             //load study
             this.launchLoadStudy(studyId, true, false, isStudyLoaded, false);
           }
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined , "Error loading study: ");
+          this.studyCaseDataService.checkPodStatusAndShowError(studyId, undefined, "Error loading study: ");
         }
       },
       error: (errorReceived) => {
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: " );
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: ");
       }
     });
   }
@@ -406,21 +410,21 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
         loadingCanceled = true;
         this.router.navigate([Routing.STUDY_CASE, Routing.STUDY_MANAGEMENT]);
       });
-      if(!loadingCanceled){
-        // Update loading step using read only step
-        this.loadingStudyDialogService.setSteps(READONLY_DIALOG_STEPS)   
-        // load study
-        this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe({
-        next: (response) => { 
+    if (!loadingCanceled) {
+      // Update loading step using read only step
+      this.loadingStudyDialogService.setSteps(READONLY_DIALOG_STEPS)
+      // load study
+      this.studyCaseDataService.getPreRequisiteForReadOnly(studyId).subscribe({
+        next: (response) => {
           this.launchLoadStudy(studyId, false, true, isStudyLoaded, false, response.has_read_only, response.allocation_is_running);
         },
-        error:  (errorReceived) => this.handleLoadingError(studyId, errorReceived, isStudyLoaded)
+        error: (errorReceived) => this.handleLoadingError(studyId, errorReceived, isStudyLoaded)
       });
-       
-    }
-}        
 
-  
+    }
+  }
+
+
   /**
    * launch the Loading of the study if needed, and in parallel launch the loading of post processings then
    * finalize the loading with logs, ontology, validation...
@@ -433,7 +437,7 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
    */
   public launchLoadStudy(
     studyId: number,
-    withEmit:boolean,
+    withEmit: boolean,
     readOnlyMode: boolean,
     functionToDoAfterLoading: any,
     isFromCreateStudy: boolean,
@@ -446,18 +450,17 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
         this.loadingDialogService.updateMessage(message),
       complete: () => this.loadingDialogService.closeLoading(),
     };
- 
+
     let loadedStudy$ = new Observable<LoadedStudy>((observer) => observer.next(null));
-    if(readOnlyMode) {
-        // Use data server to load study in read only mode
-        this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY)
-        loadedStudy$ = this.getStudyInReadOnlyMode(studyId,withEmit, !serverIsRunningForReadOnly);
-    }
-    else {
+    if (readOnlyMode) {
+      // Use data server to load study in read only mode
+      this.loadingStudyDialogService.updateStep(LoadingDialogStep.LOADING_STUDY)
+      loadedStudy$ = this.getStudyInReadOnlyMode(studyId, withEmit, !serverIsRunningForReadOnly);
+    } else {
       // Load study in edition mode
       loadedStudy$ = this.studyCaseMainService.loadStudy(studyId, withEmit);
     }
-    
+
     loadedStudy$.subscribe({
       next: (resultLoadedStudy) => {
         if (this.loadingStudyDialogService.isLoadingOpen()) {
@@ -465,28 +468,27 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
 
           // in case of read only mode, set post processings of the loaded study case
           const isReadOnlyMode = loadedStudyCase.loadStatus === LoadStatus.READ_ONLY_MODE
-          if (isReadOnlyMode){
+          if (isReadOnlyMode) {
 
             // Set post processing dictionnary from the loaded study
             this.postProcessingService.clearPostProcessingDict();
-    
-            // load read only mode
-            this.postProcessingService.setPostProcessing(loadedStudyCase);  
 
-            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);     
-          }
-          else {
+            // load read only mode
+            this.postProcessingService.setPostProcessing(loadedStudyCase);
+
+            this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);
+          } else {
             const isLoaded = loadedStudyCase.loadStatus === LoadStatus.LOADED
-            
+
             //load post processings if the study is loaded
             let loadPostProc$ = new Observable<boolean>((observer) => observer.next(null));
-            if (isLoaded){
+            if (isLoaded) {
               loadPostProc$ = this.studyCasePostProcessingService.loadStudy(studyId, false);
             }
 
             loadPostProc$.subscribe({
               next: () => {
-                
+
                 this.studyCaseLoadingService.finalizeLoadedStudyCase(loadedStudyCase, functionToDoAfterLoading, isFromCreateStudy, false).subscribe(messageObserver);
                 if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(studyId.toString())) {
                   this.loadingDialogService.updateMessage(`Loading unsaved changes`);
@@ -500,19 +502,20 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
               },
               error: (errorReceived) => {
                 functionToDoAfterLoading(false);
-                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: " );
+                this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: ");
               }
             });
-          }   
-        }      
+          }
+        }
       },
       error: (errorReceived) => {
-       
-        functionToDoAfterLoading(false);(false);
-        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: " );
+
+        functionToDoAfterLoading(false);
+        (false);
+        this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: ");
       }
     });
-}
+  }
 
   public startConnectionStatusTimer() {
 
@@ -557,88 +560,92 @@ private handleLoadingError(studyId: number, error: any, isStudyLoaded: (loaded: 
   }
 
   public getStudyInReadOnlyMode(studyId: number, withEmit: boolean, useDataServer: boolean): Observable<LoadedStudy> {
-        const loaderObservable = new Observable<LoadedStudy>((observer) => {
-          // Start study case loading to other services
-          this.loadStudyInReadOnlyModeTimeout(studyId, withEmit, observer, useDataServer);
-        });
-        return loaderObservable;
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      // Start study case loading to other services
+      this.loadStudyInReadOnlyModeTimeout(studyId, withEmit, observer, useDataServer);
+    });
+    return loaderObservable;
   }
-    
+
   private loadStudyInReadOnlyModeTimeout(studyId: number, withEmit: boolean, loaderObservable: Subscriber<LoadedStudy>, useDataServer: boolean) {
 
     // Select appropriate service based on server type
     const getStudyInReadOnlyMode = useDataServer ? this.studyCaseDataService.getStudyInReadOnlyModeUsingDataServer(studyId) : this.studyCaseMainService.getStudyInReadOnlyModeUsingMainServer(studyId);
 
     // Start timeout to load study in Read only
-    getStudyInReadOnlyMode.subscribe({ 
+    getStudyInReadOnlyMode.subscribe({
       next: (loadedStudy) => {
+        if (loadedStudy === null || loadedStudy === undefined) {
+          loaderObservable.error("Error while retreiving loaded study");
+          return;
+        }
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
           setTimeout(() => {
             this.loadStudyInReadOnlyModeTimeout(studyId, withEmit, loaderObservable, useDataServer);
           }, 3000);
         } else {
           //get current study user info
-          if (loadedStudy !== null && loadedStudy !== undefined && loadedStudy.studyCase !== null && loadedStudy.studyCase !== undefined){
-          this.studyCaseDataService.getStudy(studyId, false).subscribe({next:(study)=>{
-            if (study !== null && study !== undefined){
-              loadedStudy.studyCase = study;
-            }
-            if(withEmit){
-                const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
-                if ((currentLoadedStudy !== null) && (currentLoadedStudy !== undefined)) {
-                  this.studyCaseExecutionObserverService.removeStudyCaseObserver(currentLoadedStudy.studyCase.id);
+          if (loadedStudy.studyCase !== undefined) {
+            this.studyCaseDataService.getStudy(studyId, false).subscribe({
+              next: (study) => {
+                if (study !== null && study !== undefined) {
+                  loadedStudy.studyCase = study;
                 }
-              
-                this.studyCaseDataService.setCurrentStudy(loadedStudy);
-                this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
-            }
-        
-            loaderObservable.next(loadedStudy);
-            
-          },
-          error:(error) => {
-            loaderObservable.error(error);
-          }});
-          }
-          else{
+                if (withEmit) {
+                  const currentLoadedStudy = this.studyCaseDataService.loadedStudy;
+                  if ((currentLoadedStudy !== null) && (currentLoadedStudy !== undefined)) {
+                    this.studyCaseExecutionObserverService.removeStudyCaseObserver(currentLoadedStudy.studyCase.id);
+                  }
+
+                  this.studyCaseDataService.setCurrentStudy(loadedStudy);
+                  this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
+                }
+
+                loaderObservable.next(loadedStudy);
+
+              },
+              error: (error) => {
+                loaderObservable.error(error);
+              }
+            });
+          } else {
             loaderObservable.error("Error while retreiving loaded study");
           }
         }
-        },
-          error:(error) => {
-            loaderObservable.error(error);
-        }
+      },
+      error: (error) => {
+        loaderObservable.error(error);
+      }
     });
-  
+
   }
 
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
   public getAppInfo() {
-      return this.http.get(this.apiRoute + "/infos").pipe(map(
-        response => {
-          this.platformInfo = response
-          return this.platformInfo;      
-        }
-      )); 
+    return this.http.get(this.apiRoute + "/infos").pipe(map(
+      response => {
+        this.platformInfo = response
+        return this.platformInfo;
+      }
+    ));
   }
 
   getAppSupport() {
     if (this.support !== null && this.support !== undefined) {
       return of(this.support);
-   }
-   else {
-    return this.http.get(this.apiRoute + "/support").pipe(map(
-       response => {
-         this.support = response
-         return this.support;      
-       }
-     ));  
-   }
+    } else {
+      return this.http.get(this.apiRoute + "/support").pipe(map(
+        response => {
+          this.support = response
+          return this.support;
+        }
+      ));
+    }
   }
 
   public getGitReposInfo() {
-    return this.http.get(this.apiRoute + "/git-repos-info"); 
+    return this.http.get(this.apiRoute + "/git-repos-info");
   }
 }

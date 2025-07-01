@@ -616,3 +616,15 @@ gridster .gridster-column {
   height: 75% !important;
   min-height: 0;
 }
+
+quill-view-html .ql-container {
+  border: none;
+}
+
+quill-view-html .ql-editor {
+  padding: 0;
+}
+
+quill-view-html .ql-editor p {
+  margin: 0;
+}
