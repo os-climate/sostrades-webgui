@@ -180,8 +180,10 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
       });
     }
     // Set the layout size if the plot is being resized in the dashboard
-    this.plotData.layout.height = this.height || 450;
-    this.plotData.layout.width = this.width || 600;
+    if (this.plotData.data[0].type !== 'table') {
+      this.plotData.layout.height = this.height || 450;
+      this.plotData.layout.width = this.width || 600;
+    }
   }
 
   private createCommonModeBarButtons(showLegend: boolean) {
