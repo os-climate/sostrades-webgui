@@ -145,6 +145,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     if ((this.dashboardUpdateItemSubscription !== null) && (this.dashboardUpdateItemSubscription !== undefined)) {
       this.dashboardUpdateItemSubscription.unsubscribe();
     }
+    if ((this.sectionExpansionSubscription !== null) && (this.sectionExpansionSubscription !== undefined)) {
+      this.sectionExpansionSubscription.unsubscribe();
+    }
   }
 
   setupDragHandling() {

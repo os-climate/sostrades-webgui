@@ -610,9 +610,27 @@ gridster .gridster-column {
 }
 
 .ql-container {
-  flex: 1 1 auto;
   overflow-y: auto;
-  border: none;
   height: 75% !important;
   min-height: 0;
+}
+
+quill-view-html .ql-editor {
+  padding: 0;
+}
+
+quill-view-html .ql-editor p {
+  margin: 0;
+}
+
+.quill-content quill-view-html .ql-editor {
+  width: 100%;
+}
+
+.quill-content quill-view-html .ql-editor p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: block;
 }
