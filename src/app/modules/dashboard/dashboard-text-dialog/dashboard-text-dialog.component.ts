@@ -28,8 +28,7 @@ export class DashboardTextDialogComponent implements AfterViewInit {
         [{ color: [] }, { background: [] }],
         [{ align: [] }],
         ['clean'],
-      ],
-      placeholder: '',
+      ]
     };
     this.dialogRef.afterOpened().subscribe(() => {
       this.focusEditor();

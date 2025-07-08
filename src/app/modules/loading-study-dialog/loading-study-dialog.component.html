@@ -22,10 +22,11 @@
             class="line-zero"
             ></div>
           </div>
-          
 
           <!-- check circles gray or done + title-->
           <div class="bullet-container">
+            <span class="step-descrition" *ngIf="step.step >= currentStep">{{ step.labelBefore }}</span> 
+            <span class="step-descrition" *ngIf="step.step < currentStep">{{ step.labelAfter }}</span>
             <mat-icon *ngIf="step.step !== currentStep"
               [ngClass]="{'iconValid':true,
                         'color-success':step.step < currentStep, 
@@ -41,8 +42,7 @@
               [ngClass]="{'color-error': true}"
               >error
             </mat-icon>
-            <span class="step-descrition" *ngIf="step.step >= currentStep">{{ step.labelBefore }}</span> 
-            <span class="step-descrition" *ngIf="step.step < currentStep">{{ step.labelAfter }}</span>
+            
           </div>
         
       

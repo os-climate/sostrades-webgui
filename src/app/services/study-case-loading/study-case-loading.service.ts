@@ -136,10 +136,7 @@ export class StudyCaseLoadingService {
               // Load dashboard from api file
               this.dashboardService.getDashboard(loadedStudy.studyCase.id).subscribe({
                 next: () => {
-                  this.snackbarService.showInformation('Dashboard loaded');
-                },
-                error: () => {
-                  this.snackbarService.showError('Dashboard not loaded');
+                  console.log('Dashboard loaded');
                 }
               });
               // Load logs

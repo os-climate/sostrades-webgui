@@ -47,7 +47,7 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
             }
           }); 
         } else {
-          this.snackbarService.showError(`This interface diagramme is not available for this study. To show it, please switch to edition mode`);
+          this.snackbarService.showError(`This interface diagram is not available for this study. To show it, please switch to edition mode`);
           this.isLoading = false;
         }
       } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.INTERFACE)){

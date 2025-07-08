@@ -29,6 +29,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
   public studyName: string;
   public isLoadedStudy: boolean;
   public isReadOnlyMode: boolean;
+  public isStandAlone: boolean;
   public loadedStudy: LoadedStudy;
   public hasUnsavedChanges: boolean;
 
@@ -49,6 +50,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this.studyName = '';
     this.isLoadedStudy = false;
     this.isReadOnlyMode = false;
+    this.isStandAlone = false;
   }
 
   ngOnInit() {
@@ -62,6 +64,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
         } else {
           this.isReadOnlyMode = false;
         }
+        this.isStandAlone = this.loadedStudy.studyCase.isStandAlone;
         this.isLoadedStudy = true;
         this.onClickTreeview(this.loadedStudy);
       } else {
@@ -101,7 +104,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     }
     this.headerService.changeTitle(NavigationTitle.STUDY_WORKSPACE);
     if (this.studyCaseDataService.loadedStudy.loadStatus === LoadStatus.READ_ONLY_MODE) {
-      if (this.studyCaseDataService.preRequisiteReadOnlyDict) {
+      if (this.studyCaseDataService.preRequisiteReadOnlyDict && !this.studyCaseDataService.loadedStudy.studyCase.isStandAlone) {
         if(this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
           this.studyCaseMainService.setStudyIsActive();
         }
