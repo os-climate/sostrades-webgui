@@ -13,7 +13,7 @@ export class DashboardService extends DataHttpService {
   public onDashboardItemsAdded: EventEmitter<DisplayableItem> = new EventEmitter();
   public onDashboardItemsRemoved: EventEmitter<DisplayableItem> = new EventEmitter();
   public onDashboardItemsUpdated: EventEmitter<DisplayableItem> = new EventEmitter();
-  public onSectionExpansion: EventEmitter<void> = new EventEmitter();
+  public onSectionExpansion: EventEmitter<DisplayableItem> = new EventEmitter();
   public dashboardItems: { [id: string]: DisplayableItem };
   public isDashboardUpdated: boolean
   public isDashboardInEdition: boolean;
@@ -70,8 +70,8 @@ export class DashboardService extends DataHttpService {
     this.isDashboardUpdated = true;
   }
 
-  onSectionExpansionEvent() {
-    this.onSectionExpansion.emit();
+  onSectionExpansionEvent(item: DisplayableItem) {
+    this.onSectionExpansion.emit(item);
   }
 
   // checks if an item is selected
@@ -97,6 +97,35 @@ export class DashboardService extends DataHttpService {
     return Object.values(this.dashboardItems);
   }
 
+  // apply the new scaling factor to the dashboard items
+  // does not trigger an update so the save button is not activated
+  handleOldDashboardItems(item: DisplayableItem) {
+    switch (item.type) {
+      case 'section':
+        // check if the items are old items
+        if (item.minCols < 40 && item.minRows < 16) {
+          item.minCols = 40;
+          item.minRows = 16;
+          item.cols *= 4;
+          item.rows *= 4;
+          if (item.data.expandedSize)
+            item.data.expandedSize *= 4;
+        }
+        break;
+      case 'graph':
+        // check if the items are old items
+        if (item.minCols < 12 && item.minRows < 8) {
+          item.minCols = 12;
+          item.minRows = 8;
+          item.cols *= 4;
+          item.rows *= 4;
+        }
+        break;
+      case 'text':
+        break;
+    }
+  }
+
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
@@ -108,6 +137,7 @@ export class DashboardService extends DataHttpService {
         const dashboard: Dashboard = Dashboard.Create(response);
         this.dashboardItems = {};
         for (const item of dashboard.items) {
+          this.handleOldDashboardItems(item);
           this.dashboardItems[item.id] = item
         }
         return dashboard;

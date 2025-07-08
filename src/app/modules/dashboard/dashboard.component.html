@@ -77,7 +77,7 @@
                 <i class="fa-solid fa-arrows-up-down-left-right"></i>
               </button>
               <app-post-processing-plotly
-                [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+                [class]="item.data && item.data.graphData && item.data.graphData.data && item.data.graphData.data[0].type === 'table' ? 'table' : 'plot'"
                 [fullNamespace]=""
                 [plotData]="item.data.graphData"
                 [disciplineName]="item.disciplineName"

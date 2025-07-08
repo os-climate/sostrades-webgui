@@ -14,7 +14,7 @@
 </mat-card>
 
 <mat-expansion-panel class="expansion-panel" expanded="true">
-  <mat-expansion-panel-header style="background-color: #d9d9d9d9" >
+  <mat-expansion-panel-header style="background-color: #d9d9d9d9">
     <mat-panel-title style="font-size: 15px; font-weight: 550">
       {{ postProcessingBundle.name | ontologyDisciplineConverter }} {{ additionalDisciplineName }}
       <span class="spacer"></span>
@@ -46,7 +46,7 @@
                     [formControl]="chartsFiltered"
                     placeholderLabel="Find chart..."
                     noEntriesFoundLabel="No matching chart found"
-                    >
+                  >
                   </ngx-mat-select-search>
                 </mat-option>
                 <app-select-all-option
@@ -109,48 +109,54 @@
     "
     class="plot-resize-zone"
   >
-  <div *ngIf="postProcessingKeyCharts.length" style="width: 100%;background-color: #f4f4f4;">
-    <div class="section-panel key-charts">
-      <mat-expansion-panel id="key_charts_section" style="margin-bottom: 2px;"
-      [expanded]="isExpand('key_charts', true)"
-      (opened)="setIsExpand('key_charts', true)"
-      (closed)="setIsExpand('key_charts', false)">
-        <mat-expansion-panel-header>
+    <div *ngIf="postProcessingKeyCharts.length" style="width: 100%;background-color: #f4f4f4;">
+      <div class="section-panel key-charts">
+        <mat-expansion-panel
+          id="key_charts_section"
+          style="margin-bottom: 2px;"
+          [expanded]="isExpand('key_charts', true)"
+          (opened)="setIsExpand('key_charts', true)"
+          (closed)="setIsExpand('key_charts', false)"
+        >
+          <mat-expansion-panel-header>
 
-          <mat-panel-title style="color: #0b78b8;">
-            <span style="width: 15px; margin-right: 5px;">
-              <i class="fa-solid fa-star toolbar-icon" style="color: #0b78b8;"></i>
-            </span>
-            Key Charts
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <app-post-processing-plotly
-          [class]="
+            <mat-panel-title style="color: #0b78b8;">
+              <span style="width: 15px; margin-right: 5px;">
+                <i class="fa-solid fa-star toolbar-icon" style="color: #0b78b8;"></i>
+              </span>
+              Key Charts
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-post-processing-plotly
+            [class]="
             plot.data && plot.data[0] && plot.data[0].type === 'table'
               ? 'table'
               : 'plot'
              "
 
-          *ngFor="let plot of postProcessingKeyCharts"
-          [plotData]="plot"
-          [disciplineName]="postProcessingBundle.disciplineName"
-          [name]="postProcessingBundle.name"
-          [plotIndex]="getPlotIndex(plot)"
-          [fullNamespace]="fullNamespace"
-          [isEditing]=""
-        >
-        </app-post-processing-plotly>
-      </mat-expansion-panel>
+            *ngFor="let plot of postProcessingKeyCharts"
+            [plotData]="plot"
+            [disciplineName]="postProcessingBundle.disciplineName"
+            [name]="postProcessingBundle.name"
+            [plotIndex]="getPlotIndex(plot)"
+            [fullNamespace]="fullNamespace"
+            [isEditing]=""
+          >
+          </app-post-processing-plotly>
+        </mat-expansion-panel>
+      </div>
     </div>
-  </div>
     <div *ngIf="postProcessingWithSection.length" style="width: 100%;background-color: #f4f4f4;">
       <div *ngFor="let section of postProcessingWithSection" class="section-panel">
-        <mat-expansion-panel [id]="section.post_processing_section_name + '_section'" style="margin-bottom: 2px;"
-        [expanded]="isExpand(section.post_processing_section_name, section.post_processing_section_is_opened)"
-        (opened)="setIsExpand(section.post_processing_section_name, true)"
-        (closed)="setIsExpand(section.post_processing_section_name, false)">
+        <mat-expansion-panel
+          [id]="section.post_processing_section_name + '_section'"
+          style="margin-bottom: 2px;"
+          [expanded]="isExpand(section.post_processing_section_name, section.post_processing_section_is_opened)"
+          (opened)="setIsExpand(section.post_processing_section_name, true)"
+          (closed)="setIsExpand(section.post_processing_section_name, false)"
+        >
           <mat-expansion-panel-header>
-            <mat-panel-title >
+            <mat-panel-title>
               <span style="width: 24px;"></span>
               {{ section.post_processing_section_name }}
             </mat-panel-title>
@@ -173,26 +179,26 @@
         </mat-expansion-panel>
       </div>
     </div>
-      <app-post-processing-pareto-front
-        class="plot-pareto-front"
-        *ngFor="let plot of postProcessingBundle.plotlyParetoFront"
-        [plotData]="plot"
-      >
-      </app-post-processing-pareto-front>
+    <app-post-processing-pareto-front
+      class="plot-pareto-front"
+      *ngFor="let plot of postProcessingBundle.plotlyParetoFront"
+      [plotData]="plot"
+    >
+    </app-post-processing-pareto-front>
 
-      <app-post-processing-plotly
-        [class]="
+    <app-post-processing-plotly
+      [class]="
           plot.data && plot.data[0] && plot.data[0].type === 'table'
             ? 'table'
             : 'plot'
         "
-        *ngFor="let plot of postProcessingWithoutSection"
-        [plotData]="plot"
-        [disciplineName]="postProcessingBundle.disciplineName"
-        [name]="postProcessingBundle.name"
-        [plotIndex]="getPlotIndex(plot)"
-        [fullNamespace]="fullNamespace"
-      >
-      </app-post-processing-plotly>
+      *ngFor="let plot of postProcessingWithoutSection"
+      [plotData]="plot"
+      [disciplineName]="postProcessingBundle.disciplineName"
+      [name]="postProcessingBundle.name"
+      [plotIndex]="getPlotIndex(plot)"
+      [fullNamespace]="fullNamespace"
+    >
+    </app-post-processing-plotly>
   </div>
 </mat-expansion-panel>

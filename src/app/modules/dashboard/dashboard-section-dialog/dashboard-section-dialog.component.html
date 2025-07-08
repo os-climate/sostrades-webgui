@@ -15,7 +15,7 @@
             <div *ngSwitchCase="itemType.graph">
               {{item.data.title}}
             </div>
-            <div *ngSwitchCase="itemType.text">
+            <div *ngSwitchCase="itemType.text" class="text-item">
               {{cleanText(item.data.content)}}
             </div>
           </div>
@@ -47,7 +47,7 @@
             <div *ngSwitchCase="itemType.graph">
               {{item.data.title}}
             </div>
-            <div *ngSwitchCase="itemType.text">
+            <div *ngSwitchCase="itemType.text" class="text-item">
               {{cleanText(item.data.content)}}
             </div>
           </div>

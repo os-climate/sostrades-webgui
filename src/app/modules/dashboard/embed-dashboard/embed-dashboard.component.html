@@ -1,0 +1,48 @@
+<div class="embedded-dashboard-container">
+  <div *ngIf="loading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && dashboard" class="dashboard-content">
+    <div class="gridster-container">
+      <gridster [options]="options">
+        <ng-container *ngFor="let item of dashboard" [ngSwitch]="item.type">
+          <gridster-item *ngSwitchCase="itemType.graph" [item]="item">
+            <div class="graph-card">
+              <app-post-processing-plotly
+                [class]="item.data && item.data.graphData && item.data.graphData.data && item.data.graphData.data[0].type === 'table' ? 'table' : 'plot'"
+                [fullNamespace]=""
+                [plotData]="item.data.graphData"
+                [disciplineName]="item.disciplineName"
+                [name]="item.name"
+                [plotIndex]="item.plotIndex"
+                [height]="CalculateGraphHeight(item)"
+                [width]="CalculateGraphWidth(item)"
+                [isEditing]="options.draggable.enabled">
+              </app-post-processing-plotly>
+            </div>
+          </gridster-item>
+          <gridster-item *ngSwitchCase="itemType.text" [item]="item">
+            <div class="text-card">
+              <app-dashboard-text-item
+                [textItem]="item"
+                [inEditionMode]="options.draggable.enabled">
+              </app-dashboard-text-item>
+            </div>
+          </gridster-item>
+          <gridster-item *ngSwitchCase="itemType.section" [item]="item">
+            <div class="section-card">
+              <app-dashboard-section-item
+                [sectionItem]="item"
+                [inEditionMode]="options.draggable.enabled">
+              </app-dashboard-section-item>
+            </div>
+          </gridster-item>
+        </ng-container>
+      </gridster>
+    </div>
+  </div>
+</div>

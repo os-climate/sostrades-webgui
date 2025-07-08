@@ -51,6 +51,8 @@ mat-card-content:first-child {
 .card-actions {
   display: flex;
   justify-content: flex-start;
+  position: absolute;
+  top: 9px;
 }
 
 .edit-actions {
@@ -62,13 +64,14 @@ mat-card-content:first-child {
 .edit-content-wrapper {
   overflow-y: auto;
   height: 100%;
+  width: 100%;
+  padding: 5px 40px 5px 95px;
 }
 
 .content-wrapper {
   overflow-y: auto;
-  height: calc(100% - 36px);
-  position: relative;
-  top: 36px;
+  width: 100%;
+  padding: 5px 40px 5px 5px;
 }
 
 .empty-content {
@@ -91,7 +94,7 @@ mat-card-content:first-child {
 .show-section-header {
   flex: 0 0 auto;
   position: relative;
-  padding: 16px;
+  padding: 4px;
   display: flex;
   flex-direction: column;
 }
@@ -99,9 +102,10 @@ mat-card-content:first-child {
 .hidden-section-header {
   flex: 0 0 auto;
   position: relative;
-  padding: 16px;
+  padding: 4px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 4px;
 }
 
 .section-separator {
@@ -120,17 +124,33 @@ mat-card-content:first-child {
 .container-items {
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
   gap: 16px;
 }
 
-.item {
+.table {
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+  0px 1px 5px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+}
+
+.plot {
   overflow: hidden;
   position: relative;
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
-    0px 1px 5px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
-  min-width: 290px;
-  max-width: 600px;
-  max-height: 450px;
+  0px 1px 5px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+  width: 600px;
+  height: 450px;
+}
+
+.text {
+  width: 250px;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+  0px 1px 5px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
 }
 
 .no-graphs {
@@ -149,10 +169,15 @@ mat-card-content:first-child {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 .expansion-button {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 2px;
+  right: 4px;
+}
+
+.correct-height {
+  height: 100%;
 }
