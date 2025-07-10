@@ -6,7 +6,7 @@
 
   <div *ngIf="error" class="error-message">{{ error }}</div>
 
-  <div *ngIf="!loading && !error && dashboard" class="dashboard-content">
+  <div *ngIf="!loading && !error && dashboard.length > 0; else noDashboard" class="dashboard-content">
     <div class="gridster-container">
       <gridster [options]="options">
         <ng-container *ngFor="let item of dashboard" [ngSwitch]="item.type">
@@ -45,4 +45,13 @@
       </gridster>
     </div>
   </div>
+  <ng-template #noDashboard>
+    <div class="missing-dashboard">
+      <span>You are trying to access an empty dashboard.</span>
+      <br>
+      <span>You can start by creating a dashboard directly on the SOSTrades platform.</span>
+      <br>
+      <span>Then retry to access the embedded version here.</span>
+    </div>
+  </ng-template>
 </div>

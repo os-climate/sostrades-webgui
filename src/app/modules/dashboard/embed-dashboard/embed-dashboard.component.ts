@@ -5,7 +5,6 @@ import { GridsterConfig } from "angular-gridster2";
 import { Dashboard, DashboardGraph, DisplayableItem } from "../../../models/dashboard.model";
 import { Subscription } from "rxjs";
 import { TypeCheckingTools } from "../../../tools/type-checking.tool";
-import { EmbedDashboardService } from "../../../services/dashboard/embed-dashboard/embed-dashboard.service";
 
 @Component({
   selector: 'app-embed-dashboard',
@@ -17,7 +16,6 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
   private routeSubscription: Subscription;
   private sectionExpansionSubscription: Subscription;
   private previousPositions: string;
-  private isEmbedded: boolean;
 
   @Input() studyId: number;
   public dashboard: DisplayableItem[];
@@ -34,9 +32,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private dashboardService: DashboardService,
-    private embeddingService: EmbedDashboardService
-  ) {
+    private dashboardService: DashboardService) {
     this.options = {
       draggable: {
         enabled: false,
@@ -57,12 +53,9 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.dashboard = [];
     this.error = null;
-    this.isEmbedded = false;
   }
 
   ngOnInit(): void {
-    this.embeddingService.allowEmbedding();
-    this.isEmbedded = this.embeddingService.isEmbbed();
     this.routeSubscription = this.route.params.subscribe(params => {
       const idRequested = params['id'];
       if (idRequested !== null && idRequested !== undefined && TypeCheckingTools.isInt(idRequested)) {
