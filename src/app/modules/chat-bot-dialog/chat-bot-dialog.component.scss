@@ -25,7 +25,17 @@
     padding-left: 10px;
     padding-right: 10px;
     align-content: space-evenly;
+    width: 100%;
 }
+
+.llm-title:hover{
+    cursor: pointer;
+}
+
+.minimized{
+    overflow: hidden;
+}
+
 
 .close-button{
     color: #f0f0f0; 
