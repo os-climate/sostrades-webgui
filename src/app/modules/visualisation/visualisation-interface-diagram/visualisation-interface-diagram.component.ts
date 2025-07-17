@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { Graphviz, graphviz } from 'd3-graphviz';
 import * as d3 from 'd3';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
@@ -13,7 +13,7 @@ import { VisualizationDiagrams } from 'src/app/models/study.model';
   templateUrl: './visualisation-interface-diagram.component.html',
   styleUrls: ['./visualisation-interface-diagram.component.scss']
 })
-export class VisualisationInterfaceDiagramComponent implements OnInit {
+export class VisualisationInterfaceDiagramComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('graphviz_placeholder', { static: true }) private el: ElementRef;
 
   public isLoading: boolean;
@@ -23,6 +23,8 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
   dotString: string;
   drag:d3.DragBehavior<Element, unknown, unknown>;
   zoom:d3.ZoomBehavior<Element, unknown>;
+  private resizeObserver: ResizeObserver;
+  private resizeTimeout: any;
 
   constructor(
     private studyCaseDataService: StudyCaseDataService,
@@ -54,6 +56,32 @@ export class VisualisationInterfaceDiagramComponent implements OnInit {
         this.dotString = loadedStudy.n2Diagram[VisualizationDiagrams.INTERFACE]['dotString'];
         this.initGraph();
       }
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.resizeTimeout) {
+        clearTimeout(this.resizeTimeout);
+      }
+      this.resizeTimeout = setTimeout(() => {
+        if (!this.isLoading && this.dotString) {
+          this.initGraph();
+        }
+      }, 200);
+    });
+    if (this.el && this.el.nativeElement) {
+      this.resizeObserver.observe(this.el.nativeElement);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeObserver && this.el && this.el.nativeElement) {
+      this.resizeObserver.unobserve(this.el.nativeElement);
+      this.resizeObserver.disconnect();
+    }
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
     }
   }
 
