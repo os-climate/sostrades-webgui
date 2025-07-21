@@ -948,7 +948,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.loadingDialogService.showLoading('Regenerating study case read only, this may take a while...');
 
     this.studyCaseMainService.reloadStudyReadOnly(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-      next: (response) => {
+      next: () => {
   
           //send coedition reload
           this.socketService.reloadStudyReadOnly(this.studyCaseDataService.loadedStudy.studyCase.id);
