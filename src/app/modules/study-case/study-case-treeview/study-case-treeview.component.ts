@@ -41,6 +41,7 @@ import { StudyCaseValidationService } from 'src/app/services/study-case-validati
 import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.component';
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { PanelSection } from 'src/app/models/user-study-preferences.model';
+import { AppDataService } from 'src/app/services/app-data/app-data.service';
 
 
 @Component({
@@ -85,6 +86,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   public studyIsDoneId: number;
   public studyIsLoaded: boolean;
   public studyCanReload: boolean;
+  public hasReadOnlyFile: boolean;
   public showStudyRefreshing: boolean;
   public filterTreeInput: string;
   public loadedStudyForTreeview : LoadedStudy;
@@ -140,7 +142,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     private studyDialogService: StudyDialogService,
     private filterService: FilterService,
     private studyCaseValidationService: StudyCaseValidationService,
-    private flavorsService: FlavorsService
+    private flavorsService: FlavorsService,
+    private appDataService: AppDataService
   ) {
     this.onStudyCaseChangeSubscription = null;
     this.onTradeSpaceSelectionChangedSubscription = null;
@@ -169,6 +172,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
 
     this.isStudyNoData = false;
     this.isStudyReadOnly = false;
+    this.hasReadOnlyFile = false;
     this.canExecute = false;
 
     this.isTreeViewFiltered = false;
@@ -197,6 +201,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         // Applying no data and read only values
         this.isStudyNoData = currentLoadedStudy.noData;
         this.isStudyReadOnly = currentLoadedStudy.readOnly;
+        this.hasReadOnlyFile = currentLoadedStudy.studyCase.hasReadOnlyFile;
         
         //Check if the user has the execution rights to compute the study
         this.canExecute = this.userService.hasExecutionRights();
@@ -939,6 +944,36 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
       });
   }
 
+  onReloadStudyReadOnly() {
+    this.loadingDialogService.showLoading('Regenerating study case read only, this may take a while...');
+
+    this.studyCaseMainService.reloadStudyReadOnly(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
+      next: () => {
+  
+          //send coedition reload
+          this.socketService.reloadStudyReadOnly(this.studyCaseDataService.loadedStudy.studyCase.id);
+      
+          if (this.studyCaseDataService.loadedStudy.treeview.rootNode.status === DisciplineStatus.STATUS_DONE) {
+            this.studyIsDone = true;
+          } else {
+            this.onShowHideStatus(true);
+            this.studyIsDone = false;
+          }     
+          this.snackbarService.showInformation('Study case read only successfully regenerated');
+          this.loadingDialogService.closeLoading();
+      },
+      error: (errorReceived) => {
+        const error = errorReceived as SoSTradesError;
+        this.loadingDialogService.closeLoading();
+        if (error.redirect) {
+          this.snackbarService.showError(error.description);
+        } else {
+          this.snackbarService.showError('Study case read only regeneration failed : ' + error.description);
+        }
+      }
+    });
+  }
+
   reloadStudy() {
     this.loadingDialogService.showLoading('Requesting study case reloading');
 
@@ -1274,6 +1309,16 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     else if (notification.type === CoeditionType.RELOAD && notification.isOnlyMessage === false) {
       this.updateTreeview();
       this.startBackgroundLoadingPostProcessing();
+    }
+    else if (notification.type === CoeditionType.RELOAD_READ_ONLY && notification.isOnlyMessage === false) {
+      if (this.studyCaseDataService.loadedStudy !== null && 
+        this.studyCaseDataService.loadedStudy !== undefined &&
+        this.studyCaseDataService.loadedStudy.readOnly
+      ) {
+        this.appDataService.loadStudyInReadOnlyMode(
+          this.studyCaseDataService.loadedStudy.studyCase.id, 
+          this.studyCaseDataService.loadedStudy.studyCase.name);
+      }
     }
   }
 

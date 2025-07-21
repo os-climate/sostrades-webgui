@@ -99,6 +99,29 @@ export class StudyCaseMainService extends MainHttpService {
 
   //#endregion Load study
 
+  //#region reload read only mode
+  //#region Reload study
+  reloadStudyReadOnly(studyid: number): Observable<LoadedStudy> {
+    const loaderObservable = new Observable<LoadedStudy>((observer) => {
+      this.reloadStudyReadOnlytimeout(studyid, observer);
+    });
+    return loaderObservable;
+  }
+
+  private reloadStudyReadOnlytimeout(studyid: number, loaderObservable: Subscriber<LoadedStudy>) {
+    return this.http.get(`${this.apiRoute}/${studyid}/read-only-mode/reload`, this.options).subscribe(
+        { next: () => {
+          setTimeout(() => {
+            this.loadStudyTimeout(studyid, false, loaderObservable, false);
+          }, 3000);
+        
+      },
+      error:(error) => {
+        loaderObservable.error(error);
+      }
+    });
+  }
+
   //#region Reload study
   reloadStudy(studyid: number): Observable<LoadedStudy> {
     const loaderObservable = new Observable<LoadedStudy>((observer) => {
