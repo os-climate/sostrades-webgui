@@ -65,6 +65,7 @@ export enum CoeditionType {
   EXECUTION_STOPPED = 'execution stopped',
   CLAIM = 'claim',
   RELOAD = 'reload',
+  RELOAD_READ_ONLY = 'read only regenerated',
   VALIDATION_CHANGE = 'validation_change',
   EXPORT = 'export'
 }

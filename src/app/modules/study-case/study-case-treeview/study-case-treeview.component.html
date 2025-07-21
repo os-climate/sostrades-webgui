@@ -100,6 +100,7 @@
       *ngIf="!isStudyReadOnly" 
       (click)="fileInput.click()"
       matTooltip="Import dataset from file.json"
+      [disabled]="executionStarted"
     >
       <i class="fa-solid fa-file-import"></i> 
     </button>
@@ -117,6 +118,7 @@
     *ngIf="!isStudyReadOnly" 
     (click)="fileInputExport.click()"
     matTooltip="Export in dataset with mapping.json"
+    [disabled]="executionStarted"
     >
     <i class="fa-solid fa-file-export"></i> 
     </button>
@@ -203,6 +205,27 @@
         </i>
       </button>
     </span>
+    <button
+        mat-button
+        id="btn-treeview-reload-read-only-study"
+        aria-hidden="false"
+        *ngIf="!(isStudyReadOnly || isStudyNoData)"
+        [disabled]="executionStarted || !hasReadOnlyFile"
+        (click)="onReloadStudyReadOnly()"
+        [color]="!executionStarted && hasReadOnlyFile ? 'primary' : ''"
+        matTooltip="Regenerate read-only study"
+      >
+        <i
+          *ngIf="!executionStarted && hasReadOnlyFile"
+          class="fa-solid fa-square-pen"
+        >
+        </i>
+        <i
+          *ngIf="executionStarted || !hasReadOnlyFile"
+          class="fa-solid fa-square-pen status-off-grey"
+        >
+        </i>
+      </button>
     <button
       mat-button
       matTooltip="Users working on same study case"

@@ -190,6 +190,12 @@ export class SocketService {
       this.addNotificationToQueue(notification);
     });
 
+    this.socket.on('study-read-only-reloaded', (data) => {
+      const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
+      this.addNewNotificationOnList(notification)
+      this.addNotificationToQueue(notification);
+    });
+
     this.socket.on('validation-change', (data) => {
       const notification = new CoeditionNotification(new Date(), data.author, data.type, data.message, null, false);
       this.addNewNotificationOnList(notification)
@@ -269,6 +275,12 @@ export class SocketService {
     }
   }
 
+  reloadStudyReadOnly(studyCaseId: number) {
+    if (this.socket) {
+      this.socket.emit('reload-read-only', { study_case_id: studyCaseId });
+    }
+  }
+
   claimStudyExecution(studyCaseId: number) {
     if (this.socket) {
       this.socket.emit('claim', { study_case_id: studyCaseId });
@@ -322,7 +334,9 @@ export class SocketService {
       this.onNewNotification.emit(notification);
     } else {
       if (this.userService.getFullUsername() !== notification.author) {
-        if (notification.type === CoeditionType.EXECUTION || notification.type === CoeditionType.EXECUTION_STOPPED) {
+        if (notification.type === CoeditionType.EXECUTION || 
+          notification.type === CoeditionType.EXECUTION_STOPPED || 
+        notification.type === CoeditionType.RELOAD_READ_ONLY) {
           this.notificationQueue.pop();
           this.notificationQueue.push(notification);
           this.onNewNotification.emit(notification);
