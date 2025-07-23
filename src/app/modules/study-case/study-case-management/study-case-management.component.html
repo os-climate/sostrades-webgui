@@ -257,6 +257,17 @@
           </th>
           <td mat-cell *matCellDef="let element">
             {{element.studyPodFlavor}}
+            <button
+            [id]="'btn-study-management-edit-flavor-' + element.groupName + '-' + element.name"
+            style="margin-right: 5px"
+            mat-icon-button
+            color="primary"
+            *ngIf="element.isManager && showFlavors && !element.isStandAlone"
+            (click)="updateFlavor(element)"
+            [matTooltip]="'Change pod size of ' + element.name"
+            >
+            <i class="fa-solid fa-gear toolbar-icon"></i>
+            </button>
           </td>
         </ng-container>
 
@@ -296,17 +307,7 @@
             <i class="fa-solid fa-pen-to-square"></i>
             </button>
 
-            <button
-            [id]="'btn-study-management-edit-flavor-' + element.groupName + '-' + element.name"
-            style="margin-right: 5px"
-            mat-icon-button
-            color="primary"
-            *ngIf="element.isManager && showFlavors && !element.isStandAlone"
-            (click)="updateFlavor(element)"
-            [matTooltip]="'Change pod size of ' + element.name"
-            >
-            <i class="fa-solid fa-gear toolbar-icon"></i>
-            </button>
+            
 
             <button
             [id]="'btn-study-management-copy-' + element.groupName + '-' + element.name"
