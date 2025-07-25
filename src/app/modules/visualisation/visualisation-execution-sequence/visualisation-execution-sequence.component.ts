@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Graphviz, graphviz } from 'd3-graphviz';
+import { Graphviz } from 'd3-graphviz';
 import {Selection, BaseType, ScaleOrdinal, select, scaleOrdinal, rgb,
   zoom, drag, schemeGnBu, schemeSet3, easeLinear, color, selectAll} from 'd3';
 
@@ -56,12 +56,12 @@ export class ExecutionSequenceComponent implements OnInit {
         ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)) {
         if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
           this.visualisationService.getExecutionSequenceData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-            next: (res: any) => {
+            next: async(res: any) => {
               // this.dotString = res['dotString'];
               this.nodes = res['nodes_list'];
               this.links = res['links_list'];
               this.setMinMax();
-              this.initGraph();
+              await this.initGraph();
             },
             error: (err: any) => {  
               this.isLoading = false;
@@ -74,18 +74,18 @@ export class ExecutionSequenceComponent implements OnInit {
         }  
       } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)){
         // if diagram already exists, add a timeout, if not the graphiz has an error
-        setTimeout(() => {
+        setTimeout(async() => {
           this.nodes = loadedStudy.n2Diagram[VisualizationDiagrams.EXECUTION_SEQUENCE]['nodes_list'];
           this.links = loadedStudy.n2Diagram[VisualizationDiagrams.EXECUTION_SEQUENCE]['links_list'];
           this.setMinMax();
-          this.initGraph();
+          await this.initGraph();
         }, 2000);
       }      
     }
   }
   
 
-  initGraph(): void {
+  async initGraph(): Promise<void> {
     select(this.el.nativeElement).selectAll('svg').remove();
 
     // Define the div for the tooltip
@@ -135,6 +135,7 @@ export class ExecutionSequenceComponent implements OnInit {
     const width = window.innerWidth - margin;
     const height = window.innerHeight - margin;
 
+    const { graphviz } = await import('d3-graphviz');
     this.graph = graphviz('#graphviz-graph', {
       useWorker: false,
       width,
