@@ -2,7 +2,13 @@ import { DisciplineIconMappingConverterPipe } from './discipline-icon-mapping-co
 
 describe('DisciplineIconMappingConverterPipe', () => {
   it('create an instance', () => {
-    const pipe = new DisciplineIconMappingConverterPipe();
+    const mockOntologyService = { getParameter: () => null };
+    const mockLoggerService = { log: () => {} };
+
+    const pipe = new DisciplineIconMappingConverterPipe(
+      mockOntologyService as any,
+      mockLoggerService as any
+    );
     expect(pipe).toBeTruthy();
   });
 });
