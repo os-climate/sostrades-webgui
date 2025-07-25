@@ -42,12 +42,24 @@ import { PodSettingsComponent } from 'src/app/shared/pod-settings/pod-settings.c
 import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { PanelSection } from 'src/app/models/user-study-preferences.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 
 @Component({
   selector: 'app-study-case-treeview',
   templateUrl: './study-case-treeview.component.html',
-  styleUrls: ['./study-case-treeview.component.scss']
+  styleUrls: ['./study-case-treeview.component.scss'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(40px)', opacity: 0 }),
+        animate('250ms cubic-bezier(.25,.8,.25,1)', style({ transform: 'translateX(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms cubic-bezier(.25,.8,.25,1)', style({ transform: 'translateX(40px)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 
 export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -94,6 +106,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   public isStudyNoData: boolean;
   public isStudyReadOnly: boolean;
   public canExecute: boolean;
+  public showOtherButtons: boolean;
 
   public isTreeViewFiltered: boolean;
   public isSearchOption: boolean;
@@ -174,6 +187,7 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     this.isStudyReadOnly = false;
     this.hasReadOnlyFile = false;
     this.canExecute = false;
+    this.showOtherButtons = false;
 
     this.isTreeViewFiltered = false;
     this.isSearchOption = true;
@@ -315,6 +329,13 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     });
   }
 
+  toggleOtherButtons() {
+    this.showOtherButtons = !this.showOtherButtons;
+  }
+
+  hideOtherButtons() {
+    this.showOtherButtons = false;
+  }
 
   checkTreeViewIsFiltered() {
 

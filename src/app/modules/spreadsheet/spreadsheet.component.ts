@@ -105,15 +105,15 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       } else {
         this.createEmptyArray();
       }
-      setTimeout(() => {
-        this.initializeJSpreadSheet();
+      setTimeout(async() => {
+        await this.initializeJSpreadSheet();
       }, 0);
 
     } else {
       if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null && this.data.file === null)) {
         this.createEmptyArray();
-        setTimeout(() => {
-          this.initializeJSpreadSheet();
+        setTimeout(async() => {
+          await this.initializeJSpreadSheet();
         }, 0);
       }
       else {
@@ -121,8 +121,8 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
           chunk: (results) => {
             this.addRowsByChunk(results);
           },
-          complete: () => {
-            this.initializeJSpreadSheet();
+          complete: async() => {
+            await this.initializeJSpreadSheet();
           },
           header: true,
           chunkSize: 1024 * 1024 * 2,
@@ -177,7 +177,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     }
   }
 
-  initializeJSpreadSheet() {
+  async initializeJSpreadSheet() {
 
     if (this.rowData.length === 0) {
       this.dialogRef.close(this.data);
@@ -234,6 +234,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     }
 
     this.isTableLoaded = true;
+    const jExcel = (await import('node_modules/jspreadsheet-ce')).default;
     this.jExcelSpreadSheet = jExcel(this.spreadsheet.nativeElement, jExcelProperties);
   }
 

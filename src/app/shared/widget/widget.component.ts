@@ -32,8 +32,10 @@ export class WidgetComponent implements OnInit, OnDestroy {
   calculationChangeSubscription: Subscription;
   private borderClassMapping: Record<ValueType, string>;
   private iconClassMapping: Record<ValueType, string>;
+  private iconTooltipMapping: Record<ValueType, string>;
   public borderClass: string;
   public headerIconClass: string;
+  public headerIconTooltip: string;
 
   private baseIntegrityTooltipClass: string;
   public integrityTooltipClass: string;
@@ -67,6 +69,14 @@ export class WidgetComponent implements OnInit, OnDestroy {
       [ValueType.DEFAULT]: 'settings_applications',
       [ValueType.READ_ONLY]: 'visibility',
       [ValueType.OPTIONAL]: 'check_box_outline_blank'
+    };
+
+    this.iconTooltipMapping = {
+      [ValueType.EMPTY]: 'Data in Error',
+      [ValueType.USER]: 'Editable data',
+      [ValueType.DEFAULT]: 'Default data',
+      [ValueType.READ_ONLY]: 'Read only data',
+      [ValueType.OPTIONAL]: 'Optional data'
     };
 
     this.baseIntegrityTooltipClass = 'custom-tooltip-class';
@@ -168,6 +178,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
    */
   private SetHeaderIconClass() {
     this.headerIconClass = this.iconClassMapping[this.nodeData.valueType] || 'indeterminate_check_box';
+    this.headerIconTooltip = this.iconTooltipMapping[this.nodeData.valueType] || '';
   }
 
   get headerIconColor(): string {
