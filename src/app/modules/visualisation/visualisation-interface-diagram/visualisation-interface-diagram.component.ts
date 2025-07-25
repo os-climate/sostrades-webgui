@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { Graphviz, graphviz } from 'd3-graphviz';
-import * as d3 from 'd3';
+import {Selection, BaseType, DragBehavior, ZoomBehavior, select} from 'd3';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -18,11 +18,11 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
 
   public isLoading: boolean;
 
-  svg: d3.Selection<any, unknown, null, undefined>;
-  graph: Graphviz<d3.BaseType, any, d3.BaseType, any>;
+  svg: Selection<any, unknown, null, undefined>;
+  graph: Graphviz<BaseType, any, BaseType, any>;
   dotString: string;
-  drag:d3.DragBehavior<Element, unknown, unknown>;
-  zoom:d3.ZoomBehavior<Element, unknown>;
+  drag:DragBehavior<Element, unknown, unknown>;
+  zoom:ZoomBehavior<Element, unknown>;
   private resizeObserver: ResizeObserver;
   private resizeTimeout: any;
 
@@ -86,9 +86,9 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
   }
 
   initGraph(): void {
-    d3.select(this.el.nativeElement).selectAll('svg').remove();
+    select(this.el.nativeElement).selectAll('svg').remove();
 
-    this.svg = d3.select(this.el.nativeElement).append('svg')
+    this.svg = select(this.el.nativeElement).append('svg')
       .attr('class', 'graphviz-graph')
       .attr('id', 'graphviz-graph')
       .attr("xmlns", "http://www.w3.org/2000/svg")

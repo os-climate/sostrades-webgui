@@ -2,7 +2,9 @@
 /* eslint-disable quote-props */
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import * as d3 from 'd3';
+import {select, scaleLinear, scaleOrdinal, scaleSequential, easeLinear, rgb, 
+  interpolateBlues, schemeSet2, zoom, drag, selectAll,
+  forceSimulation, forceLink, forceManyBody, forceCenter, forceX, forceY} from 'd3';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { LoggerService } from 'src/app/services/logger/logger.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
@@ -132,36 +134,36 @@ export class CouplingGraphComponent implements OnInit {
         const width = 1000;
         const height = 1000;
 
-        d3.select(this.el.nativeElement).selectAll('svg').remove();
+        select(this.el.nativeElement).selectAll('svg').remove();
 
         // Define the div for the tooltip
-        this.tooltipDiv = d3.select(this.el.nativeElement).append('div')
+        this.tooltipDiv = select(this.el.nativeElement).append('div')
           .attr('class', 'tooltip')
           .style('position', 'fixed')
           .style('display', 'none')
           .style('justify-content', 'space-between')
           .style('flex-wrap', 'wrap');
 
-        this.svg = d3.select(this.el.nativeElement).append('svg')
+        this.svg = select(this.el.nativeElement).append('svg')
           .attr('class', 'd3-graph')
           .attr('width', '100%')
           .attr('height', '100%')
           .style('overflow', 'visible');
 
-        this.radiusScale = d3.scaleLinear()
+        this.radiusScale = scaleLinear()
           .domain([0, 200])
           .range([5, 50])
           .clamp(true);
 
-        this.linkWidthScale = d3.scaleLinear()
+        this.linkWidthScale = scaleLinear()
           .domain([0, 200])
           .range([2, 50])
           .clamp(true);
 
-        this.colorScale = d3.scaleOrdinal(d3.schemeSet2);
-        this.colorScaleLevel = d3.scaleSequential(d3.interpolateBlues)
+        this.colorScale = scaleOrdinal(schemeSet2);
+        this.colorScaleLevel = scaleSequential(interpolateBlues)
           .domain([0, 6]);
-        // this.colorScaleLevel =d3.scaleOrdinal(d3.schemeBlues);
+        // this.colorScaleLevel =scaleOrdinal(schemeBlues);
         this.types = Array.from(new Set(this.nodes.map((d: any) => d['Type']))).concat(Array.from(new Set(this.links.map((d: any) => d['Type']))));
         this.container = this.svg.append('svg:g').attr('class', 'everything');
         this.svg.append('svg:defs').attr('class', 'arrows-marker');
@@ -198,23 +200,23 @@ export class CouplingGraphComponent implements OnInit {
           .attr('markerHeight', 5)
           .attr('orient', 'auto')
           .append('path')
-          .attr('fill', (d: any) => d3.rgb(this.colorScale(d)).darker().toString())
+          .attr('fill', (d: any) => rgb(this.colorScale(d)).darker().toString())
           .attr('d', 'M0,-5L10,0L0,5');
 
 
         this.svg.call(
-          d3.zoom()
+          zoom()
             .scaleExtent([.1, 4])
             .on('zoom', (event: any) => { this.container.attr('transform', event.transform); })
         );
 
-        this.simulation = d3.forceSimulation()
-          // .force('link', d3.forceLink().id((d: any) => d['id']).distance(100).strength(d => 1 / d['metadata']['size']))
-          .force('link', d3.forceLink().id((d: any) => d['id']).distance((d: any) => this.linkDistance(d)))
-          .force('charge', d3.forceManyBody().strength(-2000))
-          .force('center', d3.forceCenter(width / 2, height / 2))
-          .force('x', d3.forceX(width / 2).strength(0.3))
-          .force('y', d3.forceY(height / 2).strength(0.3))
+        this.simulation = forceSimulation()
+          // .force('link', forceLink().id((d: any) => d['id']).distance(100).strength(d => 1 / d['metadata']['size']))
+          .force('link', forceLink().id((d: any) => d['id']).distance((d: any) => this.linkDistance(d)))
+          .force('charge', forceManyBody().strength(-2000))
+          .force('center', forceCenter(width / 2, height / 2))
+          .force('x', forceX(width / 2).strength(0.3))
+          .force('y', forceY(height / 2).strength(0.3))
           .on('tick', () => this.tick());
 
         // handles to link and node element groups
@@ -223,7 +225,7 @@ export class CouplingGraphComponent implements OnInit {
 
 
         // init D3 drag support
-        this.drag = d3.drag()
+        this.drag = drag()
         .on('start', (event: any, d: any) => this.draggedStart(event, d))
         .on('drag', (event: any, d: any) => this.dragged(event, d))
         .on('end', (event: any, d: any) => this.draggedEnd(event, d));
@@ -353,8 +355,8 @@ export class CouplingGraphComponent implements OnInit {
         exit => this.exitLink(exit),
       )
       .on('mouseover', (event: any, d: any) => {
-        const darker = d3.rgb(this.color(d)).darker().toString();
-        d3.select(event.currentTarget).select('.link')
+        const darker = rgb(this.color(d)).darker().toString();
+        select(event.currentTarget).select('.link')
           .style('stroke', darker)
           .attr('marker-end', (d: any) => `url(#end-arrow-hover-${d['Type']})`);
         this.tooltip(d, true);
@@ -362,7 +364,7 @@ export class CouplingGraphComponent implements OnInit {
       .on('mouseout', (event: any) => {
         this.tooltipDiv
           .style('display', 'none');
-        d3.select(event.currentTarget).select('.link')
+        select(event.currentTarget).select('.link')
           .style('stroke', (d: any) => this.color(d))
           .attr('marker-end', (d: any) => `url(#end-arrow-${d['Type']})`);
       });
@@ -379,14 +381,14 @@ export class CouplingGraphComponent implements OnInit {
       )
       .call(this.drag)
       .on('mouseover', (event: any, d: any) => {
-        const darker = d3.rgb(this.color(d)).darker().toString();
-        d3.select(event.currentTarget).select('circle')
+        const darker = rgb(this.color(d)).darker().toString();
+        select(event.currentTarget).select('circle')
           .style('fill', darker);
         this.tooltip(d, false);
 
         try {
           // construct the ID of the treenode to visualise it when mouvover
-          const treeViewButtons = d3.selectAll('body .tree-container');
+          const treeViewButtons = selectAll('body .tree-container');
           const buttonID = '#' + d['id'].replace(/\./g, '_');
           treeViewButtons.select(buttonID)
             .style('background', this.color(d));
@@ -398,11 +400,11 @@ export class CouplingGraphComponent implements OnInit {
       .on('mouseout', (event: any, d: any) => {
         this.tooltipDiv
           .style('display', 'none');
-        d3.select(event.currentTarget).select('circle')
+        select(event.currentTarget).select('circle')
           .style('fill', this.color(d));
         try {
           // construct the ID of the treenode to visualise it when mouvover
-          const treeViewButtons = d3.selectAll('body .tree-container');
+          const treeViewButtons = selectAll('body .tree-container');
           const buttonID = '#' + d['id'].replace(/\./g, '_');
           treeViewButtons.select(buttonID)
             .style('background', 'none');
@@ -567,7 +569,7 @@ export class CouplingGraphComponent implements OnInit {
   color(d: any): any {
     if (d['Type'] === 'DisciplineNode') {
       // if (d['expandable']===0) {
-      //   return  d3.rgb(this.colorScale(d['Type'])).brighter(1).toString();
+      //   return  rgb(this.colorScale(d['Type'])).brighter(1).toString();
       // } else {
       //   return this.colorScale(d['Type']);
       // }
@@ -589,7 +591,7 @@ export class CouplingGraphComponent implements OnInit {
       .style('cursor', d => 'expandable' in d ? (d['expandable'] === 1 ? 'pointer' : 'default') : 'default')
       .transition()
       .duration(750)
-      .ease(d3.easeLinear)
+      .ease(easeLinear)
       .attr('r', (d: any) => this.radius(d));
 
     // draw labels
@@ -620,7 +622,7 @@ export class CouplingGraphComponent implements OnInit {
     return exit
       .call(exit => exit.transition()
         .duration(750)
-        .ease(d3.easeLinear)
+        .ease(easeLinear)
         .remove()
         .select('circle')
         .attr('r', 0));
@@ -630,13 +632,13 @@ export class CouplingGraphComponent implements OnInit {
     update.select('circle')
       .transition()
       .duration(750)
-      .ease(d3.easeLinear)
+      .ease(easeLinear)
       .attr('r', (d: any) => this.radius(d));
 
     update.selectAll('text')
       .transition()
       .duration(750)
-      .ease(d3.easeLinear)
+      .ease(easeLinear)
       .attr('dx', (d: any) => this.radius(d) + 5);
 
     return update;
@@ -655,7 +657,7 @@ export class CouplingGraphComponent implements OnInit {
       .attr('length', 0)
       .call(enter => enter.transition()
         .duration(750)
-        .ease(d3.easeLinear)
+        .ease(easeLinear)
         // .style('stroke-width', d => d['Size'] ? (d['Type'] === 'parameterExchange' ? d['Size'] : d['Size']) : 1));
         .style('stroke-width', d => this.linkWidthScale(d['Size'])));
 
@@ -670,7 +672,7 @@ export class CouplingGraphComponent implements OnInit {
     return exit
       .call(exit => exit.transition()
         .duration(750)
-        .ease(d3.easeLinear)
+        .ease(easeLinear)
         .remove()
         .select('.link')
         .style('stroke-width', 0));
@@ -931,17 +933,17 @@ export class CouplingGraphComponent implements OnInit {
     const state = this.typeLabels[typeToToggle]['active'] === 1 ? 0 : 1;
     this.typeLabels[typeToToggle]['active'] = state;
 
-    const legendToggle = d3.select(event.currentTarget);
+    const legendToggle = select(event.currentTarget);
     legendToggle.select('circle')
       .transition()
       .duration(750)
-      .ease(d3.easeLinear)
-      .style('fill', (d: any) => state === 0 ? d3.rgb(this.color({ 'Type': d, 'Level': 10 })).brighter().toString() : d3.rgb(this.color({ 'Type': d, 'Level': 10 })).toString());
+      .ease(easeLinear)
+      .style('fill', (d: any) => state === 0 ? rgb(this.color({ 'Type': d, 'Level': 10 })).brighter().toString() : rgb(this.color({ 'Type': d, 'Level': 10 })).toString());
 
     legendToggle.select('text')
       .transition()
       .duration(750)
-      .ease(d3.easeLinear)
+      .ease(easeLinear)
       .style('text-decoration', () => state === 0 ? 'line-through' : '')
       .style('color', () => state === 0 ? 'lightgrey' : 'black');
 
