@@ -3,7 +3,7 @@ import { DisciplineIconMappingConverterPipe } from './discipline-icon-mapping-co
 describe('DisciplineIconMappingConverterPipe', () => {
   it('create an instance', () => {
     const mockOntologyService = { getParameter: () => null };
-    const mockLoggerService = { log: () => {} };
+    const mockLoggerService = { log: (log) => {console.log(log);} };
 
     const pipe = new DisciplineIconMappingConverterPipe(
       mockOntologyService as any,

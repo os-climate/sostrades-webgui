@@ -11,7 +11,6 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { JSpreadSheetProperties, JSpreadSheetRowData, JSpreadSheetValueError, JSpreadSheetColumns } from 'src/app/models/jspreadsheet-objects.model';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
-import * as jExcel from "node_modules/jspreadsheet-ce";
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 

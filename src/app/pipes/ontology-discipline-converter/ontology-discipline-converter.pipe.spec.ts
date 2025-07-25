@@ -3,7 +3,7 @@ import { OntologyDisciplineConverterPipe } from './ontology-discipline-converter
 describe('OntologyDisciplineConverterPipe', () => {
   it('create an instance', () => {
     const mockOntologyService = { getParameter: () => null };
-    const mockLoggerService = { log: () => {} };
+    const mockLoggerService = { log: (log) => {console.log(log);} };
 
     const pipe = new OntologyDisciplineConverterPipe(
       mockOntologyService as any,
