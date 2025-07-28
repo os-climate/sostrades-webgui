@@ -9,8 +9,6 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
-import * as html2pdf from 'html2pdf.js';
-
 
 @Component({
   selector: 'app-study-case-documentation',
@@ -173,6 +171,9 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       if (element) {
         // Create a deep copy of the element to avoid affecting the original DOM
         const clonedElement = element.cloneNode(true) as HTMLElement;
+
+        // Dynamically import html2pdf.js here
+        const html2pdf = (await import('html2pdf.js')).default;
 
         // Remove `href` from footnote backreferences to disable linking
         const footnoteLinks = clonedElement.querySelectorAll('a.footnote-backref');

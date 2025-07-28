@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Graphviz, graphviz } from 'd3-graphviz';
-import * as d3 from 'd3';
+import { Graphviz } from 'd3-graphviz';
+import {Selection, BaseType, ScaleOrdinal, select, scaleOrdinal, rgb,
+  zoom, drag, schemeGnBu, schemeSet3, easeLinear, color, selectAll} from 'd3';
+
 import { transition } from 'd3-transition';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
@@ -21,9 +23,9 @@ export class ExecutionSequenceComponent implements OnInit {
 
   public isLoading: boolean;
 
-  svg: d3.Selection<any, unknown, null, undefined>;
+  svg: Selection<any, unknown, null, undefined>;
   margin: number;
-  graph: Graphviz<d3.BaseType, any, d3.BaseType, any>;
+  graph: Graphviz<BaseType, any, BaseType, any>;
   levelsToShow: number;
   template: string[];
   nodes: string[];
@@ -31,9 +33,9 @@ export class ExecutionSequenceComponent implements OnInit {
   dotString: string;
   minLevel: number;
   maxLevel: number;
-  tooltipDiv: d3.Selection<any, unknown, null, undefined>;
-  disciplineColorScale: d3.ScaleOrdinal<string, string, never>;
-  nodeColorScale: d3.ScaleOrdinal<string, string, never>;
+  tooltipDiv: Selection<any, unknown, null, undefined>;
+  disciplineColorScale: ScaleOrdinal<string, string, never>;
+  nodeColorScale: ScaleOrdinal<string, string, never>;
   pathColor: string;
   pathColorHover: string;
   drag:any;
@@ -54,12 +56,12 @@ export class ExecutionSequenceComponent implements OnInit {
         ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)) {
         if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
           this.visualisationService.getExecutionSequenceData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-            next: (res: any) => {
+            next: async(res: any) => {
               // this.dotString = res['dotString'];
               this.nodes = res['nodes_list'];
               this.links = res['links_list'];
               this.setMinMax();
-              this.initGraph();
+              await this.initGraph();
             },
             error: (err: any) => {  
               this.isLoading = false;
@@ -72,29 +74,29 @@ export class ExecutionSequenceComponent implements OnInit {
         }  
       } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.EXECUTION_SEQUENCE)){
         // if diagram already exists, add a timeout, if not the graphiz has an error
-        setTimeout(() => {
+        setTimeout(async() => {
           this.nodes = loadedStudy.n2Diagram[VisualizationDiagrams.EXECUTION_SEQUENCE]['nodes_list'];
           this.links = loadedStudy.n2Diagram[VisualizationDiagrams.EXECUTION_SEQUENCE]['links_list'];
           this.setMinMax();
-          this.initGraph();
+          await this.initGraph();
         }, 2000);
       }      
     }
   }
   
 
-  initGraph(): void {
-    d3.select(this.el.nativeElement).selectAll('svg').remove();
+  async initGraph(): Promise<void> {
+    select(this.el.nativeElement).selectAll('svg').remove();
 
     // Define the div for the tooltip
-    this.tooltipDiv = d3.select(this.el.nativeElement).append('div')
+    this.tooltipDiv = select(this.el.nativeElement).append('div')
       .attr('class', 'tooltip')
       .style('position', 'fixed')
       .style('display', 'none')
       .style('justify-content', 'space-between')
       .style('flex-wrap', 'wrap');
 
-    this.svg = d3.select(this.el.nativeElement).append('svg')
+    this.svg = select(this.el.nativeElement).append('svg')
       .attr('class', 'graphviz-graph')
       .attr('id', 'graphviz-graph')
       .attr('width', '100%')
@@ -103,24 +105,24 @@ export class ExecutionSequenceComponent implements OnInit {
       .style('cursor', 'default');
 
     this.svg.call(
-      d3.zoom()
+      zoom()
         .scaleExtent([.1, 4])
         .on('zoom', (event: any) => { this.svg.select('svg').attr('transform', event.transform); })
     );
 
     // init D3 drag support
-    this.drag = d3.drag()
+    this.drag =  drag()
     .on('start', (event: any, d: any) => this.draggedStart(event, d))
     .on('drag', (event: any, d: any) => this.dragged(event, d))
     .on('end', (event: any, d: any) => this.draggedEnd(event, d));
 
 
     // create a light color scale and remove extreme element (too clear and too dark)
-    const nodeColorsList = d3.schemeGnBu[9].concat().reverse()
+    const nodeColorsList =  schemeGnBu[9].concat().reverse()
     nodeColorsList.pop()
 
-    this.nodeColorScale = d3.scaleOrdinal(nodeColorsList);
-    this.disciplineColorScale = d3.scaleOrdinal(d3.schemeSet3);
+    this.nodeColorScale = scaleOrdinal(nodeColorsList);
+    this.disciplineColorScale =  scaleOrdinal(schemeSet3);
 
     // // initialise color for node types
     // this.nodes.forEach((node:any)=> {node['type'] === 'DisciplineNode' ? this.nodeColorScale(node['disc_name']) : this.nodeColorScale(node['type'])})
@@ -133,6 +135,7 @@ export class ExecutionSequenceComponent implements OnInit {
     const width = window.innerWidth - margin;
     const height = window.innerHeight - margin;
 
+    const { graphviz } = await import('d3-graphviz');
     this.graph = graphviz('#graphviz-graph', {
       useWorker: false,
       width,
@@ -187,7 +190,7 @@ export class ExecutionSequenceComponent implements OnInit {
 
   getTransition(): any {
     return transition()
-      .ease(d3.easeLinear)
+      .ease(easeLinear)
       .delay(700)
       .duration(2000);
   }
@@ -241,7 +244,7 @@ export class ExecutionSequenceComponent implements OnInit {
         }
         nodeLabel = labelList.join('\n');
       }
-      const nodeColor = d3.color(node['type'] === 'DisciplineNode' ? this.disciplineColorScale(node['disc_name']) : this.nodeColorScale(node['type'])).hex();
+      const nodeColor = color(node['type'] === 'DisciplineNode' ? this.disciplineColorScale(node['disc_name']) : this.nodeColorScale(node['type'])).hex();
       line = `\t "${nodeId}" [label="${nodeLabel}" fillcolor="${nodeColor}" fontcolor="${textColor}"]`;
     }
     return line;
@@ -299,28 +302,28 @@ export class ExecutionSequenceComponent implements OnInit {
   }
 
   addInteraction(): void {
-    const drawnNodes = d3.selectAll('.node');
+    const drawnNodes = selectAll('.node');
     drawnNodes
       .style('cursor', 'pointer')
       .on('mouseover', (event: any, d: any) => {
-        const nodeId = d3.select(event.currentTarget).selectAll('title').text().trim();
+        const nodeId = select(event.currentTarget).selectAll('title').text().trim();
         const nodeData = this.nodes.find((node: any) => (node['id'] === nodeId));
-        // const currentColor = d3.select(event.currentTarget).selectAll('ellipse').style('fill');
-        const currentColor = d3.color(nodeData['type'] === 'DisciplineNode' ? this.disciplineColorScale(nodeData['disc_name']) : this.nodeColorScale(nodeData['type'])).hex();
-        const darker = d3.rgb(currentColor).darker().toString();
-        this.tooltip(d3.select(event.currentTarget), d, nodeData, false);
-        d3.select(event.currentTarget).select('ellipse')
+        // const currentColor = select(event.currentTarget).selectAll('ellipse').style('fill');
+        const currentColor = color(nodeData['type'] === 'DisciplineNode' ? this.disciplineColorScale(nodeData['disc_name']) : this.nodeColorScale(nodeData['type'])).hex();
+        const darker = rgb(currentColor).darker().toString();
+        this.tooltip(select(event.currentTarget), d, nodeData, false);
+        select(event.currentTarget).select('ellipse')
           .style('fill', darker);
       })
       .on('mouseout', (event: any,) => {
         this.tooltipDiv
           .style('display', 'none');
-        const nodeId = d3.select(event.currentTarget).selectAll('title').text().trim();
+        const nodeId = select(event.currentTarget).selectAll('title').text().trim();
         const nodeData = this.nodes.find((node: any) => (node['id'] === nodeId));
         // const currentColor = d3.select(event.currentTarget).selectAll('ellipse').style('fill');
-        const nodeColor = d3.color(nodeData['type'] === 'DisciplineNode' ? this.disciplineColorScale(nodeData['disc_name']) : this.nodeColorScale(nodeData['type'])).hex();
+        const nodeColor = color(nodeData['type'] === 'DisciplineNode' ? this.disciplineColorScale(nodeData['disc_name']) : this.nodeColorScale(nodeData['type'])).hex();
         // const brighter = d3.rgb(currentColor).brighter().toString();
-        d3.select(event.currentTarget).select('ellipse')
+        select(event.currentTarget).select('ellipse')
           .style('fill', nodeColor);
       })
       .on('click', (event: any) => this.expand(event))
@@ -330,26 +333,26 @@ export class ExecutionSequenceComponent implements OnInit {
         this.collapse(event);
       });
 
-    const drawnEdges = d3.selectAll('.edge');
+    const drawnEdges = selectAll('.edge');
     drawnEdges
       .on('mouseover', (event: any, d: any) => {
-        const edgeId = d3.select(event.currentTarget).selectAll('title').text().trim();
+        const edgeId = select(event.currentTarget).selectAll('title').text().trim();
         const edgeData = this.links.find((link: any) => (link['id'] === edgeId));
-        this.tooltip(d3.select(event.currentTarget), d, edgeData, true);
-        d3.select(event.currentTarget).select('path')
+        this.tooltip(select(event.currentTarget), d, edgeData, true);
+        select(event.currentTarget).select('path')
           .style('stroke', this.pathColorHover);
       })
       .on('mouseout', (event: any) => {
         this.tooltipDiv
           .style('display', 'none');
-        d3.select(event.currentTarget).select('path')
+        select(event.currentTarget).select('path')
           .style('stroke', this.pathColor);
       });
     this.isLoading = false;
   }
 
   expand(event: any): void {
-    const nodeId = d3.select(event.currentTarget).selectAll('title').text().trim();
+    const nodeId = select(event.currentTarget).selectAll('title').text().trim();
     const nodeIndex = this.nodes.findIndex((node: any) => (node['id'] === nodeId));
     if (nodeIndex > -1) {
       this.tooltipDiv.style('display', 'none');
@@ -375,7 +378,7 @@ export class ExecutionSequenceComponent implements OnInit {
   }
 
   collapse(event: any): void {
-    const nodeId = d3.select(event.currentTarget).selectAll('title').text().trim();
+    const nodeId = select(event.currentTarget).selectAll('title').text().trim();
     const nodeIndex = this.nodes.findIndex((node: any) => (node['id'] === nodeId));
     if (nodeIndex > -1) {
       this.tooltipDiv.style('display', 'none');
