@@ -121,7 +121,7 @@ import { ProcessBuilderComponent } from './shared/process-builder/process-builde
 import { NoServerComponent } from './modules/no-server/no-server.component';
 import { LoginInformationDialogComponent } from './modules/login/login-information-dialog/login-information-dialog.component';
 import { EditionFormDialogComponent } from './shared/edition-form-dialog/edition-form-dialog.component';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { MarkdownModule, MARKED_OPTIONS } from 'ngx-markdown';
 import { LoadingStudyDialogComponent } from './modules/loading-study-dialog/loading-study-dialog.component';
 import { FilterBarComponent } from './shared/filter-bar/filter-bar.component';
 import { TruncatePipe } from './pipes/truncate/truncate.pipe';
@@ -130,10 +130,7 @@ import { AuthenticationErrorComponent } from './modules/authentication-error/aut
 import { GridsterModule } from "angular-gridster2";
 import { QuillModule } from "ngx-quill";
 import { QuillConfigModule } from "ngx-quill/config";
-import Quill from "quill"
-import QuillPlaceholder from "quill-placeholder-module"
 
-Quill.register('modules/placeholder', QuillPlaceholder);
 registerLocaleData(fr);
 
 
@@ -261,7 +258,7 @@ registerLocaleData(fr);
         }),
         MarkdownModule.forRoot({
             markedOptions: {
-              provide: MarkedOptions,
+              provide: MARKED_OPTIONS,
               useValue: {
                 gfm: true,
                 breaks: true,
