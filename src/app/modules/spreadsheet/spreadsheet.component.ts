@@ -11,7 +11,6 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { JSpreadSheetProperties, JSpreadSheetRowData, JSpreadSheetValueError, JSpreadSheetColumns } from 'src/app/models/jspreadsheet-objects.model';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
-import * as jExcel from "node_modules/jspreadsheet-ce";
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 
 
@@ -105,15 +104,15 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
       } else {
         this.createEmptyArray();
       }
-      setTimeout(() => {
-        this.initializeJSpreadSheet();
+      setTimeout(async() => {
+        await this.initializeJSpreadSheet();
       }, 0);
 
     } else {
       if (this.data.nodeData.type.includes('array') && (this.data.nodeData.value === null && this.data.file === null)) {
         this.createEmptyArray();
-        setTimeout(() => {
-          this.initializeJSpreadSheet();
+        setTimeout(async() => {
+          await this.initializeJSpreadSheet();
         }, 0);
       }
       else {
@@ -121,8 +120,8 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
           chunk: (results) => {
             this.addRowsByChunk(results);
           },
-          complete: () => {
-            this.initializeJSpreadSheet();
+          complete: async() => {
+            await this.initializeJSpreadSheet();
           },
           header: true,
           chunkSize: 1024 * 1024 * 2,
@@ -177,7 +176,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     }
   }
 
-  initializeJSpreadSheet() {
+  async initializeJSpreadSheet() {
 
     if (this.rowData.length === 0) {
       this.dialogRef.close(this.data);
@@ -234,6 +233,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     }
 
     this.isTableLoaded = true;
+    const jExcel = (await import('node_modules/jspreadsheet-ce')).default;
     this.jExcelSpreadSheet = jExcel(this.spreadsheet.nativeElement, jExcelProperties);
   }
 

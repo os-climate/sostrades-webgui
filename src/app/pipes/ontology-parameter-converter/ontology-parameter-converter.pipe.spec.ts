@@ -2,7 +2,13 @@ import { OntologyParameterConverterPipe } from './ontology-parameter-converter.p
 
 describe('OntologyParameterConverterPipe', () => {
   it('create an instance', () => {
-    const pipe = new OntologyParameterConverterPipe();
+    const mockOntologyService = { getParameter: () => null };
+    const mockLoggerService = { log: (log) => {console.log(log);} };
+
+    const pipe = new OntologyParameterConverterPipe(
+      mockOntologyService as any,
+      mockLoggerService as any
+    );
     expect(pipe).toBeTruthy();
   });
 });

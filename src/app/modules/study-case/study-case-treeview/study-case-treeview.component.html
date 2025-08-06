@@ -26,39 +26,41 @@
       </mat-button-toggle-group>
     </mat-menu>
   </div>
-  <mat-toolbar class="toolbar" *ngIf="originTreeNode">
-
+  <mat-toolbar class="toolbar" *ngIf="originTreeNode && !(isStudyReadOnly || isStudyNoData)">
     <button
-      mat-button
+        mat-raised-button
+        id="btn-treeview-reload-read-only-study"
+        aria-hidden="false"
+        *ngIf="!isStudyNoData && !executionStarted && hasReadOnlyFile &&!showChangesButtons"
+        (click)="onReloadStudyReadOnly()"
+        color="primary"
+        matTooltip="Regenerate read-only files"
+        class="toolbar-button"
+      >
+        <i class="fa-solid fa-square-pen"></i>
+        Rebuild read-only
+      </button>
+    <button
+      mat-raised-button
       id="btn-treeview-save-synchronise"
       (click)="saveAndSynchronise()"
-      [disabled]="!showChangesButtons || executionStarted"
-      *ngIf="!(isStudyReadOnly || isStudyNoData)"
+      *ngIf="!isStudyNoData && showChangesButtons && !executionStarted"
+      matTooltip="Save changes"
+      aria-hidden="false"
+      aria-label="Save changes"
+      class="toolbar-button"
+      color="primary"
     >
-      <img
-        src="/assets/save_sync.svg"
-        class="toolbar-icon"
-        aria-hidden="false"
-        aria-label="Save changes"
-        matTooltip="Save changes"
-        *ngIf="showChangesButtons && !executionStarted"
-      />
-      <img
-        src="/assets/save_sync_disabled.svg"
-        class="toolbar-icon"
-        aria-hidden="false"
-        aria-label="Save changes"
-        matTooltip="Save changes"
-        *ngIf="!showChangesButtons || executionStarted"
-      />
+      <i class="fa-solid fa-floppy-disk"></i>
+      Save changes
     </button>
-
     <button
       mat-button
       id="btn-treeview-start-calculation"
       (click)="onStartExecution()"
       *ngIf="!executionStarted && !(isStudyReadOnly || isStudyNoData) && canExecute"
       [disabled]="!studyIsLoaded || executionStarted"
+      class="toolbar-button execution-button"
     >
       <i
         class="fa-regular fa-circle-play execution"
@@ -73,6 +75,7 @@
         matTooltip="Start execution"
       >
       </i>
+      Start execution
     </button>
     <button
       mat-button
@@ -80,62 +83,58 @@
       (click)="onStopExecution()"
       *ngIf="executionStarted && !(isStudyReadOnly || isStudyNoData)"
       [disabled]="!studyIsLoaded && !canExecute"
+      class="toolbar-button stop-button"
     >
-      <mat-icon
+      <i class="fa-solid fa-stop"
         [ngClass]="
           studyCaseDataService.loadedStudy.userIdExecutionAuthorized ===
           userService.getCurrentUserId()
-            ? ' stop'
+            ? ' execution'
             : ' status-off'
         "
         aria-hidden="false"
         aria-label="Stop execution"
         matTooltip="Stop execution"
       >
-        stop</mat-icon
-      >
+      </i>
+      Stop execution
     </button>
-    <button
-      mat-button 
-      *ngIf="!isStudyReadOnly" 
-      (click)="fileInput.click()"
-      matTooltip="Import dataset from file.json"
-    >
-      <i class="fa-solid fa-file-import"></i> 
-    </button>
-    <input 
-      #fileInput
-      style="display: none" 
-      type="file" 
-      id="fileInput" 
-      (change)="onImportDatasetFromJsonFile($event)" 
-      accept=".json"
-    >
+    
 
-    <button
-    mat-button 
-    *ngIf="!isStudyReadOnly" 
-    (click)="fileInputExport.click()"
-    matTooltip="Export in dataset with mapping.json"
-    >
-    <i class="fa-solid fa-file-export"></i> 
+    
+    </mat-toolbar>
+    <mat-toolbar class="toolbar-actions" *ngIf="originTreeNode">
+       <button
+      mat-button
+      matTooltip="Users working on same study case"
+      (click)="onShowRoomUser()"
+      id="btn-treeview-show-working-users"
+      [matBadge]="'+' + (numberOfUserRoom - 1)"
+      [matBadgeHidden]="numberOfUserRoom <= 1"
+      matBadgeColor="warn"
+      matBadgeSize="small"
+      matBadgePosition="after"
+      aria-hidden="false"
+      aria-label="Users working on same study case"
+      
+      >
+      <mat-icon >people</mat-icon>
     </button>
-    <input 
-      #fileInputExport
-      style="display: none" 
-      type="file" 
-      id="fileInputExport" 
-      (change)="onExportDatasetFromJsonFile($event)" 
-      accept=".json"
-    >
     <button
-    mat-button
-    *ngIf="!isStudyReadOnly" 
-    [matTooltip]="'Download study data into csv'"
-    (click)="downloadStudy($event)"
+      mat-button
+      (click)="onAccessLink()"
+      aria-hidden="false"
+      aria-label="Study case access link"
+      matTooltip="Study case access link"
+      id="btn-treeview-study-access-link"
     >
-      <i class="fa-solid fa-download"> </i>
+        <i class="fa-solid fa-up-right-from-square"></i>
     </button>
+    
+     
+    
+
+   <div class="other-buttons" *ngIf="showOtherButtons" @slideInOut>
     <button
       mat-button
       id="btn-treeview-study-settings"
@@ -151,35 +150,8 @@
       >
       </i>
     </button>
-    <button
-      [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
-      mat-button
-      (click)="onShowHideStatus(!showStatus)"
-      [matTooltip]="showStatus ? 'Hide status' : 'Show status'"
-    >
-    <i [class]="showStatus ? 'fa-solid fa-eye-slash' : 'fa-sharp fa-solid fa-eye'"></i>
-
-    </button>
-    <button
-      mat-button
-      [id]="showState ? 'hide-validation-state': 'show-validation-state'"
-      [matTooltip]=" showState ? 'Hide validation state' : 'Show validation state'"
-      (click)="onShowHideState()"
-    >
-    <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
-    </button>
-    <button
-      mat-button
-      (click)="onAccessLink()"
-      aria-hidden="false"
-      aria-label="Study case access link"
-      matTooltip="Study case access link"
-      id="btn-treeview-study-access-link"
-    >
-        <i class="fa-solid fa-up-right-from-square"></i>
-    </button>
-   
-    <span 
+    
+<span 
       [matTooltip]="studyCanReload && !executionStarted ? 'Reload the study' : !studyCanReload || executionStarted ? 'No reload possible before first run or while running' : ''"
     >
       <button
@@ -204,20 +176,66 @@
       </button>
     </span>
     <button
-      mat-button
-      matTooltip="Users working on same study case"
-      (click)="onShowRoomUser()"
-      id="btn-treeview-show-working-users"
-      [matBadge]="'+' + (numberOfUserRoom - 1)"
-      [matBadgeHidden]="numberOfUserRoom <= 1"
-      matBadgeColor="warn"
-      matBadgeSize="small"
-      matBadgePosition="after"
-      aria-hidden="false"
-      aria-label="Users working on same study case"
-      >
-      <mat-icon>people</mat-icon>
+      mat-button 
+      *ngIf="!isStudyReadOnly" 
+      (click)="fileInput.click()"
+      matTooltip="Import dataset from file.json"
+      [disabled]="executionStarted"
+    >
+      <i class="fa-solid fa-file-import"></i> 
     </button>
+    <input 
+      #fileInput
+      style="display: none" 
+      type="file" 
+      id="fileInput" 
+      (change)="onImportDatasetFromJsonFile($event)" 
+      accept=".json"
+    >
+
+    <button
+    mat-button 
+    *ngIf="!isStudyReadOnly" 
+    (click)="fileInputExport.click()"
+    matTooltip="Export in dataset with mapping.json"
+    [disabled]="executionStarted"
+    >
+    <i class="fa-solid fa-file-export"></i> 
+    </button>
+    <input 
+      #fileInputExport
+      style="display: none" 
+      type="file" 
+      id="fileInputExport" 
+      (change)="onExportDatasetFromJsonFile($event)" 
+      accept=".json"
+    >
+    <button
+    mat-button
+    *ngIf="!isStudyReadOnly" 
+    [matTooltip]="'Download study data into csv'"
+    (click)="downloadStudy($event)"
+    >
+      <i class="fa-solid fa-download"> </i>
+    </button>
+    
+    <button
+      mat-button
+      [id]="showState ? 'hide-validation-state': 'show-validation-state'"
+      [matTooltip]=" showState ? 'Hide validation state' : 'Show validation state'"
+      (click)="onShowHideState()"
+    >
+    <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
+    </button>
+    <button
+      [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
+      mat-button
+      (click)="onShowHideStatus(!showStatus)"
+      [matTooltip]="showStatus ? 'Hide status' : 'Show status'"
+    >
+    <i [class]="showStatus ? 'fa-solid fa-circle-minus' : 'fa-sharp fa-solid fa-circle-plus'"></i>
+
+    </button>   
     <button
     id="btn-treeview-information"
     mat-button
@@ -228,8 +246,18 @@
     color="accent"
     >
       <i class="fa-solid fa-circle-info"></i>
+    </button>  
+
+    </div>
+    <button
+      id="btn-treeview-show-more-buttons"
+      mat-button
+      [matTooltip]="showOtherButtons? 'Hide action buttons' : 'Show action buttons'"
+      (click)="toggleOtherButtons()"
+      class="toggle-button">
+      <i class="fa-solid fa-ellipsis"
+      [ngClass]="showOtherButtons ? 'rotate-90' : 'rotate-0'"></i>
     </button>
-    
   </mat-toolbar>
   <mat-divider width="100%" *ngIf="originTreeNode"></mat-divider>
 

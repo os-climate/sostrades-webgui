@@ -3,7 +3,6 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Scenario } from 'src/app/models/scenario.model';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
-import * as Plotly from 'plotly.js-dist-min';
 
 @Component({
   selector: 'app-post-processing-pareto-front',
@@ -76,7 +75,8 @@ export class PostProcessingParetoFrontComponent implements OnInit {
         this.initTradeScenarioList(this.plotData.data);
       }
 
-      setTimeout(() => {
+      setTimeout(async() => {
+        const Plotly = (await import('plotly.js-dist-min')).default;
         Plotly.react(
           this.PlotlyPlaceHolder.nativeElement,
           this.plotData.data, this.plotData.layout, { modeBarButtons: modeBarButtons });
@@ -95,7 +95,8 @@ export class PostProcessingParetoFrontComponent implements OnInit {
     }
   }
 
-  refreshPlot() {
+  async refreshPlot() {
+    const Plotly = (await import('plotly.js-dist-min')).default;
     Plotly.react(this.PlotlyPlaceHolder.nativeElement, this.plotData.data, this.plotData.layout);
   }
 
@@ -161,7 +162,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
     }
   }
 
-  selectAll() {
+  async selectAll() {
     this.scenarioList.forEach(sce => {
       sce.selected = true;
     });
@@ -170,10 +171,10 @@ export class PostProcessingParetoFrontComponent implements OnInit {
         this.updatePointStyle(dataElement.name, true);
       }
     });
-    this.refreshPlot();
+    await this.refreshPlot();
   }
 
-  unSelectAll() {
+  async unSelectAll() {
     this.scenarioList.forEach(sce => {
       sce.selected = false;
     });
@@ -182,10 +183,10 @@ export class PostProcessingParetoFrontComponent implements OnInit {
         this.updatePointStyle(dataElement.name, false);
       }
     });
-    this.refreshPlot();
+    await this.refreshPlot();
   }
 
-  invertSelection() {
+  async invertSelection() {
     this.scenarioList.forEach(sce => {
       sce.selected = !sce.selected;
     });
@@ -195,15 +196,15 @@ export class PostProcessingParetoFrontComponent implements OnInit {
         this.updatePointStyle(dataElement.name, this.scenarioList[scenIndex].selected);
       }
     });
-    this.refreshPlot();
+    await this.refreshPlot();
   }
 
-  onCheckboxChange(event: MatCheckboxChange, scenarioUpdated: Scenario) {
+  async onCheckboxChange(event: MatCheckboxChange, scenarioUpdated: Scenario) {
     this.updatePointStyle(scenarioUpdated.name, event.checked);
-    this.refreshPlot();
+    await this.refreshPlot();
   }
 
-  onPlotlyClick(data) {
+  async onPlotlyClick(data) {
 
     if (data !== undefined && data !== null && data.points !== undefined && data.points !== null && data.points.length > 0) {
       data.points.forEach((pt) => {
@@ -217,10 +218,10 @@ export class PostProcessingParetoFrontComponent implements OnInit {
         }
       });
     }
-    this.refreshPlot();
+    await this.refreshPlot();
   }
 
-  onPlotlySelection(data) {
+  async onPlotlySelection(data) {
 
     if (data !== undefined && data !== null && data.points !== undefined && data.points !== null && data.points.length > 0) {
       data.points.forEach((pt) => {
@@ -231,7 +232,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
         }
       });
     }
-    this.refreshPlot();
+    await this.refreshPlot();
   }
 
   updatePointStyle(scenarioName: string, isSelected: boolean) {
