@@ -152,7 +152,7 @@ export class EditionFormDialogComponent implements OnInit {
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.snackbarService.showError(`Error retrieving user profile list : ${error.description}`);
+          this.snackbarService.showError(`Failed to retrieve user profile list: ${error.description}`);
         }
       }
     });
@@ -193,7 +193,7 @@ export class EditionFormDialogComponent implements OnInit {
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.snackbarService.showError('Error loading group list for form : ' + error.description);
+          this.snackbarService.showError('Failed to load group list for form: ' + error.description);
         }
       }
     });

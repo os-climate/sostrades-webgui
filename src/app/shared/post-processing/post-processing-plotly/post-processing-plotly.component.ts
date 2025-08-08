@@ -114,7 +114,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData);
     if (isFavorite) graph.data.title = graph.getTitle;
     const text: void | string = isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph);
-    this.snackbarService.showInformation(text ? text : isFavorite ? 'Graph added to dashboard !' : 'Graph removed from dashboard !');
+    this.snackbarService.showInformation(text ? text : isFavorite ? 'Graph has been added to dashboard.' : 'Graph has been removed from dashboard.');
   }
 
   // Check if the plot is in the dashboard

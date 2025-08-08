@@ -72,10 +72,10 @@ export class WidgetComponent implements OnInit, OnDestroy {
     };
 
     this.iconTooltipMapping = {
-      [ValueType.EMPTY]: 'Data in Error',
+      [ValueType.EMPTY]: 'Data has errors',
       [ValueType.USER]: 'Editable data',
       [ValueType.DEFAULT]: 'Default data',
-      [ValueType.READ_ONLY]: 'Read only data',
+      [ValueType.READ_ONLY]: 'Read-only data',
       [ValueType.OPTIONAL]: 'Optional data'
     };
 
@@ -130,7 +130,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
       this.nodeData,
       this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
-    this.snackbarService.showInformation(`${this.nodeData.displayName} added to temporary changes`);
+    this.snackbarService.showInformation(`${this.nodeData.displayName} has been added to temporary changes`);
     this.onStateUpdate();
   }
 
