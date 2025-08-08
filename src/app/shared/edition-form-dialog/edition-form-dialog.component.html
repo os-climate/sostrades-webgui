@@ -1,7 +1,7 @@
 <div class="container-dialog" *ngIf="isLoading && data.editionDialogName === dialogEditionName.EDITION_STUDY">
     <app-progress-bar
       progressMode="indeterminate"
-      progressText="Loading form information"
+      progressText="Loading form data"
     ></app-progress-bar>
   </div>
 
@@ -24,14 +24,13 @@
                 
                 />
                 <mat-error *ngIf="hasError('name', 'required')">
-                    Field is <strong>required</strong>
+                    This field is <strong>required</strong>
                 </mat-error>
                 <mat-error *ngIf="hasError('name', 'error')">
-                    {{labelName}} already <strong>exist</strong>
+                    {{labelName}} already <strong>exists</strong>
                 </mat-error>
                 <mat-error *ngIf="hasError('name', 'pattern')"
-                    >Only letters, numbers, dashes and underscores are
-                    authorized</mat-error
+                    >Only letters, numbers, dashes and underscores are allowed</mat-error
                 >
             </mat-form-field>
         </div>
@@ -50,7 +49,7 @@
                 />
 
                 <mat-error *ngIf="hasError('groupDescription', 'required')">
-                    Field is <strong>required</strong>
+                    This field is <strong>required</strong>
                 </mat-error>
             </mat-form-field>
         </div>
@@ -71,7 +70,7 @@
                 </mat-select>
         
                 <mat-error *ngIf="hasError('groupId', 'required')">
-                Field is <strong>required</strong>
+                This field is <strong>required</strong>
                 </mat-error>
             </mat-form-field>
         </div>
@@ -85,10 +84,10 @@
                 (input)="onChange($event, data.editionDialogName)"
                 />
                 <mat-error *ngIf="hasError('username', 'required')"
-                >A Username is <strong>required</strong></mat-error
+                >Username is <strong>required</strong></mat-error
                 >
                 <mat-error *ngIf="hasError('username', 'pattern')"
-                >Only letters, numbers, dashes and underscores are authorized</mat-error
+                >Only letters, numbers, dashes and underscores are allowed</mat-error
                 >
             </mat-form-field>
         </div>
@@ -101,10 +100,10 @@
                 (input)="onChange($event, data.editionDialogName)"
                 />
                 <mat-error *ngIf="hasError('firstname', 'required')"
-                >A First name is <strong>required</strong></mat-error
+                >First name is <strong>required</strong></mat-error
                 >
                 <mat-error *ngIf="hasError('firstname', 'pattern')"
-                >Only letters, numbers, dashes and underscores are authorized</mat-error
+                >Only letters, numbers, dashes and underscores are allowed</mat-error
                 >
             </mat-form-field>
         </div>
@@ -117,10 +116,10 @@
                 (input)="onChange($event, data.editionDialogName)"
                 />
                 <mat-error *ngIf="hasError('lastname', 'required')"
-                >A Last name is <strong>required</strong></mat-error
+                >Last name is <strong>required</strong></mat-error
                 >
                 <mat-error *ngIf="hasError('lastname', 'pattern')"
-                >Only letters, numbers, dashes and underscores are authorized</mat-error
+                >Only letters, numbers, dashes and underscores are allowed</mat-error
                 >
             </mat-form-field>
         </div>
@@ -133,10 +132,10 @@
                 (input)="onChange($event, data.editionDialogName)"
                 />
                 <mat-error *ngIf="hasError('email', 'required')"
-                >An email is <strong>required</strong></mat-error
+                >Email address is <strong>required</strong></mat-error
                 >
                 <mat-error *ngIf="hasError('email', 'pattern')"
-                >Enter a valid email address</mat-error
+                >Please enter a valid email address</mat-error
                 >
             </mat-form-field>
         </div>

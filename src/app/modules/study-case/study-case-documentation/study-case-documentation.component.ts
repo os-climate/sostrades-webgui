@@ -153,7 +153,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   // Generate documentation into pdf
   async generatePDF(disciplineName: string) {
     // Display the loading page
-    this.loadingDialogService.showLoading(`Generating pdf`);
+    this.loadingDialogService.showLoading(`Generating PDF...`);
 
     // Set the flag to indicate that the PDF is being generated
     this.isPDFGenerating = true;

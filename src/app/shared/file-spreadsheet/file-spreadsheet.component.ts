@@ -96,19 +96,19 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
 
       if (this.isListType && !this.hasSubTypeDescriptor) {
         // Saving list type
-        this.loadingDialogService.showLoading(`Saving in temporary changes : ${this.nodeData.displayName}`);
+        this.loadingDialogService.showLoading(`Saving to temporary changes: ${this.nodeData.displayName}`);
         this.papa.parse(file, {
           complete: papaparseResults => {
 
             // Validate separator used to create the csv
             if (papaparseResults.meta.delimiter !== ',') {
-              this.snackbarService.showError(`Given csv file does not seems to use the atetnded csv separator.\nPLease check that ',' is the csv separator used in the file`);
+              this.snackbarService.showError(`The CSV file does not use the expected comma separator.\nPlease ensure that ',' is used as the CSV separator in the file.`);
               return;
             }
 
             // Check the content of the file (empty file is not somethign alowed)
             if (papaparseResults.data.length === 0) {
-              this.snackbarService.showWarning(`Given csv file is empty, no changes has been applied.`);
+              this.snackbarService.showWarning(`The CSV file is empty. No changes have been applied.`);
               return;
             }
 
@@ -122,12 +122,12 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
             });
 
             if (headers.length > 1) {
-              this.snackbarService.showError(`Given csv file contains more than one attended columns.\nPlease set only one column and name it 'value'`);
+              this.snackbarService.showError(`The CSV file contains more than one column.\nPlease include only one column and name it 'value'.`);
               return;
             }
 
             if (headers[0] !== 'value') {
-              this.snackbarService.showError(`Cannot locate 'value' column name.\nColumn with data to read has to be named 'value' in order to proceed`);
+              this.snackbarService.showError(`Cannot locate the 'value' column.\nThe data column must be named 'value' to proceed.`);
               return;
             }
 
@@ -175,11 +175,11 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
             this.nodeData.sizeInMo = size_mo;
             this.stateUpdate.emit();
             this.loadingDialogService.closeLoading();
-            this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
+            this.snackbarService.showInformation(`${this.nodeData.displayName} value has been saved to temporary changes`);
           }
         });
       } else {
-        this.loadingDialogService.showLoading(`Saving in temporary changes this csv file : ${this.nodeData.displayName}.csv`);
+        this.loadingDialogService.showLoading(`Saving CSV file to temporary changes: ${this.nodeData.displayName}.csv`);
 
         const updateItem = new StudyUpdateParameter(
           this.nodeData.identifier,
@@ -238,11 +238,11 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
               this.nodeData.sizeInMo = size_mo;
               this.stateUpdate.emit();
               this.loadingDialogService.closeLoading();
-              this.snackbarService.showInformation(`${this.nodeData.displayName} value saved in temporary changes`);
+              this.snackbarService.showInformation(`${this.nodeData.displayName} value has been saved to temporary changes`);
             } catch (error) {
               event.target.value='';
               this.loadingDialogService.closeLoading();
-              this.snackbarService.showError(`Error to upload "${file.name}"\n ${error} `);
+              this.snackbarService.showError(`Failed to upload "${file.name}"\n${error}`);
             }
           };
         } else {
@@ -256,7 +256,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
             sizeGigaByte = sizeGigaByte * 1024;
             unity = "MB";
           }
-          this.snackbarService.showError(`Error to upload "${file.name}". Its size ${sizeGigaByte.toFixed(2)}${unity} is bigger than our ${maxByteSize/(1024 * 1024)}MB limit.`);
+          this.snackbarService.showError(`Failed to upload "${file.name}". File size ${sizeGigaByte.toFixed(2)}${unity} exceeds the ${maxByteSize/(1024 * 1024)}MB limit.`);
          }               
       }
     }
@@ -287,7 +287,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
       name = this.nodeData.displayName;
     }
 
-    this.loadingDialogService.showLoading(`Loading csv file : ${name}.csv`);
+    this.loadingDialogService.showLoading(`Loading CSV file: ${name}.csv`);
 
     const updateParameter = this.studyCaselocalStorageService.
       getOneStudyParameterFromLocalStorage(this.studyCaseDataService.loadedStudy.studyCase.id.toString(), this.nodeData.identifier);
@@ -342,7 +342,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
             next: (file) => {
               if (file.byteLength/1024/1024 > 2){
                 //the file length is upper than 2Mo, it cannot be displayed
-                this.snackbarService.showWarning(`The data is too big to be displayed, it can still be downloaded`);
+                this.snackbarService.showWarning(`The data is too large to display, but it can still be downloaded.`);
                 this.nodeData.sizeInMo = file.byteLength/1024/1024;
               }
               else{
@@ -366,7 +366,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
               if (error.redirect) {
                 this.snackbarService.showError(error.description);
               } else {
-                this.snackbarService.showError('Error loading csv file : ' + error.description);
+                this.snackbarService.showError('Failed to load CSV file: ' + error.description);
               }
             }
           });
@@ -391,7 +391,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
     }
     // Secure filename removing special characters
     const fileName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    this.loadingDialogService.showLoading(`Getting csv file : ${fileName}.csv`);
+    this.loadingDialogService.showLoading(`Retrieving CSV file: ${fileName}.csv`);
 
     const updateParameter = this.studyCaselocalStorageService.
       getOneStudyParameterFromLocalStorage(this.studyCaseDataService.loadedStudy.studyCase.id.toString(), this.nodeData.identifier);
@@ -435,7 +435,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.snackbarService.showError('Error loading csv file : ' + error.description);
+          this.snackbarService.showError('Failed to load CSV file: ' + error.description);
         }
       }
     });

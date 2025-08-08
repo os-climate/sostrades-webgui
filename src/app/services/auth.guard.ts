@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
           }), finalize(() => {
             if (!this.userService.currentUserExist()) {
               this.router.navigate([Routing.LOGIN]);
-              this.snackbarService.showError('Error at reloading your credentials, please log in again');
+              this.snackbarService.showError('Failed to reload your credentials. Please log in again.');
               this.isLoadingCurrentUser = false;
             }
             
@@ -67,7 +67,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       }
       this.router.navigate([Routing.LOGIN], { queryParams: { autologon: '' } });
       // eslint-disable-next-line max-len
-      this.snackbarService.showError('Authentication needed : Your access token has expired or you are not authenticated, please login again');
+      this.snackbarService.showError('Authentication required: Your access token has expired or you are not authenticated. Please log in again.');
     }
   }
 
@@ -78,7 +78,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     } else {
       this.router.navigate([Routing.LOGIN]);
       // eslint-disable-next-line max-len
-      this.snackbarService.showError('Authentication needed : Your access token has expired or you are not authenticated, please login again');
+      this.snackbarService.showError('Authentication required: Your access token has expired or you are not authenticated. Please log in again.');
     }
   }
 }
