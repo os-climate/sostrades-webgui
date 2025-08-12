@@ -1,8 +1,15 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { DataHttpService } from "../http/data-http/data-http.service";
 import { HttpClient } from "@angular/common/http";
 import { Location } from "@angular/common";
-import { Dashboard, DisplayableItem } from "../../models/dashboard.model";
+import {
+  Dashboard,
+  DashboardItemFactory,
+  DisplayableItem, GraphData,
+  ItemData,
+  ItemLayout,
+  SectionData, TextData
+} from "../../models/dashboard.model";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -10,11 +17,12 @@ import { map } from "rxjs/operators";
   providedIn: 'root'
 })
 export class DashboardService extends DataHttpService {
-  public onDashboardItemsAdded: EventEmitter<DisplayableItem> = new EventEmitter();
-  public onDashboardItemsRemoved: EventEmitter<DisplayableItem> = new EventEmitter();
-  public onDashboardItemsUpdated: EventEmitter<DisplayableItem> = new EventEmitter();
-  public onSectionExpansion: EventEmitter<DisplayableItem> = new EventEmitter();
-  public dashboardItems: { [id: string]: DisplayableItem };
+  public onDashboardItemsAdded: EventEmitter<{ layout: ItemLayout, data: ItemData }> = new EventEmitter();
+  public onDashboardItemsRemoved: EventEmitter<string> = new EventEmitter();
+  public onDashboardItemsUpdated: EventEmitter<{ layout?: ItemLayout, data?: ItemData }> = new EventEmitter();
+  public onSectionExpansion: EventEmitter<ItemLayout> = new EventEmitter();
+  // public dashboardItems: { [id: string]: DisplayableItem };
+  public currentDashboard: Dashboard;
   public isDashboardUpdated: boolean
   public isDashboardInEdition: boolean;
 
@@ -22,9 +30,17 @@ export class DashboardService extends DataHttpService {
     private http: HttpClient,
     private location: Location) {
     super(location, 'dashboard');
-    this.dashboardItems = {};
+    // this.dashboardItems = {};
     this.isDashboardUpdated = false;
     this.isDashboardInEdition = false;
+  }
+
+  isText(data: ItemData): TextData | null {
+    return ('content' in data) ? data as TextData : null;
+  }
+
+  isGraph(data: ItemData): GraphData | null {
+    return ('disciplineName' in data && 'plotIndex' in data && 'postProcessingFilters' in data && 'graphData' in data && 'name' in data) ? data as GraphData : null;
   }
 
   // Getter to check if the dashboard has changed
@@ -37,52 +53,58 @@ export class DashboardService extends DataHttpService {
   }
 
   // adds an item to the dashboard and emits an event
-  addItem(item: DisplayableItem) {
-    this.dashboardItems[item.id] = item;
+  addItem(item: { layout: ItemLayout, data: ItemData }) {
+    this.currentDashboard.layout[item.layout.item_id] = item.layout;
+    this.currentDashboard.data[item.layout.item_id] = item.data;
+    // this.dashboardItems[stringId] = item;
     this.onDashboardItemsAdded.emit(item);
     this.isDashboardUpdated = true;
   }
 
   // removes an item from the dashboard and emits an event
-  removeItem(item: DisplayableItem): void | string {
+  removeItem(itemId: string): void | string {
     let text: string = null;
-    if (item.id in this.dashboardItems) delete this.dashboardItems[item.id];
-    else {
-      for (const dashboardItem of Object.values(this.dashboardItems)) {
-        if (dashboardItem.type === 'section') {
-          const index = dashboardItem.data.items.findIndex((child: DisplayableItem) => child.id === item.id);
+    if (itemId in this.currentDashboard.layout) {
+      delete this.currentDashboard.layout[itemId];
+      delete this.currentDashboard.data[itemId];
+    } else {
+      for (const dashboardItem of Object.values(this.currentDashboard.layout)) {
+        if (dashboardItem.item_type === 'section') {
+          const index = dashboardItem.children.findIndex((child: string) => child === itemId);
           if (index !== -1) {
-            dashboardItem.data.items.splice(index, 1);
+            dashboardItem.children.splice(index, 1);
+            delete this.currentDashboard.data[itemId];
             text = 'Graph removed from section !';
           }
         }
       }
     }
-    this.onDashboardItemsRemoved.emit(item);
+    this.onDashboardItemsRemoved.emit(itemId);
     this.isDashboardUpdated = true;
     if (text) return text;
   }
 
   // updates an item in the dashboard and emits an event
-  updateItem(item: DisplayableItem) {
-    this.dashboardItems[item.id] = item;
+  updateItem(item: { layout?: ItemLayout, data?: ItemData }) {
+    if (item.layout) this.currentDashboard.layout[item.layout.item_id] = item.layout;
+    if (item.data) this.currentDashboard.data[item.layout.item_id] = item.data;
     this.onDashboardItemsUpdated.emit(item);
     this.isDashboardUpdated = true;
   }
 
-  onSectionExpansionEvent(item: DisplayableItem) {
-    this.onSectionExpansion.emit(item);
+  onSectionExpansionEvent(item: { layout: ItemLayout, data: SectionData }) {
+    this.onSectionExpansion.emit(item.layout);
   }
 
   // checks if an item is selected
   isSelected(itemId: string) {
-    if (itemId in this.dashboardItems)
+    if (Object.keys(this.currentDashboard.layout).includes(itemId))
       return true;
     else {
-      for (const item of Object.values(this.dashboardItems)) {
-        if (item.type === 'section') {
-          for (const child of item.data.items) {
-            if (child.id === itemId) {
+      for (const item of Object.values(this.currentDashboard.layout)) {
+        if (item.item_type === 'section') {
+          for (const childId of item.children) {
+            if (childId === itemId) {
               return true;
             }
           }
@@ -92,15 +114,56 @@ export class DashboardService extends DataHttpService {
     return false;
   }
 
-  // get the whole dashboard loaded in the service
-  getItems(): DisplayableItem[] {
-    return Object.values(this.dashboardItems);
+  // get the whole layout dashboard loaded in the service
+  getItemsLayout(): ItemLayout[] {
+    return Object.values(this.currentDashboard.layout)
+  }
+
+  getItemLayoutById(id: string): ItemLayout {
+    return this.currentDashboard.layout[id];
+  }
+
+  // get the whole data dashboard loaded in the service
+  getItemsData(): { [id: string]: ItemData } {
+    return this.currentDashboard.data
+  }
+
+  getItemDataById(id: string): ItemData {
+    return this.currentDashboard.data[id];
+  }
+
+
+  addItemToSection(itemId: string, section: ItemLayout) {
+    if (itemId in this.currentDashboard.layout) {
+      delete this.currentDashboard.layout[itemId];
+    }
+    if (!section.children) {
+      section.children = [];
+    }
+    if (!section.children.includes(itemId)) {
+      section.children.push(itemId);
+    }
+    this.onDashboardItemsUpdated.emit({ layout: section, data: this.currentDashboard.data[itemId] })
+    this.isDashboardUpdated = true;
+  }
+
+  // Note: this method assumes the itemType is provided to correctly recreate the layout
+  removeItemFromSection(itemId: string, itemType: 'text' | 'graph', section: ItemLayout): ItemLayout {
+    if (section.children) {
+      const index: number = section.children.indexOf(itemId);
+      if (index !== -1) {
+        section.children.splice(index, 1);
+      }
+    }
+    this.currentDashboard.layout[itemId] = DashboardItemFactory.createItemLayout(itemId, itemType);
+    this.isDashboardUpdated = true;
+    return this.currentDashboard.layout[itemId]
   }
 
   // apply the new scaling factor to the dashboard items
   // does not trigger an update so the save button is not activated
-  handleOldDashboardItems(item: DisplayableItem) {
-    switch (item.type) {
+  handleOldDashboardItems(item: ItemLayout) {
+    switch (item.item_type) {
       case 'section':
         // check if the items are old items
         if (item.minCols < 40 && item.minRows < 16) {
@@ -126,32 +189,46 @@ export class DashboardService extends DataHttpService {
     }
   }
 
+  // transform {layout: {[id: string]:ItemLayout}, data: {[id: string]:ItemData}} into items {layout: ItemLayout, data: ItemData}
+  layoutDataToDisplayableItem(layout: { [id: string]: ItemLayout }, data: {
+    [id: string]: ItemData
+  }): DisplayableItem[] {
+    console.log('layout', layout);
+    console.log('data', data);
+    return [];
+  }
+
   /// -----------------------------------------------------------------------------------------------------------------------------
   /// --------------------------------------           API DATA          ----------------------------------------------------------
   /// -----------------------------------------------------------------------------------------------------------------------------
 
   // get the dashboard from the API
-  getDashboard(studyId: number): Observable<Dashboard> {
+  getDashboard(studyId: number): Observable<DisplayableItem[]> {
     return this.http.get<Dashboard>(`${this.apiRoute}/${studyId}`).pipe(map(
       response => {
         const dashboard: Dashboard = Dashboard.Create(response);
-        this.dashboardItems = {};
-        for (const item of dashboard.items) {
+        // parse each layout in dashboard
+        for (const item of Object.values(dashboard.layout)) {
           this.handleOldDashboardItems(item);
-          this.dashboardItems[item.id] = item
         }
-        return dashboard;
+        this.currentDashboard = dashboard;
+        return this.layoutDataToDisplayableItem(dashboard.layout, dashboard.data);
       }
     ))
   }
 
+
   // Save the dashboard to the API
-  updateDashboard(dashboard: Dashboard): Observable<void> {
+  updateDashboard(study_case_id: number): Observable<void> {
     const payload = {
-      study_case_id: dashboard.studyCaseId,
-      items: dashboard.items
+      study_case_id: study_case_id,
+      layout: this.currentDashboard.layout,
+      data: this.currentDashboard.data
     }
+    console.log('Dashboard sent to the API:');
+    console.log('\tlayout:', this.currentDashboard.layout);
+    console.log('\tdata:', this.currentDashboard.data);
     this.isDashboardUpdated = false;
-    return this.http.post<void>(`${this.apiRoute}/${dashboard.studyCaseId}`, payload);
+    return this.http.post<void>(`${this.apiRoute}/${payload.study_case_id}`, payload);
   }
 }

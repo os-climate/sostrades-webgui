@@ -6,7 +6,8 @@ import {
   HostListener,
   ChangeDetectorRef,
   ViewChild,
-  QueryList, ElementRef
+  QueryList,
+  ElementRef
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TreeNodeDataService } from 'src/app/services/tree-node-data.service';
@@ -14,11 +15,9 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { LoadedStudy } from 'src/app/models/study.model';
 import { DashboardService } from "../../services/dashboard/dashboard.service";
 import {
-  Dashboard,
-  DashboardGraph,
-  DashboardSection,
-  DashboardText,
-  DisplayableItem
+  ItemLayout,
+  ItemData,
+  DashboardItemFactory, Dashboard, TextData, GraphData, SectionData
 } from "../../models/dashboard.model";
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
@@ -38,14 +37,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private dashboardUpdateItemSubscription: Subscription;
   private sectionExpansionSubscription: Subscription;
   public loadedStudy: LoadedStudy;
-  public dashboardFavorites: DisplayableItem[];
+  // public dashboardItems: Array<{layout: ItemLayout, data: ItemData}>;
   public isDashboardUpdated: boolean;
   public options: GridsterConfig;
   private previousPositions: string;
   public isDashboardInEditionMode: boolean;
 
-  // Getter that returns the graph items of the dashboard
-  itemType: { [K in DisplayableItem['type']]: K } = {
+
+  // Getter that returns the type string
+  itemType: { [K in ItemLayout['item_type']]: K } = {
     graph: 'graph',
     section: 'section',
     text: 'text'
@@ -58,9 +58,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     private dashboardService: DashboardService,
     private cdr: ChangeDetectorRef) {
     this.loadedStudy = null;
-    this.dashboardFavorites = [];
     this.isDashboardUpdated = this.dashboardService.isDashboardChanged;
     this.isDashboardInEditionMode = false;
+    this.initializeGridsterOptions();
+  }
+
+  private initializeGridsterOptions() {
     this.options = {
       draggable: {
         enabled: false,
@@ -83,48 +86,90 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       maxRows: 400,
       margin: 1,
       swap: true,
-    }
+    };
   }
 
   ngOnInit() {
+    this.setupSubscriptions();
+    this.isDashboardInEditionMode = this.dashboardService.isDashboardInEditionMode;
+    this.savePreviousPositions();
+    if (this.isDashboardInEditionMode) this.toggleEdit();
+    if (this.options.api) this.options.api.optionsChanged();
+  }
+
+  private setupSubscriptions() {
     this.treeNodeDataSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(() => {
       this.loadedStudy = this.studyCaseDataService.loadedStudy;
     });
-    this.dashboardAddItemSubscription = this.dashboardService.onDashboardItemsAdded.subscribe((item: DisplayableItem) => {
-      this.dashboardFavorites.push(item);
+
+    this.dashboardAddItemSubscription = this.dashboardService.onDashboardItemsAdded.subscribe((item: {
+      layout: ItemLayout,
+      data: ItemData
+    }) => {
+      console.log('Dashboard item added: ', item);
       this.isDashboardUpdated = true;
     });
-    this.dashboardRemoveItemSubscription = this.dashboardService.onDashboardItemsRemoved.subscribe((item: DisplayableItem) => {
-      this.dashboardFavorites = this.dashboardFavorites.filter(existing => existing.id !== item.id);
+
+    this.dashboardRemoveItemSubscription = this.dashboardService.onDashboardItemsRemoved.subscribe((itemId: string) => {
+      console.log('Dashboard item removed: ', itemId);
       this.isDashboardUpdated = true;
     });
-    this.dashboardUpdateItemSubscription = this.dashboardService.onDashboardItemsUpdated.subscribe((item: DisplayableItem) => {
-      const index = this.dashboardFavorites.findIndex(existing => existing.id === item.id);
-      if (index !== -1) {
-        this.dashboardFavorites[index] = item;
-        this.isDashboardUpdated = true;
-      }
+
+    this.dashboardUpdateItemSubscription = this.dashboardService.onDashboardItemsUpdated.subscribe((item: {
+      layout: ItemLayout,
+      data: ItemData
+    }) => {
+      console.log('Dashboard item updated: ', item);
       if (this.options.api) this.options.api.optionsChanged();
+      this.isDashboardUpdated = true;
     });
-    this.sectionExpansionSubscription = this.dashboardService.onSectionExpansion.subscribe((item: DisplayableItem) => {
-      this.itemResize(item);
+
+    this.sectionExpansionSubscription = this.dashboardService.onSectionExpansion.subscribe((itemLayout: ItemLayout) => {
+      this.itemResize(itemLayout);
       this.onAutoFit();
     });
-    this.dashboardFavorites = this.dashboardService.getItems();
-    this.isDashboardInEditionMode = this.dashboardService.isDashboardInEditionMode;
-    this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
-      id: item.id,
+  }
+
+  private savePreviousPositions() {
+    this.previousPositions = JSON.stringify(Object.values(this.dashboardService.currentDashboard.layout).map((item: ItemLayout) => ({
+      item_id: item.item_id,
       x: item.x,
       y: item.y,
       cols: item.cols,
       rows: item.rows
     })));
-    if (this.isDashboardInEditionMode) this.toggleEdit();
-    if (this.options.api) this.options.api.optionsChanged();
+  }
+
+  get dashboard(): Dashboard {
+    return this.dashboardService.currentDashboard
+  }
+
+  getItemLayout(id: string): ItemLayout | null {
+    return this.dashboardService.currentDashboard.layout[id] || null;
+  }
+
+  getGraphData(id: string): GraphData {
+    return this.dashboardService.currentDashboard.data[id] as GraphData;
+  }
+
+  getDisplayItems(): string[] {
+    return Object.keys(this.dashboardService.currentDashboard.layout)
+  }
+
+  getTextData(id: string): TextData {
+    return this.dashboardService.currentDashboard.data[id] as TextData;
+  }
+
+  getSectionItem(id: string): { layout: ItemLayout, data: SectionData } {
+    const section: ItemLayout = this.dashboardService.currentDashboard.layout[id];
+    const sectionData: SectionData = this.dashboardService.currentDashboard.data[id] as SectionData;
+    if (section && sectionData) {
+      return { layout: section, data: sectionData };
+    }
   }
 
   ngAfterViewInit() {
-    this.updateGraphSizes();
+    // this.updateGraphSizes();
     if (this.options.api) this.options.api.optionsChanged();
     this.cdr.detectChanges();
   }
@@ -171,46 +216,44 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Save the current dashboard in a backend file
   OnSaveDashboard() {
-    const dashboard: Dashboard = {
-      'studyCaseId': this.loadedStudy.studyCase.id,
-      'items': this.dashboardFavorites,
-    }
-    this.dashboardService.updateDashboard(dashboard).subscribe({
+    this.dashboardService.updateDashboard(this.loadedStudy.studyCase.id).subscribe({
       next: () => {
         this.snackbarService.showInformation('Dashboard saved');
         this.isDashboardUpdated = false;
       },
       error: (err) => {
-        this.snackbarService.showError(`Error saving dashboard: ${err}`);
+        let errorMessage = err.message || 'Unknown error';
+        if (err.error && err.error.description) {
+          errorMessage = err.error.description
+        }
+        this.snackbarService.showError(`Error saving dashboard: ${errorMessage}`);
       }
     });
     this.options.draggable.enabled = false;
     this.options.resizable.enabled = false;
     this.options.displayGrid = 'none';
-    if (this.dashboardFavorites.length > 0)
+    if (this.getDisplayItems().length > 0)
       this.options.api.optionsChanged();
   }
 
   // Custom compact function to fil the empty spaces in the dashboard
-  autoFitItems(items: DisplayableItem[]) {
-    const ColsWidth = 40;
-    const placed: DisplayableItem[] = [];
-
-    for (const item of items) {
+  autoFitItems(itemsLayout: ItemLayout[]): ItemLayout[] {
+    const placed: ItemLayout[] = [];
+    for (const itemLayout of itemsLayout) {
       let found = false;
       for (let y = 0; !found; y++) {
-        for (let x = 0; x <= ColsWidth - item.cols; x++) {
+        for (let x = 0; x <= this.options.maxCols - itemLayout.cols; x++) {
           // Check if there is a collision with an already placed item
-          const collision = placed.some(other =>
-            x < other.x + other.cols &&
-            x + item.cols > other.x &&
-            y < other.y + other.rows &&
-            y + item.rows > other.y
-          );
+          const collision = placed.some((other: ItemLayout): boolean => {
+            return (x < other.x + other.cols &&
+              x + itemLayout.cols > other.x &&
+              y < other.y + other.rows &&
+              y + itemLayout.rows > other.y)
+          });
           if (!collision) {
-            item.x = x;
-            item.y = y;
-            placed.push(item);
+            itemLayout.x = x;
+            itemLayout.y = y;
+            placed.push(itemLayout);
             found = true;
             break;
           }
@@ -223,20 +266,28 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Handle the auto-fit button click and change the compact type to none
   onAutoFit() {
-    this.dashboardFavorites = this.autoFitItems(this.dashboardFavorites);
+    let itemsLayout: ItemLayout[] = [];
+    for (const itemId of this.getDisplayItems()) {
+      const itemLayout: ItemLayout = this.getItemLayout(itemId);
+      itemsLayout.push(itemLayout);
+    }
+    itemsLayout = this.autoFitItems(itemsLayout);
+    itemsLayout.forEach((item: ItemLayout)=> {
+      this.dashboardService.currentDashboard.layout[item.item_id] = item;
+    })
     this.options.compactType = 'none'
     if (this.options.api) this.options.api.optionsChanged();
   }
 
   // Calculate the width of the graph item for resizing
-  CalculateGraphWidth(item: DashboardGraph): number {
+  calculateGraphWidth(item: ItemLayout): number {
     const colWidth = this.getColWidth();
     if (!colWidth) return null;
     return (item.cols * colWidth) + ((item.cols - 1) * this.options.margin);
   }
 
   // Calculate the height of the graph item for resizing
-  CalculateGraphHeight(item: DashboardGraph): number {
+  calculateGraphHeight(item: ItemLayout): number {
     const rowHeight = this.getRowHeight();
     if (!rowHeight) return null;
     return (item.rows * rowHeight) + ((item.rows - 1) * this.options.margin);
@@ -258,16 +309,16 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // Listen for window resize event
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.updateGraphSizes();
-  }
-
-  // Used to trigger Angular's change detection
-  updateGraphSizes() {
-    this.dashboardFavorites = [...this.dashboardFavorites];
-  }
+  // // Listen for window resize event
+  // @HostListener('window:resize', ['$event'])
+  // onResize() {
+  //   this.updateGraphSizes();
+  // }
+  //
+  // // Used to trigger Angular's change detection
+  // updateGraphSizes() {
+  //   this.dashboardItems = [...this.dashboardItems];
+  // }
 
   // Handle the drag stop event
   onDragStop() {
@@ -283,47 +334,46 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 0);
   }
 
-  onItemResize(item: DisplayableItem) {
+  onItemResize(item: ItemLayout) {
     setTimeout(() => {
       this.itemResize(item);
     }, 0)
   }
 
   // Handle the item resize event
-  itemResize(item: DisplayableItem) {
-    if (item.minCols && item.minRows) {
-      if (item.cols < item.minCols) {
-        this.snackbarService.showError(`${item.type} item must have at least ${item.minCols} columns`);
+  itemResize(item_layout: ItemLayout) {
+    if (item_layout.minCols && item_layout.minRows) {
+      if (item_layout.cols < item_layout.minCols) {
+        this.snackbarService.showError(`${item_layout.item_type} item must have at least ${item_layout.minCols} columns`);
         // check if the item after recalibration will stay on the valid grid
         // if not, set the item's x to the maximum x position based on the options.maxCols minus item.minCols (to avoid grid to be extended)
-        if (item.x + item.minCols > this.options.maxCols) {
-          item.x = this.options.maxCols - item.minCols;
+        if (item_layout.x + item_layout.minCols > this.options.maxCols) {
+          item_layout.x = this.options.maxCols - item_layout.minCols;
         }
-        JSON.parse(this.previousPositions).forEach(i => {
-          if (item.x + item.minCols > i.x && item.x < i.x + i.cols && item.y + item.rows > i.y && item.y < i.y + i.rows && item.id !== i.id)
-            item.x = i.x - item.minCols;
+        JSON.parse(this.previousPositions).forEach((i: {item_id: string, x: number, y: number, cols: number, rows: number}) => {
+          if (item_layout.x + item_layout.minCols > i.x && item_layout.x < i.x + i.cols && item_layout.y + item_layout.rows > i.y && item_layout.y < i.y + i.rows && item_layout.item_id !== i.item_id)
+            item_layout.x = i.x - item_layout.minCols;
         });
-        item.cols = item.minCols;
+        item_layout.cols = item_layout.minCols;
       }
-      if (item.rows < item.minRows) {
-        this.snackbarService.showError(`${item.type} item must have at least ${item.minRows} rows`);
+      if (item_layout.rows < item_layout.minRows) {
+        this.snackbarService.showError(`${item_layout.type} item must have at least ${item_layout.minRows} rows`);
         // check if the item after recalibration will not collide with another item
-        // if not, set the item's y to the maximum y position based on the other item colliding y and the item.minRows (to avoid items to overlap)
-        JSON.parse(this.previousPositions).forEach(i => {
-          if (item.y + item.minRows > i.y && item.y < i.y + i.rows && item.x + item.cols > i.x && item.x < i.x + i.cols && item.id !== i.id)
-            item.y = i.y - item.minRows
+        // if not, set the item's y to the maximum y position based on the other item colliding y and the item_layout.minRows (to avoid items to overlap)
+        JSON.parse(this.previousPositions).forEach((i: {item_id: string, x: number, y: number, cols: number, rows: number}) => {
+          if (item_layout.y + item_layout.minRows > i.y && item_layout.y < i.y + i.rows && item_layout.x + item_layout.cols > i.x && item_layout.x < i.x + i.cols && item_layout.item_id !== i.item_id)
+            item_layout.y = i.y - item_layout.minRows
         });
-        item.rows = item.minRows;
+        item_layout.rows = item_layout.minRows;
       }
     }
-
     if (this.options.api) this.options.api.optionsChanged();
   }
 
   // check if the position of the items has changed
   checkForPositionChanges() {
-    const currentPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
-      id: item.id,
+    const currentPositions = JSON.stringify(Object.values(this.dashboardService.currentDashboard.layout).map((item: ItemLayout): {item_id: string, x: number, y: number, cols: number, rows: number}  => ({
+      item_id: item.item_id,
       x: item.x,
       y: item.y,
       cols: item.cols,
@@ -331,20 +381,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     })));
     if (currentPositions !== this.previousPositions) {
       this.orderItemsByPosition();
-      this.previousPositions = JSON.stringify(this.dashboardFavorites.map(item => ({
-        id: item.id,
-        x: item.x,
-        y: item.y,
-        cols: item.cols,
-        rows: item.rows
-      })));
+      this.savePreviousPositions();
       this.isDashboardUpdated = true;
     }
   }
 
   // Change the dashboard list of the component to match the new order of the items in the grid
   orderItemsByPosition() {
-    this.dashboardFavorites.sort((a, b) => {
+    Object.values(this.dashboardService.currentDashboard.layout).sort((a: ItemLayout, b: ItemLayout) => {
       if (a.y === b.y) {
         return a.x - b.x;
       } else {
@@ -355,12 +399,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Add a new text item to the dashboard
   onAddText() {
-    const text = new DashboardText();
-    this.dashboardService.addItem(text);
+    const newText = DashboardItemFactory.createText();
+    this.dashboardService.addItem(newText);
   }
+
   // Add a new section item to the dashboard
   onAddSection() {
-    const section = new DashboardSection();
-    this.dashboardService.addItem(section);
+    const newSection = DashboardItemFactory.createSection();
+    this.dashboardService.addItem(newSection);
   }
 }

@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { GridsterConfig } from "angular-gridster2";
-import { Dashboard, DashboardGraph, DisplayableItem } from "../../../models/dashboard.model";
+import { DashboardGraph, DisplayableItem, ItemLayout } from "../../../models/dashboard.model";
 import { Subscription } from "rxjs";
 import { TypeCheckingTools } from "../../../tools/type-checking.tool";
 
@@ -24,7 +24,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
   public options: GridsterConfig;
 
   // Getter that returns the graph items of the dashboard
-  itemType: { [K in DisplayableItem['type']]: K } = {
+  itemType: { [K in ItemLayout['type']]: K } = {
     graph: 'graph',
     section: 'section',
     text: 'text'
@@ -59,8 +59,8 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.params.subscribe(params => {
       const idRequested = params['id'];
       if (idRequested !== null && idRequested !== undefined && TypeCheckingTools.isInt(idRequested)) {
-        this.dashboardService.getDashboard(idRequested).subscribe((dashboard: Dashboard) => {
-          this.dashboard = dashboard.items;
+        this.dashboardService.getDashboard(idRequested).subscribe((dashboard: DisplayableItem[]) => {
+          this.dashboard = dashboard;
           this.loading = false;
         });
       } else {

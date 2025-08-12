@@ -3,9 +3,10 @@ import { StudyCaseValidation } from 'src/app/models/study-case-validation.model'
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import * as Plotly from 'plotly.js-dist-min';
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
-import { DashboardGraph } from "../../../models/dashboard.model";
+import { DashboardItemFactory, ItemData, ItemLayout } from "../../../models/dashboard.model";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SnackbarService } from "../../../services/snackbar/snackbar.service";
+import { PostProcessingFilter } from "../../../models/post-processing-filter.model";
 
 @Component({
   selector: 'app-post-processing-plotly',
@@ -17,6 +18,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   @Input() fullNamespace: string;
   @Input() disciplineName: string;
   @Input() name: string;
+  @Input() filters: PostProcessingFilter[];
   @Input() plotIndex: number;
   @Input() height?: number;
   @Input() width?: number;
@@ -87,6 +89,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
       disciplineName: this.disciplineName,
       name: this.name,
       id: this.plotIndex,
+      filters: this.filters
     }
     this.isFavorite = !this.isFavorite;
     if (this.isFavorite)
@@ -101,17 +104,27 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
    * @param isFavorite add if true and remove if false
    * @description Add or remove the plot in the dashboard
    * */
-  saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
-    const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData);
-    if (isFavorite) graph.data.title = graph.getTitle;
-    const text: void | string = isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph);
+  saveFavorites(plotId: {
+    disciplineName: string,
+    name: string,
+    id: number,
+    filters: PostProcessingFilter[]
+  }, plotData: any, isFavorite: boolean) {
+    const graph: {
+      layout: ItemLayout,
+      data: ItemData
+    } = DashboardItemFactory.createGraph(plotId.disciplineName, plotId.name, plotId.id, plotId.filters, plotData);
+    const text: void | string = isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph.layout.item_id);
     this.snackbarService.showInformation(text ? text : isFavorite ? 'Graph added to dashboard !' : 'Graph removed from dashboard !');
   }
 
   // Check if the plot is in the dashboard
   loadFavorites() {
-    const graph = new DashboardGraph(this.disciplineName, this.name, this.plotIndex, this.plotData);
-    this.isFavorite = this.dashboardService.isSelected(graph.identifier);
+    const graph: {
+      layout: ItemLayout,
+      data: ItemData
+    } = DashboardItemFactory.createGraph(this.disciplineName, this.name, this.plotIndex, this.filters, this.plotData);
+    this.isFavorite = this.dashboardService.isSelected(graph.layout.item_id);
   }
 
   private setupValidation() {
