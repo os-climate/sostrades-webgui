@@ -180,7 +180,7 @@ export class StudyCaseLocalStorageService {
   }
 
   saveStudyChanges(studyId: string, studyParameters: StudyUpdateParameter[], withReloading: boolean, isStudySaved: any) {
-    this.loadingDialogService.showLoading('Saving changes, please wait a moment');
+    this.loadingDialogService.showLoading('Saving changes, please wait...');
 
     this.studyCaseMainService.updateStudyParameters(studyParameters, studyId).subscribe({
       next: (loadedStudy) => {
@@ -234,7 +234,7 @@ export class StudyCaseLocalStorageService {
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
-          this.studyCaseDataService.checkPodStatusAndShowError(parseInt(studyId), errorReceived,"Error saving study case changes: " );
+          this.studyCaseDataService.checkPodStatusAndShowError(parseInt(studyId), errorReceived,"Failed to save study case changes: " );
         }
         isStudySaved(false);
       }

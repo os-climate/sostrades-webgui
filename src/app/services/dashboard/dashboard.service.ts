@@ -53,7 +53,7 @@ export class DashboardService extends DataHttpService {
           const index = dashboardItem.data.items.findIndex((child: DisplayableItem) => child.id === item.id);
           if (index !== -1) {
             dashboardItem.data.items.splice(index, 1);
-            text = 'Graph removed from section !';
+            text = 'Graph has been removed from section.';
           }
         }
       }

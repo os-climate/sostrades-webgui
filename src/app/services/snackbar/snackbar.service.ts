@@ -25,7 +25,7 @@ export class SnackbarService {
   }
 
   showInformation(message: string) {
-    this.openSnackBar(SnackBarTypes.INFORMATIONN, message, '', 5000);
+    this.openSnackBar(SnackBarTypes.INFORMATION, message, '', 5000);
   }
 
   showWarning(message: string) {
@@ -40,6 +40,6 @@ export class SnackbarService {
 
 export enum SnackBarTypes { // Implemented in styles.scss
   ERROR = 'snackBarError',
-  INFORMATIONN = 'snackBarInformation',
+  INFORMATION = 'snackBarInformation',
   WARNING = 'snackBarWarning',
 }

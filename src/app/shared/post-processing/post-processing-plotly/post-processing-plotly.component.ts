@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, SimpleChanges, OnChanges } from '@angular/core';
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
-import * as Plotly from 'plotly.js-dist-min';
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { DashboardGraph } from "../../../models/dashboard.model";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -26,6 +25,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   public isPlotLoading: boolean;
   public studyCaseValidation: StudyCaseValidation;
   public isFavorite: boolean;
+  private plotlyPromise: Promise<any>;
 
   private readonly downloadIcon = {
     width: 24,
@@ -81,6 +81,15 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     }
   }
 
+  
+
+  private async getPlotly() {
+    if (!this.plotlyPromise) {
+      this.plotlyPromise = import('plotly.js-dist-min').then(m => m.default);
+    }
+    return this.plotlyPromise;
+  }
+
   // Add or remove the plot in the dashboard
   OnFavoriteClick() {
     const plotId = {
@@ -105,7 +114,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData);
     if (isFavorite) graph.data.title = graph.getTitle;
     const text: void | string = isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph);
-    this.snackbarService.showInformation(text ? text : isFavorite ? 'Graph added to dashboard !' : 'Graph removed from dashboard !');
+    this.snackbarService.showInformation(text ? text : isFavorite ? 'Graph has been added to dashboard.' : 'Graph has been removed from dashboard.');
   }
 
   // Check if the plot is in the dashboard
@@ -186,7 +195,8 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     }
   }
 
-  private createCommonModeBarButtons(showLegend: boolean) {
+  private async createCommonModeBarButtons(showLegend: boolean) {
+    const Plotly = await this.getPlotly();
     return [
       {
         name: 'Show/hide legend',
@@ -206,7 +216,8 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     ];
   }
 
-  private createEnlargedPlot(gd: any) {
+  private async createEnlargedPlot(gd: any) {
+    const Plotly = await this.getPlotly();
     const overlay = document.createElement('div');
     Object.assign(overlay.style, {
       position: 'fixed',
@@ -266,7 +277,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
             }
           }]
           : []),
-        ...this.createCommonModeBarButtons(currentLayout.showlegend)
+        ...(await this.createCommonModeBarButtons(currentLayout.showlegend))
           .filter(button =>
             typeof button === 'string' ||
             (typeof button === 'object' && button.name !== 'Enlarge plot')
@@ -318,7 +329,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     });
   }
 
-  private initializePlot() {
+  private async initializePlot() {
     const modeBarButtons = [[
       ...(this.plotData.csv_data?.length > 0
         ? [{
@@ -329,16 +340,16 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
           }
         }]
         : []),
-      ...this.createCommonModeBarButtons(true)
+      ...(await this.createCommonModeBarButtons(true))
     ]];
 
-    setTimeout(() => {
+    setTimeout(async() => {
       this.plotData['config'] = {
         modeBarButtons,
         displaylogo: false,
         toImageButtonOptions: this.downloadConfig
       };
-
+      const Plotly = await this.getPlotly();
       Plotly.react(
         this.PlotlyPlaceHolder.nativeElement,
         this.plotData

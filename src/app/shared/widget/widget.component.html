@@ -29,10 +29,14 @@
     <div class="header-icon" style="cursor: default; user-select: none;">
       <div style="width: 18px">
         <div *ngIf="!nodeData.coupling" style="width: 18px"></div>
-        <i *ngIf="nodeData.coupling" class="fa-solid fa-right-left"></i>
-        <i *ngIf="nodeData.hasConnectorData" class="fa-solid fa-link" style="font-size: 15px; margin-right: 3px;"></i>
+        <i *ngIf="nodeData.coupling" class="fa-solid fa-right-left"
+          matTooltip="Coupling data"></i>
+        <i *ngIf="nodeData.hasConnectorData" class="fa-solid fa-link" style="font-size: 15px; margin-right: 3px;"
+         matTooltip="Connector data"></i>
       </div>
-      <mat-icon style="font-size: 18px; margin-left: 3px; width: 24px" [class]="headerIconColor">{{
+      <mat-icon style="font-size: 18px; margin-left: 3px; width: 24px" 
+      [class]="headerIconColor"
+      [matTooltip]="headerIconTooltip">{{
         headerIconClass
       }}</mat-icon>
     </div>

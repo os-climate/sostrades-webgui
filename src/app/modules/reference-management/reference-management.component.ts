@@ -295,7 +295,7 @@ export class ReferenceManagementComponent implements OnInit, OnDestroy {
         this.AddGeneratedRefenceToProcessList(study)
       } else {
         this.snackbarService.showError(
-          'Error while generating reference ' + study.process + '.' + study.name + ' : ' + refDoneStatus.generationLogs
+          'Failed to generate reference ' + study.process + '.' + study.name + ': ' + refDoneStatus.generationLogs
           );
         study.isRegeneratingReference = false;
       }

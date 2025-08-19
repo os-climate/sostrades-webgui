@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
-import { Graphviz, graphviz } from 'd3-graphviz';
-import * as d3 from 'd3';
+import { Graphviz} from 'd3-graphviz';
+import {Selection, BaseType, DragBehavior, ZoomBehavior, select} from 'd3';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { VisualisationService } from 'src/app/services/visualisation/visualisation.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -18,11 +18,11 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
 
   public isLoading: boolean;
 
-  svg: d3.Selection<any, unknown, null, undefined>;
-  graph: Graphviz<d3.BaseType, any, d3.BaseType, any>;
+  svg: Selection<any, unknown, null, undefined>;
+  graph: Graphviz<BaseType, any, BaseType, any>;
   dotString: string;
-  drag:d3.DragBehavior<Element, unknown, unknown>;
-  zoom:d3.ZoomBehavior<Element, unknown>;
+  drag:DragBehavior<Element, unknown, unknown>;
+  zoom:ZoomBehavior<Element, unknown>;
   private resizeObserver: ResizeObserver;
   private resizeTimeout: any;
 
@@ -32,16 +32,16 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
     private snackbarService: SnackbarService
   ) { this.isLoading = true; }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const loadedStudy = this.studyCaseDataService.loadedStudy;
 
     if (loadedStudy !== null && loadedStudy !== undefined) {
       if (Object.keys(loadedStudy.n2Diagram).length === 0 ||!Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.INTERFACE)) {
         if (this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running) {
           this.visualisationService.getInterfaceDiagramData(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
-            next: (res: any) => {
+            next: async(res: any) => {
               this.dotString = res['dotString'];
-              this.initGraph();
+              await this.initGraph();
             },
             error: (err) => {
               this.isLoading = false;
@@ -54,7 +54,7 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
         }
       } else if (Object.keys(loadedStudy.n2Diagram).includes(VisualizationDiagrams.INTERFACE)){
         this.dotString = loadedStudy.n2Diagram[VisualizationDiagrams.INTERFACE]['dotString'];
-        this.initGraph();
+        await this.initGraph();
       }
     }
   }
@@ -64,9 +64,9 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
       if (this.resizeTimeout) {
         clearTimeout(this.resizeTimeout);
       }
-      this.resizeTimeout = setTimeout(() => {
+      this.resizeTimeout = setTimeout(async() => {
         if (!this.isLoading && this.dotString) {
-          this.initGraph();
+          await this.initGraph();
         }
       }, 200);
     });
@@ -85,10 +85,10 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
     }
   }
 
-  initGraph(): void {
-    d3.select(this.el.nativeElement).selectAll('svg').remove();
+  async initGraph(): Promise<void> {
+    select(this.el.nativeElement).selectAll('svg').remove();
 
-    this.svg = d3.select(this.el.nativeElement).append('svg')
+    this.svg = select(this.el.nativeElement).append('svg')
       .attr('class', 'graphviz-graph')
       .attr('id', 'graphviz-graph')
       .attr("xmlns", "http://www.w3.org/2000/svg")
@@ -113,7 +113,7 @@ export class VisualisationInterfaceDiagramComponent implements OnInit, AfterView
       } catch (error) {
         this.snackbarService.showError(error);
       }
-
+    const { graphviz } = await import('d3-graphviz');
     this.graph = graphviz('#graphviz-graph', {
       useWorker: false,
       width,

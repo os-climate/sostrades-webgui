@@ -576,7 +576,7 @@ export class AppDataService extends DataHttpService {
     getStudyInReadOnlyMode.subscribe({
       next: (loadedStudy) => {
         if (loadedStudy === null || loadedStudy === undefined) {
-          loaderObservable.error("Error while retreiving loaded study");
+          loaderObservable.error("Failed to retrieve loaded study");
           return;
         }
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
@@ -609,7 +609,7 @@ export class AppDataService extends DataHttpService {
               }
             });
           } else {
-            loaderObservable.error("Error while retreiving loaded study");
+            loaderObservable.error("Failed to retrieve loaded study");
           }
         }
       },
