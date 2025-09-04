@@ -149,8 +149,8 @@ export class DashboardItemFactory {
 export type DisplayableItem = DashboardText | DashboardGraph | DashboardSection;
 
 interface BaseItem extends GridsterItem {
-  id: string;
-  type: 'text' | 'graph' | 'section';
+  item_id: string;
+  item_type: 'text' | 'graph' | 'section';
   // position on the grid
   x: number;
   y: number;
@@ -165,8 +165,8 @@ interface BaseItem extends GridsterItem {
 }
 
 export class DashboardText implements BaseItem {
-  id: string;
-  type: 'text' = 'text' as const;
+  item_id: string;
+  item_type: 'text' = 'text' as const;
   x: number;
   y: number;
   cols: number;
@@ -178,7 +178,7 @@ export class DashboardText implements BaseItem {
   }
 
   constructor() {
-    this.id = `text-${Date.now()}`;
+    this.item_id = `text-${Date.now()}`;
     this.data = { content: '' };
     this.x = 0;
     this.y = 0;
@@ -190,8 +190,8 @@ export class DashboardText implements BaseItem {
 }
 
 export class DashboardGraph implements BaseItem {
-  id: string;
-  type: 'graph' = 'graph' as const;
+  item_id: string;
+  item_type: 'graph' = 'graph' as const;
   x: number;
   y: number;
   cols: number;
@@ -228,7 +228,7 @@ export class DashboardGraph implements BaseItem {
       title: graphData?.layout?.title?.text.replace(/<[^>]*>/g, '') || '',
       graphData: graphData
     };
-    this.id = JSON.stringify(this.identifier);
+    this.item_id = JSON.stringify(this.identifier);
   }
 
   get identifier(): {
@@ -247,8 +247,8 @@ export class DashboardGraph implements BaseItem {
 }
 
 export class DashboardSection implements BaseItem {
-  id: string;
-  type: 'section' = 'section' as const;
+  item_id: string;
+  item_type: 'section' = 'section' as const;
   x: number;
   y: number;
   cols: number;
@@ -263,7 +263,7 @@ export class DashboardSection implements BaseItem {
   };
 
   constructor() {
-    this.id = `section-${Date.now()}`;
+    this.item_id = `section-${Date.now()}`;
     this.x = 0;
     this.y = 0;
     this.cols = 40;

@@ -48,6 +48,7 @@ export class DashboardService extends DataHttpService {
     return this.isDashboardUpdated;
   }
 
+  // getter to check if the dashboard is in edition mode
   get isDashboardInEditionMode() {
     return this.isDashboardInEdition;
   }
@@ -133,6 +134,7 @@ export class DashboardService extends DataHttpService {
   }
 
 
+  // Add an item to a section from the dashboard, removing it from the dashboard first
   addItemToSection(itemId: string, section: ItemLayout) {
     if (itemId in this.currentDashboard.layout) {
       delete this.currentDashboard.layout[itemId];
@@ -143,11 +145,11 @@ export class DashboardService extends DataHttpService {
     if (!section.children.includes(itemId)) {
       section.children.push(itemId);
     }
-    this.onDashboardItemsUpdated.emit({ layout: section, data: this.currentDashboard.data[itemId] })
+    this.onDashboardItemsUpdated.emit({ layout: section, data: this.currentDashboard.data[section.item_id] })
     this.isDashboardUpdated = true;
   }
 
-  // Note: this method assumes the itemType is provided to correctly recreate the layout
+  // Remove an item from a section and add it back to the dashboard, recreating the layout in the meantime
   removeItemFromSection(itemId: string, itemType: 'text' | 'graph', section: ItemLayout): ItemLayout {
     if (section.children) {
       const index: number = section.children.indexOf(itemId);
@@ -160,7 +162,7 @@ export class DashboardService extends DataHttpService {
     return this.currentDashboard.layout[itemId]
   }
 
-  // apply the new scaling factor to the dashboard items
+  // apply the new scaling factor to the old dashboard items
   // does not trigger an update so the save button is not activated
   handleOldDashboardItems(item: ItemLayout) {
     switch (item.item_type) {
@@ -189,13 +191,38 @@ export class DashboardService extends DataHttpService {
     }
   }
 
-  // transform {layout: {[id: string]:ItemLayout}, data: {[id: string]:ItemData}} into items {layout: ItemLayout, data: ItemData}
-  layoutDataToDisplayableItem(layout: { [id: string]: ItemLayout }, data: {
-    [id: string]: ItemData
-  }): DisplayableItem[] {
-    console.log('layout', layout);
-    console.log('data', data);
-    return [];
+  // transform new data structure into old one for embed component
+  layoutDataToDisplayableItem(layout: { [id: string]: ItemLayout }, data: { [id: string]: ItemData }
+  ): DisplayableItem[] {
+    if (layout && data) {
+      const items: DisplayableItem[] = [];
+      for (const itemLayout of Object.values(layout)) {
+        if (itemLayout.item_id in data) {
+          const itemData: ItemData = data[itemLayout.item_id];
+          if (itemLayout.item_type === 'section' && itemLayout.children) {
+            const sectionItems: DisplayableItem[] = []
+            for (const childId of itemLayout.children) {
+              if (childId in data) {
+                const childData: ItemData = data[childId];
+                const childLayout: ItemLayout = DashboardItemFactory.createItemLayout(childId, this.isGraph(childData) ? 'graph' : 'text');
+                sectionItems.push({ ...childLayout, data : childData } as DisplayableItem);
+              }
+            }
+            // append the items list to the section's data
+            const sectionData = {
+              ...itemData,
+              items: sectionItems
+            }
+            // clean section layout of any old children references
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { children, ...cleanedSectionLayout } = itemLayout;
+            items.push({ ...cleanedSectionLayout , data : sectionData } as DisplayableItem);
+          } else
+            items.push({ ...itemLayout, data : itemData } as DisplayableItem);
+        }
+      }
+      return items;
+    }
   }
 
   /// -----------------------------------------------------------------------------------------------------------------------------
@@ -205,7 +232,7 @@ export class DashboardService extends DataHttpService {
   // get the dashboard from the API
   getDashboard(studyId: number): Observable<DisplayableItem[]> {
     return this.http.get<Dashboard>(`${this.apiRoute}/${studyId}`).pipe(map(
-      response => {
+      (response: Dashboard): DisplayableItem[] => {
         const dashboard: Dashboard = Dashboard.Create(response);
         // parse each layout in dashboard
         for (const item of Object.values(dashboard.layout)) {
@@ -225,9 +252,6 @@ export class DashboardService extends DataHttpService {
       layout: this.currentDashboard.layout,
       data: this.currentDashboard.data
     }
-    console.log('Dashboard sent to the API:');
-    console.log('\tlayout:', this.currentDashboard.layout);
-    console.log('\tdata:', this.currentDashboard.data);
     this.isDashboardUpdated = false;
     return this.http.post<void>(`${this.apiRoute}/${payload.study_case_id}`, payload);
   }

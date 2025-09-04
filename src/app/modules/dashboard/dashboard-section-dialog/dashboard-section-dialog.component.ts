@@ -52,6 +52,7 @@ export class DashboardSectionDialogComponent {
 
 
   myCustomTransferArrayItem(event: CdkDragDrop<(ItemLayout | string)[]>) {
+    // get the id of the item being moved cast to string if from dashboard list
     const itemId: string = typeof event.previousContainer.data[event.previousIndex] === "string"
       ? (event.previousContainer.data[event.previousIndex] as string)
       : (event.previousContainer.data[event.previousIndex] as ItemLayout).item_id

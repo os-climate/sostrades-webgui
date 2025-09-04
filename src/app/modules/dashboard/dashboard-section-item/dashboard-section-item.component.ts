@@ -88,7 +88,6 @@ export class DashboardSectionItemComponent implements OnInit {
 
   // delete the text item of the dashboard and emit an event
   deleteSectionItem() {
-    console.log(this.sectionItem)
     this.dashboardService.removeItem(this.sectionItem.layout.item_id);
   }
 

@@ -3,7 +3,6 @@ import {
   OnInit,
   OnDestroy,
   AfterViewInit,
-  HostListener,
   ChangeDetectorRef,
   ViewChild,
   QueryList,
@@ -37,12 +36,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private dashboardUpdateItemSubscription: Subscription;
   private sectionExpansionSubscription: Subscription;
   public loadedStudy: LoadedStudy;
-  // public dashboardItems: Array<{layout: ItemLayout, data: ItemData}>;
   public isDashboardUpdated: boolean;
   public options: GridsterConfig;
   private previousPositions: string;
   public isDashboardInEditionMode: boolean;
-
 
   // Getter that returns the type string
   itemType: { [K in ItemLayout['item_type']]: K } = {
@@ -171,7 +168,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     // this.updateGraphSizes();
     if (this.options.api) this.options.api.optionsChanged();
-    this.cdr.detectChanges();
   }
 
   ngOnDestroy() {
@@ -308,17 +304,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       return parseFloat(getComputedStyle(rowElement).height);
     }
   }
-
-  // // Listen for window resize event
-  // @HostListener('window:resize', ['$event'])
-  // onResize() {
-  //   this.updateGraphSizes();
-  // }
-  //
-  // // Used to trigger Angular's change detection
-  // updateGraphSizes() {
-  //   this.dashboardItems = [...this.dashboardItems];
-  // }
 
   // Handle the drag stop event
   onDragStop() {
