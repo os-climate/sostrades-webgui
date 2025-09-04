@@ -150,7 +150,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getDisplayItems(): string[] {
-    return Object.keys(this.dashboardService.currentDashboard.layout)
+    if (this.dashboardService.currentDashboard && this.dashboardService.currentDashboard.layout){
+      return Object.keys(this.dashboardService.currentDashboard.layout);
+    }
+    return [];
   }
 
   getTextData(id: string): TextData {
