@@ -4,7 +4,7 @@
     (click)="onClickTreeview(loadedStudy)"
   >
     <div
-    class="header-treeview"
+    [class]="isReadOnlyMode? 'header-treeview-read-only' : 'header-treeview'"
     >
       <div style="margin-left: 5px;">
       <span>My current study</span>
@@ -14,7 +14,7 @@
         [ngClass]="{'long-title': studyName.length > 13}"
         > : {{ studyName }}</span>
         <p *ngIf="isReadOnlyMode; else isEditionMode"  >
-          <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;margin-right:3px"></i>
+          <i class="fa-solid fa-triangle-exclamation" style="color: white;margin-right:3px"></i>
           <span
           *ngIf="!isStandAlone"
           style="font-weight: bold;"
@@ -29,7 +29,7 @@
           >Stand Alone </span>
           <button
             mat-button
-            class="edit-button cursor-pointer"
+            class="edit-button cursor-pointer white-button"
             id="study-switch-to-edition-button"
             *ngIf="isReadOnlyMode && !isStandAlone"
             matTooltip="Leave the read only mode."
@@ -41,7 +41,7 @@
         </p>
         <ng-template #isEditionMode>
           <p>
-            <i class="fa-solid fa-triangle-exclamation" style="color: white;margin-right:3px"></i>
+            <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;margin-right:3px"></i>
             <span
               style="font-weight: bold;"
               matTooltipPosition="left"
@@ -52,10 +52,10 @@
             <button
               *ngIf="loadedStudy?.studyCase.hasReadOnlyFile"
               mat-button
-              class="edit-button cursor-pointer"
+              class="edit-button cursor-pointer primary-button"
               id="study-switch-to-read-only-button"
               matTooltip="Leave the edition mode."
-              color="primary"
+              color="white"
               (click)="onClickSwitchReadOnlyStudy($event)">
               <i class="fa-solid fa-repeat"></i>
               Switch to read only mode

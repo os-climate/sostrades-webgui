@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { StudyCaseExecutionObserverService } from './study-case-execution-observer.service';
+import { ReferenceGenerationObserverService } from './reference-generation-observer.service';
 
-describe('StudyCaseExecutionObserverService', () => {
-  let service: StudyCaseExecutionObserverService;
+describe('ReferenceGenerationObserverService', () => {
+  let service: ReferenceGenerationObserverService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(StudyCaseExecutionObserverService);
+    service = TestBed.inject(ReferenceGenerationObserverService);
   });
 
   it('should be created', () => {

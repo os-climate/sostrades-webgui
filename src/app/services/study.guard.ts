@@ -16,7 +16,7 @@ export class StudyGuard implements CanActivate {
     if (this.userService.hasAccessToStudy()) {
       return true;
     } else {
-      this.snackbarService.showError('You don\'t have the permission to access this ressource');
+      this.snackbarService.showError('You don\'t have permission to access this resource.');
     }
   }
 }
