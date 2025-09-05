@@ -175,7 +175,6 @@
             (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
           </th>
           <td mat-cell *matCellDef="let element">
-            <div class="cell-content">
               <a
                 routerLink="/study/{{element.id}}"
                 class="link-study-title"
@@ -185,7 +184,6 @@
               >
                 {{ element.name }}
               </a>
-            </div>
           </td>
         </ng-container>
 

@@ -113,7 +113,6 @@ table td {
   border-collapse: separate;
   width: 100%;
   margin-bottom: 0 !important;
-  table-layout: fixed !important;
 }
 
 td.mat-mdc-cell:last-of-type,
@@ -198,44 +197,19 @@ tr:hover .actions-hover-row {
 }
 
 .mat-column-process .cell-content,
-.mat-column-repository .cell-content,
-.mat-column-groupName .cell-content {
+.mat-column-repository .cell-content{
   width: 100%;
   word-break: break-word;
-}
 
-.mat-column-name .cell-content {
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
-.mat-column-selected {
-  width: 4% !important;
-}
-
-.mat-column-isFavorite {
-  width: 7% !important;
-}
-
-.mat-column-name,
+.mat-column-process,
 .mat-column-repository {
-  width: 21% !important;
-}
-
-.mat-column-process {
   width: 15% !important;
 }
 
-.mat-column-groupName,
-.mat-column-executionStatus,
-.mat-column-creationDate,
-.mat-column-modificationDate {
-  width: 8% !important;
+.mat-column-name{
+  width: 10% !important;
 }
 
-.mat-mdc-table-container {
-  width: 100%;
-  overflow-x: auto;
+
 }
