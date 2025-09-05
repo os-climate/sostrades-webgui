@@ -137,6 +137,10 @@ export class StudyCaseLoadingService {
               this.dashboardService.getDashboard(loadedStudy.studyCase.id).subscribe({
                 next: () => {
                   console.log('Dashboard loaded');
+                },
+                error: (errorReceived) => {
+                  console.log(`Error loading dashboard : ${errorReceived}`);
+                  this.snackbarService.showError(`Error while loading dashboard: ${errorReceived}`);
                 }
               });
               // Load logs

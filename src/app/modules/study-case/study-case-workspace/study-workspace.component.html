@@ -64,6 +64,7 @@
     </button>
 
   </div>
+  
 </div>
 <div style="height: 100%; width: 100%;  background-color: white" *ngIf="showSearch">
   <div style="float: right;">
@@ -80,6 +81,7 @@
 </div>
 <div #tabGroup style="height: 100%; width: 100%; background-color: white"
      *ngIf="!showSearch && showView">
+    
   <as-split [useTransition]="true" unit="pixel" [gutterSize]="10">
     <!--split for the light treeview only visible in the fullscreen mode-->
     <as-split-area

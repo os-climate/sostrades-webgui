@@ -475,3 +475,14 @@ export class DashboardTextDialogData extends AbstractDialogData {
     this.id = null;
   }
 }
+
+export class StudyChatBotDialogData extends AbstractDialogData {
+  public chatBotUrl: string;
+  public studyName:string;
+
+  public constructor() {
+    super();
+    this.chatBotUrl = '';
+    this.studyName = '';
+  }
+}

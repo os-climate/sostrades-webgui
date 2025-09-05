@@ -29,7 +29,8 @@ export enum Routing {
     SAML = 'saml',
     RESET_PASSWORD = 'reset-password',
     AUTHENTICATION_ERROR = 'authentication-error',
-    NO_SERVER = 'no-server'
+    NO_SERVER = 'no-server',
+    EMBED_DASHBOARD = 'embed-dashboard/:id'
 }
 
 export enum NavigationTitle {
@@ -83,8 +84,8 @@ export enum ColumnName {
     DELETE = 'delete',
     CREATION_STATUS = 'creationStatus',
     STUDY_CREATION = 'studyCreation',
-    VARIABLE_ID = 'variableId', 
-    OLD_VALUE = 'oldValue', 
+    VARIABLE_ID = 'variableId',
+    OLD_VALUE = 'oldValue',
     NEW_VALUE = 'newValue',
     DATASET_ID = 'datasetId'
 }

@@ -416,7 +416,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
   }
 
   createDownloadLinkFileFromServer(fileName: string) {
-    const service = this.studyCaseDataService.loadedStudy.loadStatus !== LoadStatus.READ_ONLY_MODE && this.studyCaseDataService.preRequisiteReadOnlyDict.allocation_is_running ? this.studyCaseMainService : this.studyCaseDataService;
+    const service = this.studyCaseDataService;
     service.getFile(this.nodeData.identifier).subscribe({
       next: (file) => {
         const fileToDownload = new Blob([file], { type: 'text/csv' });

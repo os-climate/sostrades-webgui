@@ -44,26 +44,37 @@ export class AuthGuard implements CanActivate, CanActivateChild {
               this.snackbarService.showError('Failed to reload your credentials. Please log in again.');
               this.isLoadingCurrentUser = false;
             }
-            
           }));
       } else {
 
-          // Retrieving study access url if it exists and rerouting if appropriated
-          const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
+        // Retrieving study access url if it exists and rerouting if appropriated
+        const studyUrlRequested = this.studyCaseLocalStorage.getStudyUrlRequestedFromLocalStorage();
 
-          if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
-            this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
-            this.router.navigate([studyUrlRequested]);
-          }
+        if (studyUrlRequested !== null && studyUrlRequested !== undefined && studyUrlRequested.length > 0) {
           this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
-        
-          return true;
+          this.router.navigate([studyUrlRequested]);
+        }
+        this.studyCaseLocalStorage.removeStudyUrlRequestedFromLocalStorage();
+
+        // Retrieving embedded dashboard access url if it exists and rerouting if appropriated
+        const dashboardUrlRequested = this.studyCaseLocalStorage.getDashboardUrlRequestFromLocalStorage();
+        if (dashboardUrlRequested !== null && dashboardUrlRequested !== undefined && dashboardUrlRequested.length > 0) {
+          this.studyCaseLocalStorage.removeDashboardUrlRequestedFromLocalStorage();
+          this.router.navigate([dashboardUrlRequested]);
+
+        }
+        this.studyCaseLocalStorage.removeDashboardUrlRequestedFromLocalStorage();
+
+        return true;
       }
     } else {
       // Case user try to load study from link and not authenticated
       if (this.location.path().includes('/study/')) {
         // Saving in local storage study requested url
         this.studyCaseLocalStorage.setStudyUrlRequestedInLocalStorage(this.location.path());
+      } else if (this.location.path().includes('/embed-dashboard/')) {
+        // saving in local storage dashboard requested url
+        this.studyCaseLocalStorage.setDashboardUrlRequestInLocalStorage(this.location.path());
       }
       this.router.navigate([Routing.LOGIN], { queryParams: { autologon: '' } });
       // eslint-disable-next-line max-len

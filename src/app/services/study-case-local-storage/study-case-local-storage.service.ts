@@ -190,11 +190,11 @@ export class StudyCaseLocalStorageService {
           this.snackbarService.showInformation('All changes have been saved');
           isStudySaved(true);
         };
-    
+
         const onError = (errorMessage: string) => {
           // Reset ontology (make sure nothing was loaded)
           this.ontologyService.resetOntology();
-    
+
           // Notify user
           this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorMessage}`);
           this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
@@ -203,7 +203,7 @@ export class StudyCaseLocalStorageService {
           this.snackbarService.showInformation('All changes have been saved');
           isStudySaved(true);
         };
-    
+
         if (withReloading) {
           this.loadingDialogService.updateMessage(`Loading ontology`);
 
@@ -230,7 +230,7 @@ export class StudyCaseLocalStorageService {
       },
       error: (errorReceived) => {
         const error = errorReceived as SoSTradesError;
-        
+
         if (error.redirect) {
           this.snackbarService.showError(error.description);
         } else {
@@ -241,10 +241,9 @@ export class StudyCaseLocalStorageService {
     });
   }
 
-  
   finalizeUpdateParameterFromDataset(loadedStudy: LoadedStudy) {
     this.loadingDialogService.updateMessage(`Loading ontology`);
-    
+
     // Call ontology service
     this.ontologyService.loadOntology(loadedStudy).subscribe({
       next: () => {
@@ -269,7 +268,7 @@ export class StudyCaseLocalStorageService {
   private onUpdateError(errorMessage: string, loadedStudy: LoadedStudy){
      // Reset ontology (make sure nothing was loaded)
      this.ontologyService.resetOntology();
-    
+
      // Notify user
      this.snackbarService.showError(`Ontology not loaded, the following error occurs: ${errorMessage}`);
      this.studyCaseDataService.onStudyCaseChange.emit(loadedStudy);
@@ -289,14 +288,25 @@ export class StudyCaseLocalStorageService {
   }
 
   getStudyUrlRequestedFromLocalStorage(): string {
-    const studyIdRequested = localStorage.getItem(StudyCaseLocalStorageAttributes.STUDYACCESSURL);
-    return studyIdRequested;
+    return localStorage.getItem(StudyCaseLocalStorageAttributes.STUDYACCESSURL);
   }
 
+  setDashboardUrlRequestInLocalStorage(dashboardUrl: string) {
+    localStorage.setItem(StudyCaseLocalStorageAttributes.DASHBOARDURL, dashboardUrl);
+  }
+
+  removeDashboardUrlRequestedFromLocalStorage() {
+    localStorage.removeItem(StudyCaseLocalStorageAttributes.DASHBOARDURL);
+  }
+
+  getDashboardUrlRequestFromLocalStorage(): string {
+    return localStorage.getItem(StudyCaseLocalStorageAttributes.DASHBOARDURL);
+  }
 }
 
 
 export enum StudyCaseLocalStorageAttributes {
   STUDYPARAMETERLIST = 'studyParameterList',
-  STUDYACCESSURL = 'studyAccessId'
+  STUDYACCESSURL = 'studyAccessId',
+  DASHBOARDURL = 'dashboardUrl',
 }

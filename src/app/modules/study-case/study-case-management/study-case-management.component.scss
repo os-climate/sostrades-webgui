@@ -197,15 +197,19 @@ tr:hover .actions-hover-row {
 }
 
 .mat-column-process .cell-content,
-.mat-column-repository .cell-content {
+.mat-column-repository .cell-content{
   width: 100%;
   word-break: break-word;
-}
+
 
 .mat-column-process,
-.mat-column-repository{
+.mat-column-repository {
   width: 15% !important;
 }
+
 .mat-column-name{
   width: 10% !important;
+}
+
+
 }
