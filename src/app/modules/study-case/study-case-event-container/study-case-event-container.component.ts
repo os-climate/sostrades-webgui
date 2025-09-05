@@ -28,14 +28,15 @@ export class StudyCaseEventContainerComponent implements OnInit, OnDestroy{
   }
   isChatBotEnabled(): boolean {
     // Check if the LLM chatbot is configured in the application settings
-    return environment.hasOwnProperty('STUDY_LLM_URL') && environment['STUDY_LLM_URL'].trim() !== '';
+    const studyLlmUrl = environment['STUDY_LLM_URL'];
+    return ('STUDY_LLM_URL' in environment) && typeof studyLlmUrl === 'string' && studyLlmUrl.trim() !== '';
   }
 
   openChatBot(){
     if ((this.chatBotDialog !== null && this.chatBotDialog !== undefined && this.chatBotDialog.getState() !== MatDialogState.OPEN)
     || this.chatBotDialog === null || this.chatBotDialog === undefined){
       const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
-      let chatbotData = new StudyChatBotDialogData();
+      const chatbotData = new StudyChatBotDialogData();
       chatbotData.studyName = this.studyCaseDataService.loadedStudy.studyCase.name;
       chatbotData.chatBotUrl = environment['STUDY_LLM_URL']  + '/?embed=true&study-id=' + studyId ;
       this.chatBotDialog = this.dialog.open(ChatBotDialogComponent, {

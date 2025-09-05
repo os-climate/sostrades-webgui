@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig  } from '@angular/material/dialog';
 import { StudyChatBotDialogData } from 'src/app/models/dialog-data.model';
-import { AppDataService } from 'src/app/services/app-data/app-data.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-chat-bot-dialog',
@@ -37,7 +35,6 @@ export class ChatBotDialogComponent implements OnInit {
   minimizeDialog() {
     if (this.dialogRef !== null && this.dialogRef !== undefined) {
       if (this.isMinimized){
-        const rect = this.dialogRef.componentRef.location.nativeElement.getBoundingClientRect();
         this.dialogRef.updateSize("600px","800px");
         const matDialogConfig = new MatDialogConfig();
         matDialogConfig.position = {top:`${this.startPosition.top}px`, right:`0px`};
