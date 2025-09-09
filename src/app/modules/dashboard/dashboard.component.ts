@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('gridsterItem') gridsterItems: QueryList<ElementRef>;
 
   private treeNodeDataSubscription: Subscription;
+  private updatedDashboardSubscription: Subscription;
   private dashboardAddItemSubscription: Subscription;
   private dashboardRemoveItemSubscription: Subscription;
   private dashboardUpdateItemSubscription: Subscription;
@@ -97,6 +98,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private setupSubscriptions() {
     this.treeNodeDataSubscription = this.treeNodeDataService.currentTreeNodeData.subscribe(() => {
       this.loadedStudy = this.studyCaseDataService.loadedStudy;
+    });
+
+    this.updatedDashboardSubscription = this.dashboardService.onDashboardUpdated.subscribe(() => {
+       if (this.options.api) this.options.api.optionsChanged();
     });
 
     this.dashboardAddItemSubscription = this.dashboardService.onDashboardItemsAdded.subscribe((item: {
@@ -177,6 +182,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     if ((this.treeNodeDataSubscription !== null) && (this.treeNodeDataSubscription !== undefined)) {
       this.treeNodeDataSubscription.unsubscribe();
     }
+    if ((this.updatedDashboardSubscription !== null) && (this.updatedDashboardSubscription !== undefined)) {
+      this.updatedDashboardSubscription.unsubscribe();
+    }
     if ((this.dashboardAddItemSubscription !== null) && (this.dashboardAddItemSubscription !== undefined)) {
       this.dashboardAddItemSubscription.unsubscribe();
     }
@@ -228,11 +236,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.snackbarService.showError(`Error saving dashboard: ${errorMessage}`);
       }
     });
-    this.options.draggable.enabled = false;
-    this.options.resizable.enabled = false;
-    this.options.displayGrid = 'none';
-    if (this.getDisplayItems().length > 0)
-      this.options.api.optionsChanged();
   }
 
   // Custom compact function to fil the empty spaces in the dashboard
@@ -396,4 +399,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     const newSection = DashboardItemFactory.createSection();
     this.dashboardService.addItem(newSection);
   }
+
+  deleteUnavailableItem(itemId: string) {
+    this.dashboardService.removeItem(itemId);
+  }
 }
+
+
