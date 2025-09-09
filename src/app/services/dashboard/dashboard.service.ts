@@ -12,6 +12,7 @@ import {
 } from "../../models/dashboard.model";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import { SnackbarService } from '../snackbar/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class DashboardService extends DataHttpService {
   public onDashboardItemsRemoved: EventEmitter<string> = new EventEmitter();
   public onDashboardItemsUpdated: EventEmitter<{ layout?: ItemLayout, data?: ItemData }> = new EventEmitter();
   public onSectionExpansion: EventEmitter<ItemLayout> = new EventEmitter();
+  public onDashboardUpdated: EventEmitter<void> = new EventEmitter();
   // public dashboardItems: { [id: string]: DisplayableItem };
   public currentDashboard: Dashboard;
   public isDashboardUpdated: boolean
@@ -28,6 +30,7 @@ export class DashboardService extends DataHttpService {
 
   constructor(
     private http: HttpClient,
+    private snackbarService: SnackbarService,
     private location: Location) {
     super(location, 'dashboard');
     // this.dashboardItems = {};
@@ -243,6 +246,20 @@ export class DashboardService extends DataHttpService {
       }
     ))
   }
+
+  reloadDashboard(studyId: number): void {
+    this.getDashboard(studyId).subscribe({
+      next: () => {
+        this.onDashboardUpdated.emit();
+        console.log('Dashboard reloaded');
+      },
+      error: (errorReceived) => {
+        console.log(`Error reloading dashboard : ${errorReceived}`);
+        this.snackbarService.showError(`Error while reloading dashboard: ${errorReceived}`);
+      }
+    });
+  }
+
 
 
   // Save the dashboard to the API

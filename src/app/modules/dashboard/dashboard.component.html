@@ -72,11 +72,12 @@
       <gridster [options]="options">
         <ng-container *ngFor="let itemId of getDisplayItems()" [ngSwitch]="getItemLayout(itemId).item_type">
           <gridster-item [item]="getItemLayout(itemId)">
-            <div *ngSwitchCase="itemType.graph" class="graph-card">
+            <div *ngSwitchCase="itemType.graph" class="graph-card" >
               <button mat-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
                 <i class="fa-solid fa-arrows-up-down-left-right"></i>
               </button>
-              <app-post-processing-plotly
+              <div *ngIf="getGraphData(itemId).graphData && getGraphData(itemId).graphData.data && getGraphData(itemId).graphData.data.length > 0" class="graph-container">
+              <app-post-processing-plotly 
                 [class]="getGraphData(itemId).graphData?.data[0]?.type === 'table' ? 'table' : 'plot'"
                 [fullNamespace]=""
                 [plotData]="getGraphData(itemId).graphData"
@@ -88,7 +89,20 @@
                 [width]="calculateGraphWidth(getItemLayout(itemId))"
                 [isEditing]="options.draggable.enabled">
               </app-post-processing-plotly>
+              </div>
+              <!-- Show warning if graph data empty -->
+             <div *ngIf="!getGraphData(itemId).graphData || !getGraphData(itemId).graphData.data || getGraphData(itemId).graphData.data.length === 0" 
+             class="no-graph-data-container">
+              <div class="no-graph-data-warning">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>No data available for this chart.</span>
+                <button mat-button color="warn" (click)="deleteUnavailableItem(itemId)" matTooltip="Remove chart from dashboard">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+             </div>
             </div>
+            
             <div *ngSwitchCase="itemType.text" class="text-card">
               <app-dashboard-text-item
                 [textId]="itemId"
