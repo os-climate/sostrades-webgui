@@ -19,7 +19,8 @@ export class DashboardSectionItemComponent implements OnInit {
   itemType: { [K in ItemLayout['item_type']]: K } = {
     graph: 'graph',
     section: 'section',
-    text: 'text'
+    text: 'text',
+    value: 'value'
   }
 
   constructor(

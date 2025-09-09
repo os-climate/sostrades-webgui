@@ -1,5 +1,6 @@
 import { GridsterItem } from "angular-gridster2";
 import { PostProcessingFilter } from "./post-processing-filter.model";
+import { NodeData } from "./node-data.model";
 
 export class Dashboard {
 
@@ -25,7 +26,7 @@ export enum DashboardAttributes {
 
 export interface ItemLayout extends GridsterItem {
   item_id: string;
-  item_type: 'text' | 'graph' | 'section';
+  item_type: 'text' | 'graph' | 'section' | 'value';
   x: number;
   y: number;
   cols: number;
@@ -35,7 +36,7 @@ export interface ItemLayout extends GridsterItem {
   children?: string[]; // for sections, references to child items
 }
 
-export type ItemData = TextData | GraphData | SectionData;
+export type ItemData = TextData | GraphData | SectionData | ValueData;
 
 export interface TextData {
   content: string;
@@ -54,6 +55,12 @@ export interface SectionData {
   title: string;
   shown: boolean;
   expandedSize?: number;
+}
+
+export interface ValueData {
+  nodeData: NodeData;
+  discipline: string;
+  namespace: string;
 }
 
 export class DashboardItemFactory {
@@ -108,7 +115,18 @@ export class DashboardItemFactory {
     }
   }
 
-  static createItemLayout(item_id: string, item_type: 'text' | 'graph' | 'section') : ItemLayout {
+  static createValue(nodeData: NodeData, discipline: string, namespace: string): { layout: ItemLayout, data: ItemData } {
+    return {
+      layout: this.createItemLayout(nodeData.identifier, 'value'),
+      data: {
+        nodeData,
+        discipline,
+        namespace
+      }
+    }
+  }
+
+  static createItemLayout(item_id: string, item_type: 'text' | 'graph' | 'section' |'value') : ItemLayout {
     let cols: number;
     let rows: number;
     let minCols: number;
@@ -131,6 +149,12 @@ export class DashboardItemFactory {
         rows = 20;
         minCols = 40;
         minRows = 16;
+        break;
+      case 'value':
+        cols = 8;
+        rows = 3;
+        minCols = 4;
+        minRows = 2;
         break;
     }
     return {

@@ -16,7 +16,7 @@ import { DashboardService } from "../../services/dashboard/dashboard.service";
 import {
   ItemLayout,
   ItemData,
-  DashboardItemFactory, Dashboard, TextData, GraphData, SectionData
+  DashboardItemFactory, Dashboard, TextData, GraphData, SectionData, ValueData
 } from "../../models/dashboard.model";
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
@@ -45,7 +45,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   itemType: { [K in ItemLayout['item_type']]: K } = {
     graph: 'graph',
     section: 'section',
-    text: 'text'
+    text: 'text',
+    value: 'value'
   }
 
   constructor(
@@ -165,6 +166,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     const sectionData: SectionData = this.dashboardService.currentDashboard.data[id] as SectionData;
     if (section && sectionData) {
       return { layout: section, data: sectionData };
+    }
+  }
+
+  getValueData(id: string) {
+    const value: ItemLayout = this.dashboardService.currentDashboard.layout[id];
+    const valueData: ValueData = this.dashboardService.currentDashboard.data[id] as ValueData;
+    if (value && valueData) {
+      return { layout: value, data: valueData };
     }
   }
 

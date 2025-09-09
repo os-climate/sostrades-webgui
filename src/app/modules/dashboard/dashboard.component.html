@@ -102,6 +102,18 @@
                 [inEditionMode]="options.draggable.enabled">
               </app-dashboard-section-item>
             </div>
+            <div *ngSwitchCase="itemType.value" class="value-card">
+              <button mat-button color="primary" class="drag-handle" matTooltip="Move Value" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
+                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+              </button>
+              <app-widget
+              [nodeData]="getValueData(itemId).data.nodeData"
+              [discipline]="getValueData(itemId).data.nodeData.disciplineFullPathList.length > 0 ? getValueData(itemId).data.nodeData.disciplineFullPathList[0] : getValueData(itemId).data.discipline"
+              [namespace]="getValueData(itemId).data.namespace"
+              [isEditing]="options.draggable.enabled"
+              >
+              </app-widget>
+            </div>
           </gridster-item>
         </ng-container>
       </gridster>

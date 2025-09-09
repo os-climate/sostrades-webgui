@@ -21,7 +21,6 @@ export class DashboardService extends DataHttpService {
   public onDashboardItemsRemoved: EventEmitter<string> = new EventEmitter();
   public onDashboardItemsUpdated: EventEmitter<{ layout?: ItemLayout, data?: ItemData }> = new EventEmitter();
   public onSectionExpansion: EventEmitter<ItemLayout> = new EventEmitter();
-  // public dashboardItems: { [id: string]: DisplayableItem };
   public currentDashboard: Dashboard;
   public isDashboardUpdated: boolean
   public isDashboardInEdition: boolean;
@@ -30,7 +29,6 @@ export class DashboardService extends DataHttpService {
     private http: HttpClient,
     private location: Location) {
     super(location, 'dashboard');
-    // this.dashboardItems = {};
     this.isDashboardUpdated = false;
     this.isDashboardInEdition = false;
   }

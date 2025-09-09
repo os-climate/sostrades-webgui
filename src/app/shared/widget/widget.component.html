@@ -12,6 +12,15 @@
   <div
     [ngClass]=" nodeData.isHighlighted ? 'widget-header-animated' : 'widget-header'"
   >
+    <button
+      mat-button
+      [hidden]="!isEditing"
+      id="favorite-post-processing-plot"
+      [matTooltip]="isFavorite ? 'Remove from dashboard' : 'Add into dashboard'"
+      class="favorite-button-container float-left-button cursor-pointer"
+      (click)="OnFavoriteClick()">
+      <i [ngClass]="isFavorite ? 'fa-star fa-solid favorite-post-processing' : 'fa-star fa-regular not-favorite-post-processing'" class=""></i>
+    </button>
     <div
       [id]="nodeData.displayName"
       class="text-header cursor-pointer"
@@ -21,7 +30,7 @@
       "
       matTooltipClass="custom-tooltip-class"
       (click)="showOntologyInformations()"
-      
+
     >
       {{ nodeData.displayName }}
     </div>
@@ -34,7 +43,7 @@
         <i *ngIf="nodeData.hasConnectorData" class="fa-solid fa-link" style="font-size: 15px; margin-right: 3px;"
          matTooltip="Connector data"></i>
       </div>
-      <mat-icon style="font-size: 18px; margin-left: 3px; width: 24px" 
+      <mat-icon style="font-size: 18px; margin-left: 3px; width: 24px"
       [class]="headerIconColor"
       [matTooltip]="headerIconTooltip">{{
         headerIconClass

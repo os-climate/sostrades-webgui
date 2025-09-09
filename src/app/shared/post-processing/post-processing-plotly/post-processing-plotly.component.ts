@@ -78,12 +78,9 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
       this.setupLayout();
       this.initializePlot();
     }
-    if (this.isEditing === undefined) {
+    if (this.isEditing === undefined)
       this.isEditing = this.dashboardService.isDashboardInEdition
-    }
   }
-
-  
 
   private async getPlotly() {
     if (!this.plotlyPromise) {
@@ -129,11 +126,18 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
 
   // Check if the plot is in the dashboard
   loadFavorites() {
-    const graph: {
-      layout: ItemLayout,
-      data: ItemData
-    } = DashboardItemFactory.createGraph(this.disciplineName, this.name, this.plotIndex, this.filters, this.plotData);
-    this.isFavorite = this.dashboardService.isSelected(graph.layout.item_id);
+    const id: {
+      disciplineName: string,
+      name: string,
+      plotIndex: number,
+      postProcessingFilters: PostProcessingFilter[]
+    } = {
+      disciplineName: this.disciplineName,
+      name: this.name,
+      plotIndex: this.plotIndex,
+      postProcessingFilters: this.filters
+    }
+    this.isFavorite = this.dashboardService.isSelected(JSON.stringify(id));
   }
 
   private setupValidation() {

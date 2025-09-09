@@ -1,17 +1,23 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { NodeData, WidgetType, ValueType, IoType } from 'src/app/models/node-data.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { StudyUpdateParameter, UpdateParameterType } from 'src/app/models/study-update.model';
-import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
+import {
+  StudyCaseLocalStorageService
+} from 'src/app/services/study-case-local-storage/study-case-local-storage.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { OntologyInformationsDialogData } from 'src/app/models/dialog-data.model';
-import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology-informations/ontology-informations.component';
+import {
+  OntologyInformationsComponent
+} from 'src/app/modules/ontology/ontology-informations/ontology-informations.component';
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { Subscription } from 'rxjs';
 import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
+import { DashboardService } from "../../services/dashboard/dashboard.service";
+import { DashboardItemFactory, ItemData, ItemLayout } from "../../models/dashboard.model";
 
 @Component({
   selector: 'app-widget',
@@ -19,13 +25,14 @@ import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.m
   styleUrls: ['./widget.component.scss'],
 })
 
-export class WidgetComponent implements OnInit, OnDestroy {
+export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private static BASE_INTEGRITY_TOOLTIP_CLASS = 'custom-tooltip-class';
 
   @Input() nodeData: NodeData;
   @Input() namespace: string;
   @Input() discipline: string;
+  @Input() isEditing?: boolean;
 
   public widgetType: WidgetType;
   public isCalculationRunning: boolean;
@@ -43,6 +50,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
   public widgetIntegrityMessage: string;
   public integrityMessageClass: string;
   private dialogRef: MatDialogRef<OntologyInformationsComponent>;
+  public isFavorite: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -51,7 +59,8 @@ export class WidgetComponent implements OnInit, OnDestroy {
     public ontologyService: OntologyService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     public filterService: FilterService,
-    private snackbarService: SnackbarService) {
+    private snackbarService: SnackbarService,
+    public dashboardService: DashboardService) {
 
     this.isCalculationRunning = false;
 
@@ -92,9 +101,15 @@ export class WidgetComponent implements OnInit, OnDestroy {
     this.calculationChangeSubscription = this.calculationService.onCalculationChange.subscribe(calculationRunning => {
       this.isCalculationRunning = calculationRunning;
     });
-
     this.SetBorderClass();
     this.SetHeaderIconClass();
+    this.loadFavorites();
+  }
+
+  // force reload so the edition mode is correctly applied and stars appear and disappear correctly
+  ngAfterViewInit(): void {
+    if (this.isEditing === undefined)
+      this.isEditing = this.dashboardService.isDashboardInEdition
   }
 
   ngOnDestroy(): void {
@@ -103,7 +118,6 @@ export class WidgetComponent implements OnInit, OnDestroy {
       this.dialogRef = null;
     }
   }
-
 
   public onInputChange(value) {
     const updateItem = new StudyUpdateParameter(
@@ -232,5 +246,26 @@ export class WidgetComponent implements OnInit, OnDestroy {
     } else {
       return false;
     }
+  }
+
+  OnFavoriteClick() {
+    this.isFavorite = !this.isFavorite;
+    if (this.isFavorite)
+      this.saveFavorites(true)
+    else
+      this.saveFavorites(false)
+  }
+
+  saveFavorites(isFavorite: boolean) {
+    const value: {
+      layout: ItemLayout,
+      data: ItemData
+    } = DashboardItemFactory.createValue(this.nodeData, this.discipline, this.namespace);
+    const text: void | string = isFavorite ? this.dashboardService.addItem(value) : this.dashboardService.removeItem(value.layout.item_id);
+    this.snackbarService.showInformation(text ? text : isFavorite ? 'Value added to dashboard !' : 'Value removed from dashboard !');
+  }
+
+  loadFavorites() {
+    this.isFavorite = this.dashboardService.isSelected(this.nodeData.identifier);
   }
 }
