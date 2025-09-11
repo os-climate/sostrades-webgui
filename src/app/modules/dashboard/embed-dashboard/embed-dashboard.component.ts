@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { GridsterConfig } from "angular-gridster2";
-import { Dashboard, DashboardGraph, DisplayableItem } from "../../../models/dashboard.model";
+import { DashboardGraph, DisplayableItem, ItemLayout } from "../../../models/dashboard.model";
 import { Subscription } from "rxjs";
 import { TypeCheckingTools } from "../../../tools/type-checking.tool";
 
@@ -24,7 +24,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
   public options: GridsterConfig;
 
   // Getter that returns the graph items of the dashboard
-  itemType: { [K in DisplayableItem['type']]: K } = {
+  itemType: { [K in ItemLayout['type']]: K } = {
     graph: 'graph',
     section: 'section',
     text: 'text'
@@ -59,8 +59,8 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.params.subscribe(params => {
       const idRequested = params['id'];
       if (idRequested !== null && idRequested !== undefined && TypeCheckingTools.isInt(idRequested)) {
-        this.dashboardService.getDashboard(idRequested).subscribe((dashboard: Dashboard) => {
-          this.dashboard = dashboard.items;
+        this.dashboardService.getDashboard(idRequested).subscribe((dashboard: DisplayableItem[]) => {
+          this.dashboard = dashboard;
           this.loading = false;
         });
       } else {
@@ -73,7 +73,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
       this.onAutoFit();
     });
     this.previousPositions = JSON.stringify(this.dashboard.map(item => ({
-      id: item.id,
+      id: item.item_id,
       x: item.x,
       y: item.y,
       cols: item.cols,
@@ -128,7 +128,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
           item.x = this.options.maxCols - item.minCols;
         }
         JSON.parse(this.previousPositions).forEach(i => {
-          if (item.x + item.minCols > i.x && item.x < i.x + i.cols && item.y + item.rows > i.y && item.y < i.y + i.rows && item.id !== i.id)
+          if (item.x + item.minCols > i.x && item.x < i.x + i.cols && item.y + item.rows > i.y && item.y < i.y + i.rows && item.item_id !== i.id)
             item.x = i.x - item.minCols;
         });
         item.cols = item.minCols;
@@ -137,7 +137,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
         // check if the item after recalibration will not collide with another item
         // if not, set the item's y to the maximum y position based on the other item colliding y and the item.minRows (to avoid items to overlap)
         JSON.parse(this.previousPositions).forEach(i => {
-          if (item.y + item.minRows > i.y && item.y < i.y + i.rows && item.x + item.cols > i.x && item.x < i.x + i.cols && item.id !== i.id)
+          if (item.y + item.minRows > i.y && item.y < i.y + i.rows && item.x + item.cols > i.x && item.x < i.x + i.cols && item.item_id !== i.id)
             item.y = i.y - item.minRows
         });
         item.rows = item.minRows;
@@ -183,7 +183,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
   }
   checkForPositionChanges() {
     const currentPositions = JSON.stringify(this.dashboard.map(item => ({
-      id: item.id,
+      id: item.item_id,
       x: item.x,
       y: item.y,
       cols: item.cols,
@@ -192,7 +192,7 @@ export class EmbedDashboardComponent implements OnInit, OnDestroy {
     if (currentPositions !== this.previousPositions) {
       this.orderItemsByPosition();
       this.previousPositions = JSON.stringify(this.dashboard.map(item => ({
-        id: item.id,
+        id: item.item_id,
         x: item.x,
         y: item.y,
         cols: item.cols,

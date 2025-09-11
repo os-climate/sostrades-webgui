@@ -16,9 +16,10 @@
                 [class]="item.data && item.data.graphData && item.data.graphData.data && item.data.graphData.data[0].type === 'table' ? 'table' : 'plot'"
                 [fullNamespace]=""
                 [plotData]="item.data.graphData"
-                [disciplineName]="item.disciplineName"
-                [name]="item.name"
-                [plotIndex]="item.plotIndex"
+                [disciplineName]="item.data.disciplineName"
+                [name]="item.data.name"
+                [filters]="item.data.postProcessingFilters"
+                [plotIndex]="item.data.plotIndex"
                 [height]="CalculateGraphHeight(item)"
                 [width]="CalculateGraphWidth(item)"
                 [isEditing]="options.draggable.enabled">
@@ -28,7 +29,8 @@
           <gridster-item *ngSwitchCase="itemType.text" [item]="item">
             <div class="text-card">
               <app-dashboard-text-item
-                [textItem]="item"
+                [textId]="item.id"
+                [textItemData]="item.data"
                 [inEditionMode]="options.draggable.enabled">
               </app-dashboard-text-item>
             </div>

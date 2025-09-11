@@ -7,16 +7,16 @@
         <div
           cdkDropList
           id="dashboard-list"
-          [cdkDropListData]="data.dashboard"
+          [cdkDropListData]="data.dashboard.layout"
           class="list"
           (cdkDropListDropped)="drop($event)"
-          *ngIf="data.dashboard && data.dashboard.length > 0">
-          <div cdkDrag *ngFor="let item of data.dashboard" [ngSwitch]="item.type" class="box-item">
-            <div *ngSwitchCase="itemType.graph">
-              {{item.data.title}}
+          *ngIf="data.dashboard.layout && data.dashboard.layout.length > 0">
+          <div cdkDrag *ngFor="let item of data.dashboard.layout" class="box-item">
+            <div *ngIf="isGraph(getItemData(item.item_id))">
+              {{getGraphData(getItemData(item.item_id)).title}}
             </div>
-            <div *ngSwitchCase="itemType.text" class="text-item">
-              {{cleanText(item.data.content)}}
+            <div *ngIf="!isGraph(getItemData(item.item_id))" class="text-item">
+              {{cleanText(getTextData(getItemData(item.item_id)).content)}}
             </div>
           </div>
         </div>
@@ -24,9 +24,10 @@
           cdkDropList
           id="empty-dashboard-list"
           class="empty-list"
-          [cdkDropListData]="data.dashboard"
+          [cdkDropListData]="data.dashboard.layout"
           (cdkDropListDropped)="drop($event)"
-          *ngIf="!data.dashboard || data.dashboard.length === 0">
+          *ngIf="!data.dashboard.layout || data.dashboard.layout.length === 0"
+        >
           Drag and drop items here
         </div>
       </div>
@@ -39,26 +40,26 @@
         <div
           cdkDropList
           id="section-list"
-          [cdkDropListData]="data.content"
+          [cdkDropListData]="data.section.layout.children"
           class="list"
           (cdkDropListDropped)="drop($event)"
-          *ngIf="data.content && data.content.length > 0">
-          <div cdkDrag *ngFor="let item of data.content" [ngSwitch]="item.type" class="box-item">
-            <div *ngSwitchCase="itemType.graph">
-              {{item.data.title}}
+          *ngIf="data.section.layout.children && data.section.layout.children.length > 0">
+          <div cdkDrag *ngFor="let itemId of data.section.layout.children" class="box-item">
+            <div *ngIf="isGraph(getItemData(itemId))">
+              {{getGraphData(getItemData(itemId)).title}}
             </div>
-            <div *ngSwitchCase="itemType.text" class="text-item">
-              {{cleanText(item.data.content)}}
+            <div *ngIf="!isGraph(getItemData(itemId))" class="text-item">
+              {{cleanText(getTextData(getItemData(itemId)).content)}}
             </div>
           </div>
         </div>
         <div
           cdkDropList
           id="empty-section-list"
-          [cdkDropListData]="data.content"
+          [cdkDropListData]="data.section.layout.children"
           class="empty-list"
           (cdkDropListDropped)="drop($event)"
-          *ngIf="!data.content || data.content.length === 0"
+          *ngIf="!data.section.layout.children || data.section.layout.children.length === 0"
         >
           Drag and drop items here
         </div>
