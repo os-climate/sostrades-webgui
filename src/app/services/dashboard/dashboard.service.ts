@@ -250,8 +250,9 @@ export class DashboardService extends DataHttpService {
   reloadDashboard(studyId: number): void {
     this.getDashboard(studyId).subscribe({
       next: () => {
+        
+        // Emit the update event
         this.onDashboardUpdated.emit();
-        console.log('Dashboard reloaded');
       },
       error: (errorReceived) => {
         console.log(`Error reloading dashboard : ${errorReceived}`);

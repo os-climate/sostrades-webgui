@@ -41,6 +41,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public options: GridsterConfig;
   private previousPositions: string;
   public isDashboardInEditionMode: boolean;
+  public showDashboard: boolean = true; // Property to control component recreation
 
   // Getter that returns the type string
   itemType: { [K in ItemLayout['item_type']]: K } = {
@@ -101,9 +102,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.updatedDashboardSubscription = this.dashboardService.onDashboardUpdated.subscribe(() => {
-       if (this.options.api) this.options.api.optionsChanged();
+       console.log('Dashboard update received, recreating component...');
+       
+       // Simulate ngDestroy/ngOnInit cycle by toggling the component
+       this.showDashboard = false;
+       
+       // Re-create the component after Angular has destroyed it
+       setTimeout(() => {
+         this.showDashboard = true;
+         // Reinitialize gridster options
+         this.initializeGridsterOptions();
+         this.cdr.detectChanges();
+         console.log('Dashboard component recreated');
+       }, 50);
     });
-
     this.dashboardAddItemSubscription = this.dashboardService.onDashboardItemsAdded.subscribe((item: {
       layout: ItemLayout,
       data: ItemData

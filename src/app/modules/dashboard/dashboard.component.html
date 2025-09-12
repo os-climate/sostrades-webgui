@@ -65,7 +65,7 @@
     </div>
   </div>
   <div
-    *ngIf="getDisplayItems().length > 0; else noDashboard"
+    *ngIf="showDashboard && getDisplayItems().length > 0; else noDashboard"
     class="plot-resize-zone"
   >
     <div class="gridster-container">
