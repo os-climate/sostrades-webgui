@@ -102,7 +102,19 @@
               </div>
              </div>
             </div>
-            
+            <div *ngSwitchCase="itemType.value_data" class="value-card">
+              <button mat-button color="primary" class="drag-handle drag-value-data" matTooltip="Move Data" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
+                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+              </button>
+              <app-widget
+              [nodeData]="getValueData(itemId).data.nodeData"
+              [discipline]="getValueData(itemId).data.nodeData.disciplineFullPathList.length > 0 ? getValueData(itemId).data.nodeData.disciplineFullPathList[0] : getValueData(itemId).data.discipline"
+              [namespace]="getValueData(itemId).data.namespace"
+              [forceReadOnly]="true"
+              [isDashboardInEdition]="options.draggable.enabled"
+              >
+              </app-widget>
+            </div>
             <div *ngSwitchCase="itemType.text" class="text-card">
               <app-dashboard-text-item
                 [textId]="itemId"

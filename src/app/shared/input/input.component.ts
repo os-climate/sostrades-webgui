@@ -22,6 +22,7 @@ export class InputErrorStateMatcher implements ErrorStateMatcher {
 export class InputComponent implements OnInit {
 
   @Input() nodeData: NodeData;
+  @Input() forceReadOnly?: boolean;
   @Output() valueChanged: EventEmitter<any> = new EventEmitter();
 
   public placeholderDict = new Map<string, string>();
@@ -82,7 +83,7 @@ export class InputComponent implements OnInit {
 
     this.inputFormControl = new FormControl(this.innerValue, validators);
 
-    if (this.nodeData.valueType === ValueType.READ_ONLY) {
+    if (this.nodeData.valueType === ValueType.READ_ONLY || this.forceReadOnly) {
       this.inputFormControl.disable();
       if (this.nodeData.value === '' || this.nodeData.value === undefined || this.nodeData.value === null) {
         this.nodeData.value = 'No value yet';

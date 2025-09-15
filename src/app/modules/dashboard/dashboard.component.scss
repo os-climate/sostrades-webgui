@@ -128,7 +128,7 @@ gridster {
 .drag-handle {
   position: absolute;
   top: 13px;
-  left: 52px;
+  right: 5px;
   z-index: 10;
   cursor: move;
   width: 30px;
@@ -143,6 +143,10 @@ gridster {
     color: #333;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
+}
+
+.drag-value-data{
+  top: 0px;
 }
 
 .missing-dashboard {
@@ -166,3 +170,5 @@ gridster {
   justify-content: center;
   align-items: center;
 }
+
+

@@ -23,6 +23,7 @@ export class DashboardService extends DataHttpService {
   public onDashboardItemsUpdated: EventEmitter<{ layout?: ItemLayout, data?: ItemData }> = new EventEmitter();
   public onSectionExpansion: EventEmitter<ItemLayout> = new EventEmitter();
   public onDashboardUpdated: EventEmitter<void> = new EventEmitter();
+  public onDashboardEditionModeChanged: EventEmitter<boolean> = new EventEmitter();
   // public dashboardItems: { [id: string]: DisplayableItem };
   public currentDashboard: Dashboard;
   public isDashboardUpdated: boolean

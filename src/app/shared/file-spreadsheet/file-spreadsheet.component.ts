@@ -25,6 +25,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
   @Input() nodeData: NodeData;
   @Input() namespace: string;
   @Input() discipline: string;
+  @Input() forceReadOnly?: boolean;
   @Output() stateUpdate: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('fileUpload', { static: false }) fileUpload: ElementRef;
@@ -57,7 +58,7 @@ export class FileSpreadsheetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.nodeData !== null && this.nodeData !== undefined) {
-      if (this.nodeData.editable === true && this.nodeData.ioType !== IoType.OUT) {
+      if ((this.nodeData.editable === true && this.nodeData.ioType !== IoType.OUT) && this.forceReadOnly !== true) {
         this.isReadOnly = false;
       }
 
