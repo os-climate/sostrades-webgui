@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, AfterViewInit, OnChanges } from '@angular/core';
 import { NodeData, WidgetType, ValueType, IoType } from 'src/app/models/node-data.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -135,7 +135,7 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
       //TODO: update size on changes
       // if (changes.height || changes.width) {
       //   this.setupLayout();
