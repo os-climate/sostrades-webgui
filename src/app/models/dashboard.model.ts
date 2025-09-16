@@ -1,5 +1,6 @@
 import { GridsterItem } from "angular-gridster2";
 import { PostProcessingFilter } from "./post-processing-filter.model";
+import { NodeData } from "./node-data.model";
 
 export class Dashboard {
 
@@ -15,6 +16,7 @@ export class Dashboard {
       jsonData[DashboardAttributes.LAYOUT],
       jsonData[DashboardAttributes.DATA]);
   }
+
 }
 
 export enum DashboardAttributes {
@@ -25,7 +27,7 @@ export enum DashboardAttributes {
 
 export interface ItemLayout extends GridsterItem {
   item_id: string;
-  item_type: 'text' | 'graph' | 'section';
+  item_type: 'text' | 'graph' | 'section' | 'value_data';
   x: number;
   y: number;
   cols: number;
@@ -35,7 +37,7 @@ export interface ItemLayout extends GridsterItem {
   children?: string[]; // for sections, references to child items
 }
 
-export type ItemData = TextData | GraphData | SectionData;
+export type ItemData = TextData | GraphData | SectionData | ValueData;
 
 export interface TextData {
   content: string;
@@ -48,6 +50,13 @@ export interface GraphData {
   postProcessingFilters: PostProcessingFilter[];
   graphData: any;
   title?: string;
+}
+
+export interface ValueData {
+  key: string;
+  nodeData: NodeData;
+  discipline: string;
+  namespace: string;
 }
 
 export interface SectionData {
@@ -93,6 +102,18 @@ export class DashboardItemFactory {
     };
   }
 
+  static createValueData(nodeData: NodeData, discipline: string, namespace: string): { layout: ItemLayout, data: ItemData } {
+    return {
+      layout: this.createItemLayout(nodeData.identifier, 'value_data'),
+      data: {
+        key: nodeData.identifier,
+        nodeData,
+        discipline,
+        namespace
+      }
+    }
+  }
+
   static createSection(): { layout: ItemLayout, data: ItemData } {
     const id = `section-${Date.now()}`;
     const layout: ItemLayout = this.createItemLayout(id, 'section');
@@ -108,7 +129,7 @@ export class DashboardItemFactory {
     }
   }
 
-  static createItemLayout(item_id: string, item_type: 'text' | 'graph' | 'section') : ItemLayout {
+  static createItemLayout(item_id: string, item_type: 'text' | 'graph' | 'section' | 'value_data') : ItemLayout {
     let cols: number;
     let rows: number;
     let minCols: number;
@@ -125,6 +146,12 @@ export class DashboardItemFactory {
         rows = 12;
         minCols = 12;
         minRows = 8;
+        break;
+      case 'value_data':
+        cols = 8;
+        rows = 3;
+        minCols = 4;
+        minRows = 2;
         break;
       case 'section':
         cols = 40;
@@ -146,11 +173,11 @@ export class DashboardItemFactory {
   }
 }
 
-export type DisplayableItem = DashboardText | DashboardGraph | DashboardSection;
+export type DisplayableItem = DashboardText | DashboardGraph | DashboardSection | DashboardValueData;
 
 interface BaseItem extends GridsterItem {
   item_id: string;
-  item_type: 'text' | 'graph' | 'section';
+  item_type: 'text' | 'graph' | 'section' | 'value_data';
   // position on the grid
   x: number;
   y: number;
@@ -243,6 +270,48 @@ export class DashboardGraph implements BaseItem {
       plotIndex: this.data.plotIndex,
       postProcessingFilters: this.data.postProcessingFilters
     };
+  }
+}
+
+export class DashboardValueData implements BaseItem {
+  item_id: string;
+  item_type: 'value_data' = 'value_data' as const;
+  x: number;
+  y: number;
+  cols: number;
+  rows: number;
+  minCols: number;
+  minRows: number;
+  data: {
+    key: string;
+    nodeData: NodeData;
+    discipline: string;
+    namespace: string;
+  }
+
+  constructor(
+    key: string,
+    discipline: string,
+    namespace: string,
+    nodeData: NodeData
+  ) {
+    this.x = 0;
+    this.y = 0;
+    this.cols = 16;
+    this.rows = 12;
+    this.minCols = 12;
+    this.minRows = 8;
+    this.data = {
+      key: key,
+      discipline: discipline,
+      namespace: namespace,
+      nodeData: nodeData
+    };
+    this.item_id = key;
+  }
+
+  get identifier(): string {
+    return this.data.key;
   }
 }
 

@@ -23,6 +23,7 @@ export class InputErrorStateMatcher implements ErrorStateMatcher {
 export class TableComponent implements OnInit, OnDestroy {
 
   @Input() nodeData: NodeData;
+  @Input() forceReadOnly?: boolean;
   @Output() valueChanged: EventEmitter<any> = new EventEmitter();
 
   public displayUnit: string;
@@ -68,7 +69,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
     this.inputFormControl = new FormControl('', validators);
 
-    if (this.nodeData.valueType === ValueType.READ_ONLY) {
+    if (this.nodeData.valueType === ValueType.READ_ONLY || this.forceReadOnly === true) {
       this.isReadOnlyWidget = true;
       this.inputFormControl.disable();
       if (this.nodeData.value === '' || this.nodeData.value === undefined || this.nodeData.value === null) {

@@ -16,11 +16,12 @@ import { DashboardService } from "../../services/dashboard/dashboard.service";
 import {
   ItemLayout,
   ItemData,
-  DashboardItemFactory, Dashboard, TextData, GraphData, SectionData
+  DashboardItemFactory, Dashboard, TextData, GraphData, SectionData, ValueData
 } from "../../models/dashboard.model";
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { SnackbarService } from "../../services/snackbar/snackbar.service";
+import { NodeData } from 'src/app/models/node-data.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,12 +42,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public options: GridsterConfig;
   private previousPositions: string;
   public isDashboardInEditionMode: boolean;
+  public showDashboard: boolean; // Property to control component recreation
 
   // Getter that returns the type string
   itemType: { [K in ItemLayout['item_type']]: K } = {
     graph: 'graph',
     section: 'section',
-    text: 'text'
+    text: 'text',
+    value_data: 'value_data'
   }
 
   constructor(
@@ -59,6 +62,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isDashboardUpdated = this.dashboardService.isDashboardChanged;
     this.isDashboardInEditionMode = false;
     this.initializeGridsterOptions();
+    this.showDashboard = true;
   }
 
   private initializeGridsterOptions() {
@@ -92,6 +96,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isDashboardInEditionMode = this.dashboardService.isDashboardInEditionMode;
     this.savePreviousPositions();
     if (this.isDashboardInEditionMode) this.toggleEdit();
+    
+    // Emit the initial dashboard edition mode state
+    this.dashboardService.onDashboardEditionModeChanged.emit(this.dashboardService.isDashboardInEdition);
+    
     if (this.options.api) this.options.api.optionsChanged();
   }
 
@@ -101,9 +109,21 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.updatedDashboardSubscription = this.dashboardService.onDashboardUpdated.subscribe(() => {
-       if (this.options.api) this.options.api.optionsChanged();
+       console.log('Dashboard update received, recreating component...');
+       
+       // Simulate ngDestroy/ngOnInit cycle by toggling the component
+       this.showDashboard = false;
+       
+       // Re-create the component after Angular has destroyed it
+       setTimeout(() => {
+         this.showDashboard = true;
+         this.setEditMode(false);
+         // Reinitialize gridster options
+         this.initializeGridsterOptions();
+         this.cdr.detectChanges();
+         console.log('Dashboard component recreated');
+       }, 50);
     });
-
     this.dashboardAddItemSubscription = this.dashboardService.onDashboardItemsAdded.subscribe((item: {
       layout: ItemLayout,
       data: ItemData
@@ -133,13 +153,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private savePreviousPositions() {
-    this.previousPositions = JSON.stringify(Object.values(this.dashboardService.currentDashboard.layout).map((item: ItemLayout) => ({
-      item_id: item.item_id,
-      x: item.x,
-      y: item.y,
-      cols: item.cols,
+    if (this.dashboardService.currentDashboard && this.dashboardService.currentDashboard.layout) {
+      this.previousPositions = JSON.stringify(Object.values(this.dashboardService.currentDashboard.layout).map((item: ItemLayout) => ({
+        item_id: item.item_id,
+        x: item.x,
+        y: item.y,
+        cols: item.cols,
       rows: item.rows
-    })));
+      })));
+    }
   }
 
   get dashboard(): Dashboard {
@@ -152,6 +174,44 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getGraphData(id: string): GraphData {
     return this.dashboardService.currentDashboard.data[id] as GraphData;
+  }
+
+  getValueData(id: string) {
+    const value: ItemLayout = this.dashboardService.currentDashboard.layout[id];
+    const valueData: ValueData = this.dashboardService.currentDashboard.data[id] as ValueData;
+    valueData.nodeData = new NodeData(
+      valueData.nodeData.identifier,
+      valueData.nodeData.defaultValue,
+      valueData.nodeData.type,
+      valueData.nodeData.unit,
+      valueData.nodeData.possibleValues,
+      valueData.nodeData.range,
+      valueData.nodeData.subTypeDescriptor,
+      valueData.nodeData.userLevel,
+      valueData.nodeData.visibility,
+      valueData.nodeData.ioType,
+      valueData.nodeData.modelOrigin,
+      valueData.nodeData.coupling,
+      valueData.nodeData.oldValue,
+      valueData.nodeData.oldValue,
+      valueData.nodeData.editable,
+      valueData.nodeData.overwritten,
+      valueData.nodeData.numerical,
+      valueData.nodeData.metaInput,
+      valueData.nodeData.optional,
+      valueData.nodeData.connector_data,
+      valueData.nodeData.dataframeDescriptor,
+      valueData.nodeData.dataframeEditionLocked,
+      valueData.nodeData.disciplineFullPathList,
+      valueData.nodeData.variableKey,
+      valueData.nodeData.checkIntegrityMessage,
+      valueData.nodeData.sizeInMo,
+      valueData.nodeData.parent,
+      valueData.nodeData.isDataDisc
+      );
+    if (value && valueData) {
+      return { layout: value, data: valueData };
+    }
   }
 
   getDisplayItems(): string[] {
@@ -204,8 +264,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.draggable.enabled = !this.options.draggable.enabled;
     this.options.resizable.enabled = !this.options.resizable.enabled;
     this.dashboardService.isDashboardInEdition = this.options.draggable.enabled;
+    this.dashboardService.onDashboardEditionModeChanged.emit(this.options.draggable.enabled);
     this.options.displayGrid = this.options.draggable.enabled ? 'always' : 'none';
     if (this.options.api) this.options.api.optionsChanged();
+  }
+
+  setEditMode(isEditMode: boolean) {
+    if (this.options.draggable.enabled !== isEditMode) {
+      this.toggleEdit();
+    }
   }
 
   // Handle the mat-slide-toggle inside the button when the user clicks the button

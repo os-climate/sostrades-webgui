@@ -102,4 +102,19 @@
   color: darkorange;
 }
 
+.not-favorite-value-data {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.favorite-value-data {
+  cursor: pointer;
+  color: gold;
+  transform: scale(1.2);
+}
+
+.favorite-button-container {
+  align-items: baseline;
+  height: 18px;
+}
 
