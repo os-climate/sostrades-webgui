@@ -117,6 +117,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
        // Re-create the component after Angular has destroyed it
        setTimeout(() => {
          this.showDashboard = true;
+         this.setEditMode(false);
          // Reinitialize gridster options
          this.initializeGridsterOptions();
          this.cdr.detectChanges();
@@ -266,6 +267,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dashboardService.onDashboardEditionModeChanged.emit(this.options.draggable.enabled);
     this.options.displayGrid = this.options.draggable.enabled ? 'always' : 'none';
     if (this.options.api) this.options.api.optionsChanged();
+  }
+
+  setEditMode(isEditMode: boolean) {
+    if (this.options.draggable.enabled !== isEditMode) {
+      this.toggleEdit();
+    }
   }
 
   // Handle the mat-slide-toggle inside the button when the user clicks the button
