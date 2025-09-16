@@ -152,13 +152,15 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private savePreviousPositions() {
-    this.previousPositions = JSON.stringify(Object.values(this.dashboardService.currentDashboard.layout).map((item: ItemLayout) => ({
-      item_id: item.item_id,
-      x: item.x,
-      y: item.y,
-      cols: item.cols,
+    if (this.dashboardService.currentDashboard && this.dashboardService.currentDashboard.layout) {
+      this.previousPositions = JSON.stringify(Object.values(this.dashboardService.currentDashboard.layout).map((item: ItemLayout) => ({
+        item_id: item.item_id,
+        x: item.x,
+        y: item.y,
+        cols: item.cols,
       rows: item.rows
-    })));
+      })));
+    }
   }
 
   get dashboard(): Dashboard {
