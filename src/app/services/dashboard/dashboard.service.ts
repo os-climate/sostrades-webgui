@@ -103,6 +103,7 @@ export class DashboardService extends DataHttpService {
 
   // checks if an item is selected
   isSelected(itemId: string) {
+    if (!this.currentDashboard || !this.currentDashboard.layout) return false;
     if (Object.keys(this.currentDashboard.layout).includes(itemId))
       return true;
     else {
@@ -121,6 +122,7 @@ export class DashboardService extends DataHttpService {
 
   // get the whole layout dashboard loaded in the service
   getItemsLayout(): ItemLayout[] {
+    if (!this.currentDashboard || !this.currentDashboard.layout) return [];
     return Object.values(this.currentDashboard.layout)
   }
 
@@ -244,6 +246,9 @@ export class DashboardService extends DataHttpService {
         }
         this.currentDashboard = dashboard;
         return this.layoutDataToDisplayableItem(dashboard.layout, dashboard.data);
+      },
+      (error) => {
+        console.log(`Error fetching dashboard : ${error}`);
       }
     ))
   }
@@ -251,9 +256,10 @@ export class DashboardService extends DataHttpService {
   reloadDashboard(studyId: number): void {
     this.getDashboard(studyId).subscribe({
       next: () => {
-        
-        // Emit the update event
-        this.onDashboardUpdated.emit();
+        if (this.currentDashboard !== undefined && this.currentDashboard !== null) {
+          // Emit the update event
+          this.onDashboardUpdated.emit();
+        }
       },
       error: (errorReceived) => {
         console.log(`Error reloading dashboard : ${errorReceived}`);
