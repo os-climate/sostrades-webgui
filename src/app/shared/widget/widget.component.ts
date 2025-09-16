@@ -36,6 +36,7 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   public isCalculationRunning: boolean;
   calculationChangeSubscription: Subscription;
   dashboardEditionModeSubscription: Subscription;
+  dashboardItemsRemovedSubscription: Subscription;
   private borderClassMapping: Record<ValueType, string>;
   private iconClassMapping: Record<ValueType, string>;
   private iconTooltipMapping: Record<ValueType, string>;
@@ -107,6 +108,13 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
       this.isDashboardInEdition = isInEdition;
     });
 
+    // Subscribe to dashboard items removed events
+    this.dashboardItemsRemovedSubscription = this.dashboardService.onDashboardItemsRemoved.subscribe(removedItemId => {
+      if (removedItemId === this.nodeData.identifier) {
+        this.isFavorite = false;
+      }
+    });
+
     this.SetBorderClass();
     this.SetHeaderIconClass();
     this.loadFavorites();
@@ -127,6 +135,11 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     // Unsubscribe from dashboard edition mode changes
     if (this.dashboardEditionModeSubscription) {
       this.dashboardEditionModeSubscription.unsubscribe();
+    }
+    
+    // Unsubscribe from dashboard items removed events
+    if (this.dashboardItemsRemovedSubscription) {
+      this.dashboardItemsRemovedSubscription.unsubscribe();
     }
     
     // Unsubscribe from calculation changes
