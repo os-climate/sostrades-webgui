@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { NodeData, WidgetType, ValueType, IoType } from 'src/app/models/node-data.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -31,6 +31,8 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   @Input() discipline: string;
   @Input() forceReadOnly?: boolean;
   @Input() isDashboardInEdition?:boolean;
+  @Input() width?: number;
+  @Input() height?: number;
 
   public widgetType: WidgetType;
   public isCalculationRunning: boolean;
@@ -51,6 +53,8 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   public integrityMessageClass: string;
   private dialogRef: MatDialogRef<OntologyInformationsComponent>;
   public isFavorite: boolean;
+  public isDashboardContext: boolean = false;
+  public dashboardScale: number = 1;
 
   constructor(
     private dialog: MatDialog,
@@ -118,6 +122,52 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     this.SetBorderClass();
     this.SetHeaderIconClass();
     this.loadFavorites();
+    this.updateDashboardContext();
+  }
+
+  private updateDashboardContext(): void {
+    // Detect if we're in dashboard context by checking if width/height are provided and valid
+    this.isDashboardContext = !!(this.width && this.height && this.width > 0 && this.height > 0);
+    
+    if (this.isDashboardContext) {
+      this.calculateDashboardScale();
+    } else {
+      this.dashboardScale = 1; // Reset to default scale when not in dashboard
+    }
+  }
+
+  private calculateDashboardScale(): void {
+    // Base widget sizes pour différents types (réduits pour permettre plus de scaling)
+    const baseWidgets = { width: 300, height: 80 };
+    
+    if (this.width && this.height) {
+      // Réduire encore plus le padding pour maximiser l'espace
+      const usableWidth = this.width ;   // Réduit de 20 à 10
+      const usableHeight = this.height ; // Réduit de 15 à 10
+      
+      // Get base dimensions for current widget type
+      const baseSize = baseWidgets;
+      
+      // Calculate scale basé sur le plus petit ratio pour maintenir l'aspect ratio
+      const widthScale = usableWidth / baseSize.width;
+      const heightScale = usableHeight / baseSize.height;
+      let scale = Math.min(widthScale, heightScale);
+      
+      // Si on dépasse la taille de base, on applique un bonus de scaling
+    if (usableWidth > baseSize.width || usableHeight > baseSize.height) {
+      // Calculer combien on dépasse en pourcentage
+      const widthOverflow = Math.max(0, (usableWidth - baseSize.width) / baseSize.width);
+      const heightOverflow = Math.max(0, (usableHeight - baseSize.height) / baseSize.height);
+      const maxOverflow = Math.max(widthOverflow, heightOverflow);
+      
+      // Appliquer un bonus progressif (par exemple 50% du dépassement)
+      const bonus = maxOverflow * 0.5;
+      scale = scale * (1 + bonus);
+    }
+    
+    // Limites de scaling plus généreuses
+    this.dashboardScale = Math.max(Math.min(scale, 6.0), 0.8); // Max 6.0, min 0.8
+  }
   }
 
   // force reload so the edition mode is correctly applied and stars appear and disappear correctly
@@ -148,12 +198,12 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     }
   }
 
-  ngOnChanges(): void {
-      //TODO: update size on changes
-      // if (changes.height || changes.width) {
-      //   this.setupLayout();
-      //   this.initializePlot();
-      // }
+  ngOnChanges(changes: SimpleChanges): void {
+      // Update dashboard context when width or height changes
+      if (changes.width || changes.height) {
+        this.updateDashboardContext();
+      }
+      
       this.isDashboardInEdition = this.dashboardService.isDashboardInEdition;
       
     }

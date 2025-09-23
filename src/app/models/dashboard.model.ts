@@ -107,10 +107,10 @@ export class DashboardItemFactory {
       layout: this.createItemLayout(nodeData.identifier, 'value_data'),
       data: {
         key: nodeData.identifier,
-        nodeData,
+        nodeData: nodeData as NodeData,
         discipline,
         namespace
-      }
+      } as ValueData
     }
   }
 
@@ -148,16 +148,16 @@ export class DashboardItemFactory {
         minRows = 8;
         break;
       case 'value_data':
-        cols = 8;
-        rows = 3;
-        minCols = 4;
-        minRows = 2;
+        cols = 6;
+        rows = 2;
+        minCols = 2;
+        minRows = 1;
         break;
       case 'section':
         cols = 40;
         rows = 20;
         minCols = 40;
-        minRows = 16;
+        minRows = 5;
         break;
     }
     return {

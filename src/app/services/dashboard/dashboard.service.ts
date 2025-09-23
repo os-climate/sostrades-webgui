@@ -8,11 +8,13 @@ import {
   DisplayableItem, GraphData,
   ItemData,
   ItemLayout,
-  SectionData, TextData
+  SectionData, TextData,
+  ValueData
 } from "../../models/dashboard.model";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { SnackbarService } from '../snackbar/snackbar.service';
+import { NodeData } from 'src/app/models/node-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,12 +41,60 @@ export class DashboardService extends DataHttpService {
     this.isDashboardInEdition = false;
   }
 
-  isText(data: ItemData): TextData | null {
-    return ('content' in data) ? data as TextData : null;
+  isText(data: ItemData): boolean {
+    return ('content' in data) ;
   }
 
-  isGraph(data: ItemData): GraphData | null {
-    return ('disciplineName' in data && 'plotIndex' in data && 'postProcessingFilters' in data && 'graphData' in data && 'name' in data) ? data as GraphData : null;
+  isGraph(data: ItemData): boolean {
+    return ('disciplineName' in data && 'plotIndex' in data && 'postProcessingFilters' in data && 'graphData' in data && 'name' in data);
+  }
+
+  isDataValue(data: ItemData): boolean {
+    return ('nodeData' in data);
+  }
+
+  getDataAsGraph(data: ItemData): GraphData | null {
+    return this.isGraph(data)? data as GraphData : null;
+  }
+
+  getDataAsText(data: ItemData): TextData | null {
+    return this.isText(data)? data as TextData : null;
+  }
+
+  getDataAsValue(data: ItemData): ValueData | null {
+        const valueData: ValueData = data as ValueData;
+        valueData.nodeData = new NodeData(
+          valueData.nodeData.identifier,
+          valueData.nodeData.defaultValue,
+          valueData.nodeData.type,
+          valueData.nodeData.unit,
+          valueData.nodeData.possibleValues,
+          valueData.nodeData.range,
+          valueData.nodeData.subTypeDescriptor,
+          valueData.nodeData.userLevel,
+          valueData.nodeData.visibility,
+          valueData.nodeData.ioType,
+          valueData.nodeData.modelOrigin,
+          valueData.nodeData.coupling,
+          valueData.nodeData.oldValue,
+          valueData.nodeData.oldValue,
+          valueData.nodeData.editable,
+          valueData.nodeData.overwritten,
+          valueData.nodeData.numerical,
+          valueData.nodeData.metaInput,
+          valueData.nodeData.optional,
+          valueData.nodeData.connector_data,
+          valueData.nodeData.dataframeDescriptor,
+          valueData.nodeData.dataframeEditionLocked,
+          valueData.nodeData.disciplineFullPathList,
+          valueData.nodeData.variableKey,
+          valueData.nodeData.checkIntegrityMessage,
+          valueData.nodeData.sizeInMo,
+          valueData.nodeData.parent,
+          valueData.nodeData.isDataDisc
+          );
+        return valueData ;
+      
   }
 
   // Getter to check if the dashboard has changed
@@ -74,7 +124,7 @@ export class DashboardService extends DataHttpService {
       delete this.currentDashboard.data[itemId];
     } else {
       for (const dashboardItem of Object.values(this.currentDashboard.layout)) {
-        if (dashboardItem.item_type === 'section') {
+        if (dashboardItem.item_type === 'section' && dashboardItem.children) {
           const index = dashboardItem.children.findIndex((child: string) => child === itemId);
           if (index !== -1) {
             dashboardItem.children.splice(index, 1);
@@ -108,7 +158,7 @@ export class DashboardService extends DataHttpService {
       return true;
     else {
       for (const item of Object.values(this.currentDashboard.layout)) {
-        if (item.item_type === 'section') {
+        if (item.item_type === 'section' && item.children) {
           for (const childId of item.children) {
             if (childId === itemId) {
               return true;
@@ -156,7 +206,7 @@ export class DashboardService extends DataHttpService {
   }
 
   // Remove an item from a section and add it back to the dashboard, recreating the layout in the meantime
-  removeItemFromSection(itemId: string, itemType: 'text' | 'graph', section: ItemLayout): ItemLayout {
+  removeItemFromSection(itemId: string, itemType: 'text' | 'graph' | 'value_data', section: ItemLayout): ItemLayout {
     if (section.children) {
       const index: number = section.children.indexOf(itemId);
       if (index !== -1) {
@@ -210,7 +260,7 @@ export class DashboardService extends DataHttpService {
             for (const childId of itemLayout.children) {
               if (childId in data) {
                 const childData: ItemData = data[childId];
-                const childLayout: ItemLayout = DashboardItemFactory.createItemLayout(childId, this.isGraph(childData) ? 'graph' : 'text');
+                const childLayout: ItemLayout = DashboardItemFactory.createItemLayout(childId, this.isGraph(childData) ? 'graph' : this.isDataValue(childData) ? 'value_data' : 'text');
                 sectionItems.push({ ...childLayout, data : childData } as DisplayableItem);
               }
             }

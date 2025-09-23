@@ -1,7 +1,13 @@
 <div
   [id]="nodeData.identifier"
   class="widget"
-  [ngClass]="borderClass"
+  [ngClass]="[borderClass, isDashboardContext ? 'dashboard-widget' : '']"
+  [style.transform]="isDashboardContext ? 'scale(' + dashboardScale + ')' : 'none'"
+  [style.transform-origin]="isDashboardContext ? 'top left' : 'center'"
+  [style.width]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
+  [style.height]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
+  [style.min-width]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
+  [style.min-height]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
   *ngIf="
     showWidget(
       filterService.filters.userLevel,

@@ -112,6 +112,8 @@
               [namespace]="getValueData(itemId).data.namespace"
               [forceReadOnly]="true"
               [isDashboardInEdition]="options.draggable.enabled"
+              [width]="calculateWidgetWidth(getItemLayout(itemId)) || undefined"
+              [height]="calculateWidgetHeight(getItemLayout(itemId)) || undefined"
               >
               </app-widget>
             </div>
