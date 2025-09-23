@@ -1,10 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ItemLayout, ItemData, SectionData, GraphData, TextData } from "../../../models/dashboard.model";
+import { ItemLayout, ItemData, SectionData, GraphData, TextData, ValueData } from "../../../models/dashboard.model";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { QuillEditorComponent } from "ngx-quill";
 import { MatDialog } from "@angular/material/dialog";
 import { DashboardTextDialogComponent } from "../dashboard-text-dialog/dashboard-text-dialog.component";
 import { DashboardSectionDialogComponent } from "../dashboard-section-dialog/dashboard-section-dialog.component";
+import { NodeData } from 'src/app/models/node-data.model';
 
 @Component({
   selector: 'app-dashboard-section-item',
@@ -92,8 +93,13 @@ export class DashboardSectionItemComponent implements OnInit {
     this.dashboardService.removeItem(this.sectionItem.layout.item_id);
   }
 
-  getChildType(childId: string): 'text' | 'graph' {
-    return this.dashboardService.isGraph(this.dashboardService.currentDashboard.data[childId]) ? 'graph' : 'text';
+  getChildType(childId: string): 'text' | 'graph' | 'value_data' {
+    if (this.dashboardService.isGraph(this.dashboardService.currentDashboard.data[childId])) {
+      return 'graph';
+    } else if (this.dashboardService.isDataValue(this.dashboardService.currentDashboard.data[childId])) {
+      return 'value_data';
+    }
+    return 'text';
   }
 
   getGraphChildData(childId: string): GraphData {
@@ -114,4 +120,8 @@ export class DashboardSectionItemComponent implements OnInit {
       return itemData as TextData;
     return undefined;
   }
+  
+  getValueData(id: string) : ValueData{
+     return this.dashboardService.getDataAsValue(this.dashboardService.getItemDataById(id));
+    }
 }

@@ -13,10 +13,13 @@
           *ngIf="data.dashboard.layout && data.dashboard.layout.length > 0">
           <div cdkDrag *ngFor="let item of data.dashboard.layout" class="box-item">
             <div *ngIf="isGraph(getItemData(item.item_id))">
-              {{getGraphData(getItemData(item.item_id)).title}}
+              Chart: {{getGraphData(getItemData(item.item_id)).title}}
             </div>
-            <div *ngIf="!isGraph(getItemData(item.item_id))" class="text-item">
-              {{cleanText(getTextData(getItemData(item.item_id)).content)}}
+            <div *ngIf="isData(getItemData(item.item_id))">
+              Data: {{getValueData(getItemData(item.item_id)).nodeData.identifier}}
+            </div>
+            <div *ngIf="isText(getItemData(item.item_id))" class="text-item">
+              Text: {{cleanText(getTextData(getItemData(item.item_id)).content)}}
             </div>
           </div>
         </div>
@@ -46,10 +49,13 @@
           *ngIf="data.section.layout.children && data.section.layout.children.length > 0">
           <div cdkDrag *ngFor="let itemId of data.section.layout.children" class="box-item">
             <div *ngIf="isGraph(getItemData(itemId))">
-              {{getGraphData(getItemData(itemId)).title}}
+              Chart: {{getGraphData(getItemData(itemId)).title}}
             </div>
-            <div *ngIf="!isGraph(getItemData(itemId))" class="text-item">
-              {{cleanText(getTextData(getItemData(itemId)).content)}}
+            <div *ngIf="isData(getItemData(itemId))">
+              Data: {{getValueData(getItemData(itemId)).nodeData.identifier}}
+            </div>
+            <div *ngIf="isText(getItemData(itemId))" class="text-item">
+              Text: {{cleanText(getTextData(getItemData(itemId)).content)}}
             </div>
           </div>
         </div>

@@ -51,6 +51,15 @@
             [plotIndex]="getGraphChildData(childId).plotIndex"
             [isEditing]="inEditionMode">
           </app-post-processing-plotly>
+          <app-widget
+            *ngSwitchCase="itemType.value_data"
+              [nodeData]="getValueData(childId).nodeData"
+              [discipline]="getValueData(childId).nodeData.disciplineFullPathList.length > 0 ? getValueData(childId).nodeData.disciplineFullPathList[0] : getValueData(childId).discipline"
+              [namespace]="getValueData(childId).namespace"
+              [forceReadOnly]="true"
+              [isDashboardInEdition]="inEditionMode"
+              >
+              </app-widget>
           <app-dashboard-text-item
             class="text"
             *ngSwitchCase="itemType.text"

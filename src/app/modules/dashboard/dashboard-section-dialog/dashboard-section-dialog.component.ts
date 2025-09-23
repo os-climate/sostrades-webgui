@@ -1,6 +1,6 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { GraphData, ItemData, ItemLayout, SectionData, TextData } from "../../../models/dashboard.model";
+import { GraphData, ItemData, ItemLayout, SectionData, TextData, ValueData } from "../../../models/dashboard.model";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 
@@ -57,9 +57,10 @@ export class DashboardSectionDialogComponent {
       ? (event.previousContainer.data[event.previousIndex] as string)
       : (event.previousContainer.data[event.previousIndex] as ItemLayout).item_id
 
-    const itemType: 'text' | 'graph' = typeof event.previousContainer.data[event.previousIndex] === "string"
-      ? this.dashboardService.isGraph(this.data.dashboard.data[itemId]) ? 'graph' : 'text'
-      : ((event.previousContainer.data[event.previousIndex] as ItemLayout).item_type as 'text' | 'graph');
+    const itemType: 'text' | 'graph' | 'value_data' = typeof event.previousContainer.data[event.previousIndex] === "string"
+      ? this.dashboardService.isGraph(this.data.dashboard.data[itemId]) ? 'graph' :
+      this.dashboardService.isDataValue(this.data.dashboard.data[itemId]) ? 'value_data' :'text'
+      : ((event.previousContainer.data[event.previousIndex] as ItemLayout).item_type as 'text' | 'graph' | 'value_data');
 
     if ((event.previousContainer.id === this.DASHBOARD_LIST_ID || event.previousContainer.id === this.DASHBOARD_EMPTY_LIST_ID)
       && (event.container.id === this.SECTION_LIST_ID || event.container.id === this.SECTION_EMPTY_LIST_ID)) {
@@ -111,14 +112,26 @@ export class DashboardSectionDialogComponent {
   }
 
   isGraph(data: ItemData): boolean {
-    return ('disciplineName' in data && 'plotIndex' in data && 'postProcessingFilters' in data && 'graphData' in data && 'name' in data) ? true : null;
-  }
-
-  getGraphData(data: ItemData): GraphData | null {
     return this.dashboardService.isGraph(data);
   }
 
-  getTextData(data: ItemData): TextData | null {
+  isData(data: ItemData): boolean {
+    return this.dashboardService.isDataValue(data);
+  }
+
+  isText(data: ItemData): boolean {
     return this.dashboardService.isText(data);
+  }
+
+  getGraphData(data: ItemData): GraphData | null {
+    return this.dashboardService.getDataAsGraph(data);
+  }
+
+  getValueData(data: ItemData): ValueData | null {
+    return this.dashboardService.getDataAsValue(data);
+  }
+
+  getTextData(data: ItemData): TextData | null {
+    return this.dashboardService.getDataAsText(data);
   }
 }
