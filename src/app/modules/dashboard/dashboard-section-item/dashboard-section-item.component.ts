@@ -5,7 +5,6 @@ import { QuillEditorComponent } from "ngx-quill";
 import { MatDialog } from "@angular/material/dialog";
 import { DashboardTextDialogComponent } from "../dashboard-text-dialog/dashboard-text-dialog.component";
 import { DashboardSectionDialogComponent } from "../dashboard-section-dialog/dashboard-section-dialog.component";
-import { NodeData } from 'src/app/models/node-data.model';
 
 @Component({
   selector: 'app-dashboard-section-item',

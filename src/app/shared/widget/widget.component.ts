@@ -53,8 +53,8 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   public integrityMessageClass: string;
   private dialogRef: MatDialogRef<OntologyInformationsComponent>;
   public isFavorite: boolean;
-  public isDashboardContext: boolean = false;
-  public dashboardScale: number = 1;
+  public isDashboardContext: boolean;
+  public dashboardScale: number;
 
   constructor(
     private dialog: MatDialog,
@@ -97,6 +97,8 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     this.widgetIntegrityMessage = '';
     this.integrityMessageClass = 'error-message error-message-color-red';
     this.isDashboardInEdition = false;
+    this.isDashboardContext = false;
+    this.dashboardScale = 1;
   }
 
   ngOnInit(): void {

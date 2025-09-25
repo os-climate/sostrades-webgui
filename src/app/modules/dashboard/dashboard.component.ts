@@ -21,7 +21,6 @@ import {
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { SnackbarService } from "../../services/snackbar/snackbar.service";
-import { NodeData } from 'src/app/models/node-data.model';
 
 @Component({
   selector: 'app-dashboard',
