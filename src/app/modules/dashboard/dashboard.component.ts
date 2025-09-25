@@ -21,7 +21,6 @@ import {
 import { GridsterConfig } from "angular-gridster2";
 import { MatSlideToggle, MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { SnackbarService } from "../../services/snackbar/snackbar.service";
-import { NodeData } from 'src/app/models/node-data.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -178,37 +177,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getValueData(id: string) {
     const value: ItemLayout = this.dashboardService.currentDashboard.layout[id];
-    const valueData: ValueData = this.dashboardService.currentDashboard.data[id] as ValueData;
-    valueData.nodeData = new NodeData(
-      valueData.nodeData.identifier,
-      valueData.nodeData.defaultValue,
-      valueData.nodeData.type,
-      valueData.nodeData.unit,
-      valueData.nodeData.possibleValues,
-      valueData.nodeData.range,
-      valueData.nodeData.subTypeDescriptor,
-      valueData.nodeData.userLevel,
-      valueData.nodeData.visibility,
-      valueData.nodeData.ioType,
-      valueData.nodeData.modelOrigin,
-      valueData.nodeData.coupling,
-      valueData.nodeData.oldValue,
-      valueData.nodeData.oldValue,
-      valueData.nodeData.editable,
-      valueData.nodeData.overwritten,
-      valueData.nodeData.numerical,
-      valueData.nodeData.metaInput,
-      valueData.nodeData.optional,
-      valueData.nodeData.connector_data,
-      valueData.nodeData.dataframeDescriptor,
-      valueData.nodeData.dataframeEditionLocked,
-      valueData.nodeData.disciplineFullPathList,
-      valueData.nodeData.variableKey,
-      valueData.nodeData.checkIntegrityMessage,
-      valueData.nodeData.sizeInMo,
-      valueData.nodeData.parent,
-      valueData.nodeData.isDataDisc
-      );
+    const valueData: ValueData = this.dashboardService.getDataAsValue(this.dashboardService.currentDashboard.data[id]);
     if (value && valueData) {
       return { layout: value, data: valueData };
     }
@@ -357,6 +326,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Calculate the height of the graph item for resizing
   calculateGraphHeight(item: ItemLayout): number {
+    const rowHeight = this.getRowHeight();
+    if (!rowHeight) return null;
+    return (item.rows * rowHeight) + ((item.rows - 1) * this.options.margin);
+  }
+
+  // Calculate the width of the widget item for resizing
+  calculateWidgetWidth(item: ItemLayout): number {
+    const colWidth = this.getColWidth();
+    if (!colWidth) return null;
+    return (item.cols * colWidth) + ((item.cols - 1) * this.options.margin);
+  }
+
+  // Calculate the height of the widget item for resizing
+  calculateWidgetHeight(item: ItemLayout): number {
     const rowHeight = this.getRowHeight();
     if (!rowHeight) return null;
     return (item.rows * rowHeight) + ((item.rows - 1) * this.options.margin);

@@ -128,7 +128,7 @@ gridster {
 .drag-handle {
   position: absolute;
   top: 13px;
-  right: 5px;
+  left: 52px;
   z-index: 10;
   cursor: move;
   width: 30px;
@@ -146,7 +146,9 @@ gridster {
 }
 
 .drag-value-data{
-  top: 0px;
+  top: auto;
+  left: 5px;
+  bottom: 5px;
 }
 
 .missing-dashboard {
@@ -169,6 +171,20 @@ gridster {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+// Value data widget card styling
+.value-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  
+  app-widget {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 }
 
 
