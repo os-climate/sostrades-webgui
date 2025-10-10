@@ -852,6 +852,11 @@ getStudyStandAloneZip(studyId: number): Observable<Blob> {
   return this.http.get(url, options);
 }
 
+getStudyStandAloneZipBase64(studyId: number): Observable<any> {
+  const url = `${this.apiRoute}/${studyId}/stand-alone/export-base64`;
+  return this.http.get(url);
+}
+
 importStudyStandAloneZip(groupId:number, file:File): Observable<Study> {
     const formData = new FormData();
 
