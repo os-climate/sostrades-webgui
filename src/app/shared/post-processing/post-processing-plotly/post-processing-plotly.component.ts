@@ -6,6 +6,7 @@ import { DashboardItemFactory, ItemData, ItemLayout } from "../../../models/dash
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SnackbarService } from "../../../services/snackbar/snackbar.service";
 import { PostProcessingFilter } from "../../../models/post-processing-filter.model";
+import { ProxyMapService } from 'src/app/services/proxy-map/proxy-map.service';
 
 @Component({
   selector: 'app-post-processing-plotly',
@@ -59,7 +60,8 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     private snackBar: MatSnackBar,
     private studyCaseValidationService: StudyCaseValidationService,
     private snackbarService: SnackbarService,
-    public dashboardService: DashboardService) {
+    public dashboardService: DashboardService,
+    public proxyMapService: ProxyMapService) {
     this.isPlotLoading = true;
     this.studyCaseValidation = null;
   }
@@ -205,6 +207,15 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     if (this.plotData.data[0].type !== 'table') {
       this.plotData.layout.height = this.height || 450;
       this.plotData.layout.width = this.width || 600;
+    }
+    //check if plotData as tile_url_placeholder and replace it by the correct url
+    const host = window.location.host;
+    if (!host.includes('localhost:')) {
+      if (this.plotData.tile_url_placeholder) {
+        const proxy_route = this.proxyMapService.apiRoute;
+        const old_url = this.plotData.layout.map.style.sources['osm-tiles'].tiles[0];
+        this.plotData.layout.map.style.sources['osm-tiles'].tiles = [old_url.replace(this.plotData.tile_url_placeholder, proxy_route)];
+        }
     }
   }
 
