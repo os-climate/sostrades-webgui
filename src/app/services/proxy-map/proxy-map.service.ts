@@ -16,5 +16,6 @@ export class ProxyMapService extends BaseHttpService {
     public get apiRoute(): string {
       return `${super.apiRoute}`;
     }
+
   
 }

@@ -212,9 +212,14 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     const host = window.location.host;
     if (!host.includes('localhost:')) {
       if (this.plotData.tile_url_placeholder) {
-        const proxy_route = this.proxyMapService.apiRoute;
+        const proxy_route = this.proxyMapService.apiRoute+"/osm-tiles";
         const old_url = this.plotData.layout.map.style.sources['osm-tiles'].tiles[0];
         this.plotData.layout.map.style.sources['osm-tiles'].tiles = [old_url.replace(this.plotData.tile_url_placeholder, proxy_route)];
+        }
+      if (this.plotData.font_url_placeholder) {
+        const proxy_route = this.proxyMapService.apiRoute+"/osm-font";
+        const old_url = this.plotData.layout.map.style.glyphs;
+        this.plotData.layout.map.style.glyphs = old_url.replace(this.plotData.font_url_placeholder, proxy_route);
         }
     }
   }
