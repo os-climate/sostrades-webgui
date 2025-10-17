@@ -874,6 +874,23 @@ importStudyStandAloneZip(groupId:number, file:File): Observable<Study> {
     return this.http.post<Study>(url, formData);
   }
 
+importStudyStandAloneZipBase64(groupId: number, filename: string, fileData: string): Observable<Study> {
+  const url = `${this.apiRoute}/stand-alone/import-base64`;
+  
+  const requestData = {
+    group_id: groupId,
+    filename: filename,
+    file_data: fileData
+  };
+  
+  return this.http.post<Study>(url, requestData, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
 
 waitStudyCreationEnding(studyId:number, creationObservable:Subscriber<Study>){
   this.getStudy(studyId, false).subscribe(
