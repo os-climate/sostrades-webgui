@@ -218,7 +218,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
 
   private setMapStyle() {
     if (this.plotData.layout.map.style == 'open-street-map') {
-      const tile_proxy_route = this.proxyMapService.apiRoute+"/osm-tiles";
+      const tile_proxy_route = this.proxyMapService.apiRoute+"/osm-tiles/{z}/{x}/{y}.png";
       const font_proxy_route = this.proxyMapService.apiRoute+"/osm-font";
       this.plotData.layout.map.style = {
             'version': 8,
