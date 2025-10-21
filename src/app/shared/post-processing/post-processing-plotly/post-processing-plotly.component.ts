@@ -210,12 +210,10 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     }
     //check if plotData as tile_url_placeholder and replace it by the correct url
     const host = window.location.host;
-    // if (!host.includes('localhost:') && this.plotData.layout.map) {
-    //   this.setMapStyle();
-    // }
-    if (this.plotData.layout.map) {
+    if (!host.includes('localhost:') && this.plotData.layout.map) {
       this.setMapStyle();
     }
+    
       
   }
 
