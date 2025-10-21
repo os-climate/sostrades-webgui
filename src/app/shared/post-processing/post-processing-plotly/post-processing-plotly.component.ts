@@ -210,18 +210,47 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     }
     //check if plotData as tile_url_placeholder and replace it by the correct url
     const host = window.location.host;
-    if (!host.includes('localhost:')) {
-      if (this.plotData.tile_url_placeholder) {
-        const proxy_route = this.proxyMapService.apiRoute+"/osm-tiles";
-        const old_url = this.plotData.layout.map.style.sources['osm-tiles'].tiles[0];
-        this.plotData.layout.map.style.sources['osm-tiles'].tiles = [old_url.replace(this.plotData.tile_url_placeholder, proxy_route)];
-        }
-      if (this.plotData.font_url_placeholder) {
-        const proxy_route = this.proxyMapService.apiRoute+"/osm-font";
-        const old_url = this.plotData.layout.map.style.glyphs;
-        this.plotData.layout.map.style.glyphs = old_url.replace(this.plotData.font_url_placeholder, proxy_route);
-        }
+    if (!host.includes('localhost:') && this.plotData.layout.map) {
+      this.setMapStyle();
     }
+      
+  }
+
+  private setMapStyle() {
+    if (this.plotData.layout.map.style == 'open-street-map') {
+      const tile_proxy_route = this.proxyMapService.apiRoute+"/osm-tiles";
+      const font_proxy_route = this.proxyMapService.apiRoute+"/osm-font";
+      this.plotData.layout.map.style = {
+            'version': 8,
+            'glyphs': font_proxy_route + "/{fontstack}/{range}.pbf",
+            'sources': {
+                'osm-tiles': {
+                    'type': 'raster',
+                    'tiles': [tile_proxy_route],
+                    'tileSize': 256,
+                    'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }
+            },
+            'layers': [
+                {
+                    'id': 'osm-layer',
+                    'type': 'raster',
+                    'source': 'osm-tiles',
+                    'minzoom': 0,
+                    'maxzoom': 18,
+                    "below": "traces"
+                }
+            ]
+        };
+    }
+    
+    const usgs_map_layer = "https://basemap.nationalmap.gov";
+    if (this.plotData.layout.map.layers && this.plotData.layout.map.layers[0].source.startsWith(usgs_map_layer)) {
+      const tile_proxy_route = this.proxyMapService.apiRoute + "/usgs-tiles";
+      this.plotData.layout.map.layers[0].source = this.plotData.layout.map.layers[0].source.replace(usgs_map_layer, tile_proxy_route);
+    }
+    
+
   }
 
   private async createCommonModeBarButtons(showLegend: boolean) {
