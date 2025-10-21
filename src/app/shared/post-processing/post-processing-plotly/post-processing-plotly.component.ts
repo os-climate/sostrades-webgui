@@ -210,13 +210,17 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     }
     //check if plotData as tile_url_placeholder and replace it by the correct url
     const host = window.location.host;
-    if (!host.includes('localhost:') && this.plotData.layout.map) {
+    // if (!host.includes('localhost:') && this.plotData.layout.map) {
+    //   this.setMapStyle();
+    // }
+    if (this.plotData.layout.map) {
       this.setMapStyle();
     }
       
   }
 
   private setMapStyle() {
+    
     if (this.plotData.layout.map.style == 'open-street-map') {
       const tile_proxy_route = this.proxyMapService.apiRoute+"/osm-tiles/{z}/{x}/{y}.png";
       const font_proxy_route = this.proxyMapService.apiRoute+"/osm-font";
@@ -247,7 +251,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     const usgs_map_layer = "https://basemap.nationalmap.gov";
     if (this.plotData.layout.map.layers && this.plotData.layout.map.layers[0].source.startsWith(usgs_map_layer)) {
       const tile_proxy_route = this.proxyMapService.apiRoute + "/usgs-tiles";
-      this.plotData.layout.map.layers[0].source = this.plotData.layout.map.layers[0].source.replace(usgs_map_layer, tile_proxy_route);
+      this.plotData.layout.map.layers[0].source = [this.plotData.layout.map.layers[0].source[0].replace(usgs_map_layer, tile_proxy_route)];
     }
     
 
