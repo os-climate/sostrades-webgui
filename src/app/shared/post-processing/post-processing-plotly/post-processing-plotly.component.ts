@@ -247,7 +247,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     }
     
     const usgs_map_layer = "https://basemap.nationalmap.gov";
-    if (this.plotData.layout.map.layers && this.plotData.layout.map.layers[0].source.startsWith(usgs_map_layer)) {
+    if (this.plotData.layout.map.layers && this.plotData.layout.map.layers[0].source[0].startsWith(usgs_map_layer)) {
       const tile_proxy_route = this.proxyMapService.apiRoute + "/usgs-tiles";
       this.plotData.layout.map.layers[0].source = [this.plotData.layout.map.layers[0].source[0].replace(usgs_map_layer, tile_proxy_route)];
     }
