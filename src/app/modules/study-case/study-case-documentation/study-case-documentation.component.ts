@@ -18,6 +18,7 @@ import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-di
 export class DocumentationComponent implements OnChanges, AfterViewInit  {
 
   @Input() identifiers: string[];
+  @Input() isOntologyDocumentation: boolean;
 
   public documentation: MardownDocumentation[];
   public loading: boolean;
@@ -77,7 +78,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
     this.loading = true;
     this.managedDocumentations = 0;
     // If study is in readonly mode, the documentation cannot be updated
-    this.canUpdate = !this.studyCaseDataService.loadedStudy.readOnly;
+    this.canUpdate = !this.isOntologyDocumentation && !this.studyCaseDataService.loadedStudy.readOnly;
     this.identifiers.forEach(identifier => {
       const markdown = this.ontologyService.markdownDocumentations[identifier];
       this.identifier = identifier
@@ -86,7 +87,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
       }
 
       //if we are in read only, the documentation is loaded from saved documentation
-      if (this.studyCaseDataService.loadedStudy.readOnly){
+      if (!this.isOntologyDocumentation && this.studyCaseDataService.loadedStudy.readOnly){
         this.studyCaseDataService.loadSavedDocumentation(this.studyCaseDataService.loadedStudy.studyCase.id, identifier).subscribe({
           next:(response)=>{
             //if there is no saved ontology, get the documentation as in edition mode from ontology server
@@ -117,7 +118,10 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   }
 
   refresh() {
-    if(this.canUpdate){
+    if (this.isOntologyDocumentation){
+      this.updateDocumentation();
+    }
+    else if(this.canUpdate){
       // Get the current study ID
       const studyId = this.studyCaseDataService.loadedStudy.studyCase.id;
 
@@ -153,7 +157,7 @@ export class DocumentationComponent implements OnChanges, AfterViewInit  {
   // Generate documentation into pdf
   async generatePDF(disciplineName: string) {
     // Display the loading page
-    this.loadingDialogService.showLoading(`Generating pdf`);
+    this.loadingDialogService.showLoading(`Generating PDF...`);
 
     // Set the flag to indicate that the PDF is being generated
     this.isPDFGenerating = true;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { NodeData, WidgetType, ValueType, IoType } from 'src/app/models/node-data.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
@@ -12,6 +12,9 @@ import { OntologyInformationsComponent } from 'src/app/modules/ontology/ontology
 import { CalculationService } from 'src/app/services/calculation/calculation.service';
 import { Subscription } from 'rxjs';
 import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
+import { DashboardService } from 'src/app/services/dashboard/dashboard.service';
+import { DashboardItemFactory, ItemData, ItemLayout } from 'src/app/models/dashboard.model';
+import { TreeNode } from 'src/app/models/tree-node.model';
 
 @Component({
   selector: 'app-widget',
@@ -19,17 +22,23 @@ import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.m
   styleUrls: ['./widget.component.scss'],
 })
 
-export class WidgetComponent implements OnInit, OnDestroy {
+export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   private static BASE_INTEGRITY_TOOLTIP_CLASS = 'custom-tooltip-class';
 
   @Input() nodeData: NodeData;
   @Input() namespace: string;
   @Input() discipline: string;
+  @Input() forceReadOnly?: boolean;
+  @Input() isDashboardInEdition?:boolean;
+  @Input() width?: number;
+  @Input() height?: number;
 
   public widgetType: WidgetType;
   public isCalculationRunning: boolean;
   calculationChangeSubscription: Subscription;
+  dashboardEditionModeSubscription: Subscription;
+  dashboardItemsRemovedSubscription: Subscription;
   private borderClassMapping: Record<ValueType, string>;
   private iconClassMapping: Record<ValueType, string>;
   private iconTooltipMapping: Record<ValueType, string>;
@@ -43,6 +52,9 @@ export class WidgetComponent implements OnInit, OnDestroy {
   public widgetIntegrityMessage: string;
   public integrityMessageClass: string;
   private dialogRef: MatDialogRef<OntologyInformationsComponent>;
+  public isFavorite: boolean;
+  public isDashboardContext: boolean;
+  public dashboardScale: number;
 
   constructor(
     private dialog: MatDialog,
@@ -51,7 +63,8 @@ export class WidgetComponent implements OnInit, OnDestroy {
     public ontologyService: OntologyService,
     private studyCaseLocalStorageService: StudyCaseLocalStorageService,
     public filterService: FilterService,
-    private snackbarService: SnackbarService) {
+    private snackbarService: SnackbarService,
+    public dashboardService: DashboardService) {
 
     this.isCalculationRunning = false;
 
@@ -72,10 +85,10 @@ export class WidgetComponent implements OnInit, OnDestroy {
     };
 
     this.iconTooltipMapping = {
-      [ValueType.EMPTY]: 'Data in Error',
+      [ValueType.EMPTY]: 'Data has errors',
       [ValueType.USER]: 'Editable data',
       [ValueType.DEFAULT]: 'Default data',
-      [ValueType.READ_ONLY]: 'Read only data',
+      [ValueType.READ_ONLY]: 'Read-only data',
       [ValueType.OPTIONAL]: 'Optional data'
     };
 
@@ -83,6 +96,9 @@ export class WidgetComponent implements OnInit, OnDestroy {
     this.integrityTooltipClass = this.baseIntegrityTooltipClass;
     this.widgetIntegrityMessage = '';
     this.integrityMessageClass = 'error-message error-message-color-red';
+    this.isDashboardInEdition = false;
+    this.isDashboardContext = false;
+    this.dashboardScale = 1;
   }
 
   ngOnInit(): void {
@@ -93,8 +109,73 @@ export class WidgetComponent implements OnInit, OnDestroy {
       this.isCalculationRunning = calculationRunning;
     });
 
+    // Subscribe to dashboard edition mode changes
+    this.dashboardEditionModeSubscription = this.dashboardService.onDashboardEditionModeChanged.subscribe(isInEdition => {
+      this.isDashboardInEdition = isInEdition;
+    });
+
+    // Subscribe to dashboard items removed events
+    this.dashboardItemsRemovedSubscription = this.dashboardService.onDashboardItemsRemoved.subscribe(removedItemId => {
+      if (removedItemId === this.nodeData.identifier) {
+        this.isFavorite = false;
+      }
+    });
+
     this.SetBorderClass();
     this.SetHeaderIconClass();
+    this.loadFavorites();
+    this.updateDashboardContext();
+  }
+
+  private updateDashboardContext(): void {
+    // Detect if we're in dashboard context by checking if width/height are provided and valid
+    this.isDashboardContext = !!(this.width && this.height && this.width > 0 && this.height > 0);
+    
+    if (this.isDashboardContext) {
+      this.calculateDashboardScale();
+    } else {
+      this.dashboardScale = 1; // Reset to default scale when not in dashboard
+    }
+  }
+
+  private calculateDashboardScale(): void {
+    // Base widget sizes pour différents types (réduits pour permettre plus de scaling)
+    const baseWidgets = { width: 300, height: 80 };
+    
+    if (this.width && this.height) {
+      // Réduire encore plus le padding pour maximiser l'espace
+      const usableWidth = this.width ;   // Réduit de 20 à 10
+      const usableHeight = this.height ; // Réduit de 15 à 10
+      
+      // Get base dimensions for current widget type
+      const baseSize = baseWidgets;
+      
+      // Calculate scale basé sur le plus petit ratio pour maintenir l'aspect ratio
+      const widthScale = usableWidth / baseSize.width;
+      const heightScale = usableHeight / baseSize.height;
+      let scale = Math.min(widthScale, heightScale);
+      
+      // Si on dépasse la taille de base, on applique un bonus de scaling
+    if (usableWidth > baseSize.width || usableHeight > baseSize.height) {
+      // Calculer combien on dépasse en pourcentage
+      const widthOverflow = Math.max(0, (usableWidth - baseSize.width) / baseSize.width);
+      const heightOverflow = Math.max(0, (usableHeight - baseSize.height) / baseSize.height);
+      const maxOverflow = Math.max(widthOverflow, heightOverflow);
+      
+      // Appliquer un bonus progressif (par exemple 50% du dépassement)
+      const bonus = maxOverflow * 0.5;
+      scale = scale * (1 + bonus);
+    }
+    
+    // Limites de scaling plus généreuses
+    this.dashboardScale = Math.max(Math.min(scale, 6.0), 0.8); // Max 6.0, min 0.8
+  }
+  }
+
+  // force reload so the edition mode is correctly applied and stars appear and disappear correctly
+  ngAfterViewInit(): void {
+    if (this.isDashboardInEdition === undefined)
+      this.isDashboardInEdition = this.dashboardService.isDashboardInEdition
   }
 
   ngOnDestroy(): void {
@@ -102,8 +183,33 @@ export class WidgetComponent implements OnInit, OnDestroy {
       this.dialogRef.close();
       this.dialogRef = null;
     }
+    
+    // Unsubscribe from dashboard edition mode changes
+    if (this.dashboardEditionModeSubscription) {
+      this.dashboardEditionModeSubscription.unsubscribe();
+    }
+    
+    // Unsubscribe from dashboard items removed events
+    if (this.dashboardItemsRemovedSubscription) {
+      this.dashboardItemsRemovedSubscription.unsubscribe();
+    }
+    
+    // Unsubscribe from calculation changes
+    if (this.calculationChangeSubscription) {
+      this.calculationChangeSubscription.unsubscribe();
+    }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+      // Update dashboard context when width or height changes
+      if (changes.width || changes.height) {
+        this.updateDashboardContext();
+      }
+      
+      this.isDashboardInEdition = this.dashboardService.isDashboardInEdition;
+      
+    }
+    
 
   public onInputChange(value) {
     const updateItem = new StudyUpdateParameter(
@@ -130,7 +236,7 @@ export class WidgetComponent implements OnInit, OnDestroy {
       this.nodeData,
       this.studyCaseDataService.loadedStudy.studyCase.id.toString());
 
-    this.snackbarService.showInformation(`${this.nodeData.displayName} added to temporary changes`);
+    this.snackbarService.showInformation(`${this.nodeData.displayName} has been added to temporary changes`);
     this.onStateUpdate();
   }
 
@@ -232,5 +338,32 @@ export class WidgetComponent implements OnInit, OnDestroy {
     } else {
       return false;
     }
+  }
+
+  OnFavoriteClick() {
+    this.isFavorite = !this.isFavorite;
+    if (this.isFavorite)
+      this.saveFavorites(true)
+    else
+      this.saveFavorites(false)
+  }
+
+  saveFavorites(isFavorite: boolean) {
+    const simpleParent = TreeNode.CreateSimpleNode(this.nodeData.parent);
+    //copy nodeData 
+    const simpleNode = Object.assign(Object.create(Object.getPrototypeOf(this.nodeData)), this.nodeData);
+    simpleNode.parent = simpleParent;
+    
+    const value: {
+      layout: ItemLayout,
+      data: ItemData
+    } = DashboardItemFactory.createValueData(simpleNode, this.discipline, this.namespace);
+    const text: void | string = isFavorite ? this.dashboardService.addItem(value) : this.dashboardService.removeItem(value.layout.item_id);
+    this.snackbarService.showInformation(text ? text : isFavorite ? 'Value added to dashboard !' : 'Value removed from dashboard !');
+  }
+
+  loadFavorites() {
+    this.isDashboardInEdition = this.dashboardService.isDashboardInEdition;
+    this.isFavorite = this.dashboardService.isSelected(this.nodeData.identifier);
   }
 }

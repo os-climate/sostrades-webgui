@@ -2,9 +2,11 @@ import { Component, OnInit, Input, ViewChild, ElementRef, SimpleChanges, OnChang
 import { StudyCaseValidation } from 'src/app/models/study-case-validation.model';
 import { StudyCaseValidationService } from 'src/app/services/study-case-validation/study-case-validation.service';
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
-import { DashboardGraph } from "../../../models/dashboard.model";
+import { DashboardItemFactory, ItemData, ItemLayout } from "../../../models/dashboard.model";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SnackbarService } from "../../../services/snackbar/snackbar.service";
+import { PostProcessingFilter } from "../../../models/post-processing-filter.model";
+import { ProxyMapService } from 'src/app/services/proxy-map/proxy-map.service';
 
 @Component({
   selector: 'app-post-processing-plotly',
@@ -16,6 +18,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   @Input() fullNamespace: string;
   @Input() disciplineName: string;
   @Input() name: string;
+  @Input() filters: PostProcessingFilter[];
   @Input() plotIndex: number;
   @Input() height?: number;
   @Input() width?: number;
@@ -57,7 +60,8 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
     private snackBar: MatSnackBar,
     private studyCaseValidationService: StudyCaseValidationService,
     private snackbarService: SnackbarService,
-    public dashboardService: DashboardService) {
+    public dashboardService: DashboardService,
+    public proxyMapService: ProxyMapService) {
     this.isPlotLoading = true;
     this.studyCaseValidation = null;
   }
@@ -96,6 +100,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
       disciplineName: this.disciplineName,
       name: this.name,
       id: this.plotIndex,
+      filters: this.filters
     }
     this.isFavorite = !this.isFavorite;
     if (this.isFavorite)
@@ -110,17 +115,27 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
    * @param isFavorite add if true and remove if false
    * @description Add or remove the plot in the dashboard
    * */
-  saveFavorites(plotId: { disciplineName: string, name: string, id: number }, plotData: any, isFavorite: boolean) {
-    const graph = new DashboardGraph(plotId.disciplineName, plotId.name, plotId.id, plotData);
-    if (isFavorite) graph.data.title = graph.getTitle;
-    const text: void | string = isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph);
+  saveFavorites(plotId: {
+    disciplineName: string,
+    name: string,
+    id: number,
+    filters: PostProcessingFilter[]
+  }, plotData: any, isFavorite: boolean) {
+    const graph: {
+      layout: ItemLayout,
+      data: ItemData
+    } = DashboardItemFactory.createGraph(plotId.disciplineName, plotId.name, plotId.id, plotId.filters, plotData);
+    const text: void | string = isFavorite ? this.dashboardService.addItem(graph) : this.dashboardService.removeItem(graph.layout.item_id);
     this.snackbarService.showInformation(text ? text : isFavorite ? 'Graph added to dashboard !' : 'Graph removed from dashboard !');
   }
 
   // Check if the plot is in the dashboard
   loadFavorites() {
-    const graph = new DashboardGraph(this.disciplineName, this.name, this.plotIndex, this.plotData);
-    this.isFavorite = this.dashboardService.isSelected(graph.identifier);
+    const graph: {
+      layout: ItemLayout,
+      data: ItemData
+    } = DashboardItemFactory.createGraph(this.disciplineName, this.name, this.plotIndex, this.filters, this.plotData);
+    this.isFavorite = this.dashboardService.isSelected(graph.layout.item_id);
   }
 
   private setupValidation() {
@@ -193,6 +208,51 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
       this.plotData.layout.height = this.height || 450;
       this.plotData.layout.width = this.width || 600;
     }
+    //check if plotData as tile_url_placeholder and replace it by the correct url
+    const host = window.location.host;
+    if (!host.includes('localhost:') && this.plotData.layout.map) {
+      this.setMapStyle();
+    }
+    
+      
+  }
+
+  private setMapStyle() {
+    
+    if (this.plotData.layout.map.style == 'open-street-map') {
+      const tile_proxy_route = this.proxyMapService.apiRoute+"/osm-tiles/{z}/{x}/{y}.png";
+      const font_proxy_route = this.proxyMapService.apiRoute+"/osm-font";
+      this.plotData.layout.map.style = {
+            'version': 8,
+            'glyphs': font_proxy_route + "/{fontstack}/{range}.pbf",
+            'sources': {
+                'osm-tiles': {
+                    'type': 'raster',
+                    'tiles': [tile_proxy_route],
+                    'tileSize': 256,
+                    'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }
+            },
+            'layers': [
+                {
+                    'id': 'osm-layer',
+                    'type': 'raster',
+                    'source': 'osm-tiles',
+                    'minzoom': 0,
+                    'maxzoom': 18,
+                    "below": "traces"
+                }
+            ]
+        };
+    }
+    
+    const usgs_map_layer = "https://basemap.nationalmap.gov";
+    if (this.plotData.layout.map.layers && this.plotData.layout.map.layers[0].source[0].startsWith(usgs_map_layer)) {
+      const tile_proxy_route = this.proxyMapService.apiRoute + "/usgs-tiles";
+      this.plotData.layout.map.layers[0].source = [this.plotData.layout.map.layers[0].source[0].replace(usgs_map_layer, tile_proxy_route)];
+    }
+    
+
   }
 
   private async createCommonModeBarButtons(showLegend: boolean) {

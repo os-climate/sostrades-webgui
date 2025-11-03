@@ -4,68 +4,73 @@
     <div [ngClass]="this.sectionItem.data.shown ? 'show-section-header' : 'hidden-section-header'"
          [style.height]="getHeaderHeight()">
       <div class="card-actions" [hidden]="!inEditionMode">
-        <button mat-button color="warn" (click)="deleteSectionItem(sectionItem)" matTooltip="Delete section" class="correct-height">
+        <button mat-button color="warn" class="no-drag-buttons" (click)="deleteSectionItem()" matTooltip="Delete section">
           <i class="fa-solid fa-trash"></i>
         </button>
         <button mat-button color="primary" class="drag-handle" matTooltip="Move section">
           <i class="fa-solid fa-arrows-up-down-left-right"></i>
         </button>
-        <button mat-button color="primary" (click)="startEditingSection()" matTooltip="Edit section" class="correct-height">
+        <button mat-button color="primary" class="no-drag-buttons" (click)="startEditingSection()" matTooltip="Edit section">
           <i class="fa-solid fa-pen-to-square"></i>
         </button>
       </div>
       <div class="expansion-button">
-        <button mat-button color="primary" [matTooltip]="this.sectionItem.data.shown ? 'Hide graphs' : 'Show graphs'"
+        <button mat-button color="primary"
+                [matTooltip]="this.sectionItem.data.shown ? 'Hide content' : 'Show content'"
                 (click)="expandSection()">
           <i [ngClass]="this.sectionItem.data.shown ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up'"></i>
         </button>
       </div>
-      <div [ngClass]="inEditionMode ? 'edit-content-wrapper' : 'content-wrapper'" (click)="startEditingTitle()">
-        <div class="quill-content"
-          *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''"
-          [matTooltip]="inEditionMode ? 'Click to edit title' : 'switch to edit mode to edit title'"
-          matTooltipPosition="below"
-        >
+      <div [ngClass]="inEditionMode ? 'edit-content-wrapper' : 'content-wrapper'"
+           (click)="startEditingTitle()"
+           [matTooltip]="inEditionMode ? 'Click to edit title' : 'switch to edit mode to edit title'">
+        <div class="quill-content" *ngIf="sectionItem.data.title && sectionItem.data.title.trim() !== ''">
           <quill-view-html [content]="sectionItem.data.title" theme="snow"></quill-view-html>
         </div>
-        <div class="empty-content"
-          [matTooltip]="inEditionMode ? 'Click to edit title' : 'switch to edit mode to edit title'"
-          matTooltipPosition="below"
-          *ngIf="!sectionItem.data.title || sectionItem.data.title.trim() === ''"
-        >
+        <div class="empty-content" *ngIf="!sectionItem.data.title || sectionItem.data.title.trim() === ''">
           Click to edit
         </div>
       </div>
     </div>
 
     <!--    Separator Line  -->
-    <div class="section-separator"  [hidden]="!this.sectionItem.data.shown"></div>
+    <div class="section-separator" [hidden]="!this.sectionItem.data.shown"></div>
 
     <!--    Graphs Area  -->
     <div class="section-items" [hidden]="!this.sectionItem.data.shown">
-      <div *ngIf="sectionItem.data.items && sectionItem.data.items.length > 0" class="container-items">
-        <ng-container *ngFor="let item of sectionItem.data.items" [ngSwitch]="item.type">
-          <div class="item">
-            <app-post-processing-plotly
-              *ngSwitchCase="itemType.graph"
-              [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
-              [fullNamespace]=""
-              [plotData]="item.data.graphData"
-              [disciplineName]="item.disciplineName"
-              [name]="item.name"
-              [plotIndex]="item.plotIndex"
-              [isEditing]="inEditionMode">
-            </app-post-processing-plotly>
-            <app-dashboard-text-item
-              *ngSwitchCase="itemType.text"
-              [textItem]="item"
-              [inEditionMode]="inEditionMode">
-            </app-dashboard-text-item>
-          </div>
+      <div *ngIf="sectionItem.layout.children && sectionItem.layout.children.length > 0" class="container-items">
+        <ng-container *ngFor="let childId of sectionItem.layout.children" [ngSwitch]="getChildType(childId)">
+          <app-post-processing-plotly
+            *ngSwitchCase="itemType.graph"
+            [class]="getGraphChildData(childId).graphData?.data[0]?.type === 'table' ? 'table' : 'plot'"
+            [fullNamespace]=""
+            [plotData]="getGraphChildData(childId).graphData"
+            [disciplineName]="getGraphChildData(childId).disciplineName"
+            [name]="getGraphChildData(childId).name"
+            [filters]="getGraphChildData(childId).postProcessingFilters"
+            [plotIndex]="getGraphChildData(childId).plotIndex"
+            [isEditing]="inEditionMode">
+          </app-post-processing-plotly>
+          <app-widget
+            *ngSwitchCase="itemType.value_data"
+              [nodeData]="getValueData(childId).nodeData"
+              [discipline]="getValueData(childId).nodeData.disciplineFullPathList.length > 0 ? getValueData(childId).nodeData.disciplineFullPathList[0] : getValueData(childId).discipline"
+              [namespace]="getValueData(childId).namespace"
+              [forceReadOnly]="true"
+              [isDashboardInEdition]="inEditionMode"
+              >
+              </app-widget>
+          <app-dashboard-text-item
+            class="text"
+            *ngSwitchCase="itemType.text"
+            [textId]="childId"
+            [textItemData]="getTextChildData(childId)"
+            [inEditionMode]="inEditionMode">
+          </app-dashboard-text-item>
         </ng-container>
       </div>
-      <div *ngIf="!sectionItem.data.items || sectionItem.data.items.length === 0" class="no-graphs">
-        No graphs available in this section
+      <div *ngIf="!sectionItem.layout.children || sectionItem.layout.children.length === 0" class="no-items">
+        No items available in this section
       </div>
     </div>
   </mat-card-content>

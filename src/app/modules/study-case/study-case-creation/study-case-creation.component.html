@@ -8,80 +8,81 @@
 </div>
 <div class="flex-container" *ngIf="!isLoading" [formGroup]="createStudyForm">
   <div mat-dialog-title>
-    <h1 style="text-align: center">
-      {{title}}
+    <h1 class="create-study-title">
+      {{ title }}
     </h1>
   </div>
-    <!-- Create study form-->
-     <div mat-dialog-content >
-     <div style="display: flex; margin-bottom: 10px;" *ngIf="!data.selectProcessOnly && data.process===null">
-     <mat-slide-toggle
-      id="slide-toggle-stand-alone"
-      class="text-zone"
-      [checked]="isStandAlone"
-      (change)="onSelectStandAlone($event.checked)"
+  <!-- Create study form-->
+  <div mat-dialog-content>
+    <div style="display: flex; margin-bottom: 10px;" *ngIf="!data.selectProcessOnly && data.process===null">
+      <mat-slide-toggle
+        id="slide-toggle-stand-alone"
+        class="text-zone"
+        [checked]="isStandAlone"
+        (change)="onSelectStandAlone($event.checked)"
       >
-    </mat-slide-toggle>
-    <mat-label >Import Study Stand Alone</mat-label>
-  </div>  
-  <div 
-    [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'">
-    
-    <mat-form-field  *ngIf="!data.selectProcessOnly && !isStandAlone">
+      </mat-slide-toggle>
+      <mat-label>Import Study Stand Alone</mat-label>
+    </div>
+    <div
+      [ngClass]="data.selectProcessOnly ? 'content-for-process-builder' :'content-for-create-study'"
+      [style.flex-direction]="!data.selectProcessOnly && isStandAlone ? 'column' : 'row'"
+    >
+      <mat-form-field *ngIf="!data.selectProcessOnly && !isStandAlone">
         <mat-label>Study name</mat-label>
         <input
           matInput
           id='studyName'
           formControlName="studyName"
           placeholder="Study name"
-          />
-        <mat-error *ngIf="hasError('studyName', 'required')"
-          >A study name is <strong>required</strong></mat-error
-        >
-        <mat-error *ngIf="createStudyForm.get('studyName').hasError('studyExists')">
-          {{createStudyForm.get('studyName').getError('studyExists')}}
+        />
+        <mat-error *ngIf="hasError('studyName', 'required')">
+          A study name is <strong>required</strong>
         </mat-error>
-        <mat-error *ngIf="hasError('studyName', 'pattern')"
-          >Only letters, numbers, dashes and underscores are authorized</mat-error
+        <mat-error *ngIf="createStudyForm.get('studyName').hasError('studyExists')">
+          {{ createStudyForm.get('studyName').getError('studyExists') }}
+        </mat-error>
+        <mat-error *ngIf="hasError('studyName', 'pattern')">
+          Only letters, numbers, dashes and underscores are authorized
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="!isStandAlone">
+        <mat-select
+          id='process'
+          formControlName="processId"
+          placeholder="Process name"
+          (selectionChange)="onProcessChange($event.value)"
+          #singleSelect>
+          <mat-option>
+            <ngx-mat-select-search
+              [formControl]="processFiltered"
+              placeholderLabel="Find process..."
+              noEntriesFoundLabel="No matching process found"
+            >
+            </ngx-mat-select-search>
+          </mat-option>
+          <mat-option id="option" *ngFor="let process of filteredProcesses | async" [value]="process.id">
+            <span style="font-size: 14px;">{{ process.processName }} </span>
+            <div style="font-size: 11px;">{{ process.repositoryName }}</div>
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('processId', 'required')">
+          Field is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="!isStandAlone">
+        <mat-select
+          id="reference"
+          placeholder="Study"
+          formControlName="selectedRef"
+          [multiple]="false"
+          #select
         >
-    </mat-form-field>
-
-    <mat-form-field *ngIf="!isStandAlone">
-      <mat-select
-      id='process'
-      formControlName="processId"
-      placeholder="Process name"
-      (selectionChange)="onProcessChange($event.value)"
-      #singleSelect>
-        <mat-option>
-          <ngx-mat-select-search
-          [formControl]="processFiltered"
-          placeholderLabel="Find process..."
-          noEntriesFoundLabel="No matching process found"
-          >
-        </ngx-mat-select-search>
-        </mat-option>
-        <mat-option id="option" *ngFor="let process of filteredProcesses | async" [value]="process.id">
-          <span style="font-size: 14px;">{{process.processName}} </span>
-            <div style="font-size: 11px;">{{process.repositoryName}}</div>
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="hasError('processId', 'required')">
-        Field is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field *ngIf="!isStandAlone">
-      <mat-select
-        id="reference"
-        placeholder="Study"
-        formControlName="selectedRef"
-        [multiple]="false"
-        #select
-      >
-        <mat-select-trigger>
-          {{ createStudyForm.controls["selectedRef"].value.name }}
-        </mat-select-trigger>
+          <mat-select-trigger>
+            {{ createStudyForm.controls["selectedRef"].value.name }}
+          </mat-select-trigger>
           <mat-option
             *ngFor="let ref of referenceList"
             [value]="ref"
@@ -117,80 +118,83 @@
               </div>
             </div>
           </mat-option>
-      </mat-select>
-      <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;" *ngIf="disabledReference && !disabledReferenceList">Loading reference</mat-hint>
-    </mat-form-field>
-    <div *ngIf="!data.selectProcessOnly && isStandAlone" style="display: block;">
-    <div style="display: flex; align-items: center;" >
-        <button 
-          style="margin: 10px;"
-          class="button-select-file"
-          mat-raised-button
-          color="primary"
-          aria-label="Import zip file"
-          id="import-study"
-          (click)="importStudyStandAlone()"
-        >
-          Select zip file
-        </button>
-        <input
-          type="file"
-          #fileUpload
-          id="fileUpload"
-          name="fileUpload"
-          accept=".zip"
-          style="display: none"
-          (change)="onSelectStudyFileZip($event)"
-        />
+        </mat-select>
+        <mat-hint id='loadingReference' style="position: relative; left: 84%; color: #f0ad4e;"
+                  *ngIf="disabledReference && !disabledReferenceList">
+          Loading reference
+        </mat-hint>
+      </mat-form-field>
+      <div *ngIf="!data.selectProcessOnly && isStandAlone" style="display: block;">
+        <div style="display: flex; align-items: center;">
+          <button
+            style="margin: 10px;"
+            class="button-select-file"
+            mat-raised-button
+            color="primary"
+            aria-label="Import zip file"
+            id="import-study"
+            (click)="importStudyStandAlone()"
+          >
+            Select zip file
+          </button>
           <input
-          matInput
-          id='studyFileName'
-          placeholder="selected file name"
-          [value]="createStudyForm.get('fileUpload').value"
-          disabled="true"
-          style="margin-left: 10px; width:100%"
-          *ngIf="!hasError('fileUpload', 'fileSize')"
+            type="file"
+            #fileUpload
+            id="fileUpload"
+            name="fileUpload"
+            accept=".zip"
+            style="display: none"
+            (change)="onSelectStudyFileZip($event)"
           />
-        <mat-error *ngIf="hasError('fileUpload', 'fileSize')"
-        style="margin-left: 10px; width:100%">
-          {{createStudyForm.get('fileUpload').getError('fileSize')}}
-        </mat-error>
+          <input
+            matInput
+            id='studyFileName'
+            placeholder="selected file name"
+            [value]="createStudyForm.get('fileUpload').value"
+            disabled="true"
+            style="margin-left: 10px; width:100%"
+            *ngIf="!hasError('fileUpload', 'fileSize')"
+          />
+          <mat-error *ngIf="hasError('fileUpload', 'fileSize')"
+                     style="margin-left: 10px; width:100%">
+            {{ createStudyForm.get('fileUpload').getError('fileSize') }}
+          </mat-error>
+        </div>
+        <mat-label *ngIf="hasWarnings" style="margin-left: 10px; width:100%; color: #f0ad4e;">
+          <i class="fa-solid fa-triangle-exclamation" style="margin-right:3px"></i>
+          {{ warnings }}
+        </mat-label>
+
       </div>
-     <mat-label *ngIf="hasWarnings" style="margin-left: 10px; width:100%; color: #f0ad4e;">
-      <i class="fa-solid fa-triangle-exclamation" style="margin-right:3px"></i>
-      {{warnings}}
-      </mat-label>
-      
+      <mat-form-field *ngIf="!data.selectProcessOnly">
+        <mat-select id="group" placeholder="Group name" formControlName="groupId" (selectionChange)="onGroupChanged()">
+          <mat-option
+            *ngFor="let group of groupList"
+            [value]="group.group.id"
+          >
+            {{ group.group.name }}
+          </mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="hasError('groupId', 'required')">
+          Field is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field *ngIf="!isStandAlone">
+        <mat-select id="flavor" placeholder="study pod size" formControlName="flavor">
+          <mat-option
+            *ngFor="let flavor of flavorsList"
+            [value]="flavor"
+          >
+            {{ flavor }}
+          </mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="hasError('flavor', 'required')">
+          Field is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
-    <mat-form-field *ngIf="!data.selectProcessOnly">
-      <mat-select id="group" placeholder="Group name" formControlName="groupId" (selectionChange)="onGroupChanged()">
-        <mat-option
-          *ngFor="let group of groupList"
-          [value]="group.group.id"
-        >
-          {{ group.group.name }}
-        </mat-option>
-      </mat-select>
-
-      <mat-error *ngIf="hasError('groupId', 'required')">
-        Field is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field *ngIf="!isStandAlone">
-      <mat-select id="flavor" placeholder="study pod size" formControlName="flavor">
-        <mat-option
-          *ngFor="let flavor of flavorsList"
-          [value]="flavor"
-        >
-          {{ flavor }}
-        </mat-option>
-      </mat-select>
-
-      <mat-error *ngIf="hasError('flavor', 'required')">
-        Field is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
-  </div>
   </div>
   <div mat-dialog-actions class="center-elements">
     <button id='cancel' mat-button (click)="onCancelClick()">Cancel</button>

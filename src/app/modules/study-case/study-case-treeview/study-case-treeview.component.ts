@@ -43,6 +43,7 @@ import { FlavorsService } from 'src/app/services/flavors/flavors.service';
 import { PanelSection } from 'src/app/models/user-study-preferences.model';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { DashboardService } from 'src/app/services/dashboard/dashboard.service';
 
 
 @Component({
@@ -156,7 +157,8 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
     private filterService: FilterService,
     private studyCaseValidationService: StudyCaseValidationService,
     private flavorsService: FlavorsService,
-    private appDataService: AppDataService
+    private appDataService: AppDataService,
+    private dashboardService: DashboardService
   ) {
     this.onStudyCaseChangeSubscription = null;
     this.onTradeSpaceSelectionChangedSubscription = null;
@@ -966,11 +968,14 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   onReloadStudyReadOnly() {
-    this.loadingDialogService.showLoading('Regenerating study case read only, this may take a while...');
+    this.loadingDialogService.showLoading('Regenerating study case\'s read-only mode. This may take a while...');
 
     this.studyCaseMainService.reloadStudyReadOnly(this.studyCaseDataService.loadedStudy.studyCase.id).subscribe({
       next: () => {
-  
+
+          //reload dashboard
+          this.dashboardService.reloadDashboard(this.studyCaseDataService.loadedStudy.studyCase.id);
+
           //send coedition reload
           this.socketService.reloadStudyReadOnly(this.studyCaseDataService.loadedStudy.studyCase.id);
       
@@ -1409,6 +1414,9 @@ export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewI
         || this.root.rootDict[oldCurrentSelectedNode.fullNamespace] === undefined) {
         currentNodeDeleted = true;
       }
+
+      //reload dashboard
+      this.dashboardService.reloadDashboard(this.studyCaseDataService.loadedStudy.studyCase.id);
 
       // Applying user local changes
       if (this.studyCaseLocalStorageService.studyHaveUnsavedChanges(loadedStudy.studyCase.id.toString())) {

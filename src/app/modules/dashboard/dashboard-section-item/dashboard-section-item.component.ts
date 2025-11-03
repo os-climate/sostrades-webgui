@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { DashboardSection, DisplayableItem } from "../../../models/dashboard.model";
+import { ItemLayout, ItemData, SectionData, GraphData, TextData, ValueData } from "../../../models/dashboard.model";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { QuillEditorComponent } from "ngx-quill";
 import { MatDialog } from "@angular/material/dialog";
@@ -12,21 +12,21 @@ import { DashboardSectionDialogComponent } from "../dashboard-section-dialog/das
   styleUrls: ['./dashboard-section-item.component.scss']
 })
 export class DashboardSectionItemComponent implements OnInit {
-  @Input() sectionItem: DashboardSection;
+  @Input() sectionItem: {layout: ItemLayout, data: SectionData};
   @Input() inEditionMode: boolean;
   @ViewChild(QuillEditorComponent, { static: false }) quillEditor: QuillEditorComponent;
 
-  itemType: { [K in DisplayableItem['type']]: K } = {
+  itemType: { [K in ItemLayout['item_type']]: K } = {
     graph: 'graph',
     section: 'section',
-    text: 'text'
+    text: 'text',
+    value_data: 'value_data'
   }
 
   constructor(
     private dashboardService: DashboardService,
     private dialog: MatDialog
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     if (!this.sectionItem.data.title)
@@ -51,15 +51,15 @@ export class DashboardSectionItemComponent implements OnInit {
 
   // When entering edit mode
   startEditingSection() {
-    const dialogRef = this.dialog.open(DashboardSectionDialogComponent, {
+    this.dialog.open(DashboardSectionDialogComponent, {
       width: '900px',
       height: '500px',
-      data: { content: this.sectionItem.data.items, dashboard: this.dashboardService.getItems().filter(item => { return item.type !== 'section' }) },
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        this.sectionItem.data.items = result;
-        this.dashboardService.updateItem(this.sectionItem);
+      data: {
+        section: this.sectionItem,
+        dashboard: {
+          layout: this.dashboardService.getItemsLayout().filter((item: ItemLayout) => item.item_type !== 'section'),
+          data: this.dashboardService.getItemsData()
+        }
       }
     });
   }
@@ -67,30 +67,60 @@ export class DashboardSectionItemComponent implements OnInit {
   expandSection() {
     this.sectionItem.data.shown = !this.sectionItem.data.shown;
     if (!this.sectionItem.data.shown)
-      this.sectionItem.data.expandedSize = this.sectionItem.rows;
-    this.sectionItem.rows = this.sectionItem.data.shown ?
+      this.sectionItem.data.expandedSize = this.sectionItem.layout.rows;
+    this.sectionItem.layout.rows = this.sectionItem.data.shown ?
       (this.sectionItem.data.expandedSize || 20) : // use stored size or default
       1; // Collapse size
-    this.sectionItem.minRows = this.sectionItem.data.shown ? 16 : 1; // Minimum 16 when expanded, 1 when collapsed
+    this.sectionItem.layout.minRows = this.sectionItem.data.shown ? 16 : 1; // Minimum 16 when expanded, 1 when collapsed
     this.dashboardService.updateItem(this.sectionItem);
     this.dashboardService.onSectionExpansionEvent(this.sectionItem);
   }
 
-  getHeaderHeight() {
+  getHeaderHeight(): string {
     if (this.sectionItem.data.shown) {
-      const percentPerRow: number = 1 / this.sectionItem.rows;
-      const gapAdjustment: number = (this.sectionItem.rows - 1);
+      const percentPerRow: number = 1 / this.sectionItem.layout.rows;
+      const gapAdjustment: number = (this.sectionItem.layout.rows - 1);
       if (gapAdjustment > 0)
         return `calc((100% - ${gapAdjustment}px) * ${percentPerRow})`;
-      else
-        return `${percentPerRow * 100}%`;
-    } else {
-      return '100%';
+      return `${percentPerRow * 100}%`;
     }
+    return '100%';
   }
 
   // delete the text item of the dashboard and emit an event
-  deleteSectionItem(text: DashboardSection) {
-    this.dashboardService.removeItem(text);
+  deleteSectionItem() {
+    this.dashboardService.removeItem(this.sectionItem.layout.item_id);
   }
+
+  getChildType(childId: string): 'text' | 'graph' | 'value_data' {
+    if (this.dashboardService.isGraph(this.dashboardService.currentDashboard.data[childId])) {
+      return 'graph';
+    } else if (this.dashboardService.isDataValue(this.dashboardService.currentDashboard.data[childId])) {
+      return 'value_data';
+    }
+    return 'text';
+  }
+
+  getGraphChildData(childId: string): GraphData {
+    const data: ItemData = this.dashboardService.currentDashboard.data[childId];
+    if ('disciplineName' in data &&
+        'name' in data &&
+        'plotIndex' in data &&
+        'postProcessingFilters' in data &&
+        'graphData' in data) {
+      return data as GraphData;
+    }
+    return undefined;
+  }
+
+  getTextChildData(childId: string): TextData {
+    const itemData: ItemData = this.dashboardService.getItemDataById(childId);
+    if ('content' in itemData)
+      return itemData as TextData;
+    return undefined;
+  }
+  
+  getValueData(id: string) : ValueData{
+     return this.dashboardService.getDataAsValue(this.dashboardService.getItemDataById(id));
+    }
 }

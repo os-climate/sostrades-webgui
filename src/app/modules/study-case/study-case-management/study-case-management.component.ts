@@ -631,15 +631,30 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.studyCaseDataService.getStudyStandAloneZip(study.id).subscribe({
+    this.studyCaseDataService.getStudyStandAloneZipBase64(study.id).subscribe({
       next: (result) => {
           if (!loadingCanceled){
           this.loadingDialogService.closeLoading();
+          
+          // Décoder le Base64 et créer le blob
+          const binaryString = atob(result.data);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          const blob = new Blob([bytes], { type: 'application/zip' });
+          
           const downloadLink = document.createElement('a');
-          downloadLink.href = window.URL.createObjectURL(result);
-          downloadLink.setAttribute('download', `zip_study_${study.id}_${study.name}.zip`);
+          downloadLink.href = window.URL.createObjectURL(blob);
+          downloadLink.setAttribute('download', result.filename);
+          downloadLink.style.display = 'none';
           document.body.appendChild(downloadLink);
           downloadLink.click();
+          document.body.removeChild(downloadLink);
+          // Nettoyer l'URL
+          setTimeout(() => {
+            window.URL.revokeObjectURL(downloadLink.href);
+          }, 100);
           this.snackbarService.showInformation("The study as been successfully exported.")
         }
       },

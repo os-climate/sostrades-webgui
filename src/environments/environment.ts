@@ -9,6 +9,7 @@ export const environment = {
   API_MESSAGE_URL: 'http://127.0.0.1:8002',
   API_POST_PROCESSING_URL: 'http://127.0.0.1:8003',
   API_ONTOLOGY_DIRECT_URL: 'http://127.0.0.1:5555',
+  STUDY_LLM_URL: 'http://127.0.0.1:8501',
 
   SOS_TRADES_HEADER_COLOR_HEX: "#713E71",
   SOS_TRADES_LOGO_FIRST: {

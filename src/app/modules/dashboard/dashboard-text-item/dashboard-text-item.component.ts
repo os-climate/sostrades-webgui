@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DashboardText } from "../../../models/dashboard.model";
+import { ItemLayout, TextData } from "../../../models/dashboard.model";
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DashboardTextDialogComponent } from "../dashboard-text-dialog/dashboard-text-dialog.component";
@@ -10,17 +10,19 @@ import { DashboardTextDialogComponent } from "../dashboard-text-dialog/dashboard
   styleUrls: ['./dashboard-text-item.component.scss']
 })
 export class DashboardTextItemComponent implements OnInit {
-  @Input() textItem: DashboardText;
+  @Input() textId: string;
+  @Input() textItemData: TextData;
   @Input() inEditionMode: boolean;
 
   constructor(
     private dashboardService: DashboardService,
     private dialog: MatDialog
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
-    if (!this.textItem.data.content)
-      this.textItem.data.content = '';
+    if (!this.textItemData.content)
+      this.textItemData.content = '';
   }
 
   // When entering edit mode
@@ -29,26 +31,24 @@ export class DashboardTextItemComponent implements OnInit {
       const dialogRef = this.dialog.open(DashboardTextDialogComponent, {
         width: '600px',
         height: '400px',
-        data: { content: this.textItem.data.content }
+        data: { content: this.textItemData.content }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result !== undefined) {
-          this.textItem.data.content = result;
-          if (this.isTextInDashboard(this.textItem)) {
-            this.dashboardService.updateItem(this.textItem);
-          }
+          this.textItemData.content = result;
+          this.dashboardService.updateItem({layout: null, data: this.textItemData});
         }
-      })
+      });
     }
   }
 
   // Check if the text is in the dashboard
-  isTextInDashboard(text: DashboardText): boolean {
-    return this.dashboardService.getItems().some(item => item.id === text.id);
+  isTextInDashboard(): boolean {
+    return this.dashboardService.getItemsLayout().some((item: ItemLayout) => item.item_id === this.textId);
   }
 
   // delete the text item of the dashboard and emit an event
-  deleteTextItem(text: DashboardText) {
-    this.dashboardService.removeItem(text);
+  deleteTextItem() {
+    this.dashboardService.removeItem(this.textId);
   }
 }
