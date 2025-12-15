@@ -13,7 +13,6 @@ import { TypeConversionTools } from 'src/app/tools/type-conversion.tool';
 import { SpreadsheetComponent } from 'src/app/modules/spreadsheet/spreadsheet.component';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { Papa } from 'ngx-papaparse';
-import { LoadStatus } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-file-spreadsheet',

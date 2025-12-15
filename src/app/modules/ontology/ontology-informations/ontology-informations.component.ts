@@ -19,7 +19,6 @@ import { SpreadsheetComponent } from '../../spreadsheet/spreadsheet.component';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { ConnectorDataComponent } from '../../connector-data/connector-data.component';
 import { OntologyParameterUsage } from 'src/app/models/ontology-parameter-usage.model';
-import { LoadStatus } from 'src/app/models/study.model';
 
 @Component({
   selector: 'app-ontology-informations',
