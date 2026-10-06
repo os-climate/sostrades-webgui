@@ -86,19 +86,19 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "sos-trades-gui:build"
+            "buildTarget": "sos-trades-gui:build"
             
           },
           "configurations": {
             "production": {
-              "browserTarget": "sos-trades-gui:build:production"
+              "buildTarget": "sos-trades-gui:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sos-trades-gui:build"
+            "buildTarget": "sos-trades-gui:build"
           }
         },
         "lint": {
