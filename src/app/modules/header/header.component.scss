@@ -72,6 +72,22 @@
   color: white
 }
 
+#toolbar .mat-mdc-button {
+  color: white;
+}
+
+#toolbar .mat-mdc-button i {
+  font-size: 20px;
+  line-height: 1;
+}
+
+#toolbar .mat-mdc-button mat-icon {
+  font-size: 24px;
+  height: 24px;
+  line-height: 24px;
+  width: 24px;
+}
+
 #no-server {
   background-color: #fbca32;
   color: black;
