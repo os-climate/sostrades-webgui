@@ -8,14 +8,14 @@
       class="toolbar-item-shadow toolbar-margin"
       [ngClass]="{ 'mat-raised-button': bottomAnchorLog }"
       (click)="anchorToBottom()"
-    >
+      >
       <div style="width: 24px; height: 24px; line-height: 24px">
         <i
           class="fa-solid fa-anchor fa-fw toolbar-icon-font-aw"
           aria-hidden="false"
           aria-label="Anchor to bottom"
           matTooltip="Anchor to bottom"
-        >
+          >
         </i>
       </div>
     </button>
@@ -58,14 +58,15 @@
     <ng-container matColumnDef="exception">
       <mat-header-cell *matHeaderCellDef>Exception</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button
-          *ngIf="element.exception !== null && element.exception !== ''"
-          mat-icon-button
-          color="primary"
-          (click)="showException(element.exception)"
-        >
-          <i class="fa fa-exclamation-circle" style="color: red;"> </i>
-        </button>
+        @if (element.exception !== null && element.exception !== '') {
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="showException(element.exception)"
+            >
+            <i class="fa fa-exclamation-circle" style="color: red;"> </i>
+          </button>
+        }
       </mat-cell>
     </ng-container>
 

@@ -2,10 +2,12 @@
   <div style="padding: 10px">CSV : {{ data.title }}</div>
 
   <div mat-dialog-content>
-    <div class="progress-bar-csv" *ngIf="!isTableLoaded">
-      <div class="progressText">Loading Csv data</div>
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
+    @if (!isTableLoaded) {
+      <div class="progress-bar-csv">
+        <div class="progressText">Loading Csv data</div>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+    }
     <div
       [ngStyle]="
         isTableLoaded
@@ -15,14 +17,15 @@
             }
           : { height: '0px!important', 'max-width': '80vw' }
       "
-      #spreadsheet
-    ></div>
-  </div>
+    #spreadsheet
+  ></div>
+</div>
 
-  <div mat-dialog-actions>
-    <button id="cancel" mat-button (click)="cancelClick()" [disabled]="!isTableLoaded">
-      Cancel
-    </button>
+<div mat-dialog-actions>
+  <button id="cancel" mat-button (click)="cancelClick()" [disabled]="!isTableLoaded">
+    Cancel
+  </button>
+  @if (isCsvEditable) {
     <button
       mat-raised-button
       color="success"
@@ -32,12 +35,16 @@
           : null
       "
       mat-button
-      *ngIf="isCsvEditable"
       [disabled]="!hasCsvChanges || isLargeFile"
       (click)="saveDataClick()"
-    >
-      <span *ngIf="isLargeFile"> Disabled save </span>
-      <span *ngIf="!isLargeFile">Save</span>
+      >
+      @if (isLargeFile) {
+        <span> Disabled save </span>
+      }
+      @if (!isLargeFile) {
+        <span>Save</span>
+      }
     </button>
-  </div>
+  }
+</div>
 </div>

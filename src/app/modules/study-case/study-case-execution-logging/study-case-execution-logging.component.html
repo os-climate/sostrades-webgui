@@ -7,51 +7,54 @@
     color="warn"
     class="toolbar-item-shadow"
     (click)="downloadRawStudyLogs()"
-  >
+    >
     <div style="width: 24px; height: 24px; line-height: 24px">
       <i
         class="fa-solid fa-download fa-fw toolbar-icon-font-aw"
         aria-hidden="false"
         aria-label="Download raw study logs"
         matTooltip="Download raw study logs"
-      >
+        >
       </i>
     </div>
   </button>
   <div class="toolbar-spacer"></div>
 
-  <div class="server-load" *ngIf="displayMemoryCpu">
-    <div style="margin-right: 5px">CPU</div>
-    <div
+  @if (displayMemoryCpu) {
+    <div class="server-load">
+      <div style="margin-right: 5px">CPU</div>
+      <div
       style="
         margin-right: 10px;
         background-color: white;
         padding: 0 5px 0 5px;
         border-radius: 7px;
       "
-    >
-      {{ cpuLoad }}
-    </div>
-    <div style="margin-right: 5px">Memory</div>
-    <div
+        >
+        {{ cpuLoad }}
+      </div>
+      <div style="margin-right: 5px">Memory</div>
+      <div
       style="
         margin-right: 10px;
         background-color: white;
         padding: 0 5px 0 5px;
         border-radius: 7px;
       "
-    >
-      {{ memoryLoad }}
+        >
+        {{ memoryLoad }}
+      </div>
+      @if (!isCalculationRunning && displayIconInfoMemoryCpu) {
+        <button
+          mat-button
+          [matTooltip]="'Last metrics recorded from file system. The memory unit is in ' + memoryUnit "
+          color='accent'
+          >
+          <i class="fa-solid fa-circle-info"> </i>
+        </button>
+      }
     </div>
-    <button
-      *ngIf="!isCalculationRunning && displayIconInfoMemoryCpu"
-      mat-button
-      [matTooltip]="'Last metrics recorded from file system. The memory unit is in ' + memoryUnit "
-      color='accent'
-    >
-      <i class="fa-solid fa-circle-info"> </i>
-    </button>
-  </div>
+  }
 
   <div class="toolbar-spacer"></div>
 
@@ -63,14 +66,14 @@
     class="toolbar-item-shadow"
     [ngClass]="{ 'mat-raised-button': bottomAnchorLog }"
     (click)="anchorToBottom()"
-  >
+    >
     <div style="width: 24px; height: 24px; line-height: 24px">
       <i
         class="fa-solid fa-anchor fa-fw toolbar-icon-font-aw"
         aria-hidden="false"
         aria-label="Anchor to bottom"
         matTooltip="Anchor to bottom"
-      >
+        >
       </i>
     </div>
   </button>
@@ -83,7 +86,7 @@
       'mat-raised-button': calculationService.logFullSizeViewActive
     }"
     (click)="changeLogZoneSize()"
-  >
+    >
     <div style="height: 24px; line-height: 24px">
       <i
         [ngClass]="
@@ -95,7 +98,7 @@
         aria-hidden="false"
         aria-label="Change log zone size"
         matTooltip="Change log zone size"
-      >
+        >
       </i>
     </div>
   </button>

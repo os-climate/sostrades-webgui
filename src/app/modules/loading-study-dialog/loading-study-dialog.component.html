@@ -1,89 +1,114 @@
 <div class="flex-container">
-    <h1 mat-dialog-title [matTooltip]="tootipTitle.length > 0 ? tootipTitle :''">{{title}}</h1>
-    
-    <div class="progress-container" >
-      <div *ngFor="let step of steps;" class="inline-container">
+  <h1 mat-dialog-title [matTooltip]="tootipTitle.length > 0 ? tootipTitle :''">{{title}}</h1>
+
+  <div class="progress-container" >
+    @for (step of steps; track step) {
+      <div class="inline-container">
         <!-- progress bar-->
-          
-          <!-- progress bar between circles -->
-          <div class="progress-bar-size">
-            <div style="width: 100%;margin-top: -4px;" *ngIf="step.step === currentStep && !isInError">
+        <!-- progress bar between circles -->
+        <div class="progress-bar-size">
+          @if (step.step === currentStep && !isInError) {
+            <div style="width: 100%;margin-top: -4px;">
               <app-progress-bar class="progress-bar-loading"
-              progressMode="indeterminate"
+                progressMode="indeterminate"
               ></app-progress-bar>
             </div>
-            <div *ngIf="step.step === currentStep && isInError"
-            class="line-zero"
+          }
+          @if (step.step === currentStep && isInError) {
+            <div
+              class="line-zero"
             ></div>
-            <div *ngIf="step.step < currentStep"
-            class="line-succeed"
+          }
+          @if (step.step < currentStep) {
+            <div
+              class="line-succeed"
             ></div>
-            <div *ngIf="step.step > currentStep"
-            class="line-zero"
+          }
+          @if (step.step > currentStep) {
+            <div
+              class="line-zero"
             ></div>
-          </div>
-
-          <!-- check circles gray or done + title-->
-          <div class="bullet-container">
-            <span class="step-descrition" *ngIf="step.step >= currentStep">{{ step.labelBefore }}</span> 
-            <span class="step-descrition" *ngIf="step.step < currentStep">{{ step.labelAfter }}</span>
-            <mat-icon *ngIf="step.step !== currentStep"
+          }
+        </div>
+        <!-- check circles gray or done + title-->
+        <div class="bullet-container">
+          @if (step.step >= currentStep) {
+            <span class="step-descrition">{{ step.labelBefore }}</span>
+          }
+          @if (step.step < currentStep) {
+            <span class="step-descrition">{{ step.labelAfter }}</span>
+          }
+          @if (step.step !== currentStep) {
+            <mat-icon
               [ngClass]="{'iconValid':true,
                         'color-success':step.step < currentStep, 
                         'color-before': step.step > currentStep,
                       }"
               >check_circle
             </mat-icon>
-            <mat-icon *ngIf="!isInError && step.step === currentStep"
+          }
+          @if (!isInError && step.step === currentStep) {
+            <mat-icon
               [ngClass]="{'iconValid':true}"
               >check_circle
             </mat-icon>
-            <mat-icon *ngIf="isInError && step.step === currentStep"
+          }
+          @if (isInError && step.step === currentStep) {
+            <mat-icon
               [ngClass]="{'color-error': true}"
               >error
             </mat-icon>
-            
-          </div>
-        
-      
-    </div>
-  </div>
-      
-    <div mat-dialog-actions class="button-end" *ngIf="!isInError">
-      <button 
-        id="loading-cancel-button"
-        mat-button
-        (click)="onCancelClick()" 
-        *ngIf="!disableCancelLoading">
-        Cancel loading
-      </button>
-      <div *ngIf="disableCancelLoading" class="disable-cancel-button-message">
-        Loading is almost finished, cancel button is now disable to terminate the process.
+          }
+        </div>
       </div>
-    </div>
+    }
+  </div>
 
-    <div mat-dialog-actions class="button-error" *ngIf="isInError">
-      
+  @if (!isInError) {
+    <div mat-dialog-actions class="button-end">
+      @if (!disableCancelLoading) {
+        <button
+          id="loading-cancel-button"
+          mat-button
+          (click)="onCancelClick()"
+          >
+          Cancel loading
+        </button>
+      }
+      @if (disableCancelLoading) {
+        <div class="disable-cancel-button-message">
+          Loading is almost finished, cancel button is now disable to terminate the process.
+        </div>
+      }
+    </div>
+  }
+
+  @if (isInError) {
+    <div mat-dialog-actions class="button-error">
       <div class="error-message">
-         <div>
+        <div>
           <mat-icon class="icon-error-message">error</mat-icon>
         </div>
         <div>
-          <span *ngIf="errorMessage.length < 200">{{errorMessage}}</span>
-          <textarea matInput *ngIf="errorMessage.length > 200" readonly>
-            {{errorMessage}}
-          </textarea>
+          @if (errorMessage.length < 200) {
+            <span>{{errorMessage}}</span>
+          }
+          @if (errorMessage.length > 200) {
+            <textarea matInput readonly>
+              {{errorMessage}}
+            </textarea>
+          }
         </div>
       </div>
-      <div style="text-align: center; margin-top: 10px;"> 
+      <div style="text-align: center; margin-top: 10px;">
         <button
           id="close"
           mat-raised-button
-          color="primary" 
+          color="primary"
           (click)="onCancelClick()" >
           Close
         </button>
       </div>
     </div>
+  }
 </div>
-  

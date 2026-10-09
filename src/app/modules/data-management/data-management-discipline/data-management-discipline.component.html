@@ -4,11 +4,11 @@
     [expanded]="IsExpand('')"
     (opened)="SetIsExpand('', true)"
     (closed)="SetIsExpand('', false)"
-  >
-    <mat-expansion-panel-header
-     style="background-color: #d9d9d9d9"
     >
-      
+    <mat-expansion-panel-header
+      style="background-color: #d9d9d9d9"
+      >
+
       <mat-panel-title style="font-size: 15px; font-weight: 550">
         <i [ngClass]="disciplineIcon" style="margin:0 5px;margin-top: 3px;"></i>
         {{ disciplineData.modelNameFullPath[0] | ontologyDisciplineConverter }} {{ additionalLabel }}
@@ -17,77 +17,88 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
-    <mat-expansion-panel
-      class="expansion-panel"
-      [expanded]="IsExpand('details')"
-      (opened)="SetIsExpand('details', true)"
-      (closed)="SetIsExpand('details', false)"
-      *ngIf="disciplineData.modelNameFullPath[0] !== 'Data'"
-    >
-      <mat-expansion-panel-header>
-        <mat-panel-title> Discipline details </mat-panel-title>
-      </mat-expansion-panel-header>
-      <div *ngIf="modelDetails === null" class="no-data-to-display">
-        No details available for this discipline
-      </div>
-      <div
-        *ngIf="modelDetails !== null"
+    @if (disciplineData.modelNameFullPath[0] !== 'Data') {
+      <mat-expansion-panel
+        class="expansion-panel"
+        [expanded]="IsExpand('details')"
+        (opened)="SetIsExpand('details', true)"
+        (closed)="SetIsExpand('details', false)"
+        >
+        <mat-expansion-panel-header>
+          <mat-panel-title> Discipline details </mat-panel-title>
+        </mat-expansion-panel-header>
+        @if (modelDetails === null) {
+          <div class="no-data-to-display">
+            No details available for this discipline
+          </div>
+        }
+        @if (modelDetails !== null) {
+          <div
         style="
           height: 100%;
           width: 100%;
           padding: 10px;
           background-color: #f9f9f9;
         "
-      >
-        <table style="width: 100%; padding: 4px">
-          <ng-container *ngFor="let attr of modelDetails">
-            <tr>
-              <td *ngIf="attr[0] !== 'icon'">{{ attr[0] }} :</td>
-              <td *ngIf="attr[0] !== 'icon'">{{ attr[1] }}</td>              
-            </tr>
-          </ng-container>
-        </table>
-      </div>
-    </mat-expansion-panel>
+            >
+            <table style="width: 100%; padding: 4px">
+              @for (attr of modelDetails; track attr) {
+                <tr>
+                  @if (attr[0] !== 'icon') {
+                    <td>{{ attr[0] }} :</td>
+                  }
+                  @if (attr[0] !== 'icon') {
+                    <td>{{ attr[1] }}</td>
+                  }
+                </tr>
+              }
+            </table>
+          </div>
+        }
+      </mat-expansion-panel>
+    }
 
-    <mat-expansion-panel
-      id="numerical-parameters-panel"
-      class="expansion-panel"
-      [expanded]="IsExpand('numerical')"
-      (opened)="SetIsExpand('numerical', true)"
-      (closed)="SetIsExpand('numerical', false)"
-      *ngIf="
-        countItemsInDict(
-          disciplineData.numericalParameters,
-          filterService.filters.userLevel,
-          filterService.filters.showReadOnly
-        ) > 0
-      "
-    >
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Numerical parameters ({{
-            countItemsInDict(
-              disciplineData.numericalParameters,
-              filterService.filters.userLevel,
-              filterService.filters.showReadOnly
-            )
-          }})
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <div
-        *ngIf="disciplineData.numericalParameters"
-        style="height: 100%; width: 100%"
-      >
-        <app-widget-container
-          *ngIf="disciplineData.numericalParameters"
-          [nodeDataList]="numericalParametersOrdered"
-          [discipline]="disciplineData.modelNameFullPath[0]"
-          [namespace]="disciplineData.namespace"
+    @if (
+      countItemsInDict(
+      disciplineData.numericalParameters,
+      filterService.filters.userLevel,
+      filterService.filters.showReadOnly
+      ) > 0
+      ) {
+      <mat-expansion-panel
+        id="numerical-parameters-panel"
+        class="expansion-panel"
+        [expanded]="IsExpand('numerical')"
+        (opened)="SetIsExpand('numerical', true)"
+        (closed)="SetIsExpand('numerical', false)"
         >
-        </app-widget-container>
-      </div>
-    </mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Numerical parameters ({{
+            countItemsInDict(
+            disciplineData.numericalParameters,
+            filterService.filters.userLevel,
+            filterService.filters.showReadOnly
+            )
+            }})
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        @if (disciplineData.numericalParameters) {
+          <div
+            style="height: 100%; width: 100%"
+            >
+            @if (disciplineData.numericalParameters) {
+              <app-widget-container
+                [nodeDataList]="numericalParametersOrdered"
+                [discipline]="disciplineData.modelNameFullPath[0]"
+                [namespace]="disciplineData.namespace"
+                >
+              </app-widget-container>
+            }
+          </div>
+        }
+      </mat-expansion-panel>
+    }
 
     <mat-expansion-panel
       id="input-parameters-panel"
@@ -95,42 +106,45 @@
       [expanded]="IsExpand('inputs')"
       (opened)="SetIsExpand('inputs', true)"
       (closed)="SetIsExpand('inputs', false)"
-    >
+      >
       <mat-expansion-panel-header>
         <mat-panel-title>
           Input parameters ({{
-            countItemsInDict(
-              disciplineData.disciplinaryInputs,
-              filterService.filters.userLevel,
-              filterService.filters.showReadOnly
-            )
+          countItemsInDict(
+          disciplineData.disciplinaryInputs,
+          filterService.filters.userLevel,
+          filterService.filters.showReadOnly
+          )
           }})
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div
-        *ngIf="
-          countItemsInDict(
-            disciplineData.disciplinaryInputs,
-            filterService.filters.userLevel,
-            filterService.filters.showReadOnly
-          ) === 0
-        "
-        class="no-data-to-display"
-      >
-        No input parameters
-      </div>
-      <div
-        *ngIf="disciplineData.disciplinaryInputs"
-        style="height: 100%; width: 100%"
-      >
-        <app-widget-container
-          *ngIf="disciplineData.disciplinaryInputs"
-          [nodeDataList]="disciplinaryInputsOrdered"
-          [discipline]="disciplineData.modelNameFullPath[0]"
-          [namespace]="disciplineData.namespace"
-        >
-        </app-widget-container>
-      </div>
+      @if (
+        countItemsInDict(
+        disciplineData.disciplinaryInputs,
+        filterService.filters.userLevel,
+        filterService.filters.showReadOnly
+        ) === 0
+        ) {
+        <div
+          class="no-data-to-display"
+          >
+          No input parameters
+        </div>
+      }
+      @if (disciplineData.disciplinaryInputs) {
+        <div
+          style="height: 100%; width: 100%"
+          >
+          @if (disciplineData.disciplinaryInputs) {
+            <app-widget-container
+              [nodeDataList]="disciplinaryInputsOrdered"
+              [discipline]="disciplineData.modelNameFullPath[0]"
+              [namespace]="disciplineData.namespace"
+              >
+            </app-widget-container>
+          }
+        </div>
+      }
     </mat-expansion-panel>
 
     <mat-expansion-panel
@@ -139,42 +153,45 @@
       [expanded]="IsExpand('outputs')"
       (opened)="SetIsExpand('outputs', true)"
       (closed)="SetIsExpand('outputs', false)"
-    >
+      >
       <mat-expansion-panel-header>
         <mat-panel-title>
           Output parameters ({{
-            countItemsInDict(
-              disciplineData.disciplinaryOutputs,
-              filterService.filters.userLevel,
-              true
-            )
+          countItemsInDict(
+          disciplineData.disciplinaryOutputs,
+          filterService.filters.userLevel,
+          true
+          )
           }})
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div
-        *ngIf="
-          countItemsInDict(
-            disciplineData.disciplinaryOutputs,
-            filterService.filters.userLevel,
-            true
-          ) === 0
-        "
-        class="no-data-to-display"
-      >
-        No output parameters
-      </div>
-      <div
-        *ngIf="disciplineData.disciplinaryOutputs"
-        style="height: 100%; width: 100%"
-      >
-        <app-widget-container
-          *ngIf="disciplineData.disciplinaryOutputs"
-          [nodeDataList]="disciplinaryOutputsOrdered"
-          [discipline]="disciplineData.modelNameFullPath[0]"
-          [namespace]="disciplineData.namespace"
-        >
-        </app-widget-container>
-      </div>
+      @if (
+        countItemsInDict(
+        disciplineData.disciplinaryOutputs,
+        filterService.filters.userLevel,
+        true
+        ) === 0
+        ) {
+        <div
+          class="no-data-to-display"
+          >
+          No output parameters
+        </div>
+      }
+      @if (disciplineData.disciplinaryOutputs) {
+        <div
+          style="height: 100%; width: 100%"
+          >
+          @if (disciplineData.disciplinaryOutputs) {
+            <app-widget-container
+              [nodeDataList]="disciplinaryOutputsOrdered"
+              [discipline]="disciplineData.modelNameFullPath[0]"
+              [namespace]="disciplineData.namespace"
+              >
+            </app-widget-container>
+          }
+        </div>
+      }
     </mat-expansion-panel>
   </mat-expansion-panel>
 </div>

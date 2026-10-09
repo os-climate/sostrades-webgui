@@ -3,11 +3,12 @@
   <div class="scroll-box">
     <span class="message-box">{{ data.message }}</span>
   </div>
-  <button
-    mat-icon-button
-    *ngIf="data.action !== ''"
-    (click)="snackBarRef.dismiss()"
-  >
-    {{ data.action }}
-  </button>
+  @if (data.action !== '') {
+    <button
+      mat-icon-button
+      (click)="snackBarRef.dismiss()"
+      >
+      {{ data.action }}
+    </button>
+  }
 </div>

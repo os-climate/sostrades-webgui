@@ -1,23 +1,27 @@
 <div class="flex-container">
   <br>
-  <div class="warning-title">
-    <mat-icon class="color-warning">warning</mat-icon>
-    <h1 style="margin: 0;"> {{ validationTitle }} </h1>
-  </div>
-  <br>
-  <div class="message-container">
-    <div class="message emoji-font">{{ data.message }}</div>
-  </div>
-  <br>
-  <div id="save-cancel" class="save-or-cancel">
-    <button id="cancel" *ngIf="showCancelButton"  mat-raised-button (click)="onCancelClick()">
-      {{ data.buttonCancelText }}
-    </button>
-    <button *ngIf="showSupButton"  mat-raised-button (click)="onSupClick()">
-      {{ data.buttonSecondaryActionText }}
-    </button>
-    <button id="buttonOk" mat-raised-button color="danger" (click)="onOkClick()">
-      {{ data.buttonOkText }}
-    </button>
-  </div>
-</div>
+    <div class="warning-title">
+      <mat-icon class="color-warning">warning</mat-icon>
+      <h1 style="margin: 0;"> {{ validationTitle }} </h1>
+    </div>
+    <br>
+      <div class="message-container">
+        <div class="message emoji-font">{{ data.message }}</div>
+      </div>
+      <br>
+        <div id="save-cancel" class="save-or-cancel">
+          @if (showCancelButton) {
+            <button id="cancel"  mat-raised-button (click)="onCancelClick()">
+              {{ data.buttonCancelText }}
+            </button>
+          }
+          @if (showSupButton) {
+            <button  mat-raised-button (click)="onSupClick()">
+              {{ data.buttonSecondaryActionText }}
+            </button>
+          }
+          <button id="buttonOk" mat-raised-button color="danger" (click)="onOkClick()">
+            {{ data.buttonOkText }}
+          </button>
+        </div>
+      </div>

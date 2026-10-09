@@ -1,108 +1,115 @@
 <div class="flex-container">
-  <div class="add-row mat-elevation-z1" *ngIf="!isReadOnlyWidget">
-    <div class="add-row-title">Add a row</div>
-
-    <div class="add-row-fields">
-      <mat-form-field style="height: auto !important">
-        <input
-          matInput
-          placeholder="Value"
-          [(ngModel)]="addValue"
-          [formControl]="inputFormControl"
-          [errorStateMatcher]="matcher"
-          style="text-align: right"
-        />
-        <mat-error *ngIf="inputFormControl.hasError('required')">
-          Field is <strong>required</strong>
-        </mat-error>
-        <mat-error
-          *ngIf="
-            inputFormControl.hasError('pattern') &&
-            nodeData.type.includes('float')
-          "
-        >
-          Field must be a <strong>float</strong>
-        </mat-error>
-        <mat-error
-          *ngIf="
-            inputFormControl.hasError('pattern') &&
-            nodeData.type.includes('int')
-          "
-        >
-          Field must be a <strong>int</strong>
-        </mat-error>
-        <mat-error
-          *ngIf="
-            inputFormControl.hasError('min') || inputFormControl.hasError('max')
-          "
-        >
-          Invalid <strong>range</strong> [{{ nodeData.range[0] }},{{
-            nodeData.range[1]
-          }}]
-        </mat-error>
-      </mat-form-field>
-
-      <button
-        mat-icon-button
-        color="primary"
-        (click)="addRow()"
-        [disabled]="inputFormControl.invalid"
-      >
-        <i class="fa-solid fa-circle-plus fa-fw"> </i>
-      </button>
-    </div>
-  </div>
-
-  <div class="mat-elevation-z2">
-    <div *ngIf="nodeData.type === 'array'" class="add-row-title">Values</div>
-    <mat-table #table [dataSource]="dataSource">
-      <ng-container matColumnDef="value">
-        <mat-header-cell *matHeaderCellDef hidden="true"
-          >Values</mat-header-cell
-        >
-        <mat-cell *matCellDef="let row; let i = index">
-          <mat-form-field floatLabel="never">
-            <input
-              *ngIf="nodeData.type.includes('float'); else nonFloatManagement"
-              matInput
-              placeholder=""
-              [value]="row"
-              style="text-align: right"
-              (input)="onInputChange($event.target.value, i)"
-              [disabled]="isReadOnlyWidget"
-              (focus)="onFocus($event, i); $event.target.select()"
-              (blur)="onBlur($event, i)"
+  @if (!isReadOnlyWidget) {
+    <div class="add-row mat-elevation-z1">
+      <div class="add-row-title">Add a row</div>
+      <div class="add-row-fields">
+        <mat-form-field style="height: auto !important">
+          <input
+            matInput
+            placeholder="Value"
+            [(ngModel)]="addValue"
+            [formControl]="inputFormControl"
+            [errorStateMatcher]="matcher"
+            style="text-align: right"
             />
-            <ng-template #nonFloatManagement>
-              <input
-                matInput
-                placeholder=""
-                [value]="row"
-                style="text-align: right"
-                (input)="onInputChange($event.target.value, i)"
-                [disabled]="isReadOnlyWidget"
-              />
-            </ng-template>
+            @if (inputFormControl.hasError('required')) {
+              <mat-error>
+                Field is <strong>required</strong>
+              </mat-error>
+            }
+            @if (
+              inputFormControl.hasError('pattern') &&
+              nodeData.type.includes('float')
+              ) {
+              <mat-error
+                >
+                Field must be a <strong>float</strong>
+              </mat-error>
+            }
+            @if (
+              inputFormControl.hasError('pattern') &&
+              nodeData.type.includes('int')
+              ) {
+              <mat-error
+                >
+                Field must be a <strong>int</strong>
+              </mat-error>
+            }
+            @if (
+              inputFormControl.hasError('min') || inputFormControl.hasError('max')
+              ) {
+              <mat-error
+                >
+                Invalid <strong>range</strong> [{{ nodeData.range[0] }},{{
+                nodeData.range[1]
+                }}]
+              </mat-error>
+            }
           </mat-form-field>
-        </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="delete">
-        <mat-header-cell *matHeaderCellDef hidden="true"></mat-header-cell>
-        <mat-cell *matCellDef="let row; let i = index">
           <button
             mat-icon-button
             color="primary"
-            (click)="deleteRow(i)"
-            [disabled]="isReadOnlyWidget"
-          >
-          <i class="fa-regular fa-trash-can"> </i>
+            (click)="addRow()"
+            [disabled]="inputFormControl.invalid"
+            >
+            <i class="fa-solid fa-circle-plus fa-fw"> </i>
           </button>
-        </mat-cell>
-      </ng-container>
+        </div>
+      </div>
+    }
 
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-    </mat-table>
-  </div>
-</div>
+    <div class="mat-elevation-z2">
+      @if (nodeData.type === 'array') {
+        <div class="add-row-title">Values</div>
+      }
+      <mat-table #table [dataSource]="dataSource">
+        <ng-container matColumnDef="value">
+          <mat-header-cell *matHeaderCellDef hidden="true"
+            >Values</mat-header-cell
+            >
+            <mat-cell *matCellDef="let row; let i = index">
+              <mat-form-field floatLabel="never">
+                @if (nodeData.type.includes('float')) {
+                  <input
+                    matInput
+                    placeholder=""
+                    [value]="row"
+                    style="text-align: right"
+                    (input)="onInputChange($event.target.value, i)"
+                    [disabled]="isReadOnlyWidget"
+                    (focus)="onFocus($event, i); $event.target.select()"
+                    (blur)="onBlur($event, i)"
+                    />
+                } @else {
+                  <input
+                    matInput
+                    placeholder=""
+                    [value]="row"
+                    style="text-align: right"
+                    (input)="onInputChange($event.target.value, i)"
+                    [disabled]="isReadOnlyWidget"
+                    />
+                  }
+                </mat-form-field>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <mat-header-cell *matHeaderCellDef hidden="true"></mat-header-cell>
+              <mat-cell *matCellDef="let row; let i = index">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="deleteRow(i)"
+                  [disabled]="isReadOnlyWidget"
+                  >
+                  <i class="fa-regular fa-trash-can"> </i>
+                </button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          </mat-table>
+        </div>
+      </div>

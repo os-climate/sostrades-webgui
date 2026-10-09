@@ -2,44 +2,49 @@
   <div
     class="treeview-container mat-elevation-z2"
     (click)="onClickTreeview(loadedStudy)"
-  >
-    <div
-    [class]="isReadOnlyMode? 'header-treeview-read-only' : 'header-treeview'"
     >
+    <div
+      [class]="isReadOnlyMode? 'header-treeview-read-only' : 'header-treeview'"
+      >
       <div style="margin-left: 5px;">
-      <span>My current study</span>
-      <span
-        id="text-sidenav-study-loaded-name"
-        *ngIf="studyName !== ''"
-        [ngClass]="{'long-title': studyName.length > 13}"
-        > : {{ studyName }}</span>
-        <p *ngIf="isReadOnlyMode; else isEditionMode"  >
-          <i class="fa-solid fa-triangle-exclamation" style="color: white;margin-right:3px"></i>
+        <span>My current study</span>
+        @if (studyName !== '') {
           <span
-          *ngIf="!isStandAlone"
-          style="font-weight: bold;"
-          matTooltip="Your study is in read only mode, it cannot be updated nor computed unless you click on the 'Switch to edition mode' button"
-          matTooltipPosition="left"
-          >Read Only Mode </span>
-          <span
-          *ngIf="isStandAlone"
-          style="font-weight: bold;"
-          matTooltip="Your study is stand alone, it cannot be updated nor computed"
-          matTooltipPosition="left"
-          >Stand Alone </span>
-          <button
-            mat-button
-            class="edit-button cursor-pointer white-button"
-            id="study-switch-to-edition-button"
-            *ngIf="isReadOnlyMode && !isStandAlone"
-            matTooltip="Leave the read only mode."
-            color="primary"
-            (click)="onClickSwitchEditStudy($event)">
-            <i class="fa-solid fa-repeat"></i>
-            Switch to edition mode
-          </button>
-        </p>
-        <ng-template #isEditionMode>
+            id="text-sidenav-study-loaded-name"
+            [ngClass]="{'long-title': studyName.length > 13}"
+          > : {{ studyName }}</span>
+        }
+        @if (isReadOnlyMode) {
+          <p  >
+            <i class="fa-solid fa-triangle-exclamation" style="color: white;margin-right:3px"></i>
+            @if (!isStandAlone) {
+              <span
+                style="font-weight: bold;"
+                matTooltip="Your study is in read only mode, it cannot be updated nor computed unless you click on the 'Switch to edition mode' button"
+                matTooltipPosition="left"
+              >Read Only Mode </span>
+            }
+            @if (isStandAlone) {
+              <span
+                style="font-weight: bold;"
+                matTooltip="Your study is stand alone, it cannot be updated nor computed"
+                matTooltipPosition="left"
+              >Stand Alone </span>
+            }
+            @if (isReadOnlyMode && !isStandAlone) {
+              <button
+                mat-button
+                class="edit-button cursor-pointer white-button"
+                id="study-switch-to-edition-button"
+                matTooltip="Leave the read only mode."
+                color="primary"
+                (click)="onClickSwitchEditStudy($event)">
+                <i class="fa-solid fa-repeat"></i>
+                Switch to edition mode
+              </button>
+            }
+          </p>
+        } @else {
           <p>
             <i class="fa-solid fa-triangle-exclamation" style="color: darkorange;margin-right:3px"></i>
             <span
@@ -49,30 +54,31 @@
                 'Your study is in edition mode, it can be updated or computed unless you click on the \'Switch to read only mode\' button'
                 : 'Your study is in edition mode, there is no read-only mode available currently'"
             >Edition Mode </span>
-            <button
-              *ngIf="loadedStudy?.studyCase.hasReadOnlyFile"
-              mat-button
-              class="edit-button cursor-pointer primary-button"
-              id="study-switch-to-read-only-button"
-              matTooltip="Leave the edition mode."
-              color="white"
-              (click)="onClickSwitchReadOnlyStudy($event)">
-              <i class="fa-solid fa-repeat"></i>
-              Switch to read only mode
-            </button>
+            @if (loadedStudy?.studyCase.hasReadOnlyFile) {
+              <button
+                mat-button
+                class="edit-button cursor-pointer primary-button"
+                id="study-switch-to-read-only-button"
+                matTooltip="Leave the edition mode."
+                color="white"
+                (click)="onClickSwitchReadOnlyStudy($event)">
+                <i class="fa-solid fa-repeat"></i>
+                Switch to read only mode
+              </button>
+            }
           </p>
-        </ng-template>
+        }
 
       </div>
 
       <div >
         <mat-icon
-        id='close'
-        class="close-button cursor-pointer"
-        (click)="closeStudy($event)"
+          id='close'
+          class="close-button cursor-pointer"
+          (click)="closeStudy($event)"
         >close</mat-icon>
       </div>
-  </div>
+    </div>
     <div>
       <app-study-case-treeview></app-study-case-treeview>
     </div>

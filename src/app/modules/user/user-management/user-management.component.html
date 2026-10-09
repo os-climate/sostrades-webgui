@@ -1,123 +1,126 @@
-<div class="container" *ngIf="isLoading">
-  <app-progress-bar
-    class="container-dialog"
-    *ngIf="isLoading"
-    progressMode="indeterminate"
-    progressText="Loading users information"
-  ></app-progress-bar>
-</div>
-
-<div class="container" *ngIf="!isLoading">
-  <div id="user-header">
-    <mat-label  class="number-users"> Number of users <b>{{ userCount }}</b></mat-label>
-    <div class="filterSection">
-      <mat-form-field class="filter-form-field">
-        <mat-label class="filter-label-size">Filtered by</mat-label>
-        <mat-select
-          placeholder="Column(s) filtered"
-          class="filter-label-size"
-          (selectionChange)="onFilterChange()"
-          style="text-align: left"
-          [(ngModel)]="columnsFilterSelected"
-          [matTooltip]="columnsFilterSelected"
-          #selectionModel="ngModel"
-        >
-          <mat-option *ngFor="let item of colummnsFilter" [value]="item">
-            {{ item }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="filter-bar">
-        <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
-      </mat-form-field>
-    </div>
-    <button
-      mat-raised-button
-      id="create-user"
-      color="primary"
-      style="margin-left: 10px"
-      (click)="addUser()"
-    > Create User
-    <mat-icon>add</mat-icon>
-    </button>
+@if (isLoading) {
+  <div class="container">
+    @if (isLoading) {
+      <app-progress-bar
+        class="container-dialog"
+        progressMode="indeterminate"
+        progressText="Loading users information"
+      ></app-progress-bar>
+    }
   </div>
-  
-  <table mat-table class="table" #table [dataSource]="dataSourceUsers" matSort>
-    <!-- Username Column -->
-    <ng-container matColumnDef="username">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
-      <td mat-cell *matCellDef="let element">{{ element.username }}</td>
-    </ng-container>
+}
 
-    <!-- First Name Column -->
-    <ng-container matColumnDef="firstname">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
-      <td mat-cell *matCellDef="let element">{{ element.firstname }}</td>
-    </ng-container>
-
-    <!-- Lastname Column -->
-    <ng-container matColumnDef="lastname">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.lastname }}
-      </td>
-    </ng-container>
-
-    <!-- Email Column -->
-    <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.email }}
-      </td>
-    </ng-container>
-
-    <!-- Is Admin Column -->
-    <ng-container matColumnDef="userprofilename">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Profile</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.userprofilename }}
-      </td>
-    </ng-container>
-
-    <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element" class="actions-hover-row">
-        <button
-          *ngIf="!keycloakAvailable"
-          mat-icon-button
-          style="margin: 0 5px"
-          color="primary"
-          matTooltip="Update user"
-          (click)="updateUser(element)"
-        >
-          <i class="fa-solid fa-pen fa-fw"> </i>
-        </button>
-        <button
-          mat-icon-button
-          style="margin-right: 5px"
-          color="primary"
-          matTooltip="Delete user"
-          (click)="deleteUserAuthorizedList(element)"
-        >
-          <i class="fa-regular fa-trash-can"> </i>
-        </button>
-        <button *ngIf="element.internalAccount && !keycloakAvailable"
-          mat-icon-button
-          color="primary"
-          matTooltip="Reset user password"
-          (click)="resetPassword(element)"
-        >
-          <i class="fa-solid fa-key fa-fw"> </i>
-        </button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr
-      mat-row
-      class="table-row"
-      *matRowDef="let row; columns: displayedColumns"
-    ></tr>
-  </table>
-</div>
+@if (!isLoading) {
+  <div class="container">
+    <div id="user-header">
+      <mat-label  class="number-users"> Number of users <b>{{ userCount }}</b></mat-label>
+      <div class="filterSection">
+        <mat-form-field class="filter-form-field">
+          <mat-label class="filter-label-size">Filtered by</mat-label>
+          <mat-select
+            placeholder="Column(s) filtered"
+            class="filter-label-size"
+            (selectionChange)="onFilterChange()"
+            style="text-align: left"
+            [(ngModel)]="columnsFilterSelected"
+            [matTooltip]="columnsFilterSelected"
+            #selectionModel="ngModel"
+            >
+            @for (item of colummnsFilter; track item) {
+              <mat-option [value]="item">
+                {{ item }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="filter-bar">
+          <input matInput (keyup)="applyFilter($event)" placeholder="Filter" />
+        </mat-form-field>
+      </div>
+      <button
+        mat-raised-button
+        id="create-user"
+        color="primary"
+        style="margin-left: 10px"
+        (click)="addUser()"
+        > Create User
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <table mat-table class="table" #table [dataSource]="dataSourceUsers" matSort>
+      <!-- Username Column -->
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+        <td mat-cell *matCellDef="let element">{{ element.username }}</td>
+      </ng-container>
+      <!-- First Name Column -->
+      <ng-container matColumnDef="firstname">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+        <td mat-cell *matCellDef="let element">{{ element.firstname }}</td>
+      </ng-container>
+      <!-- Lastname Column -->
+      <ng-container matColumnDef="lastname">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.lastname }}
+        </td>
+      </ng-container>
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.email }}
+        </td>
+      </ng-container>
+      <!-- Is Admin Column -->
+      <ng-container matColumnDef="userprofilename">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Profile</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.userprofilename }}
+        </td>
+      </ng-container>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" class="actions-hover-row">
+          @if (!keycloakAvailable) {
+            <button
+              mat-icon-button
+              style="margin: 0 5px"
+              color="primary"
+              matTooltip="Update user"
+              (click)="updateUser(element)"
+              >
+              <i class="fa-solid fa-pen fa-fw"> </i>
+            </button>
+          }
+          <button
+            mat-icon-button
+            style="margin-right: 5px"
+            color="primary"
+            matTooltip="Delete user"
+            (click)="deleteUserAuthorizedList(element)"
+            >
+            <i class="fa-regular fa-trash-can"> </i>
+          </button>
+          @if (element.internalAccount && !keycloakAvailable) {
+            <button
+              mat-icon-button
+              color="primary"
+              matTooltip="Reset user password"
+              (click)="resetPassword(element)"
+              >
+              <i class="fa-solid fa-key fa-fw"> </i>
+            </button>
+          }
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr
+        mat-row
+        class="table-row"
+        *matRowDef="let row; columns: displayedColumns"
+      ></tr>
+    </table>
+  </div>
+}

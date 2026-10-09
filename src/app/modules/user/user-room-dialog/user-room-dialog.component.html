@@ -26,30 +26,32 @@
         </th>
 
         <td mat-cell *matCellDef="let element">
-          <button
-            *ngIf="
-              element.id ===
-              studyCaseDataService.loadedStudy.userIdExecutionAuthorized
-            "
-            mat-icon-button
-            color="primary"
-            matTooltip="User authorized to execute study case"
-            disabled
-          >
-            <i class="fa-solid fa-check fa-fw"> </i>
-          </button>
-          <button
-            *ngIf="
-              element.id !==
-              studyCaseDataService.loadedStudy.userIdExecutionAuthorized
-            "
-            mat-icon-button
-            color="primary"
-            matTooltip="User not authorized to execute study case"
-            disabled
-          >
-            <i class="fa-solid fa-xmark fa-fw"> </i>
-          </button>
+          @if (
+            element.id ===
+            studyCaseDataService.loadedStudy.userIdExecutionAuthorized
+            ) {
+            <button
+              mat-icon-button
+              color="primary"
+              matTooltip="User authorized to execute study case"
+              disabled
+              >
+              <i class="fa-solid fa-check fa-fw"> </i>
+            </button>
+          }
+          @if (
+            element.id !==
+            studyCaseDataService.loadedStudy.userIdExecutionAuthorized
+            ) {
+            <button
+              mat-icon-button
+              color="primary"
+              matTooltip="User not authorized to execute study case"
+              disabled
+              >
+              <i class="fa-solid fa-xmark fa-fw"> </i>
+            </button>
+          }
         </td>
       </ng-container>
 

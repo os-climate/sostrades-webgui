@@ -1,10 +1,14 @@
-<div class="flex-container" *ngIf="nodeDataList.length > 0">
-  <div *ngFor="let item of nodeDataList">
-    <app-widget
-      class="widget-container"
-      [nodeData]="item"
-      [discipline]="item.disciplineFullPathList.Length>0?item.disciplineFullPathList[0]:discipline"
-      [namespace]="namespace"
-    ></app-widget>
+@if (nodeDataList.length > 0) {
+  <div class="flex-container">
+    @for (item of nodeDataList; track item) {
+      <div>
+        <app-widget
+          class="widget-container"
+          [nodeData]="item"
+          [discipline]="item.disciplineFullPathList.Length>0?item.disciplineFullPathList[0]:discipline"
+          [namespace]="namespace"
+        ></app-widget>
+      </div>
+    }
   </div>
-</div>
+}

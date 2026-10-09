@@ -1,149 +1,158 @@
 <div class="container">
-    <div class="model-header">
-      <button
-        mat-raised-button
-        color="primary"
-        aria-label="Refresh model status list"
-        class="refresh-button"
-        [disabled]="isLoading"
-        (click)="loadModelStatusData()"
+  <div class="model-header">
+    <button
+      mat-raised-button
+      color="primary"
+      aria-label="Refresh model status list"
+      class="refresh-button"
+      [disabled]="isLoading"
+      (click)="loadModelStatusData()"
       >
-        <mat-icon 
+      <mat-icon
         class="refresh-icon"
         >
-          refresh
-        </mat-icon>
-        Refresh list
-      </button>
-      <mat-label class="number-model">
-        Number of Models <b>{{ modelCount }}</b>
-      </mat-label>
-      <div class="filterSection">
-        <mat-form-field class="filter-form-field">
-          <mat-label class="filter-bar">Filtered by</mat-label>
-          <mat-select
-            class="filter-label-size"
-            placeholder="Column(s) filtered"
-            (selectionChange)="onFilterChange()"
-            style="text-align: left"
-            [(ngModel)]="ontologyService.modelStatusColumnFiltered"
-            [matTooltip]="ontologyService.modelStatusColumnFiltered"
+        refresh
+      </mat-icon>
+      Refresh list
+    </button>
+    <mat-label class="number-model">
+      Number of Models <b>{{ modelCount }}</b>
+    </mat-label>
+    <div class="filterSection">
+      <mat-form-field class="filter-form-field">
+        <mat-label class="filter-bar">Filtered by</mat-label>
+        <mat-select
+          class="filter-label-size"
+          placeholder="Column(s) filtered"
+          (selectionChange)="onFilterChange()"
+          style="text-align: left"
+          [(ngModel)]="ontologyService.modelStatusColumnFiltered"
+          [matTooltip]="ontologyService.modelStatusColumnFiltered"
           >
-            <mat-option *ngFor="let item of columnsFilter" [value]="item" style="text-transform: capitalize;">
+          @for (item of columnsFilter; track item) {
+            <mat-option [value]="item" style="text-transform: capitalize;">
               {{ item }}
             </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field class="filter-bar">
-          <input
-            matInput
-            #filter
-            id="filter"
-            (keyup)="applyFilter($event)"
-            placeholder="Filter"
-            [(ngModel)]="ontologyService.modelStatusFilter"
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="filter-bar">
+        <input
+          matInput
+          #filter
+          id="filter"
+          (keyup)="applyFilter($event)"
+          placeholder="Filter"
+          [(ngModel)]="ontologyService.modelStatusFilter"
           />
         </mat-form-field>
       </div>
     </div>
-    <div class="btn-load-container" *ngIf="!isLoading && !hasLoadedModels">
-      <button
-        mat-raised-button
-        color="primary"
-        aria-label="Load Models"
-        class="load-button"
-        (click)="loadModelStatusData()">
+    @if (!isLoading && !hasLoadedModels) {
+      <div class="btn-load-container">
+        <button
+          mat-raised-button
+          color="primary"
+          aria-label="Load Models"
+          class="load-button"
+          (click)="loadModelStatusData()">
           Load Models
-      </button>
-    </div> 
-    <div class="label-load-container" *ngIf="!isLoading && !hasLoadedModels">
-      <mat-label class="number-models">This may take a while</mat-label>
-    </div>
-    <div class="table-container" *ngIf="isLoading || hasLoadedModels">
-      <div class="loading-zone" *ngIf="isLoading">
-        <app-progress-bar
-          progressMode="indeterminate"
-          progressText="Loading models list"
-        ></app-progress-bar>
+        </button>
       </div>
-      <div class="tables" *ngIf="!isLoading">
-  
-        <table
-          mat-table
-          #table
-          [dataSource]="dataSourceModelStatus"
-          matSort
-        >
-          <!-- Name Column -->
-          <ng-container [matColumnDef]="columnName.LABEL">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 39%;">Name 
-                  <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.LABEL)? 'icon-filter-values':'icon-filter-any-values'" 
-                  (click)="displayFilter(columnName.LABEL, $event)" ></i>
-  
-            </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              [matTooltip]="element.id"
-              style="word-wrap: break-word; max-width: 500px"
-              [class.model-name-column-yes]="element.delivered === 'YES'"
-              [class.model-name-column-no]="element.delivered === 'NO'"
-            >
-            <i
-              [ngClass]=element.icon
-              *ngIf="element.icon !== ''"
-            >
-            </i>
-              {{ element.label }}
-            </td>
-          </ng-container>
-  
-          <!-- Code Repository Column -->
-          <ng-container [matColumnDef]="columnName.CODE_REPOSITORY">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 39%;">Code Repository 
-                <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.CODE_REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'" 
-                (click)="displayFilter(columnName.CODE_REPOSITORY, $event)" ></i>
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.codeRepository }}
-            </td>
-          </ng-container>
-  
-          <ng-container [matColumnDef]="columnName.PROCESS_USING_MODEL">
-            <th mat-header-cell *matHeaderCellDef>
-            </th>
-              <td mat-cell *matCellDef="let element"> 
-                    <span>
-                  Model used by {{ element.processUsingDiscipline.length }} process<span *ngIf="element.processUsingDiscipline.length> 1" >es</span>
-                  </span>
-              </td>
-          </ng-container>
-  
-          <!-- Action Column -->
-          <ng-container [matColumnDef]="columnName.INFORMATION">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element">
-              <button
-                [id]="'btn-model-documentation-' + element.label + '-' + element.codeRepository"
-                mat-icon-button
-                color="primary"
-                [matTooltip]="element.label + ' information'"
-                matTooltipPosition="left"
-                (click)="displayDocumentation(element)"
+    }
+    @if (!isLoading && !hasLoadedModels) {
+      <div class="label-load-container">
+        <mat-label class="number-models">This may take a while</mat-label>
+      </div>
+    }
+    @if (isLoading || hasLoadedModels) {
+      <div class="table-container">
+        @if (isLoading) {
+          <div class="loading-zone">
+            <app-progress-bar
+              progressMode="indeterminate"
+              progressText="Loading models list"
+            ></app-progress-bar>
+          </div>
+        }
+        @if (!isLoading) {
+          <div class="tables">
+            <table
+              mat-table
+              #table
+              [dataSource]="dataSourceModelStatus"
+              matSort
               >
-              <i class="fa-solid fa-book"></i>
-              </button>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
-          <tr
-            mat-row
-            class="table-row"
-            [id]="'row-ontology-models-' + row.label + '-' + row.codeRepository"
-            *matRowDef="let row; columns: visibleColumns"
-          ></tr>
-        </table>
-      </div>
+              <!-- Name Column -->
+              <ng-container [matColumnDef]="columnName.LABEL">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 39%;">Name
+                  <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.LABEL)? 'icon-filter-values':'icon-filter-any-values'"
+                  (click)="displayFilter(columnName.LABEL, $event)" ></i>
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [matTooltip]="element.id"
+                  style="word-wrap: break-word; max-width: 500px"
+                  [class.model-name-column-yes]="element.delivered === 'YES'"
+                  [class.model-name-column-no]="element.delivered === 'NO'"
+                  >
+                  @if (element.icon !== '') {
+                    <i
+                      [ngClass]=element.icon
+                      >
+                    </i>
+                  }
+                  {{ element.label }}
+                </td>
+              </ng-container>
+              <!-- Code Repository Column -->
+              <ng-container [matColumnDef]="columnName.CODE_REPOSITORY">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 39%;">Code Repository
+                  <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.CODE_REPOSITORY)? 'icon-filter-values':'icon-filter-any-values'"
+                  (click)="displayFilter(columnName.CODE_REPOSITORY, $event)" ></i>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.codeRepository }}
+                </td>
+              </ng-container>
+              <ng-container [matColumnDef]="columnName.PROCESS_USING_MODEL">
+                <th mat-header-cell *matHeaderCellDef>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <span>
+                    Model used by {{ element.processUsingDiscipline.length }} process@if (element.processUsingDiscipline.length> 1) {
+                    <span >es</span>
+                  }
+                </span>
+              </td>
+            </ng-container>
+            <!-- Action Column -->
+            <ng-container [matColumnDef]="columnName.INFORMATION">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  [id]="'btn-model-documentation-' + element.label + '-' + element.codeRepository"
+                  mat-icon-button
+                  color="primary"
+                  [matTooltip]="element.label + ' information'"
+                  matTooltipPosition="left"
+                  (click)="displayDocumentation(element)"
+                  >
+                  <i class="fa-solid fa-book"></i>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
+            <tr
+              mat-row
+              class="table-row"
+              [id]="'row-ontology-models-' + row.label + '-' + row.codeRepository"
+              *matRowDef="let row; columns: visibleColumns"
+            ></tr>
+          </table>
+        </div>
+      }
     </div>
-  </div>
-  
+  }
+</div>

@@ -4,27 +4,31 @@
       <button mat-button color="warn" (click)="deleteTextItem(textItem)" matTooltip="Delete text">
         <i class="fa-solid fa-trash"></i>
       </button>
-      <button *ngIf="isTextInDashboard(textItem)" mat-button color="primary" class="drag-handle" matTooltip="Move text">
-        <i class="fa-solid fa-arrows-up-down-left-right"></i>
-      </button>
+      @if (isTextInDashboard(textItem)) {
+        <button mat-button color="primary" class="drag-handle" matTooltip="Move text">
+          <i class="fa-solid fa-arrows-up-down-left-right"></i>
+        </button>
+      }
     </div>
     <div [ngClass]="inEditionMode ? 'edit-content-wrapper' : 'content-wrapper'" (click)="startEditing()">
-      <div
-        *ngIf="textItem.data.content && textItem.data.content.trim() !== ''"
-        [matTooltip]="inEditionMode ? 'Click to edit the text box' : 'switch to edit mode to edit the text box'"
-        matTooltipPosition="below"
-        class="quill-view"
-      >
-        <quill-view-html [content]="textItem.data.content" theme="snow"></quill-view-html>
-      </div>
-      <div
-        *ngIf="!textItem.data.content || textItem.data.content.trim() === ''"
-        class="empty-content"
-        [matTooltip]="inEditionMode ? 'Click to edit the text box' : 'switch to edit mode to edit the text box'"
-        matTooltipPosition="below"
-      >
-        Click to edit
-      </div>
+      @if (textItem.data.content && textItem.data.content.trim() !== '') {
+        <div
+          [matTooltip]="inEditionMode ? 'Click to edit the text box' : 'switch to edit mode to edit the text box'"
+          matTooltipPosition="below"
+          class="quill-view"
+          >
+          <quill-view-html [content]="textItem.data.content" theme="snow"></quill-view-html>
+        </div>
+      }
+      @if (!textItem.data.content || textItem.data.content.trim() === '') {
+        <div
+          class="empty-content"
+          [matTooltip]="inEditionMode ? 'Click to edit the text box' : 'switch to edit mode to edit the text box'"
+          matTooltipPosition="below"
+          >
+          Click to edit
+        </div>
+      }
     </div>
   </mat-card-content>
 </mat-card>

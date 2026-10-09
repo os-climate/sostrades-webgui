@@ -7,16 +7,17 @@
         unit="pixel"
         direction="horizontal"
         (dragEnd)="dragEnd('left', $event)"
-      >
-        <as-split-area
-          size="290"
-          minSize="250"
-          #area1="asSplitArea"
-          *ngIf="hasAccessToStudy && isLoadedStudy"
-          [order]="0"
         >
-          <app-sidenav class="nopadding height-inherit"></app-sidenav>
-        </as-split-area>
+        @if (hasAccessToStudy && isLoadedStudy) {
+          <as-split-area
+            size="290"
+            minSize="250"
+            #area1="asSplitArea"
+            [order]="0"
+            >
+            <app-sidenav class="nopadding height-inherit"></app-sidenav>
+          </as-split-area>
+        }
         <as-split-area size="*" #area1="asSplitArea" [order]="1">
           <div class="col height-inherit nopadding">
             <div class="height-inherit">
@@ -24,27 +25,29 @@
                 unit="percent"
                 direction="vertical"
                 (dragEnd)="dragEnd('bottom', $event)"
-              >
+                >
                 <as-split-area
                   [size]="displayLogViewFullSize() ? 0 : 85"
                   [minSize]="displayLogViewFullSize() ? 0 : 50"
                   #area1="asSplitArea"
                   style="overflow-y: hidden;"
-                >
-                    <router-outlet class="height-inherit client-zone"></router-outlet>
+                  >
+                  <router-outlet class="height-inherit client-zone"></router-outlet>
                 </as-split-area>
-                <as-split-area
-                  [size]="displayLogViewFullSize() ? 100 : 15"
-                  [maxSize]="displayLogViewFullSize() ? 100 : 50"
-                  [minSize]="displayLogViewFullSize() ? 100 : 0"
-                  #area2="asSplitArea"
-                  *ngIf="displayLogs()"
-                >
-                  <app-study-case-event-container
-                  *ngIf="displayLogsNotif"
-                    class="log-zone"
-                  ></app-study-case-event-container>
-                </as-split-area>
+                @if (displayLogs()) {
+                  <as-split-area
+                    [size]="displayLogViewFullSize() ? 100 : 15"
+                    [maxSize]="displayLogViewFullSize() ? 100 : 50"
+                    [minSize]="displayLogViewFullSize() ? 100 : 0"
+                    #area2="asSplitArea"
+                    >
+                    @if (displayLogsNotif) {
+                      <app-study-case-event-container
+                        class="log-zone"
+                      ></app-study-case-event-container>
+                    }
+                  </as-split-area>
+                }
               </as-split>
             </div>
           </div>

@@ -1,4 +1,5 @@
 <router-outlet></router-outlet>
-<app-user-app-loading
-  *ngIf="authGuard.isLoadingCurrentUser"
-></app-user-app-loading>
+@if (authGuard.isLoadingCurrentUser) {
+  <app-user-app-loading
+  ></app-user-app-loading>
+}

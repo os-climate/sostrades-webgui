@@ -1,5 +1,5 @@
-<div
-*ngIf="isLoading"
+@if (isLoading) {
+  <div
 style="
       height: calc(100% - 37px);
       width: 100%;
@@ -8,14 +8,15 @@ style="
       justify-content: center;
       align-items: center;
     "
-  >
+    >
     <mat-progress-spinner
-    diameter="40"
-    mode="indeterminate"
-    style="margin: 0 auto"
+      diameter="40"
+      mode="indeterminate"
+      style="margin: 0 auto"
     ></mat-progress-spinner>
     <div style="margin-top: 10px">Loading interface diagram</div>
   </div>
+}
 
 <div [hidden]="isLoading">
   <button mat-button (click)="resetZoom()">
@@ -27,4 +28,3 @@ style="
 </div>
 <div [hidden]="isLoading" class="container" #graphviz_placeholder></div>
 
-  

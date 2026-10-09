@@ -1,444 +1,459 @@
 <div class="configure-container">
-  <div class="filter-zone" *ngIf="originTreeNode">
-    <i class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></i>
-    <input
-      class="filter-input"
-      matInput
-      #filter
-      [(ngModel)]="filterTreeInput"
-      (keyup)="applyFilter($event)"
-      [placeholder]="isSearchOption?'Search variable':'Filter treeview'"
-      (click)="applyFilter($event)"
-    />
-    <i  [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h"></i>
-    <mat-menu #searchoption="matMenu">
-      <mat-button-toggle-group ngDefaultControl [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
-        <mat-button-toggle mat-menu-item value="false"
-        (click)="onSetFilterOption()">
-          <input type="radio"  [(ngModel)]="isSearchOption" [value]=false>
-          <label class="radio-label" >Filter treeview</label>
-        </mat-button-toggle>
-        <mat-button-toggle mat-menu-item value="true"
-        (click)="onSetSearchOption()">
-          <input type="radio" [(ngModel)]="isSearchOption" [value]=true>
-          <label class="radio-label">Search variable</label>
-        </mat-button-toggle>
-      </mat-button-toggle-group>
-    </mat-menu>
-  </div>
-  <mat-toolbar class="toolbar" *ngIf="originTreeNode && !(isStudyReadOnly || isStudyNoData)">
-    <button
-        mat-raised-button
-        id="btn-treeview-reload-read-only-study"
-        aria-hidden="false"
-        *ngIf="!isStudyNoData && !executionStarted && hasReadOnlyFile &&!showChangesButtons"
-        (click)="onReloadStudyReadOnly()"
-        color="primary"
-        matTooltip="Regenerate read-only files"
-        class="toolbar-button"
-      >
-        <i class="fa-solid fa-square-pen"></i>
-        Rebuild read-only
-      </button>
-    <button
-      mat-raised-button
-      id="btn-treeview-save-synchronise"
-      (click)="saveAndSynchronise()"
-      *ngIf="!isStudyNoData && showChangesButtons && !executionStarted"
-      matTooltip="Save changes"
-      aria-hidden="false"
-      aria-label="Save changes"
-      class="toolbar-button"
-      color="primary"
-    >
-      <i class="fa-solid fa-floppy-disk"></i>
-      Save changes
-    </button>
-    <button
-      mat-button
-      id="btn-treeview-start-calculation"
-      (click)="onStartExecution()"
-      *ngIf="!executionStarted && !(isStudyReadOnly || isStudyNoData) && canExecute"
-      [disabled]="!studyIsLoaded || executionStarted"
-      class="toolbar-button execution-button"
-    >
-      <i
-        class="fa-regular fa-circle-play execution"
+  @if (originTreeNode) {
+    <div class="filter-zone">
+      <i class="fa-solid fa-magnifying-glass filter-icon" (click)="applyFilterValue(filterTreeInput)"></i>
+      <input
+        class="filter-input"
+        matInput
+        #filter
+        [(ngModel)]="filterTreeInput"
+        (keyup)="applyFilter($event)"
+        [placeholder]="isSearchOption?'Search variable':'Filter treeview'"
+        (click)="applyFilter($event)"
+        />
+        <i  [matMenuTriggerFor]="searchoption" aria-label="Change search option: Filter treeview or Search variable" class="filter-icon fas fa-sliders-h"></i>
+        <mat-menu #searchoption="matMenu">
+          <mat-button-toggle-group ngDefaultControl [(ngModel)]="isSearchOption" aria-label="Change search option: Filter treeview or Search variable">
+            <mat-button-toggle mat-menu-item value="false"
+              (click)="onSetFilterOption()">
+              <input type="radio"  [(ngModel)]="isSearchOption" [value]=false>
+              <label class="radio-label" >Filter treeview</label>
+            </mat-button-toggle>
+            <mat-button-toggle mat-menu-item value="true"
+              (click)="onSetSearchOption()">
+              <input type="radio" [(ngModel)]="isSearchOption" [value]=true>
+              <label class="radio-label">Search variable</label>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </mat-menu>
+      </div>
+    }
+    @if (originTreeNode && !(isStudyReadOnly || isStudyNoData)) {
+      <mat-toolbar class="toolbar">
+        @if (!isStudyNoData && !executionStarted && hasReadOnlyFile &&!showChangesButtons) {
+          <button
+            mat-raised-button
+            id="btn-treeview-reload-read-only-study"
+            aria-hidden="false"
+            (click)="onReloadStudyReadOnly()"
+            color="primary"
+            matTooltip="Regenerate read-only files"
+            class="toolbar-button"
+            >
+            <i class="fa-solid fa-square-pen"></i>
+            Rebuild read-only
+          </button>
+        }
+        @if (!isStudyNoData && showChangesButtons && !executionStarted) {
+          <button
+            mat-raised-button
+            id="btn-treeview-save-synchronise"
+            (click)="saveAndSynchronise()"
+            matTooltip="Save changes"
+            aria-hidden="false"
+            aria-label="Save changes"
+            class="toolbar-button"
+            color="primary"
+            >
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save changes
+          </button>
+        }
+        @if (!executionStarted && !(isStudyReadOnly || isStudyNoData) && canExecute) {
+          <button
+            mat-button
+            id="btn-treeview-start-calculation"
+            (click)="onStartExecution()"
+            [disabled]="!studyIsLoaded || executionStarted"
+            class="toolbar-button execution-button"
+            >
+            <i
+              class="fa-regular fa-circle-play execution"
         [ngClass]="
           studyCaseDataService.loadedStudy.userIdExecutionAuthorized ===
           userService.getCurrentUserId()
             ? 'fa-regular fa-circle-play execution'
             : 'fa-regular fa-circle-play status-off'
         "
-        aria-hidden="false"
-        aria-label="Start execution"
-        matTooltip="Start execution"
-      >
-      </i>
-      Start execution
-    </button>
-    <button
-      mat-button
-      id="btn-treeview-stop-calculation"
-      (click)="onStopExecution()"
-      *ngIf="executionStarted && !(isStudyReadOnly || isStudyNoData)"
-      [disabled]="!studyIsLoaded && !canExecute"
-      class="toolbar-button stop-button"
-    >
-      <i class="fa-solid fa-stop"
+              aria-hidden="false"
+              aria-label="Start execution"
+              matTooltip="Start execution"
+              >
+            </i>
+            Start execution
+          </button>
+        }
+        @if (executionStarted && !(isStudyReadOnly || isStudyNoData)) {
+          <button
+            mat-button
+            id="btn-treeview-stop-calculation"
+            (click)="onStopExecution()"
+            [disabled]="!studyIsLoaded && !canExecute"
+            class="toolbar-button stop-button"
+            >
+            <i class="fa-solid fa-stop"
         [ngClass]="
           studyCaseDataService.loadedStudy.userIdExecutionAuthorized ===
           userService.getCurrentUserId()
             ? ' execution'
             : ' status-off'
         "
-        aria-hidden="false"
-        aria-label="Stop execution"
-        matTooltip="Stop execution"
-      >
-      </i>
-      Stop execution
-    </button>
-    
-
-    
-    </mat-toolbar>
-    <mat-toolbar class="toolbar-actions" *ngIf="originTreeNode">
-       <button
-      mat-button
-      matTooltip="Users working on same study case"
-      (click)="onShowRoomUser()"
-      id="btn-treeview-show-working-users"
-      [matBadge]="'+' + (numberOfUserRoom - 1)"
-      [matBadgeHidden]="numberOfUserRoom <= 1"
-      matBadgeColor="warn"
-      matBadgeSize="small"
-      matBadgePosition="after"
-      aria-hidden="false"
-      aria-label="Users working on same study case"
-      
-      >
-      <mat-icon >people</mat-icon>
-    </button>
-    <button
-      mat-button
-      (click)="onAccessLink()"
-      aria-hidden="false"
-      aria-label="Study case access link"
-      matTooltip="Study case access link"
-      id="btn-treeview-study-access-link"
-    >
-        <i class="fa-solid fa-up-right-from-square"></i>
-    </button>
-    
-     
-    
-
-   <div class="other-buttons" *ngIf="showOtherButtons" @slideInOut>
-    <button
-      mat-button
-      id="btn-treeview-study-settings"
-      (click)="onOpenSettings()"
-      *ngIf="hasFlavors && !(isStudyReadOnly || isStudyNoData) && canExecute"
-      [disabled]="!studyIsLoaded"
-    >
-      <i
-        class="fa-solid fa-gear"
-        aria-hidden="false"
-        aria-label="Execution pod settings"
-        matTooltip="Execution pod settings"
-      >
-      </i>
-    </button>
-    
-<span 
-      [matTooltip]="studyCanReload && !executionStarted ? 'Reload the study' : !studyCanReload || executionStarted ? 'No reload possible before first run or while running' : ''"
-    >
-      <button
-        mat-button
-        id="btn-treeview-reload-study"
-        aria-hidden="false"
-        *ngIf="!(isStudyReadOnly || isStudyNoData)"
-        [disabled]="!studyCanReload || executionStarted"
-        (click)="onReloadStudy()"
-        [color]="studyCanReload && !executionStarted ? 'primary' : ''"
-      >
-        <i
-          *ngIf="studyCanReload && !executionStarted"
-          class="fa-solid fa-rotate fa-fw"
-        >
-        </i>
-        <i
-          *ngIf="!studyCanReload || executionStarted"
-          class="fa-solid fa-rotate fa-fw status-off-grey"
-        >
-        </i>
-      </button>
-    </span>
-    <button
-      mat-button 
-      *ngIf="!isStudyReadOnly" 
-      (click)="fileInput.click()"
-      matTooltip="Import dataset from file.json"
-      [disabled]="executionStarted"
-    >
-      <i class="fa-solid fa-file-import"></i> 
-    </button>
-    <input 
-      #fileInput
-      style="display: none" 
-      type="file" 
-      id="fileInput" 
-      (change)="onImportDatasetFromJsonFile($event)" 
-      accept=".json"
-    >
-
-    <button
-    mat-button 
-    *ngIf="!isStudyReadOnly" 
-    (click)="fileInputExport.click()"
-    matTooltip="Export in dataset with mapping.json"
-    [disabled]="executionStarted"
-    >
-    <i class="fa-solid fa-file-export"></i> 
-    </button>
-    <input 
-      #fileInputExport
-      style="display: none" 
-      type="file" 
-      id="fileInputExport" 
-      (change)="onExportDatasetFromJsonFile($event)" 
-      accept=".json"
-    >
-    <button
-    mat-button
-    *ngIf="!isStudyReadOnly" 
-    [matTooltip]="'Download study data into csv'"
-    (click)="downloadStudy($event)"
-    >
-      <i class="fa-solid fa-download"> </i>
-    </button>
-    
-    <button
-      mat-button
-      [id]="showState ? 'hide-validation-state': 'show-validation-state'"
-      [matTooltip]=" showState ? 'Hide validation state' : 'Show validation state'"
-      (click)="onShowHideState()"
-    >
-    <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
-    </button>
-    <button
-      [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
-      mat-button
-      (click)="onShowHideStatus(!showStatus)"
-      [matTooltip]="showStatus ? 'Hide status' : 'Show status'"
-    >
-    <i [class]="showStatus ? 'fa-solid fa-circle-minus' : 'fa-sharp fa-solid fa-circle-plus'"></i>
-
-    </button>   
-    <button
-    id="btn-treeview-information"
-    mat-button
-    aria-hidden="false"
-    aria-label="Information about calculation status and validation state"
-    matTooltip="Information about calculation status and validation state"
-    (click)="onShowStatusInformation()"
-    color="accent"
-    >
-      <i class="fa-solid fa-circle-info"></i>
-    </button>  
-
-    </div>
-    <button
-      id="btn-treeview-show-more-buttons"
-      mat-button
-      [matTooltip]="showOtherButtons? 'Hide action buttons' : 'Show action buttons'"
-      (click)="toggleOtherButtons()"
-      class="toggle-button">
-      <i class="fa-solid fa-ellipsis"
-      [ngClass]="showOtherButtons ? 'rotate-90' : 'rotate-0'"></i>
-    </button>
-  </mat-toolbar>
-  <mat-divider width="100%" *ngIf="originTreeNode"></mat-divider>
-
-  <div class="flex-container" *ngIf="originTreeNode">
-    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-      <!-- This is the tree node template for child nodes -->
-      <mat-nested-tree-node
-        *matTreeNodeDef="let node"
-        [style.display]="node.isVisible ? 'block' : 'none'"
-      >
-        <li style="padding-left: 24px !important">
-          <div class="mat-tree-node">
-            <div
-              [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
-              *ngIf="node.status.length > 0 && showStatus"
-              style="margin-left: 4px"
-              [ngClass]="'execution-bullet ' + node.status"
-              [matTooltip]="node.status"
-            >
-              {{ node.status[0] }}
-
-            </div>
-            <mat-icon
-            *ngIf="showState && !node.isValidated"
-            [id]="'node-invalidated-' + node.name"
-            class="iconValid"
-            style="color: darkgrey;"
-            matTooltip="INVALIDATED"
-            >
-            highlight_off
-           </mat-icon>
-
-            <mat-icon
-            *ngIf="showState && node.isValidated"
-            [id]="'node-validated-' + node.name"
-            class="iconValid color-success"
-            matTooltip="VALIDATED"
-            >
-            check_circle
-           </mat-icon>
-            <button
-              [id]="'btn-treeview-node-' + node.fullNamespace"
-              (click)="nodeClick(node)"
-              mat-button
-              [matTooltip]=" node.modelsFullPathList  | ontologyDisciplineConverter"
-              matTooltipPosition="right"
-              [ngClass]="node === currentSelectedNode ? 'active' : null"
-              class="node-fullnamespace"
-            >
-              <i
-                [ngClass]="node | disciplineIconMappingConverter"
+              aria-hidden="false"
+              aria-label="Stop execution"
+              matTooltip="Stop execution"
               >
-              </i>
-              <span> {{ node.name }}</span>
-
-              <mat-icon
-                *ngIf="!node.isConfigured"
-                style="font-size: 8px; width: 12px !important"
-                color="icon-danger"
-              >
-                grade
-              </mat-icon>
-            </button>
-
-
-
-          </div>
-        </li>
-      </mat-nested-tree-node>
-      <!-- This is the tree node template for parent nodes -->
-      <mat-nested-tree-node
-        *matTreeNodeDef="let node; when: hasChild"
-        [style.display]="node.isVisible ? 'block' : 'none'"
-      >
-        <li class="tree-container">
-          <div class="mat-tree-node">
+            </i>
+            Stop execution
+          </button>
+        }
+      </mat-toolbar>
+    }
+    @if (originTreeNode) {
+      <mat-toolbar class="toolbar-actions">
+        <button
+          mat-button
+          matTooltip="Users working on same study case"
+          (click)="onShowRoomUser()"
+          id="btn-treeview-show-working-users"
+          [matBadge]="'+' + (numberOfUserRoom - 1)"
+          [matBadgeHidden]="numberOfUserRoom <= 1"
+          matBadgeColor="warn"
+          matBadgeSize="small"
+          matBadgePosition="after"
+          aria-hidden="false"
+          aria-label="Users working on same study case"
+          >
+          <mat-icon >people</mat-icon>
+        </button>
+        <button
+          mat-button
+          (click)="onAccessLink()"
+          aria-hidden="false"
+          aria-label="Study case access link"
+          matTooltip="Study case access link"
+          id="btn-treeview-study-access-link"
+          >
+          <i class="fa-solid fa-up-right-from-square"></i>
+        </button>
+        @if (showOtherButtons) {
+          <div class="other-buttons" @slideInOut>
+            @if (hasFlavors && !(isStudyReadOnly || isStudyNoData) && canExecute) {
+              <button
+                mat-button
+                id="btn-treeview-study-settings"
+                (click)="onOpenSettings()"
+                [disabled]="!studyIsLoaded"
+                >
+                <i
+                  class="fa-solid fa-gear"
+                  aria-hidden="false"
+                  aria-label="Execution pod settings"
+                  matTooltip="Execution pod settings"
+                  >
+                </i>
+              </button>
+            }
             <span
-              [id]="'btn-treeview-expand-' + node.fullNamespace"
-              mat-icon-button
-              matTreeNodeToggle
-              [attr.aria-label]="'toggle ' + node.name"
-              (click)="saveTreeViewPreferences(node)"
-            >
-              <i
+              [matTooltip]="studyCanReload && !executionStarted ? 'Reload the study' : !studyCanReload || executionStarted ? 'No reload possible before first run or while running' : ''"
+              >
+              @if (!(isStudyReadOnly || isStudyNoData)) {
+                <button
+                  mat-button
+                  id="btn-treeview-reload-study"
+                  aria-hidden="false"
+                  [disabled]="!studyCanReload || executionStarted"
+                  (click)="onReloadStudy()"
+                  [color]="studyCanReload && !executionStarted ? 'primary' : ''"
+                  >
+                  @if (studyCanReload && !executionStarted) {
+                    <i
+                      class="fa-solid fa-rotate fa-fw"
+                      >
+                    </i>
+                  }
+                  @if (!studyCanReload || executionStarted) {
+                    <i
+                      class="fa-solid fa-rotate fa-fw status-off-grey"
+                      >
+                    </i>
+                  }
+                </button>
+              }
+            </span>
+            @if (!isStudyReadOnly) {
+              <button
+                mat-button
+                (click)="fileInput.click()"
+                matTooltip="Import dataset from file.json"
+                [disabled]="executionStarted"
+                >
+                <i class="fa-solid fa-file-import"></i>
+              </button>
+            }
+            <input
+              #fileInput
+              style="display: none"
+              type="file"
+              id="fileInput"
+              (change)="onImportDatasetFromJsonFile($event)"
+              accept=".json"
+              >
+              @if (!isStudyReadOnly) {
+                <button
+                  mat-button
+                  (click)="fileInputExport.click()"
+                  matTooltip="Export in dataset with mapping.json"
+                  [disabled]="executionStarted"
+                  >
+                  <i class="fa-solid fa-file-export"></i>
+                </button>
+              }
+              <input
+                #fileInputExport
+                style="display: none"
+                type="file"
+                id="fileInputExport"
+                (change)="onExportDatasetFromJsonFile($event)"
+                accept=".json"
+                >
+                @if (!isStudyReadOnly) {
+                  <button
+                    mat-button
+                    [matTooltip]="'Download study data into csv'"
+                    (click)="downloadStudy($event)"
+                    >
+                    <i class="fa-solid fa-download"> </i>
+                  </button>
+                }
+                <button
+                  mat-button
+                  [id]="showState ? 'hide-validation-state': 'show-validation-state'"
+                  [matTooltip]=" showState ? 'Hide validation state' : 'Show validation state'"
+                  (click)="onShowHideState()"
+                  >
+                  <i [class]="showState ? 'fa-solid fa-square-check' : 'fa-regular fa-square-check'"></i>
+                </button>
+                <button
+                  [id]="showStatus ? 'btn-treeview-hide-status' : 'btn-treeview-show-status'"
+                  mat-button
+                  (click)="onShowHideStatus(!showStatus)"
+                  [matTooltip]="showStatus ? 'Hide status' : 'Show status'"
+                  >
+                  <i [class]="showStatus ? 'fa-solid fa-circle-minus' : 'fa-sharp fa-solid fa-circle-plus'"></i>
+                </button>
+                <button
+                  id="btn-treeview-information"
+                  mat-button
+                  aria-hidden="false"
+                  aria-label="Information about calculation status and validation state"
+                  matTooltip="Information about calculation status and validation state"
+                  (click)="onShowStatusInformation()"
+                  color="accent"
+                  >
+                  <i class="fa-solid fa-circle-info"></i>
+                </button>
+              </div>
+            }
+            <button
+              id="btn-treeview-show-more-buttons"
+              mat-button
+              [matTooltip]="showOtherButtons? 'Hide action buttons' : 'Show action buttons'"
+              (click)="toggleOtherButtons()"
+              class="toggle-button">
+              <i class="fa-solid fa-ellipsis"
+              [ngClass]="showOtherButtons ? 'rotate-90' : 'rotate-0'"></i>
+            </button>
+          </mat-toolbar>
+        }
+        @if (originTreeNode) {
+          <mat-divider width="100%"></mat-divider>
+        }
+
+        @if (originTreeNode) {
+          <div class="flex-container">
+            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+              <!-- This is the tree node template for child nodes -->
+              <mat-nested-tree-node
+                *matTreeNodeDef="let node"
+                [style.display]="node.isVisible ? 'block' : 'none'"
+                >
+                <li style="padding-left: 24px !important">
+                  <div class="mat-tree-node">
+                    @if (node.status.length > 0 && showStatus) {
+                      <div
+                        [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
+                        style="margin-left: 4px"
+                        [ngClass]="'execution-bullet ' + node.status"
+                        [matTooltip]="node.status"
+                        >
+                        {{ node.status[0] }}
+                      </div>
+                    }
+                    @if (showState && !node.isValidated) {
+                      <mat-icon
+                        [id]="'node-invalidated-' + node.name"
+                        class="iconValid"
+                        style="color: darkgrey;"
+                        matTooltip="INVALIDATED"
+                        >
+                        highlight_off
+                      </mat-icon>
+                    }
+                    @if (showState && node.isValidated) {
+                      <mat-icon
+                        [id]="'node-validated-' + node.name"
+                        class="iconValid color-success"
+                        matTooltip="VALIDATED"
+                        >
+                        check_circle
+                      </mat-icon>
+                    }
+                    <button
+                      [id]="'btn-treeview-node-' + node.fullNamespace"
+                      (click)="nodeClick(node)"
+                      mat-button
+                      [matTooltip]=" node.modelsFullPathList  | ontologyDisciplineConverter"
+                      matTooltipPosition="right"
+                      [ngClass]="node === currentSelectedNode ? 'active' : null"
+                      class="node-fullnamespace"
+                      >
+                      <i
+                        [ngClass]="node | disciplineIconMappingConverter"
+                        >
+                      </i>
+                      <span> {{ node.name }}</span>
+                      @if (!node.isConfigured) {
+                        <mat-icon
+                          style="font-size: 8px; width: 12px !important"
+                          color="icon-danger"
+                          >
+                          grade
+                        </mat-icon>
+                      }
+                    </button>
+                  </div>
+                </li>
+              </mat-nested-tree-node>
+              <!-- This is the tree node template for parent nodes -->
+              <mat-nested-tree-node
+                *matTreeNodeDef="let node; when: hasChild"
+                [style.display]="node.isVisible ? 'block' : 'none'"
+                >
+                <li class="tree-container">
+                  <div class="mat-tree-node">
+                    <span
+                      [id]="'btn-treeview-expand-' + node.fullNamespace"
+                      mat-icon-button
+                      matTreeNodeToggle
+                      [attr.aria-label]="'toggle ' + node.name"
+                      (click)="saveTreeViewPreferences(node)"
+                      >
+                      <i
               [id]="treeControl.isExpanded(node)
               ? 'chevron-down-' + node.fullNamespace
               : 'chevron-right-'+ node.fullNamespace"
-                [ngClass]="treeControl.isExpanded(node) ? 'fas fa-chevron-down fa-fw' : 'fas fa-chevron-right fa-fw'"
-                [style.color]="node.chevronColor"
-                style="margin-left: 1px; cursor:pointer"
-              >
-              </i>
-            </span>
-            <div
-              [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
-              *ngIf="node.status.length > 0 && showStatus"
-              [ngClass]="'execution-bullet ' + node.status"
-              style="margin-left: 4px; cursor: default;"
-              [matTooltip]="node.status"
-            >
-              {{ node.status[0] }}
-            </div>
-            <mat-icon
-            *ngIf="showState && !node.isValidated"
-            [id]="'node-invalidated-' + node.name"
-            class="iconValid"
-            style="color: darkgrey;"
-            matTooltip="INVALIDATED"
-            >
-            highlight_off
-           </mat-icon>
-            <mat-icon
-            *ngIf="showState && node.isValidated"
-            mat-button
-            [id]="'node-validated-' + node.name"
-            class="iconValid color-success"
-            matTooltip="VALIDATED"
-            >
-            check_circle
-           </mat-icon>
-            <button
-              [id]="'btn-treeview-node-' + node.fullNamespace"
-              (click)="nodeClick(node)"
-              mat-button
-              [matTooltip]="node.modelsFullPathList | ontologyDisciplineConverter"
-              matTooltipPosition="right"
-              [ngClass]="node === currentSelectedNode ? 'active' : null"
-              class="node-fullnamespace"
-            >
-              <i
-                [ngClass]="node | disciplineIconMappingConverter"
-              >
-              </i>
-              <span> {{ node.name }}</span>
-              <span
-                *ngIf="node.isRoot && isTreeViewFiltered"
-                color="success"
+                        [ngClass]="treeControl.isExpanded(node) ? 'fas fa-chevron-down fa-fw' : 'fas fa-chevron-right fa-fw'"
+                        [style.color]="node.chevronColor"
+                        style="margin-left: 1px; cursor:pointer"
+                        >
+                      </i>
+                    </span>
+                    @if (node.status.length > 0 && showStatus) {
+                      <div
+                        [id]="'text-treeview-status-' + node.fullNamespace  + '-' + node.status"
+                        [ngClass]="'execution-bullet ' + node.status"
+                        style="margin-left: 4px; cursor: default;"
+                        [matTooltip]="node.status"
+                        >
+                        {{ node.status[0] }}
+                      </div>
+                    }
+                    @if (showState && !node.isValidated) {
+                      <mat-icon
+                        [id]="'node-invalidated-' + node.name"
+                        class="iconValid"
+                        style="color: darkgrey;"
+                        matTooltip="INVALIDATED"
+                        >
+                        highlight_off
+                      </mat-icon>
+                    }
+                    @if (showState && node.isValidated) {
+                      <mat-icon
+                        mat-button
+                        [id]="'node-validated-' + node.name"
+                        class="iconValid color-success"
+                        matTooltip="VALIDATED"
+                        >
+                        check_circle
+                      </mat-icon>
+                    }
+                    <button
+                      [id]="'btn-treeview-node-' + node.fullNamespace"
+                      (click)="nodeClick(node)"
+                      mat-button
+                      [matTooltip]="node.modelsFullPathList | ontologyDisciplineConverter"
+                      matTooltipPosition="right"
+                      [ngClass]="node === currentSelectedNode ? 'active' : null"
+                      class="node-fullnamespace"
+                      >
+                      <i
+                        [ngClass]="node | disciplineIconMappingConverter"
+                        >
+                      </i>
+                      <span> {{ node.name }}</span>
+                      @if (node.isRoot && isTreeViewFiltered) {
+                        <span
+                          color="success"
                 style="
                   background-color: #f6f6f6;
                   padding: 3px;
                   margin-left: 10px;
                   border-radius: 7px;
                 "
-              >
-                <i
-                  class="fa-solid fa-filter fa-fw"
-                  *ngIf="node.isRoot && isTreeViewFiltered"
-                >
-                </i>
-                Filtered
-              </span>
-
-              <mat-icon
-                *ngIf="!node.isConfigured"
-                style="font-size: 8px; width: 12px !important"
-                color="icon-danger"
-              >
-                grade
-              </mat-icon>
-            </button>
-
-
+                          >
+                          @if (node.isRoot && isTreeViewFiltered) {
+                            <i
+                              class="fa-solid fa-filter fa-fw"
+                              >
+                            </i>
+                          }
+                          Filtered
+                        </span>
+                      }
+                      @if (!node.isConfigured) {
+                        <mat-icon
+                          style="font-size: 8px; width: 12px !important"
+                          color="icon-danger"
+                          >
+                          grade
+                        </mat-icon>
+                      }
+                    </button>
+                  </div>
+                  <ul [ngClass]="node.isLastChild ? 'last-child-left-border' : null">
+                    @if (treeControl.isExpanded(node)) {
+                      <div>
+                        <ng-container matTreeNodeOutlet></ng-container>
+                      </div>
+                    }
+                  </ul>
+                </li>
+              </mat-nested-tree-node>
+            </mat-tree>
           </div>
-          <ul [ngClass]="node.isLastChild ? 'last-child-left-border' : null">
-            <div *ngIf="treeControl.isExpanded(node)">
-              <ng-container matTreeNodeOutlet></ng-container>
-            </div>
-          </ul>
-        </li>
-      </mat-nested-tree-node>
-    </mat-tree>
-  </div>
-</div>
+        }
+      </div>
 
-<div *ngIf="showStudyRefreshing" class="waiting-refresh mat-elevation-z8">
-  <div>
-    <mat-progress-spinner
-      diameter="20"
-      mode="indeterminate"
-      style="margin: 0 auto"
-    ></mat-progress-spinner>
-  </div>
-  <div class="text-loading">Refreshing data</div>
-</div>
+      @if (showStudyRefreshing) {
+        <div class="waiting-refresh mat-elevation-z8">
+          <div>
+            <mat-progress-spinner
+              diameter="20"
+              mode="indeterminate"
+              style="margin: 0 auto"
+            ></mat-progress-spinner>
+          </div>
+          <div class="text-loading">Refreshing data</div>
+        </div>
+      }

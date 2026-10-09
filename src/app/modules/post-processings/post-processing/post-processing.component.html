@@ -1,16 +1,17 @@
 <div class="flex-container">
   <div class="legend-header">
-    <div
-      class="legend-item border-readonly"
-      *ngIf="treeNode.maturity.length > 0"
-    >
-      <div class="legend-text" style="padding-left: 0 !important">
-        Maturity :
+    @if (treeNode.maturity.length > 0) {
+      <div
+        class="legend-item border-readonly"
+        >
+        <div class="legend-text" style="padding-left: 0 !important">
+          Maturity :
+        </div>
+        <div class="legend-text">
+          <strong>{{ treeNode.maturity }}</strong>
+        </div>
       </div>
-      <div class="legend-text">
-        <strong>{{ treeNode.maturity }}</strong>
-      </div>
-    </div>
+    }
     <div style="min-width: 8px"></div>
 
     <span class="spacer"></span>
@@ -21,59 +22,66 @@
     <span style="margin-left: 30px;">
       State :
     </span>
+    @if (treeNode.isValidated) {
       <button
         mat-button
-        *ngIf="treeNode.isValidated"
-       class="stateButton"
-       color="success"
-       > Validated
-        </button>
+        class="stateButton"
+        color="success"
+        > Validated
+      </button>
+    }
 
-        <button
+    @if (!treeNode.isValidated) {
+      <button
         mat-button
-        *ngIf="!treeNode.isValidated"
         class="stateButton"
         color="undetermined"
         > Not validated
-        </button>
+      </button>
+    }
     <span class="spacer"></span>
-    <button
-    mat-raised-button
-    *ngIf="!treeNode.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
-    (click)="onClickDataValidation($event)"
-    class="validationButton"
-    style="margin-right: 8px;"
-    color="primary"
-     >
-       Validate data
-    </button>
+    @if (!treeNode.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)) {
+      <button
+        mat-raised-button
+        (click)="onClickDataValidation($event)"
+        class="validationButton"
+        style="margin-right: 8px;"
+        color="primary"
+        >
+        Validate data
+      </button>
+    }
 
-    <button
-    mat-raised-button
-    *ngIf="treeNode.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
-    (click)="onClickDataValidation($event)"
-    class="validationButton"
-    style="margin-right: 1px;"
-    color="primary"
-      >
-      Invalidate data
-  </button>
+    @if (treeNode.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)) {
+      <button
+        mat-raised-button
+        (click)="onClickDataValidation($event)"
+        class="validationButton"
+        style="margin-right: 1px;"
+        color="primary"
+        >
+        Invalidate data
+      </button>
+    }
   </div>
 
   <div #PlotsContainer class="plot-body" (scroll)="scrollPlots()">
     <div class="plot-resize-zone" #Plots (resized)="onResizePlotZone()">
-      <app-post-processing-bundle
-        [postProcessingBundle]="bundle"
-        [fullNamespace]="treeNode.fullNamespace"
-        *ngFor="let bundle of treeNode.postProcessingBundle"
-      >
-      </app-post-processing-bundle>
+      @for (bundle of treeNode.postProcessingBundle; track bundle) {
+        <app-post-processing-bundle
+          [postProcessingBundle]="bundle"
+          [fullNamespace]="treeNode.fullNamespace"
+          >
+        </app-post-processing-bundle>
+      }
     </div>
   </div>
 
-  <div class="more-content" *ngIf="isMoreContentAvailable">
-    <button class="mat-elevation-z8" mat-fab color="primary" disabled>
-      <mat-icon>expand_more</mat-icon>
-    </button>
-  </div>
+  @if (isMoreContentAvailable) {
+    <div class="more-content">
+      <button class="mat-elevation-z8" mat-fab color="primary" disabled>
+        <mat-icon>expand_more</mat-icon>
+      </button>
+    </div>
+  }
 </div>

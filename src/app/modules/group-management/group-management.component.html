@@ -13,235 +13,245 @@
             formControlName="groupName"
             placeholder="Group name"
             style="text-align: right"
-          />
-
-          <mat-error *ngIf="hasError('groupName', 'required')">
-            Field is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="hasError('groupName', 'error')">
-            Group name already <strong>exist</strong>
-          </mat-error>
-          <mat-error *ngIf="hasError('groupName', 'pattern')"
-            >Only letters, numbers, dashes and underscores are
-            authorized</mat-error
-          >
-        </mat-form-field>
-
-        <mat-form-field style="margin-right: 20px; margin-bottom: 10px">
-          <input
-            id="group-description"
-            matInput
-            formControlName="groupDescription"
-            placeholder="Group description"
-            style="text-align: right"
-          />
-
-          <mat-error *ngIf="hasError('groupDescription', 'required')">
-            Field is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-
-        <mat-checkbox
-          id="confidential"
-          [(ngModel)]="checkboxConfidential"
-          class="checkbox"
-          labelPosition="before"
-          [ngModelOptions]="{ standalone: true }"
-          >Confidential</mat-checkbox
-        >
-
-        <button
-          id="create-group"
-          mat-flat-button
-          color="primary"
-          aria-label="Create Group"
-          (click)="createGroup()"
-          style="margin-bottom: 20px"
-          [disabled]="!createGroupForm.valid"
-        >
-          Create Group
-        </button>
-      </div>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel class="expansion-panel" expanded="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title> My Groups </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <div class="group-header">
-        <button
-          mat-raised-button
-          color="primary"
-          aria-label="Refresh study cases"
-          class="refresh-button"
-          [disabled]="isLoading"
-          (click)="loadGroupManagementData(true)"
-        >
-          <mat-icon 
-          class="refresh-icon"
-          >
-            refresh
-          </mat-icon>
-          Refresh list
-        </button>
-        <div class="filterSection">
-          <mat-form-field class="filter-form-field">
-            <mat-label class="filter-label-size">Filtered by</mat-label>
-            <mat-select
-              placeholder="Column(s) filtered"
-              class="filter-label-size"
-              (selectionChange)="onFilterChange()"
-              style="text-align: left"
-              [(ngModel)]="groupDataService.groupManagementColumnFiltered"
-              [matTooltip]="groupDataService.groupManagementColumnFiltered"
-            >
-              <mat-option *ngFor="let item of colummnsFilter" [value]="item" style="text-transform: capitalize;">
-                {{ item }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field class="filter-bar">
-            <input
-              id="filter"
-              matInput
-              #filter
-              (keyup)="applyFilter($event)"
-              placeholder="Filter"
-              [(ngModel)]="groupDataService.groupManagementFilter"
             />
+
+            @if (hasError('groupName', 'required')) {
+              <mat-error>
+                Field is <strong>required</strong>
+              </mat-error>
+            }
+            @if (hasError('groupName', 'error')) {
+              <mat-error>
+                Group name already <strong>exist</strong>
+              </mat-error>
+            }
+            @if (hasError('groupName', 'pattern')) {
+              <mat-error
+                >Only letters, numbers, dashes and underscores are
+                authorized</mat-error
+                >
+            }
           </mat-form-field>
-        </div>
-      </div>
 
-      <div class="table-container">
-        <div class="loading-zone" *ngIf="isLoading">
-          <app-progress-bar
-            progressMode="indeterminate"
-            progressText="Loading group list"
-          ></app-progress-bar>
-        </div>
-        <table
-          mat-table
-          *ngIf="!isLoading"
-          class="tables"
-          #table
-          [dataSource]="dataSourceMyGroups"
-          matSort
-        >
-          <!-- Name Column -->
-          <ng-container [matColumnDef]="columnName.NAME">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name
-              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'" 
-              (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.group.name }}
-            </td>
-          </ng-container>
+          <mat-form-field style="margin-right: 20px; margin-bottom: 10px">
+            <input
+              id="group-description"
+              matInput
+              formControlName="groupDescription"
+              placeholder="Group description"
+              style="text-align: right"
+              />
 
-          <!-- Description Column -->
-          <ng-container [matColumnDef]="columnName.DESCRIPTION">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Description
-              <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.DESCRIPTION)? 'icon-filter-values':'icon-filter-any-values'" 
-              (click)="displayFilterDialog(columnName.DESCRIPTION, $event)" ></i>
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.group.description }}
-            </td>
-          </ng-container>
+              @if (hasError('groupDescription', 'required')) {
+                <mat-error>
+                  Field is <strong>required</strong>
+                </mat-error>
+              }
+            </mat-form-field>
 
-            <!-- Default Group Column -->
-            <ng-container [matColumnDef]="columnName.DEFAULT">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="columnName.DEFAULT">
-                Default
-              </th>
-              <td mat-cell *matCellDef="let element">
-                <mat-radio-button
-                [id]="'default-group-' + element.group.name"
-                style="margin-left: 5px;"
-                (click)="changeDefaultGroup($event, element)"
-                [checked]="checkExistingDefaultGroup(element.group.id)"
-                >
-                </mat-radio-button>
-              </td>
-            </ng-container>
-
-          <!-- Confidential Column -->
-          <ng-container [matColumnDef]="columnName.CONFIDENTIAL">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Confidential
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <button mat-icon-button color="primary" disabled>
-                <i
-                  class="fa-solid fa-check fa-fw"
-                  [id]="'is-confidential-' + element.group.name"
-                  *ngIf="element.group.confidential"
-                >
-                </i>
-              </button>
-            </td>
-          </ng-container>
-
-          <!-- UserList Column -->
-          <ng-container [matColumnDef]="columnName.USERS">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element">
-              <button
-                [id]="'group-acces-' + element.group.name"
-                mat-icon-button
-                color="primary"
-                (click)="groupAccess(element)"
-                *ngIf="element.isOwner === true || element.isManager === true"
+            <mat-checkbox
+              id="confidential"
+              [(ngModel)]="checkboxConfidential"
+              class="checkbox"
+              labelPosition="before"
+              [ngModelOptions]="{ standalone: true }"
+              >Confidential</mat-checkbox
               >
-                <i class="fa-solid fa-user-plus fa-fw"> </i>
-              </button>
-            </td>
-          </ng-container>
 
-            <!-- Edit Column -->
-            <ng-container [matColumnDef]="columnName.EDIT">
-              <th mat-header-cell *matHeaderCellDef></th>
-              <td mat-cell *matCellDef="let element">
-                <button
-                  [id]="'edit-group-' + element.group.name"
-                  mat-icon-button
-                  color="primary"
-                  *ngIf="element.isOwner === true || element.isManager === true"
-                  (click)="updateGroup($event, element)"
-                >
-                <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-              </td>
-            </ng-container>
-
-          <!-- Delete Column -->
-          <ng-container [matColumnDef]="columnName.DELETE">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element">
               <button
-                [id]="'delete-group-' + element.group.name"
-                mat-icon-button
+                id="create-group"
+                mat-flat-button
                 color="primary"
-                (click)="deleteGroup(element.group)"
-                *ngIf="element.isOwner === true"
-              >
-                <i class="fa-regular fa-trash-can fa-fw"> </i>
+                aria-label="Create Group"
+                (click)="createGroup()"
+                style="margin-bottom: 20px"
+                [disabled]="!createGroupForm.valid"
+                >
+                Create Group
               </button>
-            </td>
-          </ng-container>
+            </div>
+          </mat-expansion-panel>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsMyGroups"></tr>
-          <tr
-            mat-row
-            class="table-row"
-            [id]="'row-group-management-' + row.group.name"
-            *matRowDef="let row; columns: displayedColumnsMyGroups"
-          ></tr>
-        </table>
-      </div>
-    </mat-expansion-panel>
-  </div>
-</div>
+          <mat-expansion-panel class="expansion-panel" expanded="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title> My Groups </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="group-header">
+              <button
+                mat-raised-button
+                color="primary"
+                aria-label="Refresh study cases"
+                class="refresh-button"
+                [disabled]="isLoading"
+                (click)="loadGroupManagementData(true)"
+                >
+                <mat-icon
+                  class="refresh-icon"
+                  >
+                  refresh
+                </mat-icon>
+                Refresh list
+              </button>
+              <div class="filterSection">
+                <mat-form-field class="filter-form-field">
+                  <mat-label class="filter-label-size">Filtered by</mat-label>
+                  <mat-select
+                    placeholder="Column(s) filtered"
+                    class="filter-label-size"
+                    (selectionChange)="onFilterChange()"
+                    style="text-align: left"
+                    [(ngModel)]="groupDataService.groupManagementColumnFiltered"
+                    [matTooltip]="groupDataService.groupManagementColumnFiltered"
+                    >
+                    @for (item of colummnsFilter; track item) {
+                      <mat-option [value]="item" style="text-transform: capitalize;">
+                        {{ item }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field class="filter-bar">
+                  <input
+                    id="filter"
+                    matInput
+                    #filter
+                    (keyup)="applyFilter($event)"
+                    placeholder="Filter"
+                    [(ngModel)]="groupDataService.groupManagementFilter"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="table-container">
+                @if (isLoading) {
+                  <div class="loading-zone">
+                    <app-progress-bar
+                      progressMode="indeterminate"
+                      progressText="Loading group list"
+                    ></app-progress-bar>
+                  </div>
+                }
+                @if (!isLoading) {
+                  <table
+                    mat-table
+                    class="tables"
+                    #table
+                    [dataSource]="dataSourceMyGroups"
+                    matSort
+                    >
+                    <!-- Name Column -->
+                    <ng-container [matColumnDef]="columnName.NAME">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name
+                        <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.NAME)? 'icon-filter-values':'icon-filter-any-values'"
+                        (click)="displayFilterDialog(columnName.NAME, $event)" ></i>
+                      </th>
+                      <td mat-cell *matCellDef="let element">
+                        {{ element.group.name }}
+                      </td>
+                    </ng-container>
+                    <!-- Description Column -->
+                    <ng-container [matColumnDef]="columnName.DESCRIPTION">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Description
+                        <i class="fa-solid fa-filter" [ngClass]="hasFilter(columnName.DESCRIPTION)? 'icon-filter-values':'icon-filter-any-values'"
+                        (click)="displayFilterDialog(columnName.DESCRIPTION, $event)" ></i>
+                      </th>
+                      <td mat-cell *matCellDef="let element">
+                        {{ element.group.description }}
+                      </td>
+                    </ng-container>
+                    <!-- Default Group Column -->
+                    <ng-container [matColumnDef]="columnName.DEFAULT">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="columnName.DEFAULT">
+                        Default
+                      </th>
+                      <td mat-cell *matCellDef="let element">
+                        <mat-radio-button
+                          [id]="'default-group-' + element.group.name"
+                          style="margin-left: 5px;"
+                          (click)="changeDefaultGroup($event, element)"
+                          [checked]="checkExistingDefaultGroup(element.group.id)"
+                          >
+                        </mat-radio-button>
+                      </td>
+                    </ng-container>
+                    <!-- Confidential Column -->
+                    <ng-container [matColumnDef]="columnName.CONFIDENTIAL">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Confidential
+                      </th>
+                      <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button color="primary" disabled>
+                          @if (element.group.confidential) {
+                            <i
+                              class="fa-solid fa-check fa-fw"
+                              [id]="'is-confidential-' + element.group.name"
+                              >
+                            </i>
+                          }
+                        </button>
+                      </td>
+                    </ng-container>
+                    <!-- UserList Column -->
+                    <ng-container [matColumnDef]="columnName.USERS">
+                      <th mat-header-cell *matHeaderCellDef></th>
+                      <td mat-cell *matCellDef="let element">
+                        @if (element.isOwner === true || element.isManager === true) {
+                          <button
+                            [id]="'group-acces-' + element.group.name"
+                            mat-icon-button
+                            color="primary"
+                            (click)="groupAccess(element)"
+                            >
+                            <i class="fa-solid fa-user-plus fa-fw"> </i>
+                          </button>
+                        }
+                      </td>
+                    </ng-container>
+                    <!-- Edit Column -->
+                    <ng-container [matColumnDef]="columnName.EDIT">
+                      <th mat-header-cell *matHeaderCellDef></th>
+                      <td mat-cell *matCellDef="let element">
+                        @if (element.isOwner === true || element.isManager === true) {
+                          <button
+                            [id]="'edit-group-' + element.group.name"
+                            mat-icon-button
+                            color="primary"
+                            (click)="updateGroup($event, element)"
+                            >
+                            <i class="fa-solid fa-pen-to-square"></i>
+                          </button>
+                        }
+                      </td>
+                    </ng-container>
+                    <!-- Delete Column -->
+                    <ng-container [matColumnDef]="columnName.DELETE">
+                      <th mat-header-cell *matHeaderCellDef></th>
+                      <td mat-cell *matCellDef="let element">
+                        @if (element.isOwner === true) {
+                          <button
+                            [id]="'delete-group-' + element.group.name"
+                            mat-icon-button
+                            color="primary"
+                            (click)="deleteGroup(element.group)"
+                            >
+                            <i class="fa-regular fa-trash-can fa-fw"> </i>
+                          </button>
+                        }
+                      </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsMyGroups"></tr>
+                    <tr
+                      mat-row
+                      class="table-row"
+                      [id]="'row-group-management-' + row.group.name"
+                      *matRowDef="let row; columns: displayedColumnsMyGroups"
+                    ></tr>
+                  </table>
+                }
+              </div>
+            </mat-expansion-panel>
+          </div>
+        </div>

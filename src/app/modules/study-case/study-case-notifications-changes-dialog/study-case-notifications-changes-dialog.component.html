@@ -4,26 +4,27 @@
     <div class="message">Done by {{ data.user }}</div>
   </div>
   <div class="filter">
-    <app-filter-bar 
-    [dataSource]="dataSourceChanges"
-    [columnsName]="columnValuesDict"
-    [columnsFilter]="colummnsDictForTitleSelection"
-    >
+    <app-filter-bar
+      [dataSource]="dataSourceChanges"
+      [columnsName]="columnValuesDict"
+      [columnsFilter]="colummnsDictForTitleSelection"
+      >
     </app-filter-bar>
   </div>
   <div class="tables" id="table">
-    <mat-paginator
-      [pageSize]="500"
-      *ngIf="showPaginator"
-      showFirstLastButtons
-      >
-    </mat-paginator>
+    @if (showPaginator) {
+      <mat-paginator
+        [pageSize]="500"
+        showFirstLastButtons
+        >
+      </mat-paginator>
+    }
     <table
       mat-table
       #table
       [dataSource]="dataSourceChanges"
       matSort
-    >
+      >
       <!-- Name Column -->
       <ng-container [matColumnDef]="columnName.VARIABLE_ID">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -38,10 +39,14 @@
       <ng-container [matColumnDef]="columnName.OLD_VALUE">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.OLD_VALUE)}}</th>
         <td mat-cell *matCellDef="let element">
-          <div *ngIf="element.changeType === 'csv'">CSV file</div>
-          <div *ngIf="element.changeType !== 'csv'" >
-            <span>{{ element.oldValue }}</span>
-          </div>
+          @if (element.changeType === 'csv') {
+            <div>CSV file</div>
+          }
+          @if (element.changeType !== 'csv') {
+            <div >
+              <span>{{ element.oldValue }}</span>
+            </div>
+          }
         </td>
       </ng-container>
 
@@ -49,32 +54,38 @@
       <ng-container [matColumnDef]="columnName.NEW_VALUE">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.NEW_VALUE)}}</th>
         <td mat-cell *matCellDef="let element">
-          <div *ngIf="element.changeType === 'csv'">CSV file</div>
-          <div *ngIf="element.changeType !== 'csv'" >
-            <span>{{ element.newValue}}</span>
-          </div>
+          @if (element.changeType === 'csv') {
+            <div>CSV file</div>
+          }
+          @if (element.changeType !== 'csv') {
+            <div >
+              <span>{{ element.newValue}}</span>
+            </div>
+          }
         </td>
       </ng-container>
 
-       <!-- Dataset Connector Id Column -->
-        <ng-container [matColumnDef]="columnName.DATASET_ID">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.DATASET_ID)}}</th>
-          <td mat-cell *matCellDef="let element">
-            <span>{{ element.datasetId}}</span>
-          </td>
-        </ng-container>
+      <!-- Dataset Connector Id Column -->
+      <ng-container [matColumnDef]="columnName.DATASET_ID">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnValuesDict.get(columnName.DATASET_ID)}}</th>
+        <td mat-cell *matCellDef="let element">
+          <span>{{ element.datasetId}}</span>
+        </td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-    
+
   </div>
   <div mat-dialog-actions>
     <button mat-raised-button color="success" (click)="onOkClick()">
       {{ data.buttonText }}
     </button>
-    <button mat-raised-button color="primary" (click)="onExportCSVClick()" *ngIf="hasChangesFromDataset">
-      Export to CSV
-    </button>
+    @if (hasChangesFromDataset) {
+      <button mat-raised-button color="primary" (click)="onExportCSVClick()">
+        Export to CSV
+      </button>
+    }
   </div>
 </div>

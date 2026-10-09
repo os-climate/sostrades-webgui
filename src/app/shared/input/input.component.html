@@ -1,20 +1,5 @@
 <mat-form-field floatLabel="never" style="margin-right: 10px">
-  <input
-    [id]="nodeData.identifier"
-    *ngIf="nodeData.type === 'float'; else nonFloatManagement"
-    matInput
-    [formControl]="inputFormControl"
-    [type]="nodeData.type"
-    [placeholder]="placeholder"
-    [errorStateMatcher]="matcher"
-    [ngModel]="nodeData.value"
-    (input)="onInputChange($event.target.value)"
-    [attr.disabled]="nodeData.editable"
-    style="text-align: right"
-    (focus)="$event.target.select()"
-    (blur)="onBlur()"
-  />
-  <ng-template #nonFloatManagement>
+  @if (nodeData.type === 'float') {
     <input
       [id]="nodeData.identifier"
       matInput
@@ -28,26 +13,46 @@
       style="text-align: right"
       (focus)="$event.target.select()"
       (blur)="onBlur()"
-    />
-  </ng-template>
+      />
+  } @else {
+    <input
+      [id]="nodeData.identifier"
+      matInput
+      [formControl]="inputFormControl"
+      [type]="nodeData.type"
+      [placeholder]="placeholder"
+      [errorStateMatcher]="matcher"
+      [ngModel]="nodeData.value"
+      (input)="onInputChange($event.target.value)"
+      [attr.disabled]="nodeData.editable"
+      style="text-align: right"
+      (focus)="$event.target.select()"
+      (blur)="onBlur()"
+      />
+    }
 
-  <mat-error *ngIf="inputFormControl.hasError('required')">
-    Field is <strong>required</strong>
-  </mat-error>
-  <mat-error
-    *ngIf="inputFormControl.hasError('pattern') && nodeData.type === 'float'"
-  >
-    Field must be a <strong>float</strong>
-  </mat-error>
-  <mat-error
-    *ngIf="inputFormControl.hasError('pattern') && nodeData.type === 'int'"
-  >
-    Field must be a <strong>int</strong>
-  </mat-error>
-  <mat-error
-    *ngIf="inputFormControl.hasError('min') || inputFormControl.hasError('max')"
-  >
-    Field must be in the
-    <strong>range [{{ nodeData.range[0] }},{{ nodeData.range[1] }}] </strong>
-  </mat-error>
-</mat-form-field>
+    @if (inputFormControl.hasError('required')) {
+      <mat-error>
+        Field is <strong>required</strong>
+      </mat-error>
+    }
+    @if (inputFormControl.hasError('pattern') && nodeData.type === 'float') {
+      <mat-error
+        >
+        Field must be a <strong>float</strong>
+      </mat-error>
+    }
+    @if (inputFormControl.hasError('pattern') && nodeData.type === 'int') {
+      <mat-error
+        >
+        Field must be a <strong>int</strong>
+      </mat-error>
+    }
+    @if (inputFormControl.hasError('min') || inputFormControl.hasError('max')) {
+      <mat-error
+        >
+        Field must be in the
+        <strong>range [{{ nodeData.range[0] }},{{ nodeData.range[1] }}] </strong>
+      </mat-error>
+    }
+  </mat-form-field>

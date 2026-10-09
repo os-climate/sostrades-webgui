@@ -2,26 +2,30 @@
   class="chip-list mat-chip-list-stacked"
   [multiple]="false"
   [selectable]="true"
->
-  <mat-chip-option
-    *ngFor="let viz of visualisationsAvailable"
-    [selected]="viz.selected"
-    (click)="onChipClick(viz.name)"
-    color="primary"
-    >{{ viz.name }}</mat-chip-option
   >
-</mat-chip-listbox>
-<div class="flex-container">
-  <app-visualisation-interface-diagram
-    *ngIf="showInterfaceDiagramContent"
-    style="margin-top: 50px; height: 100%; width: 100%"
-  ></app-visualisation-interface-diagram>
-  <app-visualisation-coupling-graph
-    *ngIf="showCouplingGraphContent"
-    style="margin-top: 50px;  height: 100%; width: 100%"
-  ></app-visualisation-coupling-graph>
-  <app-visualisation-execution-sequence
-    *ngIf="showExecutionSequenceContent"
-    style="margin-top: 50px;  height: 100%; width: 100%"
-  ></app-visualisation-execution-sequence>
-</div>
+  @for (viz of visualisationsAvailable; track viz) {
+    <mat-chip-option
+      [selected]="viz.selected"
+      (click)="onChipClick(viz.name)"
+      color="primary"
+      >{{ viz.name }}</mat-chip-option
+      >
+    }
+  </mat-chip-listbox>
+  <div class="flex-container">
+    @if (showInterfaceDiagramContent) {
+      <app-visualisation-interface-diagram
+        style="margin-top: 50px; height: 100%; width: 100%"
+      ></app-visualisation-interface-diagram>
+    }
+    @if (showCouplingGraphContent) {
+      <app-visualisation-coupling-graph
+        style="margin-top: 50px;  height: 100%; width: 100%"
+      ></app-visualisation-coupling-graph>
+    }
+    @if (showExecutionSequenceContent) {
+      <app-visualisation-execution-sequence
+        style="margin-top: 50px;  height: 100%; width: 100%"
+      ></app-visualisation-execution-sequence>
+    }
+  </div>

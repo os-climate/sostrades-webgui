@@ -10,19 +10,21 @@
       [(ngModel)]="selectedColumn"
       (selectionChange)="onColumnChange()"
       [matTooltip]="selectedColumn"
-    >
-      <mat-option *ngFor="let entry of columnsFilter | keyvalue" [value]="entry.key" style='text-transform: capitalize;'>
-        {{ entry.value }}
-      </mat-option>
-  </mat-select>
+      >
+      @for (entry of columnsFilter | keyvalue; track entry) {
+        <mat-option [value]="entry.key" style='text-transform: capitalize;'>
+          {{ entry.value }}
+        </mat-option>
+      }
+    </mat-select>
   </mat-form-field>
-    
+
   <mat-form-field id="search-filter">
     <input
       matInput
       (input)="onSearch($event.target.value)"
       placeholder="Filter"
       [(ngModel)]="filterValue"
-    />
-  </mat-form-field>
-</div>
+      />
+    </mat-form-field>
+  </div>

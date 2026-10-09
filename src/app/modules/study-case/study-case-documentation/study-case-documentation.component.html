@@ -1,90 +1,140 @@
-<div class="container-dialog" *ngIf="loading">
-  <app-progress-bar
-    progressMode="indeterminate"
-    [progressText]="'Loading documentation'"
-  ></app-progress-bar>
-</div>
-<div *ngIf="!loading">
-  <div *ngIf="hasDocumentation; else missingDocumentationMessage" style="height: 100%;background-color: #525659;">
-    <as-split unit="pixel" direction="horizontal" *ngIf="showBookmarks; else onlyDocumentation">
-      <as-split-area
-          size="250"
-          #area1="asSplitArea"
-          [order]="0"
-          style="background-color: white;"
-        >
-        <div class="bookmarks">
-          <h1 class="bookmarks-title">Bookmarks</h1>
-          <hr>
-          <ul>
-            <li *ngFor="let documentItem of documentation">
-                <a href="#{{documentItem.name}}" (click)="onClick($event, documentItem.name)">{{documentItem.name | ontologyDisciplineConverter}}</a>
-            </li>
-          </ul>
-        </div>
-      </as-split-area>
-      <as-split-area size="*" #area1="asSplitArea" [order]="1">
-        <ng-container *ngTemplateOutlet="onlyDocumentation">
-        </ng-container>
-      </as-split-area>
-    </as-split>
-    <ng-template #onlyDocumentation>
-      <div class="markdown-body markdown-container" >
-        <div *ngFor="let documentItem of documentation" >
-          <div id="button-pdf-refresh">
-            <span
-              id="refresh"
-              mat-raised-button
-              style="text-align: right;"
-              [matTooltip]="canUpdate?'Reload markdown from file system': 'No reload possible in read only mode'"
-              (click)="canUpdate && refresh()"
-              [class.disabled]="!canUpdate">
-              <i class="fa-solid fa-rotate fa-fw" [class.cursor-pointer]="canUpdate"></i>
-            </span>
-            <span
-              id="download-pdf"
-              mat-raised-button
-              matTooltip="Download markdown into pdf format"
-              (click)="generatePDF(documentItem.name)">
-              <i class="fa-solid fa-file-arrow-down cursor-pointer"></i>
-            </span>
-          </div>
-          <div class="markdown" id="markdown">
-            
-            <h1 id="{{documentItem.name}}" style="text-align: center;">
-              {{documentItem.name | ontologyDisciplineConverter }}
-            </h1>
-            <markdown
-              [id]="'markdown-'+ documentItem.name"
-              katex
-              [katexOptions]="options"
-              mermaid
-              [data]="documentItem.documentation">
-            </markdown>
-          </div>
-        </div>
-      </div>
-    </ng-template>
+@if (loading) {
+  <div class="container-dialog">
+    <app-progress-bar
+      progressMode="indeterminate"
+      [progressText]="'Loading documentation'"
+    ></app-progress-bar>
   </div>
-  <ng-template #missingDocumentationMessage>
-    <div style="padding: 5px">
-      <div class="missing-documentation">
-        <div style="font-size: 12px; line-height: unset">
-          <span>This discipline has no documentation provided from ontology yet.</span>
-          <br>
-          <span
-              [class.cursor-pointer]="canUpdate"
-              [class.disabled]="!canUpdate"
-              mat-raised-button
-              [matTooltip]="canUpdate?'Reload markdown from file system':'Switch to edition mode to reload markdown'"
-              (click)="canUpdate && refresh()">
-              <span *ngIf="canUpdate">You can reload this markdown from file system if existing</span>
-              <span *ngIf="!canUpdate">No reload available</span>
-              <i class="fa-solid fa-rotate fa-fw "></i>
-          </span>
-          
+}
+@if (!loading) {
+  <div>
+    @if (hasDocumentation) {
+      <div style="height: 100%;background-color: #525659;">
+        @if (showBookmarks) {
+          <as-split unit="pixel" direction="horizontal">
+            <as-split-area
+              size="250"
+              #area1="asSplitArea"
+              [order]="0"
+              style="background-color: white;"
+              >
+              <div class="bookmarks">
+                <h1 class="bookmarks-title">Bookmarks</h1>
+                <hr>
+                  <ul>
+                    @for (documentItem of documentation; track documentItem) {
+                      <li>
+                        <a href="#{{documentItem.name}}" (click)="onClick($event, documentItem.name)">{{documentItem.name | ontologyDisciplineConverter}}</a>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              </as-split-area>
+              <as-split-area size="*" #area1="asSplitArea" [order]="1">
+                <ng-container *ngTemplateOutlet="onlyDocumentation">
+                </ng-container>
+              </as-split-area>
+            </as-split>
+          } @else {
+            <div class="markdown-body markdown-container" >
+              @for (documentItem of documentation; track documentItem) {
+                <div >
+                  <div id="button-pdf-refresh">
+                    <span
+                      id="refresh"
+                      mat-raised-button
+                      style="text-align: right;"
+                      [matTooltip]="canUpdate?'Reload markdown from file system': 'No reload possible in read only mode'"
+                      (click)="canUpdate && refresh()"
+                      [class.disabled]="!canUpdate">
+                      <i class="fa-solid fa-rotate fa-fw" [class.cursor-pointer]="canUpdate"></i>
+                    </span>
+                    <span
+                      id="download-pdf"
+                      mat-raised-button
+                      matTooltip="Download markdown into pdf format"
+                      (click)="generatePDF(documentItem.name)">
+                      <i class="fa-solid fa-file-arrow-down cursor-pointer"></i>
+                    </span>
+                  </div>
+                  <div class="markdown" id="markdown">
+                    <h1 id="{{documentItem.name}}" style="text-align: center;">
+                      {{documentItem.name | ontologyDisciplineConverter }}
+                    </h1>
+                    <markdown
+                      [id]="'markdown-'+ documentItem.name"
+                      katex
+                      [katexOptions]="options"
+                      mermaid
+                      [data]="documentItem.documentation">
+                    </markdown>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          <ng-template #onlyDocumentation>
+            <div class="markdown-body markdown-container" >
+              @for (documentItem of documentation; track documentItem) {
+                <div >
+                  <div id="button-pdf-refresh">
+                    <span
+                      id="refresh"
+                      mat-raised-button
+                      style="text-align: right;"
+                      [matTooltip]="canUpdate?'Reload markdown from file system': 'No reload possible in read only mode'"
+                      (click)="canUpdate && refresh()"
+                      [class.disabled]="!canUpdate">
+                      <i class="fa-solid fa-rotate fa-fw" [class.cursor-pointer]="canUpdate"></i>
+                    </span>
+                    <span
+                      id="download-pdf"
+                      mat-raised-button
+                      matTooltip="Download markdown into pdf format"
+                      (click)="generatePDF(documentItem.name)">
+                      <i class="fa-solid fa-file-arrow-down cursor-pointer"></i>
+                    </span>
+                  </div>
+                  <div class="markdown" id="markdown">
+                    <h1 id="{{documentItem.name}}" style="text-align: center;">
+                      {{documentItem.name | ontologyDisciplineConverter }}
+                    </h1>
+                    <markdown
+                      [id]="'markdown-'+ documentItem.name"
+                      katex
+                      [katexOptions]="options"
+                      mermaid
+                      [data]="documentItem.documentation">
+                    </markdown>
+                  </div>
+                </div>
+              }
+            </div>
+          </ng-template>
         </div>
+      } @else {
+        <div style="padding: 5px">
+          <div class="missing-documentation">
+            <div style="font-size: 12px; line-height: unset">
+              <span>This discipline has no documentation provided from ontology yet.</span>
+              <br>
+                <span
+                  [class.cursor-pointer]="canUpdate"
+                  [class.disabled]="!canUpdate"
+                  mat-raised-button
+                  [matTooltip]="canUpdate?'Reload markdown from file system':'Switch to edition mode to reload markdown'"
+                  (click)="canUpdate && refresh()">
+                  @if (canUpdate) {
+                    <span>You can reload this markdown from file system if existing</span>
+                  }
+                  @if (!canUpdate) {
+                    <span>No reload available</span>
+                  }
+                  <i class="fa-solid fa-rotate fa-fw "></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        }
       </div>
-    </div>
-  </ng-template>
-</div>
+    }

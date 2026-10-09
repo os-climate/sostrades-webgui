@@ -1,97 +1,112 @@
-<div class="flex-container" *ngIf="isLoading">
-  <app-progress-bar
-    class="container-dialog"
-    *ngIf="isLoading"
-    progressMode="indeterminate"
-    progressText="Loading form information"
-  ></app-progress-bar>
-</div>
+@if (isLoading) {
+  <div class="flex-container">
+    @if (isLoading) {
+      <app-progress-bar
+        class="container-dialog"
+        progressMode="indeterminate"
+        progressText="Loading form information"
+      ></app-progress-bar>
+    }
+  </div>
+}
 
-<div class="flex-container" *ngIf="!isLoading">
-  <h1 mat-dialog-title>{{ parameterName }}</h1>
-  <div class="container-text">
-    <div class="text-title text-fixed-width">Current value</div>
-    <div
-      class="button-current-value"
-      *ngIf="data.nodeData.widgetType === 'fileSpreadsheet'"
-    >
-      <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
-      <div [matTooltip]="data.nodeData.isBig? 'The data is too big to be displayed, it can still be downloaded': ''">
-        <button
-          [id]="'show-button-' + data.nodeData.identifier"
-          mat-raised-button
-          style="line-height: 24px"
-          color="primary"
-          aria-label="Show data"
-          matTooltip="Show data"
-          [disabled]="data.nodeData.value === null || data.nodeData.isBig"
-          (click)="onShowCsvCurrentValue()"
-        >
-          Show
-          <!-- Add warning icon if Show is disabled because value is too big -->
-          <i style="color: red;" class="fa-solid fa-circle-info" *ngIf="data.nodeData.isBig"></i>
-        </button>
+@if (!isLoading) {
+  <div class="flex-container">
+    <h1 mat-dialog-title>{{ parameterName }}</h1>
+    <div class="container-text">
+      <div class="text-title text-fixed-width">Current value</div>
+      @if (data.nodeData.widgetType === 'fileSpreadsheet') {
+        <div
+          class="button-current-value"
+          >
+          <!-- Add a tooltip to explain why the show button is not clickable if the data is too big-->
+          <div [matTooltip]="data.nodeData.isBig? 'The data is too big to be displayed, it can still be downloaded': ''">
+            <button
+              [id]="'show-button-' + data.nodeData.identifier"
+              mat-raised-button
+              style="line-height: 24px"
+              color="primary"
+              aria-label="Show data"
+              matTooltip="Show data"
+              [disabled]="data.nodeData.value === null || data.nodeData.isBig"
+              (click)="onShowCsvCurrentValue()"
+              >
+              Show
+              <!-- Add warning icon if Show is disabled because value is too big -->
+              @if (data.nodeData.isBig) {
+                <i style="color: red;" class="fa-solid fa-circle-info"></i>
+              }
+            </button>
+          </div>
+        </div>
+      }
+      @if (data.nodeData.widgetType !== 'fileSpreadsheet') {
+        <div
+          class="text-zone"
+          [matTooltip]="data.nodeData.value"
+          matTooltipClass="custom-tooltip-class"
+          >
+          {{ data.nodeData.value }}
+        </div>
+      }
+    </div>
+    @if (data.nodeData.hasConnectorData) {
+      <div class="container-text">
+        <div class="text-title">This Current value comes from a connector</div>
+        @if (!isEditableOnAnotherNode) {
+          <div class="button-current-value">
+            <button
+              mat-raised-button
+              style="line-height: 24px"
+              color="primary"
+              aria-label="Edit connector data"
+              matTooltip="Edit connector data"
+              (click)="onShowConnectorData()"
+              >
+              Edit connector data
+            </button>
+          </div>
+        }
       </div>
-    </div>
-    <div
-      class="text-zone"
-      *ngIf="data.nodeData.widgetType !== 'fileSpreadsheet'"
-      [matTooltip]="data.nodeData.value"
-      matTooltipClass="custom-tooltip-class"
-    >
-      {{ data.nodeData.value }}
-    </div>
-  </div>
-  <div *ngIf="data.nodeData.hasConnectorData" class="container-text">
-    <div class="text-title">This Current value comes from a connector</div>
-    <div *ngIf="!isEditableOnAnotherNode" class="button-current-value">
-      <button
-        mat-raised-button
-        style="line-height: 24px"
-        color="primary"
-        aria-label="Edit connector data"
-        matTooltip="Edit connector data"
-        (click)="onShowConnectorData()"
-      >
-        Edit connector data
-      </button>
-    </div>
-  </div>
-  <div
-    *ngIf="
+    }
+    @if (
       data.nodeData.ioType !== iotype.OUT && data.nodeData.editable === false
-    "
-    class="container-text"
-    style="height: unset !important; margin-top: 5px"
-  >
-    <div style="display: flex; align-items: center; padding: 10px">
-      <div style="font-weight: 550" class="text-fixed-width">Edit variable</div>
-      <div class="button-current-value" style="margin-right: 10px">
-        <button
-          mat-raised-button
-          style="line-height: 24px"
-          color="primary"
-          aria-label="Go to edition widget"
-          matTooltip="Go to edition widget"
-          [disabled]="!isEditableOnAnotherNode"
-          (click)="goToEditableWidget()"
-        >
-          <span *ngIf="isEditableOnAnotherNode"> Go to edition widget </span>
-          <span *ngIf="!isEditableOnAnotherNode">
-            No edition widget found
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <div
-      *ngIf="isEditableOnAnotherNode"
-      style="display: flex; align-items: center; padding: 10px; overflow: auto"
-    >
-      <div style="font-weight: 550" class="text-fixed-width">
-        Edition Namespace
-      </div>
+      ) {
       <div
+        class="container-text"
+        style="height: unset !important; margin-top: 5px"
+        >
+        <div style="display: flex; align-items: center; padding: 10px">
+          <div style="font-weight: 550" class="text-fixed-width">Edit variable</div>
+          <div class="button-current-value" style="margin-right: 10px">
+            <button
+              mat-raised-button
+              style="line-height: 24px"
+              color="primary"
+              aria-label="Go to edition widget"
+              matTooltip="Go to edition widget"
+              [disabled]="!isEditableOnAnotherNode"
+              (click)="goToEditableWidget()"
+              >
+              @if (isEditableOnAnotherNode) {
+                <span> Go to edition widget </span>
+              }
+              @if (!isEditableOnAnotherNode) {
+                <span>
+                  No edition widget found
+                </span>
+              }
+            </button>
+          </div>
+        </div>
+        @if (isEditableOnAnotherNode) {
+          <div
+            style="display: flex; align-items: center; padding: 10px; overflow: auto"
+            >
+            <div style="font-weight: 550" class="text-fixed-width">
+              Edition Namespace
+            </div>
+            <div
         style="
           border-radius: 7px;
           padding: 10px;
@@ -99,190 +114,199 @@
           overflow: auto;
           white-space: nowrap;
         "
-        [matTooltip]="originNamespace"
-        matTooltipClass="custom-tooltip-class"
-      >
-        {{ originNamespace }}
+              [matTooltip]="originNamespace"
+              matTooltipClass="custom-tooltip-class"
+              >
+              {{ originNamespace }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+    <div class="container-text" style="height: unset !important; margin-top: 5px">
+      <div class="text-title text-fixed-width">Discipline Origin(s)</div>
+      <div class="text-zone" matTooltipClass="custom-tooltip-class">
+        @for (disc of originDisciplines; track disc) {
+          <div>
+            {{ disc.modelNameFullPath | ontologyDisciplineConverter }}
+          </div>
+        }
       </div>
     </div>
-  </div>
-
-  <div class="container-text" style="height: unset !important; margin-top: 5px">
-    <div class="text-title text-fixed-width">Discipline Origin(s)</div>
-
-    <div class="text-zone" matTooltipClass="custom-tooltip-class">
-      <div *ngFor="let disc of originDisciplines">
-        {{ disc.modelNameFullPath | ontologyDisciplineConverter }} 
-      </div>
-    </div>
-  </div>
-
-  <mat-tab-group class="container-workspace">
-    <mat-tab label="Information">
-      <div
+    <mat-tab-group class="container-workspace">
+      <mat-tab label="Information">
+        <div
         style="
           height: 100%;
           width: 100%;
           padding: 5px;
           background-color: #f9f9f9;
         "
-      >
-        <table style="width: 100%; background-color: white">
-          <ng-container *ngFor="let attr of infoList">
-            <tr style="border-bottom: 1px solid lightgray">
-              <td
+          >
+          <table style="width: 100%; background-color: white">
+            @for (attr of infoList; track attr) {
+              <tr style="border-bottom: 1px solid lightgray">
+                <td
                 style="
                   width: 150px !important;
                   min-width: 150px;
                   font-weight: 500;
                   font-family: Roboto, 'Helvetica Neue', sans-serif;
                 "
-              >
-                {{ attr[0] }} :
-              </td>
-              <td
+                  >
+                  {{ attr[0] }} :
+                </td>
+                <td
                 style="
                   width: calc(100% - 150px);
                   font-family: Roboto, 'Helvetica Neue', sans-serif;
                   word-wrap: break-word;
                 "
-              >
-              <i class="fa-solid fa-check fa-fw mat-icon-success" *ngIf="attr[1] === 'True'"></i>
-              <i class="fa-solid fa-xmark fa-fw mat-icon-danger" *ngIf="attr[1] === 'False'"></i>
-              <span   *ngIf="attr[1] !== 'True' && attr[1] !== 'False'"> {{ attr[1] }}</span>
-              </td>
-            </tr>
-          </ng-container>
-        </table>
-      </div>
-    </mat-tab>
-    <mat-tab label="Change history">
-      <div
+                  >
+                  @if (attr[1] === 'True') {
+                    <i class="fa-solid fa-check fa-fw mat-icon-success"></i>
+                  }
+                  @if (attr[1] === 'False') {
+                    <i class="fa-solid fa-xmark fa-fw mat-icon-danger"></i>
+                  }
+                  @if (attr[1] !== 'True' && attr[1] !== 'False') {
+                    <span  > {{ attr[1] }}</span>
+                  }
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="Change history">
+        <div
         style="
           height: 100%;
           width: 100%;
           background-color: #f9f9f9;
           overflow: auto;
         "
-      >
-        <table mat-table #table [dataSource]="dataSourceChanges" matSort>
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Parameter name
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.variableId }}
-            </td>
-          </ng-container>
-
-          <!-- Old value Column -->
-          <ng-container matColumnDef="oldValue">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Old value</th>
-            <td mat-cell *matCellDef="let element">
-              <div *ngIf="element.changeType === 'csv'">
-                <button
-                  [id]="'show-button-' + data.nodeData.identifier"
-                  *ngIf="element.oldValueBlob === true"
-                  mat-raised-button
-                  style="line-height: 24px"
-                  color="primary"
-                  aria-label="Show data"
-                  matTooltip="Show data"
-                  (click)="onShowCsvChange(element)"
-                >
-                  Show
-                </button>
-                <div
-                  *ngIf="element.oldValueBlob === false"
-                  style="line-height: 24px; padding-left: 10px"
-                >
-                  No value or Data is too big to be displayed
-                </div>
-              </div>
-              <div *ngIf="element.changeType === 'scalar' || element.changeType === 'dataset_mapping'">
-                {{ element.oldValue }}
-              </div>
-              <div *ngIf="element.changeType === 'connector_data'">
-                <button
-                  [id]="'show-button-' + data.nodeData.identifier"
-                  mat-raised-button
-                  style="line-height: 24px"
-                  color="primary"
-                  aria-label="Show data"
-                  matTooltip="Show data"
-                  (click)="onShowConnectorChange(element)"
-                >
-                  Show
-                </button>
-              </div>
-            </td>
-          </ng-container>
-        <!-- Dataset Connector Id Column -->
-          <ng-container matColumnDef="datasetConnectorId">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Dataset Connector ID</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.datasetConnectorId }}
-            </td>
+          >
+          <table mat-table #table [dataSource]="dataSourceChanges" matSort>
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Parameter name
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.variableId }}
+              </td>
             </ng-container>
-
-        <!-- Dataset Connector Id Column -->
-          <ng-container matColumnDef="datasetId">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Dataset ID</th>
-            <td mat-cell *matCellDef="let element">
+            <!-- Old value Column -->
+            <ng-container matColumnDef="oldValue">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Old value</th>
+              <td mat-cell *matCellDef="let element">
+                @if (element.changeType === 'csv') {
+                  <div>
+                    @if (element.oldValueBlob === true) {
+                      <button
+                        [id]="'show-button-' + data.nodeData.identifier"
+                        mat-raised-button
+                        style="line-height: 24px"
+                        color="primary"
+                        aria-label="Show data"
+                        matTooltip="Show data"
+                        (click)="onShowCsvChange(element)"
+                        >
+                        Show
+                      </button>
+                    }
+                    @if (element.oldValueBlob === false) {
+                      <div
+                        style="line-height: 24px; padding-left: 10px"
+                        >
+                        No value or Data is too big to be displayed
+                      </div>
+                    }
+                  </div>
+                }
+                @if (element.changeType === 'scalar' || element.changeType === 'dataset_mapping') {
+                  <div>
+                    {{ element.oldValue }}
+                  </div>
+                }
+                @if (element.changeType === 'connector_data') {
+                  <div>
+                    <button
+                      [id]="'show-button-' + data.nodeData.identifier"
+                      mat-raised-button
+                      style="line-height: 24px"
+                      color="primary"
+                      aria-label="Show data"
+                      matTooltip="Show data"
+                      (click)="onShowConnectorChange(element)"
+                      >
+                      Show
+                    </button>
+                  </div>
+                }
+              </td>
+            </ng-container>
+            <!-- Dataset Connector Id Column -->
+            <ng-container matColumnDef="datasetConnectorId">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Dataset Connector ID</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.datasetConnectorId }}
+              </td>
+            </ng-container>
+            <!-- Dataset Connector Id Column -->
+            <ng-container matColumnDef="datasetId">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Dataset ID</th>
+              <td mat-cell *matCellDef="let element">
                 {{ element.datasetId }}
-            </td>
-          </ng-container>
-
-          <!-- Author Column -->
-          <ng-container matColumnDef="author">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.author }}
-            </td>
-          </ng-container>
-
-          <!-- date Column -->
-          <ng-container matColumnDef="lastModified">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.lastModified | date: "short" }}
-            </td>
-          </ng-container>
-
-          <!-- revert Column -->
-          <ng-container matColumnDef="revert">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Revert to old value
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <button
-                mat-icon-button
-                color="primary"
-                matTooltip="Revert to old value"
-                (click)="revertChanges(element)"
+              </td>
+            </ng-container>
+            <!-- Author Column -->
+            <ng-container matColumnDef="author">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.author }}
+              </td>
+            </ng-container>
+            <!-- date Column -->
+            <ng-container matColumnDef="lastModified">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.lastModified | date: "short" }}
+              </td>
+            </ng-container>
+            <!-- revert Column -->
+            <ng-container matColumnDef="revert">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Revert to old value
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  matTooltip="Revert to old value"
+                  (click)="revertChanges(element)"
                 [disabled]="
                   element.oldValue === data.nodeData.value ||
                   (element.changeType === 'csv' &&
                     element.oldValueBlob === false)
                 "
-              >
-                <i class="fa fa-history fa-fw"> </i>
-              </button>
-            </td>
-          </ng-container>
-
-          <tr
-            mat-header-row
-            *matHeaderRowDef="displayedColumns; sticky: true"
-          ></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-
-  <mat-dialog-actions>
-    <button mat-button (click)="okClick()">Ok</button>
-  </mat-dialog-actions>
-</div>
+                  >
+                  <i class="fa fa-history fa-fw"> </i>
+                </button>
+              </td>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedColumns; sticky: true"
+            ></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+    <mat-dialog-actions>
+      <button mat-button (click)="okClick()">Ok</button>
+    </mat-dialog-actions>
+  </div>
+}

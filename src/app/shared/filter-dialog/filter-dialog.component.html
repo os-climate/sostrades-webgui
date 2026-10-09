@@ -1,69 +1,74 @@
 <div class="flex-container"  >
-    <div style="margin-bottom: 10px; margin-top: 10px;">
+  <div style="margin-bottom: 10px; margin-top: 10px;">
     <h1 style="text-align: center">
-        Filter by {{datas.columnName}}
+      Filter by {{datas.columnName}}
     </h1>
-    </div> 
+  </div>
+  <br>
     <br>
-    <br>
-    <div class="filter">        
+      <div class="filter">
         <mat-form-field style="width: 95%;">
-            <mat-select
-                id='selection'
-                [formControl]="researchMultiCtrl" 
-                [placeholder]="datas.possibleStringValues.length > 0 ? datas.possibleStringValues.length + ' Values': datas.possibleStringValues.lenght + ' Value'" 
-                (selectionChange)="onDataChange($event.value)"
-                [multiple]="true" 
-                #multiSelect 
-            > 
-                <mat-option>
-                    <ngx-mat-select-search
-                        [formControl]="researchFilteredMultiCtrl" 
-                        [showToggleAllCheckbox]="true"
-                        [toggleAllCheckboxIndeterminate]="isIndeterminate"
-                        [toggleAllCheckboxChecked]="isChecked"
-                        (toggleAll)="toggleSelectAll($event)"
-                        toggleAllCheckboxTooltipMessage='Select All/Unselect All'
-                        [toogleAllCheckboxTooltipPosition]="'above'"
-                        placeholderLabel="Find..."
-                        noEntriesFoundLabel="No matching process found"
-                    >
-                    </ngx-mat-select-search>
-                </mat-option>
-                <mat-option id="option" *ngFor="let data of filteredResearchMulti | async" [value]="data">
-                    <span style="font-size: 14px;">{{data}} </span>
-                </mat-option>
-            </mat-select>
+          <mat-select
+            id='selection'
+            [formControl]="researchMultiCtrl"
+            [placeholder]="datas.possibleStringValues.length > 0 ? datas.possibleStringValues.length + ' Values': datas.possibleStringValues.lenght + ' Value'"
+            (selectionChange)="onDataChange($event.value)"
+            [multiple]="true"
+            #multiSelect
+            >
+            <mat-option>
+              <ngx-mat-select-search
+                [formControl]="researchFilteredMultiCtrl"
+                [showToggleAllCheckbox]="true"
+                [toggleAllCheckboxIndeterminate]="isIndeterminate"
+                [toggleAllCheckboxChecked]="isChecked"
+                (toggleAll)="toggleSelectAll($event)"
+                toggleAllCheckboxTooltipMessage='Select All/Unselect All'
+                [toogleAllCheckboxTooltipPosition]="'above'"
+                placeholderLabel="Find..."
+                noEntriesFoundLabel="No matching process found"
+                >
+              </ngx-mat-select-search>
+            </mat-option>
+            @for (data of filteredResearchMulti | async; track data) {
+              <mat-option id="option" [value]="data">
+                <span style="font-size: 14px;">{{data}} </span>
+              </mat-option>
+            }
+          </mat-select>
         </mat-form-field>
-        <div *ngIf="researchMultiCtrl.value?.length > 0">
+        @if (researchMultiCtrl.value?.length > 0) {
+          <div>
             <h3>Selected Values ({{researchMultiCtrl.value?.length}}) :</h3>
-            
-        </div>
+          </div>
+        }
         <div class='list-selected'>
-            <ul *ngFor="let data of researchMultiCtrl?.value" >
-                <li class="list"> 
-                    <i class="fa-solid fa-check"></i> 
-                    {{data}}
-                </li>
+          @for (data of researchMultiCtrl?.value; track data) {
+            <ul >
+              <li class="list">
+                <i class="fa-solid fa-check"></i>
+                {{data}}
+              </li>
             </ul>
+          }
         </div>
-        
+
         <br>
-        <div id="saveOrCancel" class="d-flex justify-content-around">
+          <div id="saveOrCancel" class="d-flex justify-content-around">
             <button
-            id='cancel' 
-            mat-button 
-            (click)="cancelClick()"
-            >
-            Cancel
+              id='cancel'
+              mat-button
+              (click)="cancelClick()"
+              >
+              Cancel
             </button>
             <button
-            id='submit'
-            mat-button
-            (click)="submitForm()"              
-            >
-            Save
+              id='submit'
+              mat-button
+              (click)="submitForm()"
+              >
+              Save
             </button>
+          </div>
         </div>
-    </div>
-</div>
+      </div>

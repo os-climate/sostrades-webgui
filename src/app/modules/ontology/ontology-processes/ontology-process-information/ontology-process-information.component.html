@@ -1,72 +1,76 @@
 <div style="margin: 5px;">
-    <h2 mat-dialog-title style="text-align: center;">
-          <b>{{ data.process.processName }}</b>
-      </h2>
-    <div>
-        <table style="width: 100%; background-color: white; ">
-            <ng-container *ngFor="let attr of processDatas">
-              <tr style="border-bottom: 1px solid lightgray">
-                <td
+  <h2 mat-dialog-title style="text-align: center;">
+    <b>{{ data.process.processName }}</b>
+  </h2>
+  <div>
+    <table style="width: 100%; background-color: white; ">
+      @for (attr of processDatas; track attr) {
+        <tr style="border-bottom: 1px solid lightgray">
+          <td
                   style="
                     width: 200px;
                     font-weight: 500;
                     font-family: Roboto, 'Helvetica Neue', sans-serif;
                     vertical-align: top;
                   "
-                >
-                  {{ attr[0] }} :
-                </td>
-                <td
+            >
+            {{ attr[0] }} :
+          </td>
+          <td
                   style="
                     width: calc(100% - 150px);
                     font-size: 12px;
                     overflow-wrap: anywhere;
                   "
+            >
+            {{ attr[1] }}
+            @if (attr[1] === '' || attr[1] === null || attr[1] === undefined) {
+              <span
+                style="font-size: 12px;"
                 >
-                  {{ attr[1] }}
-                  <span
-                  *ngIf="attr[1] === '' || attr[1] === null || attr[1] === undefined"
-                  style="font-size: 12px;"
-                  >
-                  Not Avalaible
-                  </span>
-                </td>
-              </tr>
+                Not Avalaible
+              </span>
+            }
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
 
-            </ng-container>
-          </table>
-    </div>
-
-    <div *ngIf=" data.process.disciplineList !== null && data.process.disciplineList !== undefined && data.process.disciplineList.length > 0">
+  @if ( data.process.disciplineList !== null && data.process.disciplineList !== undefined && data.process.disciplineList.length > 0) {
+    <div>
       <mat-accordion [ngClass]="!panelModelsOpenState ? 'mat-accordion' : ''">
         <mat-expansion-panel id='model' (opened)="panelModelsOpenState = true" (closed)="panelModelsOpenState = false">
           <mat-expansion-panel-header>
             <span>
-              {{data.process.quantityDisciplinesUsed}} Model<span *ngIf="data.process.quantityDisciplinesUsed > 1" >s</span> used by process :
+              {{data.process.quantityDisciplinesUsed}} Model@if (data.process.quantityDisciplinesUsed > 1) {
+              <span >s</span>
+              } used by process :
             </span>
           </mat-expansion-panel-header>
           <div class="panel-open">
             <table mat-table [dataSource]="dataSourceModelsUsingByProcess" matSort class="table table-sm table-borderless">
               <ng-container  matColumnDef='disciplineList'>
-                <th mat-header-cell *matHeaderCellDef>Model<span *ngIf="data.process.quantityDisciplinesUsed > 1" >s</span></th>
+                <th mat-header-cell *matHeaderCellDef>Model@if (data.process.quantityDisciplinesUsed > 1) {
+                  <span >s</span>
+                }</th>
                 <td
-                mat-cell
-                *matCellDef="let element"
-                matTooltipClass="custom-tooltip-class"
-                style="word-wrap: break-word;"
-                >
-                  <i [class]="element.icon"></i>  
+                  mat-cell
+                  *matCellDef="let element"
+                  matTooltipClass="custom-tooltip-class"
+                  style="word-wrap: break-word;"
+                  >
+                  <i [class]="element.icon"></i>
                   <span [matTooltip]="element.id" matTooltipPosition="right"> {{ element.label }}</span>
                 </td>
               </ng-container>
-  
               <ng-container  matColumnDef='goToModel'>
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td
                   id="column-go-to-model"
                   mat-cell
                   *matCellDef="let element"
-                >
+                  >
                   <button
                     mat-button
                     [id]="'go-to-'+ element.label"
@@ -75,28 +79,32 @@
                     [matTooltip]="element.label + ' information\'s'"
                     matTooltipPosition="left"
                     (click)="goToModelsStatus(element.label)"
-                  >
+                    >
                     <i class="fa-solid fa-circle-arrow-right"></i>
                   </button>
                 </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="modelsUsingByProcessColumns; sticky: true"></tr>
               <tr
-              mat-row
-              class="table-row"
-              *matRowDef="let row; columns: modelsUsingByProcessColumns"
+                mat-row
+                class="table-row"
+                *matRowDef="let row; columns: modelsUsingByProcessColumns"
               ></tr>
-            </table> 
+            </table>
           </div>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
-    <div *ngIf=" data.process.associatedUsecases !== null && data.process.associatedUsecases !== undefined && data.process.associatedUsecases.length > 0">
+  }
+  @if ( data.process.associatedUsecases !== null && data.process.associatedUsecases !== undefined && data.process.associatedUsecases.length > 0) {
+    <div>
       <mat-accordion [ngClass]="!panelUsecaseOpenState ? 'mat-accordion' : ''">
         <mat-expansion-panel (opened)="panelUsecaseOpenState = true" (closed)="panelUsecaseOpenState = false">
           <mat-expansion-panel-header>
             <span>
-              {{data.process.associatedUsecases.length}} Associated usecase<span *ngIf="data.process.associatedUsecases.length > 1" >s</span> :
+              {{data.process.associatedUsecases.length}} Associated usecase@if (data.process.associatedUsecases.length > 1) {
+              <span >s</span>
+              } :
             </span>
           </mat-expansion-panel-header>
           <div class="panel-open">
@@ -104,12 +112,12 @@
               <ng-container  matColumnDef='name'>
                 <th mat-header-cell *matHeaderCellDef>Name</th>
                 <td
-                mat-cell
-                *matCellDef="let element"
-                matTooltipClass="custom-tooltip-class"
-                style="word-wrap: break-word;"
-                >
-                {{ element.name }}
+                  mat-cell
+                  *matCellDef="let element"
+                  matTooltipClass="custom-tooltip-class"
+                  style="word-wrap: break-word;"
+                  >
+                  {{ element.name }}
                 </td>
               </ng-container>
               <ng-container  matColumnDef='process'>
@@ -118,7 +126,7 @@
                   id="process"
                   mat-cell
                   *matCellDef="let element"
-                >{{element.process}}
+                  >{{element.process}}
                 </td>
               </ng-container>
               <ng-container  matColumnDef='repository'>
@@ -127,7 +135,7 @@
                   id="repository"
                   mat-cell
                   *matCellDef="let element"
-                >{{element.repository}}
+                  >{{element.repository}}
                 </td>
               </ng-container>
               <ng-container  matColumnDef='run_usecase'>
@@ -136,25 +144,26 @@
                   id="repository"
                   mat-cell
                   *matCellDef="let element"
-                >{{element.run_usecase}}
+                  >{{element.run_usecase}}
                 </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="associatedUsecaseColumn; sticky: true"></tr>
               <tr
-              mat-row
-              class="table-row"
-              *matRowDef="let row; columns: associatedUsecaseColumn"
+                mat-row
+                class="table-row"
+                *matRowDef="let row; columns: associatedUsecaseColumn"
               ></tr>
-            </table> 
+            </table>
           </div>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
-    <span style="font-weight: 500; font-family: Roboto, 'Helvetica Neue', sans-serif; vertical-align: top;">
-      Documentation : 
-    </span>
-    <app-study-case-documentation [identifiers]="[data.process.identifier]"></app-study-case-documentation>
-    <div style="text-align: center; margin: 10px 0;" >
-        <button mat-button (click)="closeDialog()">Ok</button>
-    </div>
+  }
+  <span style="font-weight: 500; font-family: Roboto, 'Helvetica Neue', sans-serif; vertical-align: top;">
+    Documentation :
+  </span>
+  <app-study-case-documentation [identifiers]="[data.process.identifier]"></app-study-case-documentation>
+  <div style="text-align: center; margin: 10px 0;" >
+    <button mat-button (click)="closeDialog()">Ok</button>
+  </div>
 </div>

@@ -22,9 +22,15 @@
       <ng-container matColumnDef="oldValue">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Server value</th>
         <td mat-cell *matCellDef="let element">
-          <div *ngIf="element.changeType=== 'csv'">CSV file</div>
-          <div *ngIf="element.changeType=== 'connector_data'">Connector data</div>
-          <div *ngIf="element.changeType === 'scalar'">{{ element.oldValue }}</div>
+          @if (element.changeType=== 'csv') {
+            <div>CSV file</div>
+          }
+          @if (element.changeType=== 'connector_data') {
+            <div>Connector data</div>
+          }
+          @if (element.changeType === 'scalar') {
+            <div>{{ element.oldValue }}</div>
+          }
         </td>
       </ng-container>
 
@@ -32,9 +38,15 @@
       <ng-container matColumnDef="newValue">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>New value</th>
         <td mat-cell *matCellDef="let element">
-          <div *ngIf="element.changeType === 'csv'">CSV file</div>
-          <div *ngIf="element.changeType=== 'connector_data'">Connector data</div>
-          <div *ngIf="element.changeType === 'scalar'">{{ element.newValue }}</div>
+          @if (element.changeType === 'csv') {
+            <div>CSV file</div>
+          }
+          @if (element.changeType=== 'connector_data') {
+            <div>Connector data</div>
+          }
+          @if (element.changeType === 'scalar') {
+            <div>{{ element.newValue }}</div>
+          }
         </td>
       </ng-container>
 
@@ -45,7 +57,7 @@
             (change)="$event ? allSelectedChange() : null"
             [checked]="selection.hasValue() && isAllSelected()"
             [indeterminate]="selection.hasValue() && !isAllSelected()"
-          >
+            >
           </mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let row">
@@ -53,7 +65,7 @@
             (click)="$event.stopPropagation()"
             (change)="$event ? singleRowSelectedChange(row) : null"
             [checked]="selection.isSelected(row)"
-          >
+            >
           </mat-checkbox>
         </td>
       </ng-container>

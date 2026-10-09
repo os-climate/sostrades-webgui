@@ -1,60 +1,68 @@
 <div class="news-component">
-    <div class="news-header d-flex justify-content-between" >
-        <div>
-            <div class="text-title" >
-                News
-            </div>
-        </div>
-        <div style="display: flex;">
-            <button 
-                mat-icon-button 
-                color="primary"
-                style="margin-top: -7px; margin-right: 10px;"  
-                matTooltip="Add a news" 
-                *ngIf="hasAccessToStudyManager"
-                (click)="onCreate()" >
-                <i class="fa-solid fa-square-plus fa-fw"></i>
-            </button>
-          
-            <mat-checkbox *ngIf="!isLoading && news.length > 1" (click)="clickToDisplayAllOrOneNew()">Show all news</mat-checkbox>
-        </div>
-    </div>  
-    <div class="news-body" *ngIf="!isLoading">
+  <div class="news-header d-flex justify-content-between" >
+    <div>
+      <div class="text-title" >
+        News
+      </div>
+    </div>
+    <div style="display: flex;">
+      @if (hasAccessToStudyManager) {
+        <button
+          mat-icon-button
+          color="primary"
+          style="margin-top: -7px; margin-right: 10px;"
+          matTooltip="Add a news"
+          (click)="onCreate()" >
+          <i class="fa-solid fa-square-plus fa-fw"></i>
+        </button>
+      }
 
-        <table class="table table-sm table-borderless">
-            <ng-container *ngFor="let news of newsFiltered" class="news">
-              <tr [ngClass]="hasAccessToStudyManager ? 'news-text-access-manager':'news-text-no-access-manager'">
-                <td>
-                    <div class='news'>
-                        <span>{{news.message}}</span>
-                        <br>
-                        <mat-hint style="font-size: 11px;">
-                            {{news.lastModificationDate}} 
-                        </mat-hint>
-                    </div>
+      @if (!isLoading && news.length > 1) {
+        <mat-checkbox (click)="clickToDisplayAllOrOneNew()">Show all news</mat-checkbox>
+      }
+    </div>
+  </div>
+  @if (!isLoading) {
+    <div class="news-body">
+      <table class="table table-sm table-borderless">
+        @for (news of newsFiltered; track news) {
+          <ng-container class="news">
+            <tr [ngClass]="hasAccessToStudyManager ? 'news-text-access-manager':'news-text-no-access-manager'">
+              <td>
+                <div class='news'>
+                  <span>{{news.message}}</span>
+                  <br>
+                    <mat-hint style="font-size: 11px;">
+                      {{news.lastModificationDate}}
+                    </mat-hint>
+                  </div>
                 </td>
-                <td *ngIf="hasAccessToStudyManager" class="icon-edit-delete">
-                    <button 
-                        mat-icon-button 
-                        color="primary" 
-                        matTooltip="edit message" 
-                        *ngIf="hasAccessToStudyManager"
+                @if (hasAccessToStudyManager) {
+                  <td class="icon-edit-delete">
+                    @if (hasAccessToStudyManager) {
+                      <button
+                        mat-icon-button
+                        color="primary"
+                        matTooltip="edit message"
                         (click)="onEdit(news)"  >
                         <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button 
-                        mat-icon-button 
-                        color="warn" 
-                        matTooltip="delete message" 
-                        *ngIf="hasAccessToStudyManager"
+                      </button>
+                    }
+                    @if (hasAccessToStudyManager) {
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        matTooltip="delete message"
                         (click)="onDelete(news)"  >
                         <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                      
-                </td>
+                      </button>
+                    }
+                  </td>
+                }
               </tr>
             </ng-container>
-          </table>
-    </div>
-</div>
-  
+          }
+        </table>
+      </div>
+    }
+  </div>

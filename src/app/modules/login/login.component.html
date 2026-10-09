@@ -1,175 +1,195 @@
-<div class="flex-container" *ngIf="showLogin">
-  <div style="display:flex">
-    <mat-card appearance="outlined" class="login-form" style="text-align: center; min-width: 360px ">
-      <mat-card-title style=" display:block"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
-        <div id="logos">
-  
-        <img *ngIf="environment.SOS_TRADES_LOGO_FIRST.PATH !== ''"
-        [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
-        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
-        class="logo-header"
-        >
-  
-        <img *ngIf="environment.SOS_TRADES_LOGO_SECOND.PATH !== ''"
-        [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
-        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
-        class="logo-header"
-        >   
-  
-        <img *ngIf="environment.SOS_TRADES_LOGO_THIRD.PATH !== ''"
-        [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
-        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
-        class="logo-header"
-        >
-  
-        <img *ngIf="environment.SOS_TRADES_LOGO_FOURTH.PATH !== ''"
-        [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
-        [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
-        class="logo-header"
-        >  
-      </div>
-      <br>
-        <p>SoSTrades {{ platform }}</p>
-      </mat-card-title>
-      <mat-card-content style="display: flex; flex-direction: column; margin-bottom: 20px;">
-        <div>
-          <h1 *ngIf="!loginWithCredential">Connect using</h1>
-        </div>
-        <div id="logos-box">
-          <div *ngIf="!loginWithCredential && showGitHubLogin"> 
-          
-            <div class="logos-information margin-bottom">
-              <div class="login-logos">
-                <span class="margin-bottom">Github Account
-                  <button
-                    mat-button
-                    color="accent"
-                  >
-                  <i class="fa-solid fa-circle-info information-icon cursor-pointer" (click)="openLoginInfos(logoPath.GITHUB_LOGO_PATH)"></i>
-                  </button>
-                </span>
-                <button 
-                  mat-raised-button 
-                  (click)="loginWithGithub()"
-                  id="github-account-button"
+@if (showLogin) {
+  <div class="flex-container">
+    <div style="display:flex">
+      <mat-card appearance="outlined" class="login-form" style="text-align: center; min-width: 360px ">
+        <mat-card-title style=" display:block"  [ngStyle]="{ 'background-color': environment.SOS_TRADES_HEADER_COLOR_HEX }">
+          <div id="logos">
+            @if (environment.SOS_TRADES_LOGO_FIRST.PATH !== '') {
+              <img
+                [src]="environment.SOS_TRADES_LOGO_FIRST.PATH"
+                [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FIRST.HEIGHT }"
+                class="logo-header"
                 >
-                  <img
-                  src="/assets/GitHub_Logo.png"
-                  width="80px"
-                  />
-                  <img
-                    [src]="logoPath.GITHUB_LOGO_PATH"
-                    aria-label="GitHub logo"
-                    style="width: 30px;"
-                  />
-                </button>
-              </div>
-            </div>
-            <a href="https://github.com/signup?source=login" target="_blank">Don't have a github account ?</a>
-              
-              <!-- <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="ssoUrl !== ''">
-                    <a href="{{ ssoUrl }}">
-                      <button mat-raised-button mat-button>
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        SAML SSO
-                      </button>
-                    </a>
-                  </div> -->
-              
-          </div>
-          <br *ngIf="!loginWithCredential">
-          <div *ngIf="!loginWithCredential && showGitHubLogin" class="or-bar">OR</div>
-          <div >
-            <div class="logos-information">
-              <div class="login-logos">
-                <span class="margin-bottom" *ngIf="!loginWithCredential">SoSTrades Developer Account
-                  <button
-                    mat-button
-                    color="accent"
-                  >
-                  <i *ngIf="!isLocalPlatform" class="fa-solid fa-circle-info information-icon cursor-pointer" (click)="openLoginInfos(logoPath.SOS_TRADES_LOGO_BLACK_PATH)"></i>
-                  </button>
-                </span>
-                  <i 
-                  *ngIf="loginWithCredential && showGitHubLogin"
-                  id='icon-login' 
-                  class="fa-solid fa-arrow-right-to-bracket"
-                  [style]="loginWithCredential ? 'transform: rotate(180deg)' : ''" 
-                  [matTooltip]="loginWithCredential ? 'Hide login with sostrades account' : ''" 
-                  (click)="displayLoginWithCredential()" 
-                  [ngStyle]="{ 'color': environment.SOS_TRADES_HEADER_COLOR_HEX }" >
-                  </i>
-                <button 
-                *ngIf="!loginWithCredential"
-                id="sostrades-account-button" 
-                mat-raised-button 
-                (click)="displayLoginWithCredential()" 
+            }
+            @if (environment.SOS_TRADES_LOGO_SECOND.PATH !== '') {
+              <img
+                [src]="environment.SOS_TRADES_LOGO_SECOND.PATH"
+                [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_SECOND.HEIGHT }"
+                class="logo-header"
                 >
-                  
-                  <img
-                  [src]="logoPath.SOS_TRADES_LOGO_BLACK_PATH"
-                  aria-label="Sostrades logo"
-                  style="width: 80px;"
-                  />
-                </button>
-              </div>   
-            </div>
+            }
+            @if (environment.SOS_TRADES_LOGO_THIRD.PATH !== '') {
+              <img
+                [src]="environment.SOS_TRADES_LOGO_THIRD.PATH"
+                [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_THIRD.HEIGHT }"
+                class="logo-header"
+                >
+            }
+            @if (environment.SOS_TRADES_LOGO_FOURTH.PATH !== '') {
+              <img
+                [src]="environment.SOS_TRADES_LOGO_FOURTH.PATH"
+                [ngStyle]="{ 'height': environment.SOS_TRADES_LOGO_FOURTH.HEIGHT }"
+                class="logo-header"
+                >
+            }
           </div>
-        </div>
-        <form *ngIf="loginWithCredential" [formGroup]="loginForm" (ngSubmit)="submit()">
           <br>
-          <p>
-            <mat-form-field>
-              <input
-                id="input-login-username"
-                type="text"
-                name="username"
-                matInput
-                placeholder="Username"
-                formControlName="username"
-                autocomplete
-              />
-            </mat-form-field>
-          </p>
-
-          <p>
-            <mat-form-field>
-              <input
-                id="input-login-password"
-                type="password"
-                name="password"
-                matInput
-                placeholder="Password"
-                formControlName="password"
-                autocomplete
-              />
-            </mat-form-field>
-          </p>
-
-          <p *ngIf="error" class="error">
-            {{ error }}
-          </p>
-
-          <div style="margin-top: -7.5px; margin-bottom: 20px">
-            <button
-              id="btn-login-log-in"
-              mat-raised-button
-              type="submit"
-              [disabled]="!loginForm.valid"
-              mat-button
-              aria-label="btn-login-log-in"
-            >
-              <span *ngIf="!loadingLogin">Login</span>
-              <mat-progress-spinner
-              *ngIf="loadingLogin"
-              diameter="40"
-              mode="indeterminate"
-              style="margin:0 auto; width: 40px; height: 40px;"
-            ></mat-progress-spinner>
-            </button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
+            <p>SoSTrades {{ platform }}</p>
+          </mat-card-title>
+          <mat-card-content style="display: flex; flex-direction: column; margin-bottom: 20px;">
+            <div>
+              @if (!loginWithCredential) {
+                <h1>Connect using</h1>
+              }
+            </div>
+            <div id="logos-box">
+              @if (!loginWithCredential && showGitHubLogin) {
+                <div>
+                  <div class="logos-information margin-bottom">
+                    <div class="login-logos">
+                      <span class="margin-bottom">Github Account
+                        <button
+                          mat-button
+                          color="accent"
+                          >
+                          <i class="fa-solid fa-circle-info information-icon cursor-pointer" (click)="openLoginInfos(logoPath.GITHUB_LOGO_PATH)"></i>
+                        </button>
+                      </span>
+                      <button
+                        mat-raised-button
+                        (click)="loginWithGithub()"
+                        id="github-account-button"
+                        >
+                        <img
+                          src="/assets/GitHub_Logo.png"
+                          width="80px"
+                          />
+                          <img
+                            [src]="logoPath.GITHUB_LOGO_PATH"
+                            aria-label="GitHub logo"
+                            style="width: 30px;"
+                            />
+                          </button>
+                        </div>
+                      </div>
+                      <a href="https://github.com/signup?source=login" target="_blank">Don't have a github account ?</a>
+                      <!-- <div style="margin-top: 30px; margin-bottom: 20px" *ngIf="ssoUrl !== ''">
+                      <a href="{{ ssoUrl }}">
+                        <button mat-raised-button mat-button>
+                          <i class="fa-solid fa-right-to-bracket"></i>
+                          SAML SSO
+                        </button>
+                      </a>
+                    </div> -->
+                  </div>
+                }
+                @if (!loginWithCredential) {
+                  <br>
+                  }
+                  @if (!loginWithCredential && showGitHubLogin) {
+                    <div class="or-bar">OR</div>
+                  }
+                  <div >
+                    <div class="logos-information">
+                      <div class="login-logos">
+                        @if (!loginWithCredential) {
+                          <span class="margin-bottom">SoSTrades Developer Account
+                            <button
+                              mat-button
+                              color="accent"
+                              >
+                              @if (!isLocalPlatform) {
+                                <i class="fa-solid fa-circle-info information-icon cursor-pointer" (click)="openLoginInfos(logoPath.SOS_TRADES_LOGO_BLACK_PATH)"></i>
+                              }
+                            </button>
+                          </span>
+                        }
+                        @if (loginWithCredential && showGitHubLogin) {
+                          <i
+                            id='icon-login'
+                            class="fa-solid fa-arrow-right-to-bracket"
+                            [style]="loginWithCredential ? 'transform: rotate(180deg)' : ''"
+                            [matTooltip]="loginWithCredential ? 'Hide login with sostrades account' : ''"
+                            (click)="displayLoginWithCredential()"
+                            [ngStyle]="{ 'color': environment.SOS_TRADES_HEADER_COLOR_HEX }" >
+                          </i>
+                        }
+                        @if (!loginWithCredential) {
+                          <button
+                            id="sostrades-account-button"
+                            mat-raised-button
+                            (click)="displayLoginWithCredential()"
+                            >
+                            <img
+                              [src]="logoPath.SOS_TRADES_LOGO_BLACK_PATH"
+                              aria-label="Sostrades logo"
+                              style="width: 80px;"
+                              />
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  @if (loginWithCredential) {
+                    <form [formGroup]="loginForm" (ngSubmit)="submit()">
+                      <br>
+                        <p>
+                          <mat-form-field>
+                            <input
+                              id="input-login-username"
+                              type="text"
+                              name="username"
+                              matInput
+                              placeholder="Username"
+                              formControlName="username"
+                              autocomplete
+                              />
+                            </mat-form-field>
+                          </p>
+                          <p>
+                            <mat-form-field>
+                              <input
+                                id="input-login-password"
+                                type="password"
+                                name="password"
+                                matInput
+                                placeholder="Password"
+                                formControlName="password"
+                                autocomplete
+                                />
+                              </mat-form-field>
+                            </p>
+                            @if (error) {
+                              <p class="error">
+                                {{ error }}
+                              </p>
+                            }
+                            <div style="margin-top: -7.5px; margin-bottom: 20px">
+                              <button
+                                id="btn-login-log-in"
+                                mat-raised-button
+                                type="submit"
+                                [disabled]="!loginForm.valid"
+                                mat-button
+                                aria-label="btn-login-log-in"
+                                >
+                                @if (!loadingLogin) {
+                                  <span>Login</span>
+                                }
+                                @if (loadingLogin) {
+                                  <mat-progress-spinner
+                                    diameter="40"
+                                    mode="indeterminate"
+                                    style="margin:0 auto; width: 40px; height: 40px;"
+                                  ></mat-progress-spinner>
+                                }
+                              </button>
+                            </div>
+                          </form>
+                        }
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              }

@@ -1,16 +1,17 @@
 <div class="container-configure" id="data-management-widget-container">
   <div class="legend-header">
-    <div
-      class="legend-item border-readonly"
-      *ngIf="showMaturity && objectKey(allDisciplinesDataDict).length > 0"
-    >
-      <div class="legend-text" style="padding-left: 0 !important">
-        Maturity :
+    @if (showMaturity && objectKey(allDisciplinesDataDict).length > 0) {
+      <div
+        class="legend-item border-readonly"
+        >
+        <div class="legend-text" style="padding-left: 0 !important">
+          Maturity :
+        </div>
+        <div class="legend-text">
+          <strong>{{ treeNodeData.maturity }}</strong>
+        </div>
       </div>
-      <div class="legend-text">
-        <strong>{{ treeNodeData.maturity }}</strong>
-      </div>
-    </div>
+    }
     <div style="min-width: 8px"></div>
 
     <span class="spacer"></span>
@@ -18,47 +19,51 @@
     <i [className]="treeNodeData | disciplineIconMappingConverter">
     </i>
     <span class="treenode-title" style="margin-left: 5px">
-      {{treeNodeData.name}}</span>
-  <span style="margin-left: 30px;">
-    State :
-  </span>
-    <button
-      mat-button
-      *ngIf="treeNodeData.isValidated"
-     style="cursor: default;margin-left: 4px;"
-     color="success"
-     > Validated
-      </button>
-
+    {{treeNodeData.name}}</span>
+    <span style="margin-left: 30px;">
+      State :
+    </span>
+    @if (treeNodeData.isValidated) {
       <button
-      mat-button
-      *ngIf="!treeNodeData.isValidated"
-      style=" cursor: default; margin-left: 4px;"
-      color="undetermined"
-      > Not validated
+        mat-button
+        style="cursor: default;margin-left: 4px;"
+        color="success"
+        > Validated
       </button>
-    <span class="spacer"></span>
-    <button
-    mat-raised-button
-    *ngIf="!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
-    (click)="onClickDataValidation($event)"
-    [id]="'validation-page'"
-    color="primary"
-    style="height: 25px;line-height: 5px;"
-     >
-       Validate data
-    </button>
+    }
 
-    <button
-    mat-raised-button
-    *ngIf="treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)"
-    (click)="onClickDataValidation($event)"
-    [id]="'validation-page'"
-    color="primary"
-    style="height: 25px;line-height: 5px;"
-      >
-      Invalidate data
-  </button>
+    @if (!treeNodeData.isValidated) {
+      <button
+        mat-button
+        style=" cursor: default; margin-left: 4px;"
+        color="undetermined"
+        > Not validated
+      </button>
+    }
+    <span class="spacer"></span>
+    @if (!treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)) {
+      <button
+        mat-raised-button
+        (click)="onClickDataValidation($event)"
+        [id]="'validation-page'"
+        color="primary"
+        style="height: 25px;line-height: 5px;"
+        >
+        Validate data
+      </button>
+    }
+
+    @if (treeNodeData.isValidated && !(loadedStudy.noData || loadedStudy.readOnly)) {
+      <button
+        mat-raised-button
+        (click)="onClickDataValidation($event)"
+        [id]="'validation-page'"
+        color="primary"
+        style="height: 25px;line-height: 5px;"
+        >
+        Invalidate data
+      </button>
+    }
     <button
       mat-button
       aria-hidden="false"
@@ -67,37 +72,45 @@
       color='accent'
       style="margin-right: 5px; margin-left: 2%"
       (click)="onShowConfigureInformation()"
-    >      
-        <i
-          id="icon-info"
-          class="fa-solid fa-circle-info"
+      >
+      <i
+        id="icon-info"
+        class="fa-solid fa-circle-info"
         >
-        </i>
+      </i>
     </button>
   </div>
 
-  <div *ngIf="objectKey(allDisciplinesDataDict).length > 0 && filterService.filters.showSimpleDisplay">
-    <app-data-management-discipline
-      *ngFor="let disc of objectValue(allDataDict)"
-      [disciplineData]="disc"
-    ></app-data-management-discipline>
-  </div>
-  <div *ngIf="objectKey(allDisciplinesDataDict).length > 0 && !filterService.filters.showSimpleDisplay">
-    <app-data-management-discipline
-      *ngFor="let disc of objectValue(allDisciplinesDataDict)"
-      [disciplineData]="disc"
-    ></app-data-management-discipline>
-  </div>
-  <div *ngIf="objectKey(allDisciplinesDataDict).length === 0">
-    <div
+  @if (objectKey(allDisciplinesDataDict).length > 0 && filterService.filters.showSimpleDisplay) {
+    <div>
+      @for (disc of objectValue(allDataDict); track disc) {
+        <app-data-management-discipline
+          [disciplineData]="disc"
+        ></app-data-management-discipline>
+      }
+    </div>
+  }
+  @if (objectKey(allDisciplinesDataDict).length > 0 && !filterService.filters.showSimpleDisplay) {
+    <div>
+      @for (disc of objectValue(allDisciplinesDataDict); track disc) {
+        <app-data-management-discipline
+          [disciplineData]="disc"
+        ></app-data-management-discipline>
+      }
+    </div>
+  }
+  @if (objectKey(allDisciplinesDataDict).length === 0) {
+    <div>
+      <div
       style="
         font-size: 12px;
         line-height: unset;
         padding: 15px 0 15px 0;
         text-align: center;
       "
-    >
-      This node has no data to display
+        >
+        This node has no data to display
+      </div>
     </div>
-  </div>
+  }
 </div>

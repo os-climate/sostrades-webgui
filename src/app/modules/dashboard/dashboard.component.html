@@ -1,55 +1,59 @@
 <div class="dashboard-container">
   <div class="dashboard-toolbar">
     <div class="edit-save-button">
-      <button
-        id="add-text"
-        matTooltip="Add text"
-        mat-raised-button
-        color="primary"
-        class="float-right-button"
-        (click)="onAddText()"
-        *ngIf="this.options.draggable.enabled"
-      >
-        <mat-icon>text_fields</mat-icon>
-        Add Text
-      </button>
-      <button
-        id="add-section"
-        matTooltip="Add section"
-        mat-raised-button
-        color="primary"
-        class="float-right-button"
-        (click)="onAddSection()"
-        *ngIf="this.options.draggable.enabled"
-      >
-        <i class="fa-solid fa-folder-open"></i>
-        Add Section
-      </button>
-      <button
-        id="reorder-dashboard"
-        matTooltip="Reorder dashboard"
-        mat-raised-button
-        color="primary"
-        class="float-right-button"
-        *ngIf="this.options.draggable.enabled"
-        (click)="onAutoFit()"
-      >
-        <i class="fa-solid fa-rotate-right"></i>
-        Auto-fit
-      </button>
-      <button
-        id="save-dashboard"
-        *ngIf="this.options.draggable.enabled"
-        [disabled]="!isDashboardUpdated"
-        matTooltip="Update saved dashboard"
-        mat-raised-button
-        color="primary"
-        class="float-right-button"
-        (click)="OnSaveDashboard()"
-      >
-        <i class="fa-solid fa-floppy-disk"></i>
-        Save
-      </button>
+      @if (this.options.draggable.enabled) {
+        <button
+          id="add-text"
+          matTooltip="Add text"
+          mat-raised-button
+          color="primary"
+          class="float-right-button"
+          (click)="onAddText()"
+          >
+          <mat-icon>text_fields</mat-icon>
+          Add Text
+        </button>
+      }
+      @if (this.options.draggable.enabled) {
+        <button
+          id="add-section"
+          matTooltip="Add section"
+          mat-raised-button
+          color="primary"
+          class="float-right-button"
+          (click)="onAddSection()"
+          >
+          <i class="fa-solid fa-folder-open"></i>
+          Add Section
+        </button>
+      }
+      @if (this.options.draggable.enabled) {
+        <button
+          id="reorder-dashboard"
+          matTooltip="Reorder dashboard"
+          mat-raised-button
+          color="primary"
+          class="float-right-button"
+          (click)="onAutoFit()"
+          >
+          <i class="fa-solid fa-rotate-right"></i>
+          Auto-fit
+        </button>
+      }
+      @if (this.options.draggable.enabled) {
+        <button
+          id="save-dashboard"
+          [disabled]="!isDashboardUpdated"
+          matTooltip="Update saved dashboard"
+          mat-raised-button
+          color="primary"
+          class="float-right-button"
+          (click)="OnSaveDashboard()"
+          >
+          <i class="fa-solid fa-floppy-disk"></i>
+          Save
+        </button>
+      }
       <button
         id="edit-dashboard"
         matTooltip="Edit dashboard"
@@ -57,65 +61,73 @@
         color="primary"
         class="float-right-button"
         (click)="handleEditButtonClick(slideToggle)"
-      >
+        >
         <mat-slide-toggle #slideToggle [checked]="options.draggable.enabled" (change)="onSlideToggleChange($event)">
         </mat-slide-toggle>
         Edit
       </button>
     </div>
   </div>
-  <div
-    *ngIf="dashboardFavorites.length > 0; else noDashboard"
-    class="plot-resize-zone"
-  >
-    <div class="gridster-container">
-      <gridster [options]="options">
-        <ng-container *ngFor="let item of dashboardFavorites" [ngSwitch]="item.type">
-          <gridster-item *ngSwitchCase="itemType.graph" [item]="item" #gridsterItem>
-            <div class="graph-card">
-              <button mat-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
-                <i class="fa-solid fa-arrows-up-down-left-right"></i>
-              </button>
-              <app-post-processing-plotly
-                [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
-                [fullNamespace]=""
-                [plotData]="item.data.graphData"
-                [disciplineName]="item.disciplineName"
-                [name]="item.name"
-                [plotIndex]="item.plotIndex"
-                [height]="CalculateGraphHeight(item)"
-                [width]="CalculateGraphWidth(item)"
-                [isEditing]="options.draggable.enabled">
-              </app-post-processing-plotly>
-            </div>
-          </gridster-item>
-          <gridster-item *ngSwitchCase="itemType.text" [item]="item">
-            <div class="text-card">
-              <app-dashboard-text-item
-                [textItem]="item"
-                [inEditionMode]="options.draggable.enabled">
-              </app-dashboard-text-item>
-            </div>
-          </gridster-item>
-          <gridster-item *ngSwitchCase="itemType.section" [item]="item">
-            <div class="section-card">
-              <app-dashboard-section-item
-                [sectionItem]="item"
-                [inEditionMode]="options.draggable.enabled">
-              </app-dashboard-section-item>
-            </div>
-          </gridster-item>
-        </ng-container>
-      </gridster>
+  @if (dashboardFavorites.length > 0) {
+    <div
+      class="plot-resize-zone"
+      >
+      <div class="gridster-container">
+        <gridster [options]="options">
+          @for (item of dashboardFavorites; track item) {
+            @switch (item.type) {
+              @case (itemType.graph) {
+                <gridster-item [item]="item" #gridsterItem>
+                  <div class="graph-card">
+                    <button mat-button color="primary" class="drag-handle" matTooltip="Move Graph" [style.visibility]="options.draggable.enabled ? 'visible' : 'hidden'">
+                      <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                    </button>
+                    <app-post-processing-plotly
+                      [class]="item.data && item.data.graphData && item.data.graphData[0]?.type === 'table' ? 'table' : 'plot'"
+                      [fullNamespace]=""
+                      [plotData]="item.data.graphData"
+                      [disciplineName]="item.disciplineName"
+                      [name]="item.name"
+                      [plotIndex]="item.plotIndex"
+                      [height]="CalculateGraphHeight(item)"
+                      [width]="CalculateGraphWidth(item)"
+                      [isEditing]="options.draggable.enabled">
+                    </app-post-processing-plotly>
+                  </div>
+                </gridster-item>
+              }
+              @case (itemType.text) {
+                <gridster-item [item]="item">
+                  <div class="text-card">
+                    <app-dashboard-text-item
+                      [textItem]="item"
+                      [inEditionMode]="options.draggable.enabled">
+                    </app-dashboard-text-item>
+                  </div>
+                </gridster-item>
+              }
+              @case (itemType.section) {
+                <gridster-item [item]="item">
+                  <div class="section-card">
+                    <app-dashboard-section-item
+                      [sectionItem]="item"
+                      [inEditionMode]="options.draggable.enabled">
+                    </app-dashboard-section-item>
+                  </div>
+                </gridster-item>
+              }
+            }
+          }
+        </gridster>
+      </div>
     </div>
-  </div>
-  <ng-template #noDashboard>
+  } @else {
     <div class="missing-dashboard">
       <span>This Dashboard has no items yet.</span>
       <br>
-      <span>You can start editing the dashboard by pressing the edit switch.</span>
-      <br>
-      <span>To add graphs go to the charts tab after while you are in edition mode.</span>
+        <span>You can start editing the dashboard by pressing the edit switch.</span>
+        <br>
+          <span>To add graphs go to the charts tab after while you are in edition mode.</span>
+        </div>
+      }
     </div>
-  </ng-template>
-</div>

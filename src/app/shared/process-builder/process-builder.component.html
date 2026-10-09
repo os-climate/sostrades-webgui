@@ -1,34 +1,36 @@
 <div class="container">
   <div class="box">
-    <button
-      [id]="'show-button-' + nodeData.identifier"
-      mat-raised-button
-      *ngIf="isReadOnly"
-      aria-label="Show data"
-      matTooltip="Show data"
-      (click)="onClickShow()"
-      class="custom-button"
-    >
-      <div class="custom-button-container">
-        <div style="line-height: 24px">Show</div>
-        <mat-icon class="icon-size">grid_on</mat-icon>
-      </div>
-    </button>
+    @if (isReadOnly) {
+      <button
+        [id]="'show-button-' + nodeData.identifier"
+        mat-raised-button
+        aria-label="Show data"
+        matTooltip="Show data"
+        (click)="onClickShow()"
+        class="custom-button"
+        >
+        <div class="custom-button-container">
+          <div style="line-height: 24px">Show</div>
+          <mat-icon class="icon-size">grid_on</mat-icon>
+        </div>
+      </button>
+    }
 
-    <button
-      id='edit-data'
-      mat-raised-button
-      *ngIf="!isReadOnly"
-      color="primary"
-      aria-label="Edit data"
-      matTooltip="Edit data"
-      (click)="onClickEdit()"
-      class="custom-button"
-    >
-      <div class="custom-button-container">
-        <div style="line-height: 24px">Edit</div>
-        <mat-icon class="icon-size">edit</mat-icon>
-      </div>
-    </button>
+    @if (!isReadOnly) {
+      <button
+        id='edit-data'
+        mat-raised-button
+        color="primary"
+        aria-label="Edit data"
+        matTooltip="Edit data"
+        (click)="onClickEdit()"
+        class="custom-button"
+        >
+        <div class="custom-button-container">
+          <div style="line-height: 24px">Edit</div>
+          <mat-icon class="icon-size">edit</mat-icon>
+        </div>
+      </button>
+    }
   </div>
 </div>
