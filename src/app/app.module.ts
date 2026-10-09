@@ -7,7 +7,7 @@ import { OverlayModule, FullscreenOverlayContainer, OverlayContainer } from '@an
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -134,8 +134,7 @@ import { QuillConfigModule } from "ngx-quill/config";
 registerLocaleData(fr);
 
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         HeaderComponent,
         SidenavComponent,
@@ -235,12 +234,11 @@ registerLocaleData(fr);
         TruncatePipe,
         AuthenticationErrorComponent,
     ],
-    imports: [
-        BrowserModule,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         MaterialModule,
-        HttpClientModule,
         ReactiveFormsModule,
         FormsModule,
         DragDropModule,
@@ -252,31 +250,27 @@ registerLocaleData(fr);
         GridsterModule,
         QuillModule.forRoot(),
         QuillConfigModule.forRoot({
-          modules: {
-            syntax: true,
-          }
+            modules: {
+                syntax: true,
+            }
         }),
         MarkdownModule.forRoot({
             markedOptions: {
-              provide: MARKED_OPTIONS,
-              useValue: {
-                gfm: true,
-                breaks: true,
-                pedantic: false,
-                smartLists: true,
-                smartypants: false,
-              },
+                provide: MARKED_OPTIONS,
+                useValue: {
+                    gfm: true,
+                    breaks: true,
+                    pedantic: false,
+                    smartLists: true,
+                    smartypants: false,
+                },
             },
-          }),
-    ],
-    providers: [
+        })], providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: LOCALE_ID, useValue: 'fr-FR' },
         { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
         TreeNodeDataService,
         OntologyService,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent]
-})
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }
