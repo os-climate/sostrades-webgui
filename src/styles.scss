@@ -180,9 +180,9 @@ body {
 
 .mat-mdc-snack-bar-container {
   &.snackBarError {
-    --mdc-snackbar-container-color: #e4002b;
+    --mat-snackbar-container-color: #e4002b;
     --mat-mdc-snack-bar-button-color: #fff;
-    --mdc-snackbar-supporting-text-color: #fff;
+    --mat-snackbar-supporting-text-color: #fff;
   }
 }
 
@@ -193,17 +193,17 @@ body {
 
 .mat-mdc-snack-bar-container {
   &.snackBarInformation {
-    --mdc-snackbar-container-color: #08875b;
+    --mat-snackbar-container-color: #08875b;
     --mat-mdc-snack-bar-button-color: #fff;
-    --mdc-snackbar-supporting-text-color: #fff;
+    --mat-snackbar-supporting-text-color: #fff;
   }
 }
 
 .mat-mdc-snack-bar-container {
   &.snackBarWarning {
-    --mdc-snackbar-container-color: #fbca32;
+    --mat-snackbar-container-color: #fbca32;
     --mat-mdc-snack-bar-button-color: black;
-    --mdc-snackbar-supporting-text-color: black;
+    --mat-snackbar-supporting-text-color: black;
   }
 }
 
