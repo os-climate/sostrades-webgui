@@ -49,74 +49,60 @@
     <div [ngClass]="setCalculationCss(isCalculationRunning)" style="position: relative">
       <div class="fullsize">
         @switch (widgetType) {
-          @case (label) {
-            <ng-template class="fullsize">
-              <app-label class="fullsize" [nodeData]="nodeData"> </app-label>
-            </ng-template>
+          @case ('label') {
+            <app-label class="fullsize" [nodeData]="nodeData"> </app-label>
           }
-          @case (boolean) {
-            <ng-template class="fullsize">
-              <app-slide-toggle
-                class="fullsize"
-                [nodeData]="nodeData"
-                (valueChanged)="onInputChange($event)"
-                >
-              </app-slide-toggle>
-            </ng-template>
+          @case ('boolean') {
+            <app-slide-toggle
+              class="fullsize"
+              [nodeData]="nodeData"
+              (valueChanged)="onInputChange($event)"
+              >
+            </app-slide-toggle>
           }
-          @case (select) {
-            <ng-template class="fullsize">
-              <app-select
-                class="fullsize"
-                [nodeData]="nodeData"
-                (valueChanged)="onInputChange($event)"
-                >
-              </app-select>
-            </ng-template>
+          @case ('select') {
+            <app-select
+              class="fullsize"
+              [nodeData]="nodeData"
+              (valueChanged)="onInputChange($event)"
+              >
+            </app-select>
           }
-          @case (input) {
-            <ng-template class="fullsize">
-              <app-input
-                class="fullsize"
-                [nodeData]="nodeData"
-                (valueChanged)="onInputChange($event)"
-                >
-              </app-input>
-            </ng-template>
+          @case ('input') {
+            <app-input
+              class="fullsize"
+              [nodeData]="nodeData"
+              (valueChanged)="onInputChange($event)"
+              >
+            </app-input>
           }
-          @case (table) {
-            <ng-template class="fullsize">
-              <app-table
-                class="fullsize"
-                [nodeData]="nodeData"
-                (valueChanged)="onInputChange($event)"
-                >
-              </app-table>
-            </ng-template>
+          @case ('table') {
+            <app-table
+              class="fullsize"
+              [nodeData]="nodeData"
+              (valueChanged)="onInputChange($event)"
+              >
+            </app-table>
           }
-          @case (fileSpreadsheet) {
-            <ng-template class="fullsize">
-              <app-file-spreadsheet
-                class="fullsize"
-                [nodeData]="nodeData"
-                [discipline]="discipline"
-                [namespace]="namespace"
-                (stateUpdate)="onStateUpdate()"
-                >
-              </app-file-spreadsheet>
-            </ng-template>
+          @case ('fileSpreadsheet') {
+            <app-file-spreadsheet
+              class="fullsize"
+              [nodeData]="nodeData"
+              [discipline]="discipline"
+              [namespace]="namespace"
+              (stateUpdate)="onStateUpdate()"
+              >
+            </app-file-spreadsheet>
           }
-          @case (processBuilder) {
-            <ng-template class="fullsize">
-              <app-process-builder
-                class="fullsize"
-                [nodeData]="nodeData"
-                [discipline]="discipline"
-                [namespace]="namespace"
-                (valueChanged)="onInputChange($event)"
-                >
-              </app-process-builder>
-            </ng-template>
+          @case ('processBuilder') {
+            <app-process-builder
+              class="fullsize"
+              [nodeData]="nodeData"
+              [discipline]="discipline"
+              [namespace]="namespace"
+              (valueChanged)="onInputChange($event)"
+              >
+            </app-process-builder>
           }
         }
       </div>

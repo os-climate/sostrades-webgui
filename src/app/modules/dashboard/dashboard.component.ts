@@ -257,7 +257,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // Listen for window resize event
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     this.updateGraphSizes();
   }

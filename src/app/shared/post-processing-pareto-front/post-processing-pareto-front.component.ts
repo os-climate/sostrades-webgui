@@ -76,22 +76,28 @@ export class PostProcessingParetoFrontComponent implements OnInit {
         this.initTradeScenarioList(this.plotData.data);
       }
 
-      setTimeout(async() => {
-        const Plotly = (await import('plotly.js-dist-min')).default;
-        Plotly.react(
-          this.PlotlyPlaceHolder.nativeElement,
-          this.plotData.data, this.plotData.layout, { modeBarButtons: modeBarButtons });
+      setTimeout(async () => {
+        try {
+          const plotlyModule = await import('plotly.js-dist-min');
+          const Plotly = plotlyModule.default ?? plotlyModule;
+          await Plotly.react(
+            this.PlotlyPlaceHolder.nativeElement,
+            this.plotData.data,
+            this.plotData.layout,
+            { modeBarButtons }
+          );
 
-        this.PlotlyPlaceHolder.nativeElement.on('plotly_click', (data) => {
-          this.onPlotlyClick(data);
-        });
-        this.PlotlyPlaceHolder.nativeElement.on('plotly_selected', (data) => {
-          this.onPlotlySelection(data);
-        });
-
-        this.PlotlyPlaceHolder.nativeElement.on('plotly_afterplot', () => {
+          this.PlotlyPlaceHolder.nativeElement.on('plotly_click', (data) => {
+            this.onPlotlyClick(data);
+          });
+          this.PlotlyPlaceHolder.nativeElement.on('plotly_selected', (data) => {
+            this.onPlotlySelection(data);
+          });
+        } catch (error) {
+          this.snackbarService.showError(`Error displaying chart: ${error instanceof Error ? error.message : String(error)}`);
+        } finally {
           this.isPlotLoading = false;
-        });
+        }
       }, 0);
     }
   }

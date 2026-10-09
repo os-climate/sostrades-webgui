@@ -86,7 +86,7 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
 
   private async getPlotly() {
     if (!this.plotlyPromise) {
-      this.plotlyPromise = import('plotly.js-dist-min').then(m => m.default);
+      this.plotlyPromise = import('plotly.js-dist-min').then(m => m.default ?? m);
     }
     return this.plotlyPromise;
   }
@@ -331,35 +331,36 @@ export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   }
 
   private async initializePlot() {
-    const modeBarButtons = [[
-      ...(this.plotData.csv_data?.length > 0
-        ? [{
-          name: 'Download data as csv file',
-          icon: this.downloadIcon,
-          click: () => {
-            this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
-          }
-        }]
-        : []),
-      ...(await this.createCommonModeBarButtons(true))
-    ]];
-
-    setTimeout(async() => {
+    try {
+      const modeBarButtons = [[
+        ...(this.plotData.csv_data?.length > 0
+          ? [{
+            name: 'Download data as csv file',
+            icon: this.downloadIcon,
+            click: () => {
+              this.Download(this.plotData.csv_data, this.plotData.layout.title.text);
+            }
+          }]
+          : []),
+        ...(await this.createCommonModeBarButtons(true))
+      ]];
       this.plotData['config'] = {
         modeBarButtons,
         displaylogo: false,
         toImageButtonOptions: this.downloadConfig
       };
       const Plotly = await this.getPlotly();
-      Plotly.react(
+      await Plotly.react(
         this.PlotlyPlaceHolder.nativeElement,
-        this.plotData
+        this.plotData.data,
+        this.plotData.layout,
+        this.plotData.config
       );
-
-      this.PlotlyPlaceHolder.nativeElement.on('plotly_afterplot', () => {
-        this.isPlotLoading = false;
-      });
-    }, 0);
+    } catch (error) {
+      this.snackbarService.showError(`Error displaying chart: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      this.isPlotLoading = false;
+    }
   }
 
   private Download(csvList: string[], filename: string) {
