@@ -9,9 +9,10 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 
 @Component({
-  selector: 'app-study-case-direct-access',
-  templateUrl: './study-case-direct-access.component.html',
-  styleUrls: ['./study-case-direct-access.component.scss']
+    selector: 'app-study-case-direct-access',
+    templateUrl: './study-case-direct-access.component.html',
+    styleUrls: ['./study-case-direct-access.component.scss'],
+    standalone: false
 })
 export class StudyCaseDirectAccessComponent implements OnInit, OnDestroy {
 

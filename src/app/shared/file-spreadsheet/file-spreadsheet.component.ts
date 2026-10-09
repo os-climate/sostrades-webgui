@@ -16,9 +16,10 @@ import { Papa } from 'ngx-papaparse';
 import { LoadStatus } from 'src/app/models/study.model';
 
 @Component({
-  selector: 'app-file-spreadsheet',
-  templateUrl: './file-spreadsheet.component.html',
-  styleUrls: ['./file-spreadsheet.component.scss']
+    selector: 'app-file-spreadsheet',
+    templateUrl: './file-spreadsheet.component.html',
+    styleUrls: ['./file-spreadsheet.component.scss'],
+    standalone: false
 })
 export class FileSpreadsheetComponent implements OnInit, OnDestroy {
 

@@ -9,9 +9,10 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoadedStudy } from 'src/app/models/study.model';
 
 @Component({
-  selector: 'app-post-processing',
-  templateUrl: './post-processing.component.html',
-  styleUrls: ['./post-processing.component.scss']
+    selector: 'app-post-processing',
+    templateUrl: './post-processing.component.html',
+    styleUrls: ['./post-processing.component.scss'],
+    standalone: false
 })
 export class PostProcessingComponent implements OnInit, OnDestroy {
 

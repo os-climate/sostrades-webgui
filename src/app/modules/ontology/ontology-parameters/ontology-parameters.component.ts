@@ -14,9 +14,10 @@ import { FilterDialogComponent } from 'src/app/shared/filter-dialog/filter-dialo
 import { OntologyParameterInformationsComponent } from '../ontology-parameter-informations/ontology-parameter-informations.component';
 
 @Component({
-  selector: 'app-ontology-parameters',
-  templateUrl: './ontology-parameters.component.html',
-  styleUrls: ['./ontology-parameters.component.scss']
+    selector: 'app-ontology-parameters',
+    templateUrl: './ontology-parameters.component.html',
+    styleUrls: ['./ontology-parameters.component.scss'],
+    standalone: false
 })
 export class OntologyParametersComponent implements OnInit, OnDestroy {
 

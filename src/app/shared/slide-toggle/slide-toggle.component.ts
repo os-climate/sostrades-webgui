@@ -3,9 +3,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NodeData, ValueType } from 'src/app/models/node-data.model';
 
 @Component({
-  selector: 'app-slide-toggle',
-  templateUrl: './slide-toggle.component.html',
-  styleUrls: ['./slide-toggle.component.scss']
+    selector: 'app-slide-toggle',
+    templateUrl: './slide-toggle.component.html',
+    styleUrls: ['./slide-toggle.component.scss'],
+    standalone: false
 })
 export class SlideToggleComponent implements OnInit {
 

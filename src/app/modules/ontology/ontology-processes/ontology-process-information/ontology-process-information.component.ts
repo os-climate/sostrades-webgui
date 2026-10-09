@@ -9,9 +9,10 @@ import { HeaderService } from 'src/app/services/hearder/header.service';
 import { Router } from '@angular/router';
 import { Routing } from 'src/app/models/enumeration.model';
 @Component({
-  selector: 'app-ontology-process-information',
-  templateUrl: './ontology-process-information.component.html',
-  styleUrls: ['./ontology-process-information.component.scss']
+    selector: 'app-ontology-process-information',
+    templateUrl: './ontology-process-information.component.html',
+    styleUrls: ['./ontology-process-information.component.scss'],
+    standalone: false
 })
 export class OntologyProcessInformationComponent implements OnInit {
 

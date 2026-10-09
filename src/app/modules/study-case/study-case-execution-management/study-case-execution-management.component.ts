@@ -13,9 +13,10 @@ import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execut
 
 
 @Component({
-  selector: 'app-study-case-execution-management',
-  templateUrl: './study-case-execution-management.component.html',
-  styleUrls: ['./study-case-execution-management.component.scss']
+    selector: 'app-study-case-execution-management',
+    templateUrl: './study-case-execution-management.component.html',
+    styleUrls: ['./study-case-execution-management.component.scss'],
+    standalone: false
 })
 export class StudyCaseExecutionManagementComponent implements OnInit {
 

@@ -6,9 +6,10 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-authentication-error',
-  templateUrl: './authentication-error.component.html',
-  styleUrls: ['./authentication-error.component.scss']
+    selector: 'app-authentication-error',
+    templateUrl: './authentication-error.component.html',
+    styleUrls: ['./authentication-error.component.scss'],
+    standalone: false
 })
 export class AuthenticationErrorComponent {
 

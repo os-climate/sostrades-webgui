@@ -3,9 +3,10 @@ import { NodeData } from 'src/app/models/node-data.model';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 
 @Component({
-  selector: 'app-label',
-  templateUrl: './label.component.html',
-  styleUrls: ['./label.component.scss']
+    selector: 'app-label',
+    templateUrl: './label.component.html',
+    styleUrls: ['./label.component.scss'],
+    standalone: false
 })
 
 export class LabelComponent implements OnInit {

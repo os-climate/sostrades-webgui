@@ -11,9 +11,10 @@ import { ProcessService } from 'src/app/services/process/process.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 @Component({
-  selector: 'app-ontology-models-information',
-  templateUrl: './ontology-models-information.component.html',
-  styleUrls: ['./ontology-models-information.component.scss']
+    selector: 'app-ontology-models-information',
+    templateUrl: './ontology-models-information.component.html',
+    styleUrls: ['./ontology-models-information.component.scss'],
+    standalone: false
 })
 export class OntologyModelsInformationComponent implements OnInit {
 

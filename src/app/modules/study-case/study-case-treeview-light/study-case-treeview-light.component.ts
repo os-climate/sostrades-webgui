@@ -21,9 +21,10 @@ import { Subscription } from 'rxjs';
 
 
 @Component({
-  selector: 'app-study-case-treeview-light',
-  templateUrl: './study-case-treeview-light.component.html',
-  styleUrls: ['./study-case-treeview-light.component.scss']
+    selector: 'app-study-case-treeview-light',
+    templateUrl: './study-case-treeview-light.component.html',
+    styleUrls: ['./study-case-treeview-light.component.scss'],
+    standalone: false
 })
 
 /**

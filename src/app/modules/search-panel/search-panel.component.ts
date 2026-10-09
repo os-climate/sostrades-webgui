@@ -7,9 +7,10 @@ import { NodeData } from 'src/app/models/node-data.model';
 
 
 @Component({
-  selector: 'app-search-panel',
-  templateUrl: './search-panel.component.html',
-  styleUrls: ['./search-panel.component.scss']
+    selector: 'app-search-panel',
+    templateUrl: './search-panel.component.html',
+    styleUrls: ['./search-panel.component.scss'],
+    standalone: false
 })
 export class SearchPanelComponent implements OnInit, OnDestroy {
 

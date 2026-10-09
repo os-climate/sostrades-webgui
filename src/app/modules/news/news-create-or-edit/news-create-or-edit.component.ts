@@ -6,9 +6,10 @@ import { WelcomPageComponent } from 'src/app/modules/welcom-page/welcom-page.com
 
 
 @Component({
-  selector: 'app-news-create-or-edit',
-  templateUrl: './news-create-or-edit.component.html',
-  styleUrls: ['./news-create-or-edit.component.scss']
+    selector: 'app-news-create-or-edit',
+    templateUrl: './news-create-or-edit.component.html',
+    styleUrls: ['./news-create-or-edit.component.scss'],
+    standalone: false
 })
 export class NewsCreateOrEditComponent implements OnInit {
 

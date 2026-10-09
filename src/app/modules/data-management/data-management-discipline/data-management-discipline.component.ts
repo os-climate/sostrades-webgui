@@ -13,9 +13,10 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { NodeDataTools } from 'src/app/tools/node-data.tools';
 
 @Component({
-  selector: 'app-data-management-discipline',
-  templateUrl: './data-management-discipline.component.html',
-  styleUrls: ['./data-management-discipline.component.scss']
+    selector: 'app-data-management-discipline',
+    templateUrl: './data-management-discipline.component.html',
+    styleUrls: ['./data-management-discipline.component.scss'],
+    standalone: false
 })
 export class DataManagementDisciplineComponent implements OnInit, OnDestroy {
 

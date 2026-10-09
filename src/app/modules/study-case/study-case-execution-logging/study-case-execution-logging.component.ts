@@ -15,9 +15,10 @@ import { FilterService } from 'src/app/services/filter/filter.service';
 const POLLING_DELAY = 1000;
 
 @Component({
-  selector: 'app-study-case-execution-logging',
-  templateUrl: './study-case-execution-logging.component.html',
-  styleUrls: ['./study-case-execution-logging.component.scss']
+    selector: 'app-study-case-execution-logging',
+    templateUrl: './study-case-execution-logging.component.html',
+    styleUrls: ['./study-case-execution-logging.component.scss'],
+    standalone: false
 })
 export class StudyCaseExecutionLoggingComponent implements OnInit, OnDestroy, AfterViewInit {
 

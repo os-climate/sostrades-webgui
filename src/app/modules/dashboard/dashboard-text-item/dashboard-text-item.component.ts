@@ -5,9 +5,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { DashboardTextDialogComponent } from "../dashboard-text-dialog/dashboard-text-dialog.component";
 
 @Component({
-  selector: 'app-dashboard-text-item',
-  templateUrl: './dashboard-text-item.component.html',
-  styleUrls: ['./dashboard-text-item.component.scss']
+    selector: 'app-dashboard-text-item',
+    templateUrl: './dashboard-text-item.component.html',
+    styleUrls: ['./dashboard-text-item.component.scss'],
+    standalone: false
 })
 export class DashboardTextItemComponent implements OnInit {
   @Input() textItem: DashboardText;

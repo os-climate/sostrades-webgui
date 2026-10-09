@@ -4,7 +4,8 @@ import { LoggerService } from 'src/app/services/logger/logger.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 
 @Pipe({
-  name: 'disciplineIconMappingConverter'
+    name: 'disciplineIconMappingConverter',
+    standalone: false
 })
 export class DisciplineIconMappingConverterPipe implements PipeTransform {
 

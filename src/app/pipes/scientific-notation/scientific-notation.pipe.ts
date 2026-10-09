@@ -21,7 +21,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 
 @Pipe({
-  name: 'scientificNotation'
+    name: 'scientificNotation',
+    standalone: false
 })
 export class ScientificNotationPipe implements PipeTransform {
 

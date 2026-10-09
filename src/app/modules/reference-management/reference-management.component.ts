@@ -24,9 +24,10 @@ import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-di
 import { StudyCaseCreationService } from 'src/app/services/study-case/study-case-creation/study-case-creation.service';
 
 @Component({
-  selector: 'app-reference-management',
-  templateUrl: './reference-management.component.html',
-  styleUrls: ['./reference-management.component.scss']
+    selector: 'app-reference-management',
+    templateUrl: './reference-management.component.html',
+    styleUrls: ['./reference-management.component.scss'],
+    standalone: false
 })
 export class ReferenceManagementComponent implements OnInit, OnDestroy {
 

@@ -4,9 +4,10 @@ import { LoadingStudyDialogData } from 'src/app/models/dialog-data.model';
 import { DEFAULT_DIALOG_STEPS, LoadingDialogStep } from 'src/app/models/loading-study-dialog.model';
 
 @Component({
-  selector: 'app-loading-study-dialog',
-  templateUrl: './loading-study-dialog.component.html',
-  styleUrls: ['./loading-study-dialog.component.scss']
+    selector: 'app-loading-study-dialog',
+    templateUrl: './loading-study-dialog.component.html',
+    styleUrls: ['./loading-study-dialog.component.scss'],
+    standalone: false
 })
 export class LoadingStudyDialogComponent implements OnInit {
   public disableCancelLoading: boolean;

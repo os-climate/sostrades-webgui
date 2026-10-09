@@ -4,9 +4,10 @@ import { Subject } from 'rxjs';
 import { ColumnName } from 'src/app/models/enumeration.model';
 
 @Component({
-  selector: 'app-filter-bar',
-  templateUrl: './filter-bar.component.html',
-  styleUrls: ['./filter-bar.component.scss']
+    selector: 'app-filter-bar',
+    templateUrl: './filter-bar.component.html',
+    styleUrls: ['./filter-bar.component.scss'],
+    standalone: false
 })
 
 export class FilterBarComponent implements OnInit {

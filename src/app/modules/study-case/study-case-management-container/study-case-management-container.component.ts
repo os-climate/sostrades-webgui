@@ -7,9 +7,10 @@ import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 
 @Component({
-  selector: 'app-study-case-management-container',
-  templateUrl: './study-case-management-container.component.html',
-  styleUrls: ['./study-case-management-container.component.scss']
+    selector: 'app-study-case-management-container',
+    templateUrl: './study-case-management-container.component.html',
+    styleUrls: ['./study-case-management-container.component.scss'],
+    standalone: false
 })
 export class StudyCaseManagementContainerComponent implements OnInit, OnDestroy {
 

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-visualisation-container',
-  templateUrl: './visualisation-container.component.html',
-  styleUrls: ['./visualisation-container.component.scss']
+    selector: 'app-visualisation-container',
+    templateUrl: './visualisation-container.component.html',
+    styleUrls: ['./visualisation-container.component.scss'],
+    standalone: false
 })
 export class VisualisationContainerComponent  {
 

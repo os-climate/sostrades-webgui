@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import { ValidationDialogData } from 'src/app/models/dialog-data.model';
 
 @Component({
-  selector: 'app-validation-dialog',
-  templateUrl: './validation-dialog.component.html',
-  styleUrls: ['./validation-dialog.component.scss']
+    selector: 'app-validation-dialog',
+    templateUrl: './validation-dialog.component.html',
+    styleUrls: ['./validation-dialog.component.scss'],
+    standalone: false
 })
 export class ValidationDialogComponent implements OnInit {
 

@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { NodeData } from 'src/app/models/node-data.model';
 
 @Component({
-  selector: 'app-widget-container',
-  templateUrl: './widget-container.component.html',
-  styleUrls: ['./widget-container.component.scss']
+    selector: 'app-widget-container',
+    templateUrl: './widget-container.component.html',
+    styleUrls: ['./widget-container.component.scss'],
+    standalone: false
 })
 export class WidgetContainerComponent {
 

@@ -12,9 +12,10 @@ import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 
 
 @Component({
-  selector: 'app-user-creation',
-  templateUrl: './user-creation.component.html',
-  styleUrls: ['./user-creation.component.scss']
+    selector: 'app-user-creation',
+    templateUrl: './user-creation.component.html',
+    styleUrls: ['./user-creation.component.scss'],
+    standalone: false
 })
 export class CreateUserComponent implements OnInit {
   public createUserForm: FormGroup;

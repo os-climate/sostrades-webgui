@@ -7,9 +7,10 @@ import { NavigationTitle, Routing } from 'src/app/models/enumeration.model';
 import { HeaderService } from 'src/app/services/hearder/header.service';
 
 @Component({
-  selector: 'app-ontology-container',
-  templateUrl: './ontology-container.component.html',
-  styleUrls: ['./ontology-container.component.scss']
+    selector: 'app-ontology-container',
+    templateUrl: './ontology-container.component.html',
+    styleUrls: ['./ontology-container.component.scss'],
+    standalone: false
 })
 export class OntologyContainerComponent implements OnInit, OnDestroy {
 

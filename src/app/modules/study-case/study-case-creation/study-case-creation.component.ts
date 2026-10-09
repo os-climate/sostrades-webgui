@@ -18,9 +18,10 @@ import { UserService } from 'src/app/services/user/user.service';
 import { TypeCheckingTools } from 'src/app/tools/type-checking.tool';
 
 @Component({
-  selector: 'app-study-case-creation',
-  templateUrl: './study-case-creation.component.html',
-  styleUrls: ['./study-case-creation.component.scss']
+    selector: 'app-study-case-creation',
+    templateUrl: './study-case-creation.component.html',
+    styleUrls: ['./study-case-creation.component.scss'],
+    standalone: false
 })
 export class StudyCaseCreationComponent implements OnInit, OnDestroy {
   public createStudyForm: FormGroup;

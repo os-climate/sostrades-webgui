@@ -3,9 +3,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 
 @Component({
-  selector: 'app-contact-dialog',
-  templateUrl: './contact-dialog.component.html',
-  styleUrls: ['./contact-dialog.component.scss']
+    selector: 'app-contact-dialog',
+    templateUrl: './contact-dialog.component.html',
+    styleUrls: ['./contact-dialog.component.scss'],
+    standalone: false
 })
 export class ContactDialogComponent implements OnInit {
 

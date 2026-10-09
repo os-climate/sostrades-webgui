@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-data-management-information',
-  templateUrl: './data-management-information.component.html',
-  styleUrls: ['./data-management-information.component.scss']
+    selector: 'app-data-management-information',
+    templateUrl: './data-management-information.component.html',
+    styleUrls: ['./data-management-information.component.scss'],
+    standalone: false
 })
 export class DataManagementInformationComponent  {
 

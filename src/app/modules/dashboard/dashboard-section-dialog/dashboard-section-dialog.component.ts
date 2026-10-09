@@ -5,10 +5,11 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from "@angular/cdk/dr
 import { DashboardService } from "../../../services/dashboard/dashboard.service";
 
 @Component({
-  selector: 'app-dashboard-section-dialog',
-  templateUrl: './dashboard-section-dialog.component.html',
-  styleUrls: ['./dashboard-section-dialog.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-dashboard-section-dialog',
+    templateUrl: './dashboard-section-dialog.component.html',
+    styleUrls: ['./dashboard-section-dialog.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class DashboardSectionDialogComponent {
   private DASHBOARD_LIST_ID: string = 'dashboard-list' as const;

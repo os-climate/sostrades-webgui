@@ -13,9 +13,10 @@ import { FormControl } from '@angular/forms';
 import { PostProcessingFilter } from 'src/app/models/post-processing-filter.model';
 
 @Component({
-  selector: 'app-post-processing-bundle',
-  templateUrl: './post-processing-bundle.component.html',
-  styleUrls: ['./post-processing-bundle.component.scss']
+    selector: 'app-post-processing-bundle',
+    templateUrl: './post-processing-bundle.component.html',
+    styleUrls: ['./post-processing-bundle.component.scss'],
+    standalone: false
 })
 export class PostProcessingBundleComponent implements OnInit, OnDestroy {
 

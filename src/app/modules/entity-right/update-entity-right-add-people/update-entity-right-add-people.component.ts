@@ -15,9 +15,10 @@ import { AlhpabetCssClassTools } from 'src/app/tools/alphabet-css-class.tool';
 
 
 @Component({
-  selector: 'app-update-entity-right-add-people',
-  templateUrl: './update-entity-right-add-people.component.html',
-  styleUrls: ['./update-entity-right-add-people.component.scss']
+    selector: 'app-update-entity-right-add-people',
+    templateUrl: './update-entity-right-add-people.component.html',
+    styleUrls: ['./update-entity-right-add-people.component.scss'],
+    standalone: false
 })
 export class UpdateEntityRightAddPeopleComponent implements OnInit {
 

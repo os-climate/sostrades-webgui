@@ -24,9 +24,10 @@ import { EditionFormDialogComponent } from 'src/app/shared/edition-form-dialog/e
 
 
 @Component({
-  selector: 'app-group-management',
-  templateUrl: './group-management.component.html',
-  styleUrls: ['./group-management.component.scss']
+    selector: 'app-group-management',
+    templateUrl: './group-management.component.html',
+    styleUrls: ['./group-management.component.scss'],
+    standalone: false
 })
 
 export class GroupManagementComponent implements OnInit {

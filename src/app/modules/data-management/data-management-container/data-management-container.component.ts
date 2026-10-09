@@ -18,9 +18,10 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { StudyCaseLoadingService } from 'src/app/services/study-case-loading/study-case-loading.service';
 
 @Component({
-  selector: 'app-data-management-container',
-  templateUrl: './data-management-container.component.html',
-  styleUrls: ['./data-management-container.component.scss']
+    selector: 'app-data-management-container',
+    templateUrl: './data-management-container.component.html',
+    styleUrls: ['./data-management-container.component.scss'],
+    standalone: false
 })
 export class DataManagementContainerComponent implements OnInit, OnDestroy {
 

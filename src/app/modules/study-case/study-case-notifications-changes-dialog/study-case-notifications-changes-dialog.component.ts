@@ -10,9 +10,10 @@ import { ColumnName } from 'src/app/models/enumeration.model';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-coedition-dialog',
-  templateUrl: './study-case-notifications-changes-dialog.component.html',
-  styleUrls: ['./study-case-notifications-changes-dialog.component.scss']
+    selector: 'app-coedition-dialog',
+    templateUrl: './study-case-notifications-changes-dialog.component.html',
+    styleUrls: ['./study-case-notifications-changes-dialog.component.scss'],
+    standalone: false
 })
 export class StudyCaseNotificationsChangesDialogComponent implements OnInit, AfterViewInit  {
 

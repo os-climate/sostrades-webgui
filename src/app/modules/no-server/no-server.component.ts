@@ -6,9 +6,10 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 
 @Component({
-  selector: 'app-no-server',
-  templateUrl: './no-server.component.html',
-  styleUrls: ['./no-server.component.scss']
+    selector: 'app-no-server',
+    templateUrl: './no-server.component.html',
+    styleUrls: ['./no-server.component.scss'],
+    standalone: false
 })
 export class NoServerComponent implements OnInit {
 

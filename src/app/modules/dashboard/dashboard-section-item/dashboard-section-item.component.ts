@@ -7,9 +7,10 @@ import { DashboardTextDialogComponent } from "../dashboard-text-dialog/dashboard
 import { DashboardSectionDialogComponent } from "../dashboard-section-dialog/dashboard-section-dialog.component";
 
 @Component({
-  selector: 'app-dashboard-section-item',
-  templateUrl: './dashboard-section-item.component.html',
-  styleUrls: ['./dashboard-section-item.component.scss']
+    selector: 'app-dashboard-section-item',
+    templateUrl: './dashboard-section-item.component.html',
+    styleUrls: ['./dashboard-section-item.component.scss'],
+    standalone: false
 })
 export class DashboardSectionItemComponent implements OnInit {
   @Input() sectionItem: DashboardSection;

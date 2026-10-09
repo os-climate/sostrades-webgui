@@ -7,9 +7,10 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { SnackbarService } from "../../../services/snackbar/snackbar.service";
 
 @Component({
-  selector: 'app-post-processing-plotly',
-  templateUrl: './post-processing-plotly.component.html',
-  styleUrls: ['./post-processing-plotly.component.scss']
+    selector: 'app-post-processing-plotly',
+    templateUrl: './post-processing-plotly.component.html',
+    styleUrls: ['./post-processing-plotly.component.scss'],
+    standalone: false
 })
 export class PostProcessingPlotlyComponent implements OnInit, OnChanges {
   @Input() plotData: any;

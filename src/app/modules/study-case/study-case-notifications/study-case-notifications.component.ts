@@ -14,9 +14,10 @@ import { formatDate } from '@angular/common';
 
 
 @Component({
-  selector: 'app-study-case-notifications',
-  templateUrl: './study-case-notifications.component.html',
-  styleUrls: ['./study-case-notifications.component.scss']
+    selector: 'app-study-case-notifications',
+    templateUrl: './study-case-notifications.component.html',
+    styleUrls: ['./study-case-notifications.component.scss'],
+    standalone: false
 })
 export class StudyCaseNotificationsComponent implements OnInit, OnDestroy {
 

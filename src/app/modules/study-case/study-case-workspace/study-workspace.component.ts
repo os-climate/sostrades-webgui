@@ -18,9 +18,10 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { MatTabChangeEvent } from "@angular/material/tabs";
 
 @Component({
-  selector: 'app-study-workspace',
-  templateUrl: './study-workspace.component.html',
-  styleUrls: ['./study-workspace.component.scss']
+    selector: 'app-study-workspace',
+    templateUrl: './study-workspace.component.html',
+    styleUrls: ['./study-workspace.component.scss'],
+    standalone: false
 })
 export class StudyWorkspaceComponent implements OnInit, OnDestroy {
 

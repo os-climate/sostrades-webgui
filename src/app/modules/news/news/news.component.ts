@@ -11,9 +11,10 @@ import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/vali
 import { NewsCreateOrEditComponent } from '../news-create-or-edit/news-create-or-edit.component';
 
 @Component({
-  selector: 'app-news',
-  templateUrl: './news.component.html',
-  styleUrls: ['./news.component.scss']
+    selector: 'app-news',
+    templateUrl: './news.component.html',
+    styleUrls: ['./news.component.scss'],
+    standalone: false
 })
 export class NewsComponent implements OnInit {
 

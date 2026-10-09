@@ -22,9 +22,10 @@ import { OntologyParameterUsage } from 'src/app/models/ontology-parameter-usage.
 import { LoadStatus } from 'src/app/models/study.model';
 
 @Component({
-  selector: 'app-ontology-informations',
-  templateUrl: './ontology-informations.component.html',
-  styleUrls: ['./ontology-informations.component.scss']
+    selector: 'app-ontology-informations',
+    templateUrl: './ontology-informations.component.html',
+    styleUrls: ['./ontology-informations.component.scss'],
+    standalone: false
 })
 export class OntologyInformationsComponent implements OnInit {
 

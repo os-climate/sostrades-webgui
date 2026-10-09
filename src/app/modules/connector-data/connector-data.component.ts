@@ -6,9 +6,10 @@ import { StudyCaseLocalStorageService } from 'src/app/services/study-case-local-
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 
 @Component({
-  selector: 'app-connector-data',
-  templateUrl: './connector-data.component.html',
-  styleUrls: ['./connector-data.component.scss']
+    selector: 'app-connector-data',
+    templateUrl: './connector-data.component.html',
+    styleUrls: ['./connector-data.component.scss'],
+    standalone: false
 })
 export class ConnectorDataComponent implements OnInit {
 

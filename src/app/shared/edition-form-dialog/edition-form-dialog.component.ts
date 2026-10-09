@@ -16,9 +16,10 @@ import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-di
 
 
 @Component({
-  selector: 'app-edition-form-dialog',
-  templateUrl: './edition-form-dialog.component.html',
-  styleUrls: ['./edition-form-dialog.component.scss']
+    selector: 'app-edition-form-dialog',
+    templateUrl: './edition-form-dialog.component.html',
+    styleUrls: ['./edition-form-dialog.component.scss'],
+    standalone: false
 })
 export class EditionFormDialogComponent implements OnInit {
   

@@ -6,9 +6,10 @@ import { AppDataService } from 'src/app/services/app-data/app-data.service';
 
 
 @Component({
-  selector: 'app-login-information-dialog',
-  templateUrl: './login-information-dialog.component.html',
-  styleUrls: ['./login-information-dialog.component.scss']
+    selector: 'app-login-information-dialog',
+    templateUrl: './login-information-dialog.component.html',
+    styleUrls: ['./login-information-dialog.component.scss'],
+    standalone: false
 })
 export class LoginInformationDialogComponent implements OnInit {
   public sostradesInfos: boolean;

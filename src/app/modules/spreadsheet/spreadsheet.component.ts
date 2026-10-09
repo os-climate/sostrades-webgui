@@ -15,9 +15,10 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 
 
 @Component({
-  selector: 'app-spreadsheet',
-  templateUrl: './spreadsheet.component.html',
-  styleUrls: ['./spreadsheet.component.scss']
+    selector: 'app-spreadsheet',
+    templateUrl: './spreadsheet.component.html',
+    styleUrls: ['./spreadsheet.component.scss'],
+    standalone: false
 })
 export class SpreadsheetComponent implements OnInit, AfterViewInit {
 

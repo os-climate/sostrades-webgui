@@ -11,9 +11,10 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { LoadingDialogService } from 'src/app/services/loading-dialog/loading-dialog.service';
 
 @Component({
-  selector: 'app-study-case-documentation',
-  templateUrl: './study-case-documentation.component.html',
-  styleUrls: ['./study-case-documentation.component.scss']
+    selector: 'app-study-case-documentation',
+    templateUrl: './study-case-documentation.component.html',
+    styleUrls: ['./study-case-documentation.component.scss'],
+    standalone: false
 })
 export class DocumentationComponent implements OnChanges, AfterViewInit  {
 

@@ -10,9 +10,10 @@ import { HeaderService } from 'src/app/services/hearder/header.service';
 
 
 @Component({
-  selector: 'app-ontology-parameter-informations',
-  templateUrl: './ontology-parameter-informations.component.html',
-  styleUrls: ['./ontology-parameter-informations.component.scss']
+    selector: 'app-ontology-parameter-informations',
+    templateUrl: './ontology-parameter-informations.component.html',
+    styleUrls: ['./ontology-parameter-informations.component.scss'],
+    standalone: false
 })
 export class OntologyParameterInformationsComponent implements OnInit {
 

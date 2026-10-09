@@ -9,9 +9,10 @@ import { VisualizationDiagrams } from 'src/app/models/study.model';
 
 
 @Component({
-  selector: 'app-visualisation-interface-diagram',
-  templateUrl: './visualisation-interface-diagram.component.html',
-  styleUrls: ['./visualisation-interface-diagram.component.scss']
+    selector: 'app-visualisation-interface-diagram',
+    templateUrl: './visualisation-interface-diagram.component.html',
+    styleUrls: ['./visualisation-interface-diagram.component.scss'],
+    standalone: false
 })
 export class VisualisationInterfaceDiagramComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('graphviz_placeholder', { static: true }) private el: ElementRef;

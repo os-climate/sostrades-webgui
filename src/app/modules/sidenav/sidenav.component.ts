@@ -17,9 +17,10 @@ import { StudyCaseMainService } from 'src/app/services/study-case/main/study-cas
 import { AppDataService } from 'src/app/services/app-data/app-data.service';
 
 @Component({
-  selector: 'app-sidenav',
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.scss'],
+    selector: 'app-sidenav',
+    templateUrl: './sidenav.component.html',
+    styleUrls: ['./sidenav.component.scss'],
+    standalone: false
 })
 export class SidenavComponent implements OnInit, OnDestroy {
 

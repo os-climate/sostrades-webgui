@@ -5,9 +5,10 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 
 @Component({
-  selector: 'app-post-processing-pareto-front',
-  templateUrl: './post-processing-pareto-front.component.html',
-  styleUrls: ['./post-processing-pareto-front.component.scss']
+    selector: 'app-post-processing-pareto-front',
+    templateUrl: './post-processing-pareto-front.component.html',
+    styleUrls: ['./post-processing-pareto-front.component.scss'],
+    standalone: false
 })
 export class PostProcessingParetoFrontComponent implements OnInit {
 

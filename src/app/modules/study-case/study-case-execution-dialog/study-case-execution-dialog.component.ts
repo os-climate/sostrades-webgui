@@ -5,9 +5,10 @@ import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket/socket.service';
 
 @Component({
-  selector: 'app-study-case-execution-dialog',
-  templateUrl: './study-case-execution-dialog.component.html',
-  styleUrls: ['./study-case-execution-dialog.component.scss']
+    selector: 'app-study-case-execution-dialog',
+    templateUrl: './study-case-execution-dialog.component.html',
+    styleUrls: ['./study-case-execution-dialog.component.scss'],
+    standalone: false
 })
 export class StudyCaseExecutionDialogComponent implements OnInit, OnDestroy {
 

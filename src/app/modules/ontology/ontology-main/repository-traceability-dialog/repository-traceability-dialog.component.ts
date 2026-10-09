@@ -4,9 +4,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { RepositoryTraceabilityDialogData } from 'src/app/models/dialog-data.model';
 
 @Component({
-  selector: 'app-repository-traceability-dialog',
-  templateUrl: './repository-traceability-dialog.component.html',
-  styleUrls: ['./repository-traceability-dialog.component.scss']
+    selector: 'app-repository-traceability-dialog',
+    templateUrl: './repository-traceability-dialog.component.html',
+    styleUrls: ['./repository-traceability-dialog.component.scss'],
+    standalone: false
 })
 export class RepositoryTraceabilityDialogComponent implements OnInit {
 

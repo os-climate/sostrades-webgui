@@ -32,9 +32,10 @@ import { OntologyProcessInformationComponent } from './ontology-process-informat
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-ontology-processes',
-  templateUrl: './ontology-processes.component.html',
-  styleUrls: ['./ontology-processes.component.scss']
+    selector: 'app-ontology-processes',
+    templateUrl: './ontology-processes.component.html',
+    styleUrls: ['./ontology-processes.component.scss'],
+    standalone: false
 })
 export class OntologyProcessesComponent implements OnInit, OnDestroy {
 

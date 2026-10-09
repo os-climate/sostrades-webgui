@@ -12,9 +12,10 @@ import { CoeditionType } from 'src/app/models/coedition-notification.model';
 import { StudyCaseDataService } from 'src/app/services/study-case/data/study-case-data.service';
 
 @Component({
-  selector: 'app-user-room-dialog',
-  templateUrl: './user-room-dialog.component.html',
-  styleUrls: ['./user-room-dialog.component.scss']
+    selector: 'app-user-room-dialog',
+    templateUrl: './user-room-dialog.component.html',
+    styleUrls: ['./user-room-dialog.component.scss'],
+    standalone: false
 })
 
 export class UserRoomDialogComponent implements OnInit, OnDestroy {

@@ -39,9 +39,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
-  selector: 'app-study-case-management',
-  templateUrl: './study-case-management.component.html',
-  styleUrls: ['./study-case-management.component.scss'],
+    selector: 'app-study-case-management',
+    templateUrl: './study-case-management.component.html',
+    styleUrls: ['./study-case-management.component.scss'],
+    standalone: false
 })
 
 export class StudyCaseManagementComponent implements OnInit, OnDestroy {

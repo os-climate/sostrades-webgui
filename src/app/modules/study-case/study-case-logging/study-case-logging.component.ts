@@ -9,9 +9,10 @@ import { StudyCaseExecutionExceptionDialogComponent } from '../study-case-execut
 const POLLING_DELAY = 5000;
 
 @Component({
-  selector: 'app-study-case-logging',
-  templateUrl: './study-case-logging.component.html',
-  styleUrls: ['./study-case-logging.component.scss']
+    selector: 'app-study-case-logging',
+    templateUrl: './study-case-logging.component.html',
+    styleUrls: ['./study-case-logging.component.scss'],
+    standalone: false
 })
 export class StudyCaseLoggingComponent implements OnInit, OnDestroy, AfterViewInit {
 

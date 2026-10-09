@@ -12,9 +12,10 @@ import { VisualizationDiagrams } from 'src/app/models/study.model';
 
 
 @Component({
-  selector: 'app-visualisation-execution-sequence',
-  templateUrl: './visualisation-execution-sequence.component.html',
-  styleUrls: ['./visualisation-execution-sequence.component.scss']
+    selector: 'app-visualisation-execution-sequence',
+    templateUrl: './visualisation-execution-sequence.component.html',
+    styleUrls: ['./visualisation-execution-sequence.component.scss'],
+    standalone: false
 })
 
 export class ExecutionSequenceComponent implements OnInit {

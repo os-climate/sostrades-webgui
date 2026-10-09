@@ -46,20 +46,21 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 
 @Component({
-  selector: 'app-study-case-treeview',
-  templateUrl: './study-case-treeview.component.html',
-  styleUrls: ['./study-case-treeview.component.scss'],
-  animations: [
-    trigger('slideInOut', [
-      transition(':enter', [
-        style({ transform: 'translateX(40px)', opacity: 0 }),
-        animate('250ms cubic-bezier(.25,.8,.25,1)', style({ transform: 'translateX(0)', opacity: 1 }))
-      ]),
-      transition(':leave', [
-        animate('200ms cubic-bezier(.25,.8,.25,1)', style({ transform: 'translateX(40px)', opacity: 0 }))
-      ])
-    ])
-  ]
+    selector: 'app-study-case-treeview',
+    templateUrl: './study-case-treeview.component.html',
+    styleUrls: ['./study-case-treeview.component.scss'],
+    animations: [
+        trigger('slideInOut', [
+            transition(':enter', [
+                style({ transform: 'translateX(40px)', opacity: 0 }),
+                animate('250ms cubic-bezier(.25,.8,.25,1)', style({ transform: 'translateX(0)', opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('200ms cubic-bezier(.25,.8,.25,1)', style({ transform: 'translateX(40px)', opacity: 0 }))
+            ])
+        ])
+    ],
+    standalone: false
 })
 
 export class StudyCaseTreeviewComponent implements OnInit, OnDestroy, AfterViewInit {

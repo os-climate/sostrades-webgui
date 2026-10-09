@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-study-case-status-information',
-  templateUrl: './study-case-status-information.component.html',
-  styleUrls: ['./study-case-status-information.component.scss']
+    selector: 'app-study-case-status-information',
+    templateUrl: './study-case-status-information.component.html',
+    styleUrls: ['./study-case-status-information.component.scss'],
+    standalone: false
 })
 export class StudyCaseStatusInformationComponent {
 

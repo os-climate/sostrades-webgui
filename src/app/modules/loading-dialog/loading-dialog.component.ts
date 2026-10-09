@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { LoadingDialogData } from 'src/app/models/dialog-data.model';
 
 @Component({
-  selector: 'app-loading-dialog',
-  templateUrl: './loading-dialog.component.html',
-  styleUrls: ['./loading-dialog.component.scss']
+    selector: 'app-loading-dialog',
+    templateUrl: './loading-dialog.component.html',
+    styleUrls: ['./loading-dialog.component.scss'],
+    standalone: false
 })
 export class LoadingDialogComponent implements OnInit {
 

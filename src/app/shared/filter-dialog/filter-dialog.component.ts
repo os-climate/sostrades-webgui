@@ -6,9 +6,10 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-filter-dialog',
-  templateUrl: './filter-dialog.component.html',
-  styleUrls: ['./filter-dialog.component.scss']
+    selector: 'app-filter-dialog',
+    templateUrl: './filter-dialog.component.html',
+    styleUrls: ['./filter-dialog.component.scss'],
+    standalone: false
 })
 export class FilterDialogComponent implements OnInit, OnDestroy {
 

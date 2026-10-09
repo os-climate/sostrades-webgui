@@ -13,9 +13,10 @@ import { StudyCaseValidationService } from "src/app/services/study-case-validati
 import { StudyCaseDataService } from "src/app/services/study-case/data/study-case-data.service";
 
 @Component({
-  selector: "app-study-case-validation-dialog",
-  templateUrl: "./study-case-validation-dialog.component.html",
-  styleUrls: ["./study-case-validation-dialog.component.scss"],
+    selector: "app-study-case-validation-dialog",
+    templateUrl: "./study-case-validation-dialog.component.html",
+    styleUrls: ["./study-case-validation-dialog.component.scss"],
+    standalone: false
 })
 export class StudyCaseValidationDialogComponent implements OnInit {
   public validationForm: FormGroup;

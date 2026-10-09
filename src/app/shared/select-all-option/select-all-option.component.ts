@@ -4,9 +4,10 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-select-all-option',
-  templateUrl: './select-all-option.component.html',
-  styleUrls: ['./select-all-option.component.scss']
+    selector: 'app-select-all-option',
+    templateUrl: './select-all-option.component.html',
+    styleUrls: ['./select-all-option.component.scss'],
+    standalone: false
 })
 export class SelectAllOptionComponent {
 

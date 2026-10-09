@@ -5,9 +5,10 @@ import { LinkDialogData } from 'src/app/models/dialog-data.model';
 
 
 @Component({
-  selector: 'app-link-create-or-edit',
-  templateUrl: './link-create-or-edit.component.html',
-  styleUrls: ['./link-create-or-edit.component.scss']
+    selector: 'app-link-create-or-edit',
+    templateUrl: './link-create-or-edit.component.html',
+    styleUrls: ['./link-create-or-edit.component.scss'],
+    standalone: false
 })
 
 export class LinkCreateOrEditComponent implements OnInit {

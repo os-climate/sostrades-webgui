@@ -10,9 +10,10 @@ import { RepositoryTraceabilityDialogComponent } from './repository-traceability
 import { OntologyDirectService } from 'src/app/services/ontology-direct/ontology-direct.service';
 
 @Component({
-  selector: 'app-ontology-main',
-  templateUrl: './ontology-main.component.html',
-  styleUrls: ['./ontology-main.component.scss']
+    selector: 'app-ontology-main',
+    templateUrl: './ontology-main.component.html',
+    styleUrls: ['./ontology-main.component.scss'],
+    standalone: false
 })
 export class OntologyMainComponent implements OnInit {
 

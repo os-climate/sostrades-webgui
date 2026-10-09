@@ -12,9 +12,10 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 import { VisualizationDiagrams } from 'src/app/models/study.model';
 
 @Component({
-  selector: 'app-visualisation-coupling-graph',
-  templateUrl: './visualisation-coupling-graph.component.html',
-  styleUrls: ['./visualisation-coupling-graph.component.scss']
+    selector: 'app-visualisation-coupling-graph',
+    templateUrl: './visualisation-coupling-graph.component.html',
+    styleUrls: ['./visualisation-coupling-graph.component.scss'],
+    standalone: false
 })
 export class CouplingGraphComponent implements OnInit {
 

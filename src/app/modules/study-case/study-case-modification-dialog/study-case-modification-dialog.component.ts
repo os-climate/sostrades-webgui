@@ -10,9 +10,10 @@ import { SocketService } from 'src/app/services/socket/socket.service';
 import { CoeditionType } from 'src/app/models/coedition-notification.model';
 
 @Component({
-  selector: 'app-study-case-modification-dialog',
-  templateUrl: './study-case-modification-dialog.component.html',
-  styleUrls: ['./study-case-modification-dialog.component.scss']
+    selector: 'app-study-case-modification-dialog',
+    templateUrl: './study-case-modification-dialog.component.html',
+    styleUrls: ['./study-case-modification-dialog.component.scss'],
+    standalone: false
 })
 export class StudyCaseModificationDialogComponent implements OnInit, OnDestroy {
 

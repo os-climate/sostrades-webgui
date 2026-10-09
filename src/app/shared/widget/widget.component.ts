@@ -14,9 +14,10 @@ import { Subscription } from 'rxjs';
 import { DisciplineStatus } from 'src/app/models/study-case-execution-observer.model';
 
 @Component({
-  selector: 'app-widget',
-  templateUrl: './widget.component.html',
-  styleUrls: ['./widget.component.scss'],
+    selector: 'app-widget',
+    templateUrl: './widget.component.html',
+    styleUrls: ['./widget.component.scss'],
+    standalone: false
 })
 
 export class WidgetComponent implements OnInit, OnDestroy {

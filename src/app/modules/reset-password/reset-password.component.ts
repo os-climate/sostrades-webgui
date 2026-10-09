@@ -9,9 +9,10 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { Routing } from 'src/app/models/enumeration.model';
 
 @Component({
-  selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss']
+    selector: 'app-reset-password',
+    templateUrl: './reset-password.component.html',
+    styleUrls: ['./reset-password.component.scss'],
+    standalone: false
 })
 
 

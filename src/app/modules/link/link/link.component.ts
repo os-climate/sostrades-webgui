@@ -11,9 +11,10 @@ import { ValidationDialogComponent } from 'src/app/shared/validation-dialog/vali
 import { LinkCreateOrEditComponent } from '../link-create-or-edit/link-create-or-edit.component';
 
 @Component({
-  selector: 'app-link',
-  templateUrl: './link.component.html',
-  styleUrls: ['./link.component.scss']
+    selector: 'app-link',
+    templateUrl: './link.component.html',
+    styleUrls: ['./link.component.scss'],
+    standalone: false
 })
 export class LinkComponent implements OnInit {
 

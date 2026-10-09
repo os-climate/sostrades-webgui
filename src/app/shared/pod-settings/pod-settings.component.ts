@@ -5,9 +5,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Flavor } from 'src/app/models/flavor.model';
 
 @Component({
-  selector: 'app-pod-settings',
-  templateUrl: './pod-settings.component.html',
-  styleUrls: ['./pod-settings.component.scss']
+    selector: 'app-pod-settings',
+    templateUrl: './pod-settings.component.html',
+    styleUrls: ['./pod-settings.component.scss'],
+    standalone: false
 })
 export class PodSettingsComponent implements OnInit  {
   public settingsForm: FormGroup;

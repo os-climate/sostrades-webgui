@@ -3,7 +3,8 @@ import { LoggerService } from 'src/app/services/logger/logger.service';
 import { OntologyService } from 'src/app/services/ontology/ontology.service';
 
 @Pipe({
-  name: 'ontologyParameterConverter'
+    name: 'ontologyParameterConverter',
+    standalone: false
 })
 export class OntologyParameterConverterPipe implements PipeTransform {
 

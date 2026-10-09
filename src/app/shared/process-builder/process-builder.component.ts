@@ -6,9 +6,10 @@ import { StudyCaseCreationService } from 'src/app/services/study-case/study-case
 
 
 @Component({
-  selector: 'app-process-builder',
-  templateUrl: './process-builder.component.html',
-  styleUrls: ['./process-builder.component.scss']
+    selector: 'app-process-builder',
+    templateUrl: './process-builder.component.html',
+    styleUrls: ['./process-builder.component.scss'],
+    standalone: false
 })
 export class ProcessBuilderComponent implements OnInit, OnDestroy {
 

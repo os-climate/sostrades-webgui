@@ -6,9 +6,10 @@ import { LoggerService } from 'src/app/services/logger/logger.service';
 import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 @Component({
-  selector: 'app-saml',
-  templateUrl: './saml.component.html',
-  styleUrls: ['./saml.component.scss']
+    selector: 'app-saml',
+    templateUrl: './saml.component.html',
+    styleUrls: ['./saml.component.scss'],
+    standalone: false
 })
 export class SamlComponent implements OnInit {
 

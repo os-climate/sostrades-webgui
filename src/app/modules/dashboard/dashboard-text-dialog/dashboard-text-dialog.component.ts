@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { QuillEditorComponent } from "ngx-quill";
 
 @Component({
-  selector: 'app-dashboard-text-dialog',
-  templateUrl: './dashboard-text-dialog.component.html',
-  styleUrls: ['./dashboard-text-dialog.component.scss']
+    selector: 'app-dashboard-text-dialog',
+    templateUrl: './dashboard-text-dialog.component.html',
+    styleUrls: ['./dashboard-text-dialog.component.scss'],
+    standalone: false
 })
 export class DashboardTextDialogComponent implements AfterViewInit {
   @ViewChild(QuillEditorComponent) quillEditor: QuillEditorComponent;

@@ -15,9 +15,10 @@ import { OntologyModelsInformationComponent } from './ontology-models-informatio
 import { OntologyHttpService } from 'src/app/services/ontology-http/ontology-http.service';
 
 @Component({
-  selector: 'app-ontology-models',
-  templateUrl: './ontology-models.component.html',
-  styleUrls: ['./ontology-models.component.scss']
+    selector: 'app-ontology-models',
+    templateUrl: './ontology-models.component.html',
+    styleUrls: ['./ontology-models.component.scss'],
+    standalone: false
 })
 export class OntologyModelsComponent implements OnInit, OnDestroy {
 

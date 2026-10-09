@@ -4,9 +4,10 @@ import { StudyLink } from 'src/app/models/dialog-data.model';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
-  selector: 'app-study-case-link-information',
-  templateUrl: './study-case-link-information.component.html',
-  styleUrls: ['./study-case-link-information.component.scss']
+    selector: 'app-study-case-link-information',
+    templateUrl: './study-case-link-information.component.html',
+    styleUrls: ['./study-case-link-information.component.scss'],
+    standalone: false
 })
 export class StudyCaseLinkInformationComponent {
 

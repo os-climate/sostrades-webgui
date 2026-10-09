@@ -4,9 +4,10 @@ import { StudyCaseDataService } from 'src/app/services/study-case/data/study-cas
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
-  selector: 'app-welcom-page',
-  templateUrl: './welcom-page.component.html',
-  styleUrls: ['./welcom-page.component.scss']
+    selector: 'app-welcom-page',
+    templateUrl: './welcom-page.component.html',
+    styleUrls: ['./welcom-page.component.scss'],
+    standalone: false
 })
 export class WelcomPageComponent implements OnInit {
 
