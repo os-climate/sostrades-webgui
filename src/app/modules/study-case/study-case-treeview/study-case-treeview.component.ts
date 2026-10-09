@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Inject, AfterViewInit, DOCUMENT } from '@angular/core';
 import { TreeNode, TreeView } from 'src/app/models/tree-node.model';
 import { combineLatest, Subscription } from 'rxjs';
 import { NestedTreeControl } from '@angular/cdk/tree';
@@ -31,7 +31,7 @@ import { Scenario } from 'src/app/models/scenario.model';
 import { PostProcessingService } from 'src/app/services/post-processing/post-processing.service';
 import { StudyDialogService } from 'src/app/services/study-dialog/study-dialog.service';
 import { IoType, NodeData } from 'src/app/models/node-data.model';
-import { DOCUMENT } from '@angular/common';
+
 import { PannelIds } from 'src/app/models/data-management-discipline.model';
 import { StudyCaseMainService } from 'src/app/services/study-case/main/study-case-main.service';
 import { StudyCaseExecutionSystemLoad } from 'src/app/models/study-case-execution-system-load.model';
