@@ -234,7 +234,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     }
 
     this.isTableLoaded = true;
-    const jExcel = (await import('node_modules/jspreadsheet-ce')).default;
+    const jExcel = (await import('jspreadsheet-ce')).default;
     this.jExcelSpreadSheet = jExcel(this.spreadsheet.nativeElement, jExcelProperties);
   }
 
