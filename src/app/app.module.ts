@@ -260,9 +260,7 @@ registerLocaleData(fr);
                 useValue: {
                     gfm: true,
                     breaks: true,
-                    pedantic: false,
-                    smartLists: true,
-                    smartypants: false,
+                    pedantic: false
                 },
             },
         })], providers: [
