@@ -127,7 +127,7 @@ import { FilterBarComponent } from './shared/filter-bar/filter-bar.component';
 import { TruncatePipe } from './pipes/truncate/truncate.pipe';
 import { AuthenticationErrorComponent } from './modules/authentication-error/authentication-error.component';
 
-import { GridsterModule } from "angular-gridster2";
+import { Gridster, GridsterItem } from "angular-gridster2";
 import { QuillModule } from "ngx-quill";
 import { QuillConfigModule } from "ngx-quill/config";
 
@@ -247,7 +247,8 @@ registerLocaleData(fr);
         TableVirtualScrollModule,
         ClipboardModule,
         AngularSplitModule,
-        GridsterModule,
+        Gridster,
+        GridsterItem,
         QuillModule.forRoot(),
         QuillConfigModule.forRoot({
             modules: {

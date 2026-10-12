@@ -1,4 +1,4 @@
-import { GridsterItem } from "angular-gridster2";
+import { GridsterItemConfig } from "angular-gridster2";
 
 export class Dashboard {
 
@@ -21,7 +21,7 @@ export enum DashboardAttributes {
 
 export type DisplayableItem = DashboardText | DashboardGraph | DashboardSection;
 
-interface BaseItem extends GridsterItem {
+interface BaseItem extends GridsterItemConfig {
   id: string;
   type: 'text' | 'graph' | 'section';
   // position on the grid
