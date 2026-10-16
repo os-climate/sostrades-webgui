@@ -130,7 +130,7 @@ import { AuthenticationErrorComponent } from './modules/authentication-error/aut
 import { ChatBotDialogComponent } from './modules/chat-bot-dialog/chat-bot-dialog.component';
 import { SafePipe } from './pipes/safe/safe.pipe';
 
-import { GridsterModule } from "angular-gridster2";
+import { Gridster, GridsterItem } from "angular-gridster2";
 import { QuillModule } from "ngx-quill";
 import { QuillConfigModule } from "ngx-quill/config";
 
@@ -253,7 +253,8 @@ registerLocaleData(fr);
         TableVirtualScrollModule,
         ClipboardModule,
         AngularSplitModule,
-        GridsterModule,
+        Gridster, 
+        GridsterItem,
         QuillModule.forRoot(),
         QuillConfigModule.forRoot({
             modules: {

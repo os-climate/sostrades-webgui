@@ -4,6 +4,7 @@ import { StudyChatBotDialogData } from 'src/app/models/dialog-data.model';
 
 @Component({
   selector: 'app-chat-bot-dialog',
+  standalone: false,
   templateUrl: './chat-bot-dialog.component.html',
   styleUrls: ['./chat-bot-dialog.component.scss']
 })

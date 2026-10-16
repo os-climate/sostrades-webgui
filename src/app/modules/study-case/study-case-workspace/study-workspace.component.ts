@@ -61,10 +61,10 @@ export class StudyWorkspaceComponent implements OnInit, OnDestroy {
   public selectedTabIndex: number;
   public studyName: string;
 
-  @HostListener('document:fullscreenchange', ['$event'])
-  @HostListener('document:webkitfullscreenchange', ['$event'])
-  @HostListener('document:mozfullscreenchange', ['$event'])
-  @HostListener('document:MSFullscreenChange', ['$event'])
+  @HostListener('document:fullscreenchange')
+  @HostListener('document:webkitfullscreenchange')
+  @HostListener('document:mozfullscreenchange')
+  @HostListener('document:MSFullscreenChange')
   fullscreenmode() {
     this.isFullScreenOn = !this.isFullScreenOn;
   }

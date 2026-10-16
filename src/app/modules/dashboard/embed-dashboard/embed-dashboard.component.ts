@@ -8,6 +8,7 @@ import { TypeCheckingTools } from "../../../tools/type-checking.tool";
 
 @Component({
   selector: 'app-embed-dashboard',
+  standalone: false,
   templateUrl: './embed-dashboard.component.html',
   styleUrls: ['./embed-dashboard.component.scss']
 })

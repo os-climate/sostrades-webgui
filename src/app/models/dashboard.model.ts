@@ -1,4 +1,4 @@
-import { GridsterItem } from "angular-gridster2";
+import { GridsterItemConfig  } from "angular-gridster2";
 import { PostProcessingFilter } from "./post-processing-filter.model";
 import { NodeData } from "./node-data.model";
 
@@ -25,7 +25,7 @@ export enum DashboardAttributes {
   DATA = 'data'
 }
 
-export interface ItemLayout extends GridsterItem {
+export interface ItemLayout extends GridsterItemConfig  {
   item_id: string;
   item_type: 'text' | 'graph' | 'section' | 'value_data';
   x: number;
@@ -175,7 +175,7 @@ export class DashboardItemFactory {
 
 export type DisplayableItem = DashboardText | DashboardGraph | DashboardSection | DashboardValueData;
 
-interface BaseItem extends GridsterItem {
+interface BaseItem extends GridsterItemConfig  {
   item_id: string;
   item_type: 'text' | 'graph' | 'section' | 'value_data';
   // position on the grid
