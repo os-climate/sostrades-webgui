@@ -25,7 +25,7 @@ export class StudyCaseExecutionStatus {
     const strings: string[] = [];
     strings.push(`study identifier : ${this.studyCaseId}`);
     strings.push(`disciplines status : ${this.disciplinesStatus}`);
-    strings.push(`study case execution status : ${this.studyCalculationStatus}`);+
+    strings.push(`study case execution status : ${this.studyCalculationStatus}`);
     strings.push(`study case execution cpu : ${this.studyCalculationCpu}`);
     strings.push(`study case execution memory : ${this.studyCalculationMemory}`);
     strings.push(`study case execution error message : ${this.studyCalculationMemory}`);

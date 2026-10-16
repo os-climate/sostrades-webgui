@@ -49,7 +49,7 @@ export class SpreadsheetComponent implements OnInit, AfterViewInit {
     this.isTableLoaded = false;
     this.isLargeFile = false;
     this.title = null;
-    this.contentHeight == 56;
+    this.contentHeight = 56;
     this.columnsDef = [];
     this.rowData = [];
     this.hasCsvChanges = false;

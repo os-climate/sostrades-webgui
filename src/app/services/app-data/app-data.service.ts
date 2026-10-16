@@ -530,7 +530,6 @@ export class AppDataService extends DataHttpService {
       error: (errorReceived) => {
 
         functionToDoAfterLoading(false);
-        (false);
         this.studyCaseDataService.checkPodStatusAndShowError(studyId, errorReceived, "Error loading study: ");
       }
     });

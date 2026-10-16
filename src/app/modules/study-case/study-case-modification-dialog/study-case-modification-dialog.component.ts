@@ -68,9 +68,11 @@ export class StudyCaseModificationDialogComponent implements OnInit, OnDestroy {
   }
 
   masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
       this.dataSourceChanges.data.forEach(row => this.selection.select(row));
+    }
   }
 
   updateSelectedCount() {

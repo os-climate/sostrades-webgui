@@ -244,13 +244,15 @@ export class StudyCaseManagementComponent implements OnInit, OnDestroy {
   }
 
   masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
       this.dataSourceStudies.filteredData.forEach(row => {
         if (row.isManager) {
           this.selection.select(row);
         }
       });
+    }
   }
 
   addOrRemoveFavoriteStudy(study: Study) {

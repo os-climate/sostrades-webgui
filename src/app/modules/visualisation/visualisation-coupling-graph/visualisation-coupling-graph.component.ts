@@ -113,7 +113,9 @@ export class CouplingGraphComponent implements OnInit {
         // initialize node and links visibility
         this.nodes = this.data.treeNodes.map((node: any) => {
           node['active'] = 1;
-          node['Type'] === 'DisciplineNode' ? node['expand'] = 1 : null;
+          if (node['Type'] === 'DisciplineNode') {
+            node['expand'] = 1;
+          }
           return node;
         });
         this.links = this.data.groupedLinks.map((link: any) => {
@@ -723,7 +725,11 @@ export class CouplingGraphComponent implements OnInit {
   }
 
   toggleTreeNode(d: any): any {
-    d.expand === 0 ? this.expandNode(d) : this.collapseNode(d);
+    if (d.expand === 0) {
+      this.expandNode(d);
+    } else {
+      this.collapseNode(d);
+    }
   }
 
   updateNodesAndLinks(): any {

@@ -16,6 +16,9 @@
       ],
       "rules": {
         "@typescript-eslint/no-unused-vars": "error",
+        "@angular-eslint/prefer-inject": "off",
+        "@angular-eslint/prefer-standalone": "off",
+        "@angular-eslint/template/prefer-control-flow": "off",
         "@angular-eslint/directive-selector": [
           "error",
           {
@@ -42,7 +45,9 @@
       "extends": [
         "plugin:@angular-eslint/template/recommended"
       ],
-      "rules": {}
+      "rules": {
+        "@angular-eslint/template/prefer-control-flow": "off"
+      }
     }
   ]
 }

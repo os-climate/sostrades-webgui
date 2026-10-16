@@ -143,7 +143,6 @@ export class OntologyInformationsComponent implements OnInit {
       this.isEditableOnAnotherNode = false;
     }
 
-    this.data.nodeData.parent.fullNamespace;
     this.isLoading = false;
   }
 
