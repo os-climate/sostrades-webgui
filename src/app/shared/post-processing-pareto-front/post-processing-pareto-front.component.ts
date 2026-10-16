@@ -149,7 +149,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
     });
 
     if (error) {
-      this.snackbarService.showError('Error retrieving trade list, resetting trade list');
+      this.snackbarService.showError('Failed to retrieve trade list. Resetting trade list.');
       // Resetting plot markers
       data.forEach(el => {
         if (el.mode === 'markers') {
@@ -263,7 +263,7 @@ export class PostProcessingParetoFrontComponent implements OnInit {
   applyTrade() {
     this.studyCaseDataService.tradeScenarioList = this.scenarioList;
     this.studyCaseDataService.onTradeSpaceSelectionChanged.emit(true);
-    this.snackbarService.showInformation('Trade space selection successfully applied')
+    this.snackbarService.showInformation('Trade space selection has been successfully applied.');
   }
 
   private Download(csvList, filename) {

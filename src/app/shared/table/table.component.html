@@ -13,7 +13,7 @@
           style="text-align: right"
         />
         <mat-error *ngIf="inputFormControl.hasError('required')">
-          Field is <strong>required</strong>
+          This field is <strong>required</strong>
         </mat-error>
         <mat-error
           *ngIf="
@@ -21,7 +21,7 @@
             nodeData.type.includes('float')
           "
         >
-          Field must be a <strong>float</strong>
+          This field must be a <strong>float</strong>
         </mat-error>
         <mat-error
           *ngIf="
@@ -29,7 +29,7 @@
             nodeData.type.includes('int')
           "
         >
-          Field must be a <strong>int</strong>
+          This field must be an <strong>integer</strong>
         </mat-error>
         <mat-error
           *ngIf="

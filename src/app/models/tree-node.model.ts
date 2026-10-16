@@ -212,6 +212,28 @@ export class TreeNode {
     return result;
   }
 
+  public static CreateSimpleNode(treeNode: TreeNode): TreeNode {
+    const simpleNode = new TreeNode(
+      treeNode.name,
+      null,
+      null,
+      treeNode.nodeType,
+      treeNode.modelNameFullPath,
+      treeNode.modelsFullPathList,
+      null,
+      treeNode.fullNamespace,
+      treeNode.status,
+      treeNode.maturity,
+      treeNode.identifier,
+      treeNode.isRoot
+    );
+    simpleNode.isLastChild = treeNode.isLastChild;
+    simpleNode.children = null;
+    return simpleNode;
+      
+
+  }
+
 
   public checkConfigured() {
 

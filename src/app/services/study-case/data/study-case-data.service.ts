@@ -852,6 +852,17 @@ getStudyStandAloneZip(studyId: number): Observable<Blob> {
   return this.http.get(url, options);
 }
 
+getStudyStandAloneZipBase64(studyId: number): Observable<any> {
+  const resourceUrl = `${this.apiRoute}/${studyId}/stand-alone/export-base64`;
+  
+  return this.http.get<any>(resourceUrl, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
 importStudyStandAloneZip(groupId:number, file:File): Observable<Study> {
     const formData = new FormData();
 
@@ -862,6 +873,23 @@ importStudyStandAloneZip(groupId:number, file:File): Observable<Study> {
     const url = `${this.apiRoute}/stand-alone/import`;
     return this.http.post<Study>(url, formData);
   }
+
+importStudyStandAloneZipBase64(groupId: number, filename: string, fileData: string): Observable<Study> {
+  const url = `${this.apiRoute}/stand-alone/import-base64`;
+  
+  const requestData = {
+    group_id: groupId,
+    filename: filename,
+    file_data: fileData
+  };
+  
+  return this.http.post<Study>(url, requestData, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+}
 
 
 waitStudyCreationEnding(studyId:number, creationObservable:Subscriber<Study>){

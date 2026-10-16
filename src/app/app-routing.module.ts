@@ -24,6 +24,7 @@ import { OntologyModelsComponent } from './modules/ontology/ontology-models/onto
 import { NoServerComponent } from './modules/no-server/no-server.component';
 import { Routing } from './models/enumeration.model';
 import { AuthenticationErrorComponent } from './modules/authentication-error/authentication-error.component';
+import { EmbedDashboardComponent } from './modules/dashboard/embed-dashboard/embed-dashboard.component'
 
 
 const routes: Routes = [
@@ -153,6 +154,11 @@ const routes: Routes = [
   {
     path: Routing.AUTHENTICATION_ERROR,
     component: AuthenticationErrorComponent
+  },
+  {
+    path: Routing.EMBED_DASHBOARD,
+    component: EmbedDashboardComponent,
+    canActivate: [AuthGuard]
   }
 ];
 

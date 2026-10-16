@@ -211,19 +211,38 @@ export class AppDataService extends DataHttpService {
     this.loadingStudyDialogService.setSteps(STANDALONE_CREATION_DIALOG_STEPS);
     this.loadingStudyDialogService.updateStep(LoadingDialogStep.ACCESSING_STUDY_SERVER);
 
-    //start the import of the zip
-    this.studyCaseDataService.importStudyStandAloneZip(groupId, studyZip).subscribe({
-      next: (createdStudy) => {
-        if (!loadingCanceled) {
-          this.onStudyCreated.emit(createdStudy.id);
-          //the unzip has been started by the server, we have to wait for the study to have the state "creation_done", then open the read only
-          this.handleStandAloneStudyAccess(createdStudy.id, isStudyCreated, loadingCanceled);
-        }
-      },
-      error: (error) => {
-        this.loadingStudyDialogService.setError("Error creating study\n" + error.description);
+    // Convert file to Base64 and use the new Base64 import endpoint to bypass proxy
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        // Get Base64 data (without the prefix "data:application/zip;base64,")
+        const base64Data = (reader.result as string).split(',')[1];
+        
+        // Start the import using Base64 endpoint
+        this.studyCaseDataService.importStudyStandAloneZipBase64(groupId, studyZip.name, base64Data).subscribe({
+          next: (createdStudy) => {
+            if (!loadingCanceled) {
+              this.onStudyCreated.emit(createdStudy.id);
+              //the unzip has been started by the server, we have to wait for the study to have the state "creation_done", then open the read only
+              this.handleStandAloneStudyAccess(createdStudy.id, isStudyCreated, loadingCanceled);
+            }
+          },
+          error: (error) => {
+            this.loadingStudyDialogService.setError("Error creating study\n" + error.description);
+          }
+        });
+        
+      } catch (error) {
+        this.loadingStudyDialogService.setError("Error processing file: " + error);
       }
-    });
+    };
+    
+    reader.onerror = () => {
+      this.loadingStudyDialogService.setError("Error reading file: " + studyZip.name);
+    };
+    
+    // Read the file as Base64
+    reader.readAsDataURL(studyZip);
 
   }
 
@@ -576,7 +595,7 @@ export class AppDataService extends DataHttpService {
     getStudyInReadOnlyMode.subscribe({
       next: (loadedStudy) => {
         if (loadedStudy === null || loadedStudy === undefined) {
-          loaderObservable.error("Error while retreiving loaded study");
+          loaderObservable.error("Failed to retrieve loaded study");
           return;
         }
         if (loadedStudy.loadStatus === LoadStatus.IN_PROGESS) {
@@ -609,7 +628,7 @@ export class AppDataService extends DataHttpService {
               }
             });
           } else {
-            loaderObservable.error("Error while retreiving loaded study");
+            loaderObservable.error("Failed to retrieve loaded study");
           }
         }
       },

@@ -16,6 +16,14 @@
   text-overflow: ellipsis;
 }
 
+// Dashboard-specific text header styling
+.dashboard-widget .text-header {
+  width: auto;
+  max-width: none;
+  flex: 1; // Take available space in flex container
+  padding-left: 5px; // Reduce padding in dashboard
+}
+
 .widget-separator {
   border-bottom: solid 1px;
   margin: 0px 10px 0px 10px;
@@ -35,12 +43,73 @@
   border-width: 2px;
   box-shadow: 1px 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  
+  // Dashboard context styling
+  &.dashboard-widget {
+    margin: 0; // Remove margins in dashboard context
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden; // Prevent content from overflowing
+    display: flex;
+    flex-direction: column;
+    
+    .widget-header,
+    .widget-header-animated {
+      font-size: inherit; // Allow font size to scale with transform
+      flex-shrink: 0; // Prevent header from shrinking
+    }
+    
+    .text-header {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: auto; // Let it adapt to container
+      max-width: none; // Remove fixed width constraint
+    }
+    
+    .widget-separator {
+      flex-shrink: 0; // Prevent separator from shrinking
+    }
+    
+    .fullsize {
+      min-height: unset; // Allow height to scale
+      flex: 1; // Take remaining space
+      display: flex;
+      align-items: center; // Center content vertically
+      justify-content: center; // Center content horizontally
+      
+      // Make child components fill the space
+      > * {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    
+    // Specific adjustments for different widget types
+    .widget-cell {
+      padding: 5px; // Reduce padding in dashboard
+      min-height: unset;
+      flex: 1;
+      display: flex;
+      position: relative;
+    }
+  }
 }
 
 .header-icon {
   display: flex;
   font-size: 18px;
   float: right;
+}
+
+// Dashboard-specific header icon styling
+.dashboard-widget .header-icon {
+  flex-shrink: 0; // Prevent icons from shrinking
+  font-size: inherit; // Allow font size to scale
 }
 
 .fullsize {
@@ -102,4 +171,19 @@
   color: darkorange;
 }
 
+.not-favorite-value-data {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.favorite-value-data {
+  cursor: pointer;
+  color: gold;
+  transform: scale(1.2);
+}
+
+.favorite-button-container {
+  align-items: baseline;
+  height: 18px;
+}
 

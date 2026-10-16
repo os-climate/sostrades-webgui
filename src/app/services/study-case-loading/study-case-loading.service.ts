@@ -87,7 +87,11 @@ export class StudyCaseLoadingService {
         });
       }
 
+      // Load dashboard from api file
+      this.dashboardService.reloadDashboard(loadedStudy.studyCase.id);
+
       const updateUserPreferences$ = this.studyCaseDataService.loadUserStudyPreferences(loadedStudy.studyCase.id);
+      // If read only study, load saved ontology from study case data service
       const loadReadOnlyOntology$ = loadedStudy.readOnly ? this.studyCaseDataService.loadSavedOntology(loadedStudy) : of(false);
       loadReadOnlyOntology$.subscribe({
         next: (ontologyUpdated) => {
@@ -95,6 +99,7 @@ export class StudyCaseLoadingService {
           if (ontologyUpdated) {
             this.studyCaseDataService.updateParameterOntology(loadedStudy);
           }
+          // if ontology has not been update with read only data, load ontology
           const loadOntology$ = ontologyUpdated ? of(null) : this.ontologyService.loadOntology(loadedStudy);
 
           if (loadOnlyOntology) {
@@ -110,35 +115,7 @@ export class StudyCaseLoadingService {
               }
             });
           } else {
-            // Load logs
-
-            this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
-            this.studyCaseDataService.tradeScenarioList = [];
-            const loadedOntology$ = loadedStudy.readOnly ? this.studyCaseDataService.loadSavedOntology(loadedStudy) : this.ontologyService.loadOntology(loadedStudy);
-
-            if (loadOnlyOntology) {
-              combineLatest([loadedOntology$, updateUserPreferences$]).subscribe({
-                next: ([ontologyUpdated, preferences]) => {
-
-                  loadedStudy.userStudyPreferences = preferences;
-                  if (ontologyUpdated) {
-                    this.studyCaseDataService.updateParameterOntology(loadedStudy);
-                  }
-                  //end loading
-                  this.terminateStudyCaseLoading(
-                    loadedStudy,
-                    isStudyCreated
-                  );
-                }
-              });
-            } else {
-
-              // Load dashboard from api file
-              this.dashboardService.getDashboard(loadedStudy.studyCase.id).subscribe({
-                next: () => {
-                  console.log('Dashboard loaded');
-                }
-              });
+  
               // Load logs
               this.studyCaseDataService.getLog(loadedStudy.studyCase.id);
               this.studyCaseDataService.tradeScenarioList = [];
@@ -167,7 +144,7 @@ export class StudyCaseLoadingService {
                   this.terminateStudyCaseLoading(loadedStudy, isStudyCreated);
                 }
               });
-            }
+            
             // Add new study loaded in the studymanagement page without refreshing list
             if (this.studyCaseDataService.studyManagementData.length > 0) {
               this.studyCaseDataService.updateStudyInList(loadedStudy);

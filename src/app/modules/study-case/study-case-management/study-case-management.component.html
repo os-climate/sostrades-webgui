@@ -179,11 +179,11 @@
                 routerLink="/study/{{element.id}}"
                 class="link-study-title"
                 [id]="'title-study-management-load-' + element.groupName +'-' + element.name"
-                [matTooltip]="'/study/' + element.id"
+                [matTooltip]="'/study/' + element.id + ' ' + element.name"
                 matTooltipPosition="right"
-                >
+              >
                 {{ element.name }}
-            </a>
+              </a>
           </td>
         </ng-container>
 

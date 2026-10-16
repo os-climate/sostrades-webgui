@@ -1,7 +1,13 @@
 <div
   [id]="nodeData.identifier"
   class="widget"
-  [ngClass]="borderClass"
+  [ngClass]="[borderClass, isDashboardContext ? 'dashboard-widget' : '']"
+  [style.transform]="isDashboardContext ? 'scale(' + dashboardScale + ')' : 'none'"
+  [style.transform-origin]="isDashboardContext ? 'top left' : 'center'"
+  [style.width]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
+  [style.height]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
+  [style.min-width]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
+  [style.min-height]="isDashboardContext ? (100 / dashboardScale) + '%' : 'auto'"
   *ngIf="
     showWidget(
       filterService.filters.userLevel,
@@ -12,6 +18,15 @@
   <div
     [ngClass]=" nodeData.isHighlighted ? 'widget-header-animated' : 'widget-header'"
   >
+    <button
+      mat-button
+      [hidden]="!isDashboardInEdition"
+      id="favorite-value-data"
+      [matTooltip]="isFavorite ? 'Remove from dashboard' : 'Add into dashboard'"
+      class="favorite-button-container float-left-button cursor-pointer"
+      (click)="OnFavoriteClick()">
+      <i [ngClass]="isFavorite ? 'fa-star fa-solid favorite-value-data' : 'fa-star fa-regular not-favorite-value-data'" class=""></i>
+    </button>
     <div
       [id]="nodeData.displayName"
       class="text-header cursor-pointer"
@@ -52,6 +67,7 @@
         <app-slide-toggle
           class="fullsize"
           [nodeData]="nodeData"
+          [forceReadOnly]="forceReadOnly"
           (valueChanged)="onInputChange($event)"
         >
         </app-slide-toggle>
@@ -60,6 +76,7 @@
         <app-select
           class="fullsize"
           [nodeData]="nodeData"
+          [forceReadOnly]="forceReadOnly"
           (valueChanged)="onInputChange($event)"
         >
         </app-select>
@@ -68,6 +85,7 @@
         <app-input
           class="fullsize"
           [nodeData]="nodeData"
+          [forceReadOnly]="forceReadOnly"
           (valueChanged)="onInputChange($event)"
         >
         </app-input>
@@ -76,6 +94,7 @@
         <app-table
           class="fullsize"
           [nodeData]="nodeData"
+          [forceReadOnly]="forceReadOnly"
           (valueChanged)="onInputChange($event)"
         >
         </app-table>
@@ -87,6 +106,7 @@
           [nodeData]="nodeData"
           [discipline]="discipline"
           [namespace]="namespace"
+          [forceReadOnly]="forceReadOnly"
           (stateUpdate)="onStateUpdate()"
         >
         </app-file-spreadsheet>
@@ -98,6 +118,7 @@
           [nodeData]="nodeData"
           [discipline]="discipline"
           [namespace]="namespace"
+          [forceReadOnly]="forceReadOnly"
           (valueChanged)="onInputChange($event)"
         >
         </app-process-builder>

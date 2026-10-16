@@ -8,14 +8,18 @@
 
 .content-for-process-builder {
   height: 160px;
-  
+}
+
+.create-study-title {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .content-for-create-study {
   margin-top: 1px !important;
   height: calc(100% - 40px);
   display: flex;
-  flex-direction: column;
   flex-wrap: wrap;
   justify-content: flex-start
 }
@@ -31,14 +35,11 @@
 
 .mat-mdc-select {
   width: 100%;
-  
 }
 
 .mat-mdc-form-field {
   width: 100%;
 }
-
-
 
 .error-container {
   height: 100%;
@@ -86,7 +87,6 @@
 
 .button-select-file{
   width: 200px;
-  
 }
 
 .text-zone {

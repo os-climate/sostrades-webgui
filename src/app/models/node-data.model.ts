@@ -352,7 +352,38 @@ export class NodeData {
     // check that the size of the data is upper than 2Mo
     return this.sizeInMo > 2;
   }
+
+  public serialize(): any {
+    const result = {};
+    result[NodeDataAttributes.DEFAULT] = this.defaultValue;
+    result[NodeDataAttributes.TYPE] = this.type;
+    result[NodeDataAttributes.UNIT] = this.unit;
+    result[NodeDataAttributes.POSSIBLE_VALUES] = this.possibleValues;
+    result[NodeDataAttributes.RANGE] = this.range;
+    result[NodeDataAttributes.SUBTYPE_DESCRIPTOR] = this.subTypeDescriptor;
+    result[NodeDataAttributes.USER_LEVEL] = this.userLevel;
+    result[NodeDataAttributes.VISIBILITY] = this.visibility;
+    result[NodeDataAttributes.IO_TYPE] = this.ioType;
+    result[NodeDataAttributes.MODEL_ORIGIN] = this.modelOrigin;
+    result[NodeDataAttributes.COUPLING] = this.coupling;
+    result[NodeDataAttributes.VALUE] = this._value;
+    result[NodeDataAttributes.EDITABLE] = this.editable;
+    result[NodeDataAttributes.OVERWRITTEN] = this.overwritten;
+    result[NodeDataAttributes.NUMERICAL] = this.numerical;
+    result[NodeDataAttributes.METAINPUT] = this.metaInput;
+    result[NodeDataAttributes.OPTIONAL] = this.optional;
+    result[NodeDataAttributes.CONNECTOR_INFO] = this.connector_data;
+    result[NodeDataAttributes.DATAFRAME_DESCRIPTOR] = this.dataframeDescriptor ? this.dataframeDescriptor : null;
+    result[NodeDataAttributes.DATAFRAME_EDITION_LOCKED] = this.dataframeEditionLocked;
+    result[NodeDataAttributes.DISCIPLINE_FULL_PATH_LIST] = this.disciplineFullPathList;
+    result[NodeDataAttributes.VARIABLE_KEY] = this.variableKey;
+    result[NodeDataAttributes.CHECK_INTEGRITY_MSG] = this.checkIntegrityMessage;
+    result[NodeDataAttributes.SIZE_IN_MO] = this.sizeInMo;
+
+    return result;
+  }
 }
+
 
 export function CreateNodeDataDictionary(jsonData: any, parent: TreeNode, isDataDisc: boolean): { [id: string]: NodeData } {
   const result: { [id: string]: NodeData } = {};

@@ -3,7 +3,7 @@
     class="container-dialog"
     *ngIf="isLoading"
     progressMode="indeterminate"
-    progressText="Loading form information"
+    progressText="Loading form data"
   ></app-progress-bar>
 </div>
 <div class="flex-container" [formGroup]="createUserForm" *ngIf="!isLoading">
@@ -12,56 +12,56 @@
     <input
       matInput
       formControlName="username"
-      placeholder="Enter Username"
+      placeholder="Enter username"
       style="text-align: right;"
     />
     <mat-error *ngIf="hasError('username', 'required')"
-      >A Username is <strong>required</strong></mat-error
+      >Username is <strong>required</strong></mat-error
     >
     <mat-error *ngIf="hasError('username', 'pattern')"
-      >Only letters, numbers, dashes and underscores are authorized</mat-error
+      >Only letters, numbers, dashes and underscores are allowed</mat-error
     >
   </mat-form-field>
   <mat-form-field>
     <input
       matInput
       formControlName="firstname"
-      placeholder="Enter First name"
+      placeholder="Enter first name"
       style="text-align: right;"
     />
     <mat-error *ngIf="hasError('firstname', 'required')"
-      >A First name is <strong>required</strong></mat-error
+      >First name is <strong>required</strong></mat-error
     >
     <mat-error *ngIf="hasError('firstname', 'pattern')"
-      >Only letters, numbers, dashes and underscores are authorized</mat-error
+      >Only letters, numbers, dashes and underscores are allowed</mat-error
     >
   </mat-form-field>
   <mat-form-field>
     <input
       matInput
       formControlName="lastname"
-      placeholder="Enter Last Name"
+      placeholder="Enter last name"
       style="text-align: right;"
     />
     <mat-error *ngIf="hasError('lastname', 'required')"
-      >A Last name is <strong>required</strong></mat-error
+      >Last name is <strong>required</strong></mat-error
     >
     <mat-error *ngIf="hasError('lastname', 'pattern')"
-      >Only letters, numbers, dashes and underscores are authorized</mat-error
+      >Only letters, numbers, dashes and underscores are allowed</mat-error
     >
   </mat-form-field>
   <mat-form-field>
     <input
       matInput
       formControlName="email"
-      placeholder="Enter Email"
+      placeholder="Enter email address"
       style="text-align: right;"
     />
     <mat-error *ngIf="hasError('email', 'required')"
-      >An email is <strong>required</strong></mat-error
+      >Email address is <strong>required</strong></mat-error
     >
     <mat-error *ngIf="hasError('email', 'pattern')"
-      >Enter a valid email address</mat-error
+      >Please enter a valid email address</mat-error
     >
   </mat-form-field>
   <mat-form-field>

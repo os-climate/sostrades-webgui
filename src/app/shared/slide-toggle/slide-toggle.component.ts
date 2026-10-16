@@ -11,7 +11,9 @@ import { NodeData, ValueType } from 'src/app/models/node-data.model';
 export class SlideToggleComponent implements OnInit {
 
   @Input() nodeData: NodeData;
+  @Input() forceReadOnly?: boolean;
   @Output() valueChanged: EventEmitter<any> = new EventEmitter();
+
   public toggleActivated: boolean;
 
   constructor() {
@@ -19,7 +21,7 @@ export class SlideToggleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.nodeData.valueType === ValueType.READ_ONLY) {
+    if (this.nodeData.valueType === ValueType.READ_ONLY || this.forceReadOnly === true) {
       this.toggleActivated = false;
     }
   }

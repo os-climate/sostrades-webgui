@@ -5,3 +5,22 @@
   padding: 0 !important;
 }
 
+.chat-bot-button{
+  float: right;
+  position: absolute;
+  margin-top: -55px;
+  right: 5px;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background-color: #f0f0f0; // light grey
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.chat-bot-button:hover {
+    background-color: #e0e0e0;
+  }
